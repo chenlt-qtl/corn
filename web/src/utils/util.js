@@ -79,15 +79,23 @@ export function formatDate(value, fmt) {
 
 // 生成首页路由
 export function generateIndexRouter(data) {
-let indexRouter = [{
+let indexRouter = [
+          {
+            path: '/blank/',
+            name: 'blank',
+            component: resolve => require(['@/components/layouts/BlankLayout'], resolve),
+            meta: { title: 'home' },
+            children: [
+              ...generateChildRouters(data,"/blank")
+            ]
+          },{
           path: '/',
           name: 'dashboard',
-          //component: () => import('@/components/layouts/BasicLayout'),
           component: resolve => require(['@/components/layouts/TabLayout'], resolve),
           meta: { title: '首页' },
           redirect: '/dashboard/analysis',
           children: [
-            ...generateChildRouters(data)
+            ...generateChildRouters(data,"/")
           ]
         },{
           "path": "*", "redirect": "/404", "hidden": true
@@ -97,9 +105,12 @@ let indexRouter = [{
 
 // 生成嵌套路由（子路由）
 
-function  generateChildRouters (data) {
+function  generateChildRouters (data,prefix) {
   const routers = [];
   for (var item of data) {
+    if(prefix && !item.path.startsWith(prefix)){
+      continue;
+    }
     let component = "";
     if(item.component.indexOf("layouts")>=0){
        component = "components/"+item.component;
@@ -131,7 +142,7 @@ function  generateChildRouters (data) {
       menu.alwaysShow = true;
     }
     if (item.children && item.children.length > 0) {
-      menu.children = [...generateChildRouters( item.children)];
+      menu.children = [...generateChildRouters( item.children,'')];
     }
     //--update-begin----author:scott---date:20190320------for:根据后台菜单配置，判断是否路由菜单字段，动态选择是否生成路由（为了支持参数URL菜单）------
     //判断是否生成路由
