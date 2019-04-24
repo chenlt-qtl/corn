@@ -1,7 +1,6 @@
 package org.jeecg.modules.note.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -28,11 +27,11 @@ public class Note implements Serializable {
 	@Excel(name = "name", width = 15)
 	private java.lang.String name;
 	/**pId*/
-	@Excel(name = "pId", width = 15)
-	private java.lang.String pId;
+	@Excel(name = "parentId", width = 15)
+	private java.lang.String parentId;
 	/**pIds*/
-	@Excel(name = "pIds", width = 15)
-	private java.lang.String pIds;
+	@Excel(name = "parentIds", width = 15)
+	private java.lang.String parentIds;
 	/**text*/
 	@Excel(name = "text", width = 15)
 	private java.lang.Object text;

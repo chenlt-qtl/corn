@@ -20,14 +20,14 @@
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="pId">
-          <a-input placeholder="请输入pId" v-decorator="['pId', {}]" />
+          label="parentId">
+          <a-input placeholder="请输入parentId" v-decorator="['parentId', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="pIds">
-          <a-input placeholder="请输入pIds" v-decorator="['pIds', {}]" />
+          label="parentIds">
+          <a-input placeholder="请输入parentIds" v-decorator="['parentIds', {}]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
@@ -100,7 +100,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'name','pId','pIds','text','tag','from','delFlag'))
+          this.form.setFieldsValue(pick(this.model,'name','parentId','parentIds','text','tag','source','delFlag'))
 		  //时间格式化
         });
 

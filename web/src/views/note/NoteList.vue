@@ -12,14 +12,14 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="pId">
-              <a-input placeholder="请输入pId" v-model="queryParam.pId"></a-input>
+            <a-form-item label="parentId">
+              <a-input placeholder="请输入parentId" v-model="queryParam.parentId"></a-input>
             </a-form-item>
           </a-col>
         <template v-if="toggleSearchStatus">
         <a-col :md="6" :sm="8">
-            <a-form-item label="pIds">
-              <a-input placeholder="请输入pIds" v-model="queryParam.pIds"></a-input>
+            <a-form-item label="parentIds">
+              <a-input placeholder="请输入parentIds" v-model="queryParam.parentIds"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
@@ -138,14 +138,14 @@
             dataIndex: 'name'
            },
 		   {
-            title: 'pId',
+            title: 'parentId',
             align:"center",
-            dataIndex: 'pId'
+            dataIndex: 'parentId'
            },
 		   {
-            title: 'pIds',
+            title: 'parentIds',
             align:"center",
-            dataIndex: 'pIds'
+            dataIndex: 'parentIds'
            },
 		   {
             title: 'text',

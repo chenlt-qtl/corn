@@ -5,8 +5,6 @@
 </template>
 
 <script>
-  import PageLayout from '../page/PageLayout'
-  import RouteView from './RouteView'
 
   export default {
     name: "IframePageContent",
@@ -23,7 +21,7 @@
       this.goUrl()
     },
     watch: {
-      $route(to, from) {
+      $route() {
         this.goUrl();
       }
     },
