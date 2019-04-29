@@ -2,65 +2,31 @@
   <a-card :bordered="false">
 
     <!-- 查询区域 -->
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="24">
-
-          <a-col :md="6" :sm="8">
-            <a-form-item label="name">
-              <a-input placeholder="请输入name" v-model="queryParam.name"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="parentId">
-              <a-input placeholder="请输入parentId" v-model="queryParam.parentId"></a-input>
-            </a-form-item>
-          </a-col>
-        <template v-if="toggleSearchStatus">
-        <a-col :md="6" :sm="8">
-            <a-form-item label="parentIds">
-              <a-input placeholder="请输入parentIds" v-model="queryParam.parentIds"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="text">
-              <a-input placeholder="请输入text" v-model="queryParam.text"></a-input>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="8">
-            <a-form-item label="tag">
-              <a-input placeholder="请输入tag" v-model="queryParam.tag"></a-input>
-            </a-form-item>
-          </a-col>
-        </template>
-          <a-col :md="6" :sm="8" >
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
-                {{ toggleSearchStatus ? '收起' : '展开' }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
-              </a>
-            </span>
-          </a-col>
-
-        </a-row>
-      </a-form>
-    </div>
-
-    <!-- 操作按钮区域 -->
-    <div class="table-operator">
-      <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-      <a-button type="primary" icon="download" @click="handleExportXls">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :action="importExcelUrl" @change="handleImportExcel">
-        <a-button type="primary" icon="import">导入</a-button>
-      </a-upload>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
-        <a-menu slot="overlay">
-          <a-menu-item key="1" @click="batchDel"><a-icon type="delete"/>删除</a-menu-item>
-        </a-menu>
-        <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /></a-button>
-      </a-dropdown>
+    <div style="margin-bottom: 10px;">
+      <a-row>
+        <a-col :span="12">
+          <a-form layout="inline">
+            <a-input-search
+              placeholder="input search text"
+              style="width: 300px"
+              @search="onSearch"
+            />
+          </a-form>
+        </a-col>
+        <a-col :span="12" style="text-align: right;">
+          <a-select defaultValue="lucy" style="width: 300px">
+            <div slot="dropdownRender" slot-scope="menu">
+              <v-nodes :vnodes="menu"/>
+              <a-divider style="margin: 4px 0;" />
+              <div style="padding: 8px; cursor: pointer;">
+                <a-icon type="plus" /> 增加笔记本
+              </div>
+            </div>
+            <a-select-option value="jack">Jack</a-select-option>
+            <a-select-option value="lucy">Lucy</a-select-option>
+          </a-select>
+        </a-col>
+      </a-row>
     </div>
 
     <!-- table区域-begin -->
@@ -115,7 +81,11 @@
     name: "NoteList",
     mixins:[JeecgListMixin],
     components: {
-      NoteModal
+      NoteModal,
+      VNodes: {
+        functional: true,
+        render: (h, ctx) => ctx.props.vnodes
+      }
     },
     data () {
       return {
