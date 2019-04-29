@@ -5,35 +5,16 @@
     :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]"
     :style="{ padding: '0' }">
 
-    <div v-if="mode === 'sidemenu'" class="header" :class="theme">
-      <logo />
+    <div class="header" :class="theme">
 
-      <span v-if="device === 'desktop'">Welcome to corn</span>
-      <span v-else>Corn</span>
+      <div class="logo">
+        <router-link :to="{name:'blank'}">
+          <img src="~@/assets/corn.svg" alt="logo">
+          <h1>Welcome to corn</h1>
+        </router-link>
+      </div>
 
       <user-menu :theme="theme"/>
-    </div>
-    <!-- 顶部导航栏模式 -->
-    <div v-else :class="['top-nav-header-index', theme]">
-      <div class="header-index-wide">
-        <div class="header-index-left" :style="topMenuStyle.headerIndexLeft">
-          <logo class="top-nav-header" :show-title="device !== 'mobile'" :style="topMenuStyle.topNavHeader"/>
-          <div v-if="device !== 'mobile'" id="top-nav-scroll-view" :style="topMenuStyle.scrollView">
-            <div id="top-nav-scroll-width" :style="topMenuStyle.scrollWidth">
-              <s-menu
-                mode="horizontal"
-                :menu="menus"
-                :theme="theme"></s-menu>
-            </div>
-          </div>
-          <a-icon
-            v-else
-            class="trigger"
-            :type="collapsed ? 'menu-fold' : 'menu-unfold'"
-            @click.native="toggle"></a-icon>
-        </div>
-        <user-menu class="header-index-right" :theme="theme" :style="topMenuStyle.headerIndexRight"/>
-      </div>
     </div>
 
   </a-layout-header>
@@ -41,8 +22,6 @@
 
 <script>
   import UserMenu from '../tools/UserMenu'
-  import SMenu from '../menu/'
-  import Logo from '../tools/Logo'
 
   import { mixin } from '@/utils/mixin.js'
   import { topNavScrollToSelectItem } from '@/utils/util'
@@ -51,8 +30,6 @@
     name: 'HomeHeader',
     components: {
       UserMenu,
-      SMenu,
-      Logo
     },
     mixins: [mixin],
     props: {
@@ -300,22 +277,29 @@
   }
 
   .logo {
-    height: 64px;
+    height: $height !important;
+    line-height: $height !important;
+    box-shadow: none !important;
+    transition: background 300ms;
     position: relative;
-    line-height: 64px;
     padding-left: 24px;
     -webkit-transition: all .3s;
-    transition: all .3s;
-    background: #002140;
     overflow: hidden;
+    display: inline-block;
+
+    img {
+      height: 34px;
+    }
+    a {
+      color: white;
+      &:hover {
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
 
     img, h1 {
       display: inline-block;
       vertical-align: middle;
-    }
-
-    img {
-      height: 32px;
     }
 
     h1 {
