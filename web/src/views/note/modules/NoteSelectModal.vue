@@ -20,38 +20,8 @@
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="parentId">
-          <a-input placeholder="请输入parentId" v-decorator="['parentId', {}]" />
-        </a-form-item>
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="parentIds">
-          <a-input placeholder="请输入parentIds" v-decorator="['parentIds', {}]" />
-        </a-form-item>
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="text">
-          <a-input placeholder="请输入text" v-decorator="['text', {}]" />
-        </a-form-item>
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
           label="tag">
           <a-input placeholder="请输入tag" v-decorator="['tag', {}]" />
-        </a-form-item>
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="source">
-          <a-input placeholder="请输入source" v-decorator="['source', {}]" />
-        </a-form-item>
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="delFlag">
-          <a-input placeholder="请输入delFlag" v-decorator="['delFlag', {}]" />
         </a-form-item>
 		
       </a-form>
@@ -64,7 +34,7 @@
   import pick from 'lodash.pick'
 
   export default {
-    name: "NoteModal",
+    name: "NoteSelectModal",
     data () {
       return {
         title:"操作",
@@ -92,6 +62,9 @@
     created () {
     },
     methods: {
+      show(){
+        this.visible = true;
+      },
       add () {
         this.edit({});
       },
@@ -100,8 +73,7 @@
         this.model = Object.assign({}, record);
         this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'name','parentId','parentIds','text','tag','source','delFlag'))
-		  //时间格式化
+          this.form.setFieldsValue(pick(this.model,'name','parentIds','text','tag','source'))
         });
 
       },

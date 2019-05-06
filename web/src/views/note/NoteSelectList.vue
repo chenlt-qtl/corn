@@ -14,8 +14,9 @@
           </a-form>
         </a-col>
         <a-col :span="12" style="text-align: right;">
-          <a-select :defaultActiveFirstOption="true" style="width: 300px">
-            <a-select-option v-for="d in selectData" :key="d.id">{{d.name}}</a-select-option>
+          <a-select defaultValue="lucy" style="width: 300px">
+            <a-select-option value="jack">Jack</a-select-option>
+            <a-select-option value="lucy">Lucy</a-select-option>
           </a-select>
           <a-button @click="addSelect" type="primary" icon="plus">新增笔记本</a-button>
         </a-col>
@@ -71,7 +72,6 @@
   import NoteModal from './modules/NoteModal'
   import NoteSelectModal from './modules/NoteSelectModal'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { queryNote } from '@/api/api'
 
   export default {
     name: "NoteList",
@@ -87,7 +87,6 @@
     data () {
       return {
         description: '笔记管理管理页面',
-        selectData:[],
         // 表头
         columns: [
           {
@@ -143,11 +142,11 @@
           }
         ],
 		url: {
-          list: "/note/list",
-          delete: "/note/delete",
-          deleteBatch: "/note/deleteBatch",
-          exportXlsUrl: "/note/exportXls",
-          importExcelUrl: "/note/importExcel",
+          list: "/note/note/list",
+          delete: "/note/note/delete",
+          deleteBatch: "/note/note/deleteBatch",
+          exportXlsUrl: "note/note/exportXls",
+          importExcelUrl: "note/note/importExcel",
        },
     }
   },
@@ -156,18 +155,6 @@
       return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
     }
   },
-    created() {
-      var that = this
-      queryNote().then((res) => {
-        if (res.success) {
-          for (let i = 0; i < res.result.length; i++) {
-            let temp = res.result[i]
-            that.selectData.push(temp)
-          }
-          this.loading = false
-        }
-      })
-    },
     methods: {
       addSelect () {
         this.$refs.noteSelectModal.show();

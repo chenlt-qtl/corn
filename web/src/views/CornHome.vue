@@ -7,6 +7,26 @@
 
     <br/>
 
+    <router-link :to="{path:'/blank/note'}">
+      <a-card
+        :loading="loading"
+        hoverable
+        style="width: 140px;padding: 10px;border-radius: 15px;"
+      >
+        <img
+          alt="example"
+          src="../assets/note.png"
+          slot="cover"
+        />
+        <a-card-meta
+          title="笔记管理">
+          <template slot="description"></template>
+        </a-card-meta>
+      </a-card>
+    </router-link>
+
+    <br/>
+
     <h2># Trend 组件 </h2>
 
     <a-divider> 正常 </a-divider>

@@ -1,36 +1,37 @@
 package org.jeecg.modules.note.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.service.INoteService;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-
+import org.jeecg.modules.system.entity.SysUser;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
  /**
  * @Title: Controller
@@ -40,7 +41,7 @@ import com.alibaba.fastjson.JSON;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/note/note")
+@RequestMapping("/note")
 @Slf4j
 public class NoteController {
 	@Autowired
@@ -67,6 +68,25 @@ public class NoteController {
 		result.setResult(pageList);
 		return result;
 	}
+
+	 /**
+	  * 查询笔记本(不分页)
+	  * @param req
+	  * @return
+	  */
+	 @GetMapping(value = "/listNote")
+	 public Result<List<Note>> queryNote(String parentId,HttpServletRequest req) {
+		 Result<List<Note>> result = new Result<>();
+		 SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		 try {
+			 List<Note> list = noteService.listNote(sysUser.getUsername(),parentId);
+			 result.setResult(list);
+			 result.setSuccess(true);
+		 } catch (Exception e) {
+			 e.printStackTrace();
+		 }
+		 return result;
+	 }
 	
 	/**
 	  *   添加
@@ -77,6 +97,10 @@ public class NoteController {
 	public Result<Note> add(@RequestBody Note note) {
 		Result<Note> result = new Result<Note>();
 		try {
+			if(StringUtils.isBlank(note.getParentId())){
+				note.setParentId("0");
+			}
+			note.setDelFlag("0");
 			noteService.save(note);
 			result.success("添加成功！");
 		} catch (Exception e) {

@@ -87,6 +87,9 @@ const queryUserRoleMap = (params)=>getAction("/sys/user/queryUserRoleMap",params
 // 重复校验
 const duplicateCheck = (params)=>getAction("/sys/duplicate/check",params);
 
+// 查询note
+const queryNote = (params)=>getAction("/note/listNote",params);
+
 export {
   // imgView,
   // doMian,
@@ -130,7 +133,8 @@ export {
   queryUserByDepId,
   queryUserRoleMap,
   duplicateCheck,
-  queryTreeListForRole
+  queryTreeListForRole,
+  queryNote
 }
 
 
