@@ -21,7 +21,12 @@
   import 'tinymce/plugins/wordcount'
   import 'tinymce/plugins/colorpicker'
   import 'tinymce/plugins/textcolor'
+  import 'tinymce/plugins/emoticons'
+
+
+
   export default {
+    name:'JEditor',
     components: {
       Editor
     },
@@ -40,7 +45,9 @@
       },
       toolbar: {
         type: [String, Array],
-        default: 'undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists image media table | removeformat'
+        default: 'undo redo |  formatselect | bold italic underline strikethrough |' +
+          'fontselect |fontsizeselect | forecolor backcolor| alignleft aligncenter alignright alignjustify| ' +
+          'bullist numlist outdent indent | lists image media table| removeformat'
       }
     },
     data() {

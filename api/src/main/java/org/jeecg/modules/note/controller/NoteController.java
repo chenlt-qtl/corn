@@ -99,6 +99,7 @@ public class NoteController {
 		try {
 			if(StringUtils.isBlank(note.getParentId())){
 				note.setParentId("0");
+				note.setParentIds("0");
 			}
 			note.setDelFlag("0");
 			noteService.save(note);

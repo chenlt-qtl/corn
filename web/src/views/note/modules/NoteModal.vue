@@ -92,6 +92,9 @@
     created () {
     },
     methods: {
+      show(){
+        this.visible = true;
+      },
       add () {
         this.edit({});
       },
@@ -101,7 +104,6 @@
         this.visible = true;
         this.$nextTick(() => {
           this.form.setFieldsValue(pick(this.model,'name','parentId','parentIds','text','tag','source','delFlag'))
-		  //时间格式化
         });
 
       },

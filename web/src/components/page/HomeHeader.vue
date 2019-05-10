@@ -38,10 +38,6 @@
         // sidemenu, topmenu
         default: 'sidemenu'
       },
-      menus: {
-        type: Array,
-        required: true
-      },
       theme: {
         type: String,
         required: false,
@@ -84,12 +80,6 @@
           this.buildTopMenuStyle()
         }
       },
-      /** 监听导航栏模式变化 */
-      mode(newVal) {
-        if (newVal === 'topmenu') {
-          this.calcTopMenuScrollWidth()
-        }
-      }
     },
     //update-end--author:sunjianlei---date:20190408------for: 顶部导航栏增加横向滚动条-----
     mounted() {
@@ -97,7 +87,6 @@
       //update-begin--author:sunjianlei---date:20190408------for: 顶部导航栏增加横向滚动条-----
       if (this.mode === 'topmenu') {
         this.buildTopMenuStyle()
-        this.calcTopMenuScrollWidth()
       }
       //update-end--author:sunjianlei---date:20190408------for: 顶部导航栏增加横向滚动条-----
     },
@@ -114,9 +103,6 @@
           this.headerBarFixed = false
         }
       },
-      toggle() {
-        this.$emit('toggle')
-      },
       //update-begin--author:sunjianlei---date:20190408------for: 顶部导航栏增加横向滚动条-----
       buildTopMenuStyle() {
         if (this.mode === 'topmenu') {
@@ -130,54 +116,9 @@
             this.topMenuStyle.topNavHeader = { 'min-width': '165px' }
             this.topMenuStyle.headerIndexRight = { 'min-width': rightWidth }
             this.topMenuStyle.headerIndexLeft = { 'width': `calc(100% - ${rightWidth})` }
-            // 由于首次从mobile设备下切换到desktop设备没有初始化TopMenuScrollWidth，所以这里需要计算一下
-            if (this.topMenuStyle.scrollWidth['width'] === '10000px') {
-              this.calcTopMenuScrollWidth()
-            }
           }
         }
       },
-      /** 计算滚动条的宽度 */
-      calcTopMenuScrollWidth() {
-        // 非顶部菜单时不计算宽度
-        if (this.mode !== 'topmenu') return
-        let count = 0
-        let timer = setInterval(() => {
-          count++
-          let scrollWidth = document.getElementById('top-nav-scroll-width')
-          if (scrollWidth == null) {
-            clearInterval(timer)
-            return
-          }
-          let menu = scrollWidth.getElementsByClassName('ant-menu')[0]
-          if (menu) {
-            let widthCount = 0
-            let menuItems = menu.getElementsByTagName('li')
-            for (let item of menuItems) {
-              if (item.className.indexOf('ant-menu-overflowed-submenu') === -1) {
-                widthCount += item.offsetWidth
-              }
-            }
-            // 由于首次从侧边菜单模式下切换到顶部菜单模式下没有buildTopMenuStyle，所以这里需要build一下
-            if (this.topMenuStyle.scrollWidth['width'] === '10000px') {
-              // 防止递归调用
-              this.$nextTick(() => {
-                this.buildTopMenuStyle()
-              })
-            }
-            this.topMenuStyle.scrollWidth['width'] = `${widthCount + 10}px`
-            // 将滚动条位置滚动到当前选中的菜单处
-            if (count === 1) {
-              topNavScrollToSelectItem(document)
-            }
-          }
-          // 校准数据三次再关闭定时器
-          if (count === 3) {
-            clearInterval(timer)
-          }
-        }, 100)
-      }
-      //update-end--author:sunjianlei---date:20190408------for: 顶部导航栏增加横向滚动条-----
     }
   }
 </script>

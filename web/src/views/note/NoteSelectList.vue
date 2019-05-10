@@ -1,46 +1,40 @@
 <template>
-  <a-card :bordered="false">
+  <a-modal
+    :title="title"
+    :width="800"
+    :visible="visible"
+    :confirmLoading="confirmLoading"
+    @cancel="close"
+    cancelText="关闭">
+    <template slot="footer">
+      <a-button type="primary" @click="close">
+        Close
+      </a-button>
+    </template>
 
-    <!-- 查询区域 -->
-    <div style="margin-bottom: 10px;">
-      <a-row>
-        <a-col :span="12">
-          <a-form layout="inline">
-            <a-input-search
-              placeholder="input search text"
-              style="width: 300px"
-              @search="onSearch"
-            />
-          </a-form>
-        </a-col>
-        <a-col :span="12" style="text-align: right;">
-          <a-select defaultValue="lucy" style="width: 300px">
-            <a-select-option value="jack">Jack</a-select-option>
-            <a-select-option value="lucy">Lucy</a-select-option>
-          </a-select>
-          <a-button @click="addSelect" type="primary" icon="plus">新增笔记本</a-button>
-        </a-col>
-      </a-row>
-    </div>
-
-    <!-- table区域-begin -->
-    <div>
-      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项
-        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-      </div>
-
-      <a-table
-        ref="table"
-        size="middle"
-        bordered
-        rowKey="id"
-        :columns="columns"
-        :dataSource="dataSource"
-        :pagination="ipagination"
-        :loading="loading"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-        @change="handleTableChange">
+    <a-spin :spinning="confirmLoading">
+        <!-- 操作按钮区域 -->
+        <div class="table-operator">
+          <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
+          <a-button
+            @click="batchDel"
+            style="margin-left:8px"
+            v-if="selectedRowKeys.length > 0"
+            ghost
+            type="primary"
+            icon="delete">批量删除
+          </a-button>
+        </div>
+        <a-table
+          ref="table"
+          size="middle"
+          bordered
+          rowKey="id"
+          :columns="columns"
+          :dataSource="dataSource"
+          :pagination="ipagination"
+          :loading="loading"
+          @change="handleTableChange">
 
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
@@ -58,26 +52,22 @@
           </a-dropdown>
         </span>
 
-      </a-table>
-    </div>
-    <!-- table区域-end -->
+        </a-table>
 
-    <!-- 表单区域 -->
-    <note-modal ref="modalForm" @ok="modalFormOk"></note-modal>
-    <note-select-modal ref="noteSelectModal" @ok="modalFormOk"></note-select-modal>
-  </a-card>
+        <note-select-modal ref="noteSelectModel" @ok="modalFormOk"></note-select-modal>
+    </a-spin>
+  </a-modal>
 </template>
 
 <script>
-  import NoteModal from './modules/NoteModal'
-  import NoteSelectModal from './modules/NoteSelectModal'
+  import pick from 'lodash.pick'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import NoteSelectModal from './modules/NoteSelectModal'
 
   export default {
-    name: "NoteList",
+    name: "NoteSelectList",
     mixins:[JeecgListMixin],
     components: {
-      NoteModal,
       NoteSelectModal,
       VNodes: {
         functional: true,
@@ -86,8 +76,23 @@
     },
     data () {
       return {
-        description: '笔记管理管理页面',
-        // 表头
+        title:"操作",
+        visible: false,
+        model: {},
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 5 },
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 16 },
+        },
+
+        confirmLoading: false,
+        form: this.$form.createForm(this),
+        validatorRules:{
+        },
+        onOk() {},
         columns: [
           {
             title: '#',
@@ -98,86 +103,59 @@
             customRender:function (t,r,index) {
               return parseInt(index)+1;
             }
-           },
-		   {
+          },{
             title: 'name',
             align:"center",
             dataIndex: 'name'
-           },
-		   {
-            title: 'parentId',
-            align:"center",
-            dataIndex: 'parentId'
-           },
-		   {
-            title: 'parentIds',
-            align:"center",
-            dataIndex: 'parentIds'
-           },
-		   {
-            title: 'text',
-            align:"center",
-            dataIndex: 'text'
-           },
-		   {
+          },{
             title: 'tag',
             align:"center",
             dataIndex: 'tag'
-           },
-		   {
-            title: 'source',
-            align:"center",
-            dataIndex: 'source'
-           },
-		   {
-            title: 'delFlag',
-            align:"center",
-            dataIndex: 'delFlag'
-           },
-          {
+          },{
             title: '操作',
             dataIndex: 'action',
             align:"center",
             scopedSlots: { customRender: 'action' },
           }
         ],
-		url: {
-          list: "/note/note/list",
-          delete: "/note/note/delete",
-          deleteBatch: "/note/note/deleteBatch",
-          exportXlsUrl: "note/note/exportXls",
-          importExcelUrl: "note/note/importExcel",
-       },
-    }
-  },
-  computed: {
-    importExcelUrl: function(){
-      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-    }
-  },
+        url: {
+          add: "/note/add",
+          edit: "/note/edit",
+          list: "/note/list",
+          delete: "/note/delete",
+          deleteBatch: "/note/deleteBatch",
+          exportXlsUrl: "/note/exportXls",
+          importExcelUrl: "/note/importExcel",
+        },
+      }
+    },
     methods: {
-      addSelect () {
-        this.$refs.noteSelectModal.show();
+      show(){
+        this.visible = true;
       },
+      handleAdd () {
+        this.$refs.noteSelectModel.show();
+      },
+      edit (record) {
+        this.form.resetFields();
+        this.model = Object.assign({}, record);
+        this.visible = true;
+        this.$nextTick(() => {
+          this.form.setFieldsValue(pick(this.model,'name','parentIds','text','tag','source'))
+        });
+
+      },
+      close () {
+        this.$emit('ok');
+        this.visible = false;
+      },
+
     }
   }
 </script>
-<style lang="less" scoped>
-/** Button按钮间距 */
-  .ant-btn {
-    margin-left: 3px
-  }
-  .ant-card-body .table-operator{
-    margin-bottom: 18px;
-  }
-  .ant-table-tbody .ant-table-row td{
-    padding-top:15px;
-    padding-bottom:15px;
-  }
-  .anty-row-operator button{margin: 0 5px}
-  .ant-btn-danger{background-color: #ffffff}
 
-  .ant-modal-cust-warp{height: 100%}
-  .ant-modal-cust-warp .ant-modal-body{height:calc(100% - 110px) !important;overflow-y: auto}
-  .ant-modal-cust-warp .ant-modal-content{height:90% !important;overflow-y: hidden}
+<style scoped>
+.table-operator{
+  margin-bottom: 10px;
+}
 </style>
