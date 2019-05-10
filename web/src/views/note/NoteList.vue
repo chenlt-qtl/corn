@@ -38,7 +38,6 @@
             <a-tree
               multiple
               @select="onSelect"
-              @check="onCheck"
               @rightClick="rightHandle"
               :selectedKeys="selectedKeys"
               :checkedKeys="checkedKeys"
@@ -67,7 +66,8 @@
               :wrapperCol="wrapperCol">
               <a-input placeholder="请输入机构/部门名称" v-decorator="['departName', validatorRules.departName ]"/>
             </a-form-item>
-            <j-editor :value="content"></j-editor>
+            <quill-editor ref="quillEditor" v-model="content" :options="editorOption">
+            </quill-editor>
           </a-form>
         </a-card>
       </a-col>
@@ -88,13 +88,16 @@
   import pick from 'lodash.pick'
   import { queryDepartTreeList, searchByKeywords, deleteByDepartId, queryNote} from '@/api/api'
   import { httpAction, deleteAction } from '@/api/manage'
-  import JEditor from "@/components/jeecg/JEditor";
+  import { quillEditor } from 'vue-quill-editor'
+  import 'quill/dist/quill.core.css'
+  import 'quill/dist/quill.snow.css'
+  import 'quill/dist/quill.bubble.css'
 
   export default {
     name: "NoteList",
     mixins:[JeecgListMixin],
     components: {
-      JEditor,
+      quillEditor,
       NoteModal,
       NoteSelectList,
       DepartModal,
@@ -106,6 +109,7 @@
     data () {
       return {
         content:'<h>ddd</h>',
+        editorOption: {},
         description: '笔记管理管理页面',
         selectData:[],
         iExpandedKeys: [],
@@ -468,4 +472,5 @@
   .ant-modal-cust-warp{height: 100%}
   .ant-modal-cust-warp .ant-modal-body{height:calc(100% - 110px) !important;overflow-y: auto}
   .ant-modal-cust-warp .ant-modal-content{height:90% !important;overflow-y: hidden}
+
 </style>
