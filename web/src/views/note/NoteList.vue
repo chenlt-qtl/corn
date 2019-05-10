@@ -66,8 +66,10 @@
               :wrapperCol="wrapperCol">
               <a-input placeholder="请输入机构/部门名称" v-decorator="['departName', validatorRules.departName ]"/>
             </a-form-item>
-            <quill-editor ref="quillEditor" v-model="content" :options="editorOption">
-            </quill-editor>
+
+            <vue-editor ref="quillEditor" v-model="content" :options="editorOption">
+            </vue-editor>
+
           </a-form>
         </a-card>
       </a-col>
@@ -88,16 +90,13 @@
   import pick from 'lodash.pick'
   import { queryDepartTreeList, searchByKeywords, deleteByDepartId, queryNote} from '@/api/api'
   import { httpAction, deleteAction } from '@/api/manage'
-  import { quillEditor } from 'vue-quill-editor'
-  import 'quill/dist/quill.core.css'
-  import 'quill/dist/quill.snow.css'
-  import 'quill/dist/quill.bubble.css'
+  import { VueEditor } from "vue2-editor";
 
   export default {
     name: "NoteList",
     mixins:[JeecgListMixin],
     components: {
-      quillEditor,
+      VueEditor,
       NoteModal,
       NoteSelectList,
       DepartModal,
