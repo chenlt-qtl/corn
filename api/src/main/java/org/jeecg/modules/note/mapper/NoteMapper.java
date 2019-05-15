@@ -15,4 +15,7 @@ import java.util.List;
  */
 public interface NoteMapper extends BaseMapper<Note> {
     public List<Note> listNote(@Param("createBy") String createBy,@Param("parentId") String parentId);
+
+    public List<Note> listChildNote(@Param("createBy") String createBy,@Param("parentId") String parentId);
+
 }
