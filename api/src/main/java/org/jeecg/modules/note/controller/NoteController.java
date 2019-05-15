@@ -11,6 +11,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.note.model.NoteTreeModel;
 import org.jeecg.modules.note.service.INoteService;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
@@ -87,7 +88,21 @@ public class NoteController {
 		 }
 		 return result;
 	 }
-	
+
+	 @RequestMapping(value = "/queryTreeList", method = RequestMethod.GET)
+	 public Result<List<NoteTreeModel>> queryTreeList(String parentId) {
+		 Result<List<NoteTreeModel>> result = new Result<>();
+		 SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		 try {
+			 List<NoteTreeModel> list = noteService.queryTreeList(sysUser.getUsername(),parentId);
+			 result.setResult(list);
+			 result.setSuccess(true);
+		 } catch (Exception e) {
+			 e.printStackTrace();
+		 }
+		 return result;
+	 }
+
 	/**
 	  *   添加
 	 * @param note
