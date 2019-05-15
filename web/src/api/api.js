@@ -87,8 +87,12 @@ const queryUserRoleMap = (params)=>getAction("/sys/user/queryUserRoleMap",params
 // 重复校验
 const duplicateCheck = (params)=>getAction("/sys/duplicate/check",params);
 
-// 查询note
+// 笔记管理
+
 const queryNote = (params)=>getAction("/note/listNote",params);
+const queryNoteTree = (params)=>getAction("/note/queryTreeList",params);
+const queryNoteById = (params)=>getAction("/note/queryById",params);
+
 
 export {
   // imgView,
@@ -134,7 +138,9 @@ export {
   queryUserRoleMap,
   duplicateCheck,
   queryTreeListForRole,
-  queryNote
+  queryNote,
+  queryNoteTree,
+  queryNoteById
 }
 
 

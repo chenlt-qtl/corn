@@ -3,6 +3,8 @@ package org.jeecg.modules.note.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.note.model.NoteTreeModel;
+import org.jeecg.modules.system.model.SysDepartTreeModel;
 
 import java.util.List;
 
@@ -16,4 +18,5 @@ public interface INoteService extends IService<Note> {
 
     List<Note> listNote(String createBy,String parentId);
 
+    List<NoteTreeModel> queryTreeList(String createBy ,String parentId);
 }

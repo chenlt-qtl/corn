@@ -14,8 +14,8 @@
           </a-form>
         </a-col>
         <a-col :span="12" style="text-align: right;">
-          <a-select :defaultActiveFirstOption="true" style="width: 300px" placeholder="选择笔记本">
-            <a-select-option v-for="d in selectData" :key="d.id">{{d.name}}</a-select-option>
+          <a-select :defaultActiveFirstOption="true" style="width: 300px" placeholder="选择笔记本" @change="selectTop">
+            <a-select-option v-for="d in topData" :key="d.id">{{d.name}}</a-select-option>
           </a-select>
           <a-button @click="addSelect" type="primary" icon="setting">管理笔记本</a-button>
         </a-col>
@@ -27,7 +27,7 @@
         <a-card :bordered="false">
           <!-- 按钮操作区域 -->
           <a-row style="margin-left: 14px">
-            <a-button @click="handleAdd(2)" type="primary" icon="plus">新文档</a-button>
+            <a-button @click="handleAdd" type="primary" icon="plus">新文档</a-button>
           </a-row>
           <div style="background: #fff;padding-left:16px;height: 100%; margin-top: 5px">
             <!-- 树-->
@@ -41,7 +41,7 @@
               @rightClick="rightHandle"
               :selectedKeys="selectedKeys"
               :checkedKeys="checkedKeys"
-              :treeData="departTree"
+              :treeData="noteTree"
               :checkStrictly="true"
               :expandedKeys="iExpandedKeys"
               :autoExpandParent="autoExpandParent"
@@ -58,18 +58,13 @@
           </div>
         </a-card>
       </a-col>
-      <a-col :md="12" :sm="24">
+      <a-col :md="18" :sm="24">
         <a-card :bordered="false">
           <a-form :form="form">
-            <a-form-item
-              :labelCol="labelCol"
-              :wrapperCol="wrapperCol">
-              <a-input placeholder="请输入机构/部门名称" v-decorator="['departName', validatorRules.departName ]"/>
-            </a-form-item>
-
-            <vue-editor ref="quillEditor" v-model="content" :options="editorOption">
-            </vue-editor>
-
+            <a-input v-decorator="['name', {} ]"/>
+            <div style="margin-top: 5px;">
+              <j-editor :value="content"></j-editor>
+            </div>
           </a-form>
         </a-card>
       </a-col>
@@ -77,7 +72,7 @@
     </a-row>
 
     <!-- 表单区域 -->
-    <note-select-list ref="noteSelectList" @ok="loadSelect"></note-select-list>
+    <note-select-list ref="noteSelectList" @ok="loadTop"></note-select-list>
 
   </a-card>
 </template>
@@ -88,15 +83,15 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import DepartModal from '../system/modules/DepartModal'
   import pick from 'lodash.pick'
-  import { queryDepartTreeList, searchByKeywords, deleteByDepartId, queryNote} from '@/api/api'
+  import { searchByKeywords, deleteByDepartId, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
   import { httpAction, deleteAction } from '@/api/manage'
-  import { VueEditor } from "vue2-editor";
+  import JEditor from "@/components/jeecg/JEditor";
 
   export default {
     name: "NoteList",
     mixins:[JeecgListMixin],
     components: {
-      VueEditor,
+      JEditor,
       NoteModal,
       NoteSelectList,
       DepartModal,
@@ -108,9 +103,9 @@
     data () {
       return {
         content:'<h>ddd</h>',
-        editorOption: {},
         description: '笔记管理管理页面',
-        selectData:[],
+        topData:[],
+        topId:'',
         iExpandedKeys: [],
         loading: false,
         autoExpandParent: true,
@@ -119,7 +114,7 @@
         disable: true,
         treeData: [],
         visible: false,
-        departTree: [],
+        noteTree: [],
         rightClickSelectedKey: '',
         hiding: true,
         model: {},
@@ -198,7 +193,7 @@
     }
   },
     created() {
-      this.loadSelect();
+      this.loadTop();
       this.currFlowId = this.$route.params.id
       this.currFlowName = this.$route.params.name
       this.loadTree();
@@ -207,14 +202,14 @@
       addSelect () {
         this.$refs.noteSelectList.show();
       },
-      loadSelect (){//加载笔记本下拉框
+      loadTop (){//加载笔记本下拉框
         const that = this;
-        queryNote().then((res) => {
+        queryNote({"parentId":0}).then((res) => {
           if (res.success) {
-            that.selectData = [];
+            that.topData = [];
             for (let i = 0; i < res.result.length; i++) {
               let temp = res.result[i]
-              that.selectData.push(temp)
+              that.topData.push(temp)
             }
             this.loading = false
           }
@@ -225,31 +220,33 @@
         this.loadTree()
       },
       loadTree() {
-        var that = this
-        that.treeData = []
-        that.departTree = []
-        queryDepartTreeList().then((res) => {
-          if (res.success) {
-            for (let i = 0; i < res.result.length; i++) {
-              let temp = res.result[i]
-              that.treeData.push(temp)
-              that.departTree.push(temp)
-              that.setThisExpandedKeys(temp)
-              console.log(temp.id)
+        if(this.topId) {
+          var that = this
+          that.treeData = []
+          that.noteTree = []
+          queryNoteTree({'parentId':this.topId}).then((res) => {
+            if (res.success) {
+              for (let i = 0; i < res.result.length; i++) {
+                let temp = res.result[i]
+                that.treeData.push(temp)
+                that.noteTree.push(temp)
+                that.setThisExpandedKeys(temp)
+                console.log(temp.id)
+              }
+              this.loading = false
             }
-            this.loading = false
-          }
-        })
+          })
+        }
       },
       onSearch(value) {
         let that = this
         if (value) {
           searchByKeywords({ keyWord: value }).then((res) => {
             if (res.success) {
-              that.departTree = []
+              that.noteTree = []
               for (let i = 0; i < res.result.length; i++) {
                 let temp = res.result[i]
-                that.departTree.push(temp)
+                that.noteTree.push(temp)
               }
             } else {
               that.$message.warning(res.message)
@@ -334,22 +331,26 @@
         this.visible = false
       },
       onSelect(selectedKeys, e) {
-        console.log('selected', selectedKeys, e)
-        this.hiding = false
         let record = e.node.dataRef
-        console.log('onSelect-record', record)
-        this.currSelected = Object.assign({}, record)
-        this.model = this.currSelected
-        this.selectedKeys = [record.key]
-        this.model.parentId = record.parentId
-        this.setValuesToForm(record)
+        let that = this;
+        that.currSelected = Object.assign({}, record)
+        that.model = that.currSelected
+        that.selectedKeys = [record.key]
+        that.model.parentId = record.parentId
+        console.log(record);
+        this.setValuesToForm(record.model);
+        queryNoteById({'id':record['key']}).then((res) => {
+          if (res.success) {
 
+            let temp = res.result;
+            that.content = temp['text'] == undefined?'':temp['text'];
+          }
+        })
 
       },
-      // 触发onSelect事件时,为部门树右侧的form表单赋值
       setValuesToForm(record) {
         this.form.getFieldDecorator('fax', { initialValue: '' })
-        this.form.setFieldsValue(pick(record, 'departName', 'departOrder', 'mobile', 'fax', 'address', 'memo'))
+        this.form.setFieldsValue(pick(record, 'name'))
       },
       getCurrSelectedTitle() {
         return !this.currSelected.title ? '' : this.currSelected.title
@@ -402,22 +403,17 @@
       openSelect() {
         this.$refs.sysDirectiveModal.show()
       },
-      handleAdd(num) {
-        if (num == 1) {
-          this.$refs.departModal.add()
-          this.$refs.departModal.title = '新增'
-        } else if (num == 2) {
-          let key = this.currSelected.key
-          if (!key) {
-            this.$message.warning('请先选中一条记录!')
+      handleAdd() {
+          if(!this.topId){
+            this.$message.warning('请先选中一个笔记本!')
             return false
           }
-          this.$refs.departModal.add(this.selectedKeys)
-          this.$refs.departModal.title = '新增'
-        } else {
-          this.$refs.departModal.add(this.rightClickSelectedKey)
-          this.$refs.departModal.title = '新增'
-        }
+          let key = this.currSelected.key
+          if (!key) {//顶级节点
+          }
+        this.model = Object.assign({}, {});
+        this.model.name = "无标题文档";
+        this.form.setFieldsValue(pick(this.model, 'name'))
       },
       handleDelete() {
         deleteByDepartId({ id: this.rightClickSelectedKey }).then((resp) => {
@@ -433,6 +429,10 @@
         console.log('选中指令数据', record)
         this.nodeSettingForm.setFieldsValue({ directiveCode: record.directiveCode })
         this.currSelected.sysCode = record.sysCode
+      },
+      selectTop(value){
+        this.topId = value;
+        this.loadTree();
       },
       getFlowGraphData(node) {
         this.graphDatasource.nodes.push({
@@ -471,5 +471,4 @@
   .ant-modal-cust-warp{height: 100%}
   .ant-modal-cust-warp .ant-modal-body{height:calc(100% - 110px) !important;overflow-y: auto}
   .ant-modal-cust-warp .ant-modal-content{height:90% !important;overflow-y: hidden}
-
 </style>
