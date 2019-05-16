@@ -59,14 +59,20 @@
         </a-card>
       </a-col>
       <a-col :md="18" :sm="24">
-        <a-card :bordered="false">
-          <a-form :form="form">
-            <a-input v-decorator="['name', {} ]"/>
-            <div style="margin-top: 5px;">
-              <j-editor :value="content"></j-editor>
-            </div>
-          </a-form>
-        </a-card>
+        <a-spin :spinning="spinning">
+          <a-card :bordered="false">
+            <a-form :form="form">
+              <a-form-item>
+                <a-input v-decorator="['name']"/>
+              </a-form-item>
+              <a-form-item>
+              <div style="margin-top: 5px;">
+                <j-editor v-decorator="['text']"></j-editor>
+              </div>
+              </a-form-item>
+            </a-form>
+          </a-card>
+        </a-spin>
       </a-col>
       <depart-modal ref="departModal" @ok="loadTree"></depart-modal>
     </a-row>
@@ -102,7 +108,7 @@
     },
     data () {
       return {
-        content:'<h>ddd</h>',
+        spinning:false,
         description: '笔记管理管理页面',
         topData:[],
         topId:'',
@@ -337,20 +343,14 @@
         that.model = that.currSelected
         that.selectedKeys = [record.key]
         that.model.parentId = record.parentId
-        console.log(record);
-        this.setValuesToForm(record.model);
+        that.spinning = true;
         queryNoteById({'id':record['key']}).then((res) => {
           if (res.success) {
-
-            let temp = res.result;
-            that.content = temp['text'] == undefined?'':temp['text'];
+            that.form.setFieldsValue(pick(res.result, 'name','text'))
           }
+          that.spinning = false;
         })
 
-      },
-      setValuesToForm(record) {
-        this.form.getFieldDecorator('fax', { initialValue: '' })
-        this.form.setFieldsValue(pick(record, 'name'))
       },
       getCurrSelectedTitle() {
         return !this.currSelected.title ? '' : this.currSelected.title
