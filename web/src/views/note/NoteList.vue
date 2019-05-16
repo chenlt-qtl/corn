@@ -35,17 +35,13 @@
               <template>
                 <a-dropdown :trigger="[this.dropTrigger]" @visibleChange="dropStatus">
                <span style="user-select: none">
-            <a-tree
-              multiple
-              @select="onSelect"
-              @rightClick="rightHandle"
-              :selectedKeys="selectedKeys"
-              :checkedKeys="checkedKeys"
-              :treeData="noteTree"
-              :checkStrictly="true"
-              :expandedKeys="iExpandedKeys"
-              :autoExpandParent="autoExpandParent"
-              @expand="onExpand"/>
+
+                 <a-tree
+                   draggable
+                   @select="onSelect"
+                   @rightClick="rightHandle"
+                   :treeData="noteTree"
+                 />
                 </span>
                   <!--新增右键点击事件,和增加添加和删除功能-->
                   <a-menu slot="overlay" style="padding: 10px 20px;">
@@ -63,11 +59,17 @@
           <a-card :bordered="false">
             <a-form :form="form">
               <a-form-item>
-                <a-input v-decorator="['name']"/>
+                <a-input
+                  v-decorator="['name']"
+                  @blur="submitCurrForm"
+                />
               </a-form-item>
               <a-form-item>
               <div style="margin-top: 5px;">
-                <j-editor v-decorator="['text']"></j-editor>
+                <j-editor
+                  ref="editor"
+                  v-decorator="['text']"
+                  @blur="submitCurrForm"></j-editor>
               </div>
               </a-form-item>
             </a-form>
@@ -127,8 +129,6 @@
         dropTrigger: '',
         depart: {},
         disableSubmit: false,
-        checkedKeys: [],
-        selectedKeys: [],
         autoIncr: 1,
         currSelected: {},
         form: this.$form.createForm(this),
@@ -144,52 +144,13 @@
           nodes: [],
           edges: []
         },
-        validatorRules: {
-          departName: { rules: [{ required: true, message: '请输入机构/部门名称!' }] },
-          orgCode: { rules: [{ required: true, message: '请输入机构编码!' }] },
-          mobile: { rules: [{ validator: this.validateMobile }] }
-        },
-        // 表头
-        columns: [
-          {
-            title: '#',
-            dataIndex: '',
-            key:'rowIndex',
-            width:60,
-            align:"center",
-            customRender:function (t,r,index) {
-              return parseInt(index)+1;
-            }
-           },{
-            title: 'name',
-            align:"center",
-            dataIndex: 'name'
-           },{
-            title: 'text',
-            align:"center",
-            dataIndex: 'text'
-           },{
-            title: 'tag',
-            align:"center",
-            dataIndex: 'tag'
-           },{
-            title: 'source',
-            align:"center",
-            dataIndex: 'source'
-           },{
-            title: '操作',
-            dataIndex: 'action',
-            align:"center",
-            scopedSlots: { customRender: 'action' },
-          }
-        ],
 		url: {
           list: "/note/list",
           exportXlsUrl: "/note/exportXls",
           importExcelUrl: "/note/importExcel",
-          delete: '/sysdepart/sysDepart/delete',
-          edit: '/sysdepart/sysDepart/edit',
-          deleteBatch: '/sysdepart/sysDepart/deleteBatch'
+          delete: '/note/delete',
+          edit: '/note/edit',
+          add: "/note/add",
        },
     }
   },
@@ -226,18 +187,17 @@
         this.loadTree()
       },
       loadTree() {
+        console.log('load tree');
         if(this.topId) {
-          var that = this
-          that.treeData = []
-          that.noteTree = []
+          let that = this
           queryNoteTree({'parentId':this.topId}).then((res) => {
             if (res.success) {
+              that.treeData = []
+              that.noteTree = []
               for (let i = 0; i < res.result.length; i++) {
                 let temp = res.result[i]
                 that.treeData.push(temp)
                 that.noteTree.push(temp)
-                that.setThisExpandedKeys(temp)
-                console.log(temp.id)
               }
               this.loading = false
             }
@@ -277,13 +237,6 @@
         console.log(node.node.eventKey)
         this.rightClickSelectedKey = node.node.eventKey
       },
-      onExpand(expandedKeys) {
-        console.log('onExpand', expandedKeys)
-        // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-        // or, you can remove all expanded children keys.
-        this.iExpandedKeys = expandedKeys
-        this.autoExpandParent = false
-      },
       backFlowList() {
         this.$router.back(-1)
       },
@@ -300,33 +253,6 @@
       addRootNode() {
         this.$refs.nodeModal.add(this.currFlowId, '')
       },
-      batchDel: function() {
-        console.log(this.checkedKeys)
-        if (this.checkedKeys.length <= 0) {
-          this.$message.warning('请选择一条记录！')
-        } else {
-          var ids = ''
-          for (var a = 0; a < this.checkedKeys.length; a++) {
-            ids += this.checkedKeys[a] + ','
-          }
-          var that = this
-          this.$confirm({
-            title: '确认删除',
-            content: '确定要删除所选中的 ' + this.checkedKeys.length + ' 条数据?',
-            onOk: function() {
-              deleteAction(that.url.deleteBatch, { ids: ids }).then((res) => {
-                if (res.success) {
-                  that.$message.success(res.message)
-                  that.loadTree()
-                  that.onClearSelected()
-                } else {
-                  that.$message.warning(res.message)
-                }
-              })
-            }
-          })
-        }
-      },
       nodeModalOk() {
         this.loadTree()
       },
@@ -337,30 +263,19 @@
         this.visible = false
       },
       onSelect(selectedKeys, e) {
+        console.log(234)
         let record = e.node.dataRef
         let that = this;
-        that.currSelected = Object.assign({}, record)
-        that.model = that.currSelected
-        that.selectedKeys = [record.key]
-        that.model.parentId = record.parentId
         that.spinning = true;
         queryNoteById({'id':record['key']}).then((res) => {
+          console.log(45345)
           if (res.success) {
-            that.form.setFieldsValue(pick(res.result, 'name','text'))
+            that.currSelected = Object.assign({}, res.result)
+            that.form.setFieldsValue(pick(that.currSelected, 'name','text'))
           }
           that.spinning = false;
         })
 
-      },
-      getCurrSelectedTitle() {
-        return !this.currSelected.title ? '' : this.currSelected.title
-      },
-      onClearSelected() {
-        this.hiding = true
-        this.checkedKeys = {}
-        this.currSelected = {}
-        this.form.resetFields()
-        this.selectedKeys = []
       },
       handleNodeTypeChange(val) {
         this.currSelected.nodeType = val
@@ -370,28 +285,6 @@
       },
       receiptTriggerTypeChange(value) {
         this.currSelected.receiptTriggerType = value
-      },
-      submitCurrForm() {
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            if (!this.currSelected.id) {
-              this.$message.warning('请点击选择要修改部门!')
-              return
-            }
-
-            let formData = Object.assign(this.currSelected, values)
-            console.log('Received values of form: ', formData)
-            httpAction(this.url.edit, formData, 'put').then((res) => {
-              if (res.success) {
-                this.$message.success('保存成功!')
-                this.loadTree()
-              }
-            })
-          }
-        })
-      },
-      emptyCurrForm() {
-        this.form.resetFields()
       },
       nodeSettingFormSubmit() {
         this.form.validateFields((err, values) => {
@@ -408,12 +301,18 @@
             this.$message.warning('请先选中一个笔记本!')
             return false
           }
-          let key = this.currSelected.key
-          if (!key) {//顶级节点
-          }
-        this.model = Object.assign({}, {});
-        this.model.name = "无标题文档";
-        this.form.setFieldsValue(pick(this.model, 'name'))
+
+        let key = this.currSelected.id
+        this.currSelected = {};
+        if (!key) {//顶级节点
+          this.currSelected['parentId'] = this.topId;
+        }else {
+          this.currSelected['parentId'] = key;
+        }
+
+        this.currSelected["name"] = "无标题文档";
+        this.currSelected["text"] = "";
+        this.form.setFieldsValue(pick(this.currSelected, 'name','text'))
       },
       handleDelete() {
         deleteByDepartId({ id: this.rightClickSelectedKey }).then((resp) => {
@@ -449,7 +348,39 @@
             this.getFlowGraphData(temp)
           }
         }
-      }
+      },
+      submitCurrForm() {
+        let text = this.$refs.editor.getText();
+        let that = this;
+        this.form.validateFields((err, values) => {
+          console.log(this.form.getFieldValue('name'));
+          if (!err) {
+            if(that.topId) {
+              let reloadTree = false;
+              if(!that.currSelected['id']||values['name']!=that.currSelected['name']){
+                reloadTree=true;
+              }
+              let formData = Object.assign(that.currSelected, values);
+              formData['text'] = text;
+              let url = that.url.add;
+              let method = 'post';
+              if(formData['id']){
+                url = that.url.edit;
+                method = 'put';
+              }
+              httpAction(url, formData, method).then((res) => {
+                if (res.success) {
+                  console.log('保存成功!', formData)
+                  that.currSelected = res.result;
+                  if(reloadTree){
+                    this.loadTree()
+                  }
+                }
+              })
+            }
+          }
+        })
+      },
     },
   }
 </script>

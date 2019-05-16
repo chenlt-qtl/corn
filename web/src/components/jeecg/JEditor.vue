@@ -51,6 +51,7 @@
       }
     },
     data() {
+      let that = this;
       return {
         //初始化配置
         init: {
@@ -65,7 +66,10 @@
           images_upload_handler: (blobInfo, success) => {
             const img = 'data:image/jpeg;base64,' + blobInfo.base64()
             success(img)
-          }
+          },
+          setup : function(ed) {
+            ed.on('blur', that.onBlur);
+          },
         },
         myValue: this.value
       }
@@ -78,19 +82,24 @@
       onClick(e) {
         this.$emit('onClick', e, tinymce)
       },
+      onBlur(e) {
+        this.$emit('blur', e, tinymce)
+      },
       //可以添加一些自己的自定义事件，如清空内容
       clear() {
         this.myValue = ''
-      }
+      },
+      getText(){
+        return tinymce.activeEditor.getContent();
+      },
     },
     watch: {
       value(newValue) {
         this.myValue = newValue
       },
       myValue(newValue) {
-        console.log(newValue)
         this.$emit('input', newValue)
-      }
+      },
     }
   }
 
