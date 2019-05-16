@@ -14,7 +14,7 @@
           </a-form>
         </a-col>
         <a-col :span="12" style="text-align: right;">
-          <a-select :defaultActiveFirstOption="true" style="width: 300px" placeholder="选择笔记本" @change="selectTop">
+          <a-select :defaultActiveFirstOption="true" style="width: 300px" placeholder="选择笔记本" @change="loadTree()" v-model="topId">
             <a-select-option v-for="d in topData" :key="d.id">{{d.name}}</a-select-option>
           </a-select>
           <a-button @click="addSelect" type="primary" icon="setting">管理笔记本</a-button>
@@ -41,6 +41,7 @@
                    @select="onSelect"
                    @rightClick="rightHandle"
                    :treeData="noteTree"
+                   :selectedKeys="selectedKeys"
                  />
                 </span>
                   <!--新增右键点击事件,和增加添加和删除功能-->
@@ -112,6 +113,7 @@
       return {
         spinning:false,
         description: '笔记管理管理页面',
+        selectedKeys:[],
         topData:[],
         topId:'',
         iExpandedKeys: [],
@@ -178,6 +180,10 @@
               let temp = res.result[i]
               that.topData.push(temp)
             }
+            if(res.result.length>0){
+              that.topId = res.result[0].id;
+              that.loadTree();
+            }
             this.loading = false
           }
         })
@@ -187,7 +193,6 @@
         this.loadTree()
       },
       loadTree() {
-        console.log('load tree');
         if(this.topId) {
           let that = this
           queryNoteTree({'parentId':this.topId}).then((res) => {
@@ -198,6 +203,10 @@
                 let temp = res.result[i]
                 that.treeData.push(temp)
                 that.noteTree.push(temp)
+              }
+              if(res.result.length>0){
+                that.selectedKeys[0] = res.result[0].key
+                that.loadForm(res.result[0].key)
               }
               this.loading = false
             }
@@ -262,12 +271,15 @@
         console.log(111)
         this.visible = false
       },
-      onSelect(selectedKeys, e) {
+      onSelect(keys,e) {
         console.log(234)
         let record = e.node.dataRef
+        this.loadForm(record['key']);
+      },
+      loadForm(id){
         let that = this;
         that.spinning = true;
-        queryNoteById({'id':record['key']}).then((res) => {
+        queryNoteById({'id':id}).then((res) => {
           console.log(45345)
           if (res.success) {
             that.currSelected = Object.assign({}, res.result)
@@ -275,7 +287,6 @@
           }
           that.spinning = false;
         })
-
       },
       handleNodeTypeChange(val) {
         this.currSelected.nodeType = val
@@ -328,10 +339,6 @@
         console.log('选中指令数据', record)
         this.nodeSettingForm.setFieldsValue({ directiveCode: record.directiveCode })
         this.currSelected.sysCode = record.sysCode
-      },
-      selectTop(value){
-        this.topId = value;
-        this.loadTree();
       },
       getFlowGraphData(node) {
         this.graphDatasource.nodes.push({

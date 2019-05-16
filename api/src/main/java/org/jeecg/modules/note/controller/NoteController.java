@@ -115,9 +115,13 @@ public class NoteController {
 			if(StringUtils.isBlank(note.getParentId())){
 				note.setParentId("0");
 				note.setParentIds("0");
+			}else {
+				Note parent = noteService.getById(note.getParentId());
+				note.setParentIds(parent.getParentIds()+"/"+note.getParentId());
 			}
 			note.setDelFlag("0");
 			noteService.save(note);
+			result.setResult(note);
 			result.success("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -142,6 +146,7 @@ public class NoteController {
 			boolean ok = noteService.updateById(note);
 			//TODO 返回false说明什么？
 			if(ok) {
+				result.setResult(note);
 				result.success("修改成功!");
 			}
 		}
