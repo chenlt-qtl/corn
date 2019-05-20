@@ -34,12 +34,13 @@
             <a-col :md="10" :sm="24">
               <template>
                 <a-dropdown :trigger="[this.dropTrigger]" @visibleChange="dropStatus">
-               <span style="user-select: none">
-
+               <span
+                 style="user-select: none">
                  <a-tree
                    draggable
                    @select="onSelect"
                    @rightClick="rightHandle"
+                   @dblclick.native="onDblclick"
                    :treeData="noteTree"
                    :selectedKeys="selectedKeys"
                  />
@@ -77,7 +78,6 @@
           </a-card>
         </a-spin>
       </a-col>
-      <depart-modal ref="departModal" @ok="loadTree"></depart-modal>
     </a-row>
 
     <!-- 表单区域 -->
@@ -193,6 +193,7 @@
         this.loadTree()
       },
       loadTree() {
+        this.currSelected = {};
         if(this.topId) {
           let that = this
           queryNoteTree({'parentId':this.topId}).then((res) => {
@@ -232,6 +233,15 @@
         }
 
       },
+      onDblclick(){
+        const {href} = this.$router.resolve({
+          path: '/blank/note/detail',
+          query: {
+            id: this.selectedKeys[0]
+          }
+        })
+        window.open(href, '_blank')
+      },
       setThisExpandedKeys(node) {
         if (node.children && node.children.length > 0) {
           this.iExpandedKeys.push(node.key)
@@ -268,19 +278,17 @@
       nodeModalClose() {
       },
       hide() {
-        console.log(111)
         this.visible = false
       },
       onSelect(keys,e) {
-        console.log(234)
         let record = e.node.dataRef
-        this.loadForm(record['key']);
+        this.selectedKeys[0] = record['key'];
+        this.loadForm();
       },
-      loadForm(id){
+      loadForm(){
         let that = this;
         that.spinning = true;
-        queryNoteById({'id':id}).then((res) => {
-          console.log(45345)
+        queryNoteById({'id':this.selectedKeys[0]}).then((res) => {
           if (res.success) {
             that.currSelected = Object.assign({}, res.result)
             that.form.setFieldsValue(pick(that.currSelected, 'name','text'))
