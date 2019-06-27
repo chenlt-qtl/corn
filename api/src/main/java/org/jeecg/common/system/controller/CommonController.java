@@ -6,12 +6,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +53,7 @@ public class CommonController {
 			String fileName = null;
 			String bizPath = "user";
 			String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
+			SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 			File file = new File(ctxPath + File.separator + bizPath + File.separator + nowday);
 			if (!file.exists()) {
 				file.mkdirs();// 创建文件根目录
@@ -58,7 +61,7 @@ public class CommonController {
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 			MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
 			String orgName = mf.getOriginalFilename();// 获取文件名
-			fileName = orgName.substring(0, orgName.lastIndexOf(".")) + "_" + System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
+			fileName = sysUser.getUsername() + "_" + System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
 			String savePath = file.getPath() + File.separator + fileName;
 			File savefile = new File(savePath);
 			FileCopyUtils.copy(mf.getBytes(), savefile);

@@ -22,6 +22,8 @@
   import 'tinymce/plugins/colorpicker'
   import 'tinymce/plugins/textcolor'
   import 'tinymce/plugins/emoticons'
+  import Vue from 'vue'
+  import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 
 
@@ -41,7 +43,7 @@
       },
       plugins: {
         type: [String, Array],
-        default: 'lists image media table textcolor wordcount contextmenu'
+        default: 'lists image media table textcolor wordcount contextmenu powerpaste'
       },
       toolbar: {
         type: [String, Array],
@@ -64,8 +66,37 @@
           branding: false,
           menubar: false,
           images_upload_handler: (blobInfo, success) => {
-            const img = 'data:image/jpeg;base64,' + blobInfo.base64()
-            success(img)
+            var xhr, formData;
+
+            xhr = new XMLHttpRequest();
+
+            xhr.withCredentials = false;
+            xhr.open('POST', window._CONFIG['domianURL']+"/sys/common/upload");
+
+            const token = Vue.ls.get(ACCESS_TOKEN);
+            if (token) {
+              xhr.setRequestHeader( 'X-Access-Token', token);
+            }
+
+            xhr.onload = function() {
+              var json;
+              if (xhr.status != 200) {
+                return;
+              }
+
+              json = JSON.parse(xhr.responseText);
+              if (!json || typeof json.message != 'string') {
+                return;
+              }
+              console.log(window._CONFIG['domianURL']+"/"+json.message);
+
+              success(window._CONFIG['domianURL']+"/"+json.message);
+            };
+
+            formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+            xhr.send(formData);
           },
           setup : function(ed) {
             ed.on('blur', that.onBlur);

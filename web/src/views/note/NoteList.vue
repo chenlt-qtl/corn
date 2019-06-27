@@ -67,12 +67,9 @@
                 />
               </a-form-item>
               <a-form-item>
-              <div style="margin-top: 5px;">
-                <j-editor
-                  ref="editor"
-                  v-decorator="['text']"
-                  @blur="submitCurrForm"></j-editor>
-              </div>
+                <div style="margin-top: 5px;">
+                  <j-editor ref="jEditor" :value="content" @blur="submitCurrForm"></j-editor>
+                </div>
               </a-form-item>
             </a-form>
           </a-card>
@@ -89,16 +86,14 @@
 <script>
   import NoteModal from './modules/NoteModal'
   import NoteSelectList from './NoteSelectList'
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import DepartModal from '../system/modules/DepartModal'
   import pick from 'lodash.pick'
-  import { searchByKeywords, deleteByDepartId, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
+  import { searchByKeywords, deleteByDepartId, queryNote, queryNoteTree, queryNoteById,upload} from '@/api/api'
   import { httpAction, deleteAction } from '@/api/manage'
   import JEditor from "@/components/jeecg/JEditor";
 
   export default {
     name: "NoteList",
-    mixins:[JeecgListMixin],
     components: {
       JEditor,
       NoteModal,
@@ -111,6 +106,7 @@
     },
     data () {
       return {
+        content:'',
         spinning:false,
         description: '笔记管理管理页面',
         selectedKeys:[],
@@ -153,6 +149,7 @@
           delete: '/note/delete',
           edit: '/note/edit',
           add: "/note/add",
+          upload: window._CONFIG['domianURL']+"/sys/common/upload",
        },
     }
   },
@@ -168,19 +165,19 @@
       this.loadTree();
     },
     methods: {
-      addSelect () {
+      addSelect() {
         this.$refs.noteSelectList.show();
       },
-      loadTop (){//加载笔记本下拉框
+      loadTop() {//加载笔记本下拉框
         const that = this;
-        queryNote({"parentId":0}).then((res) => {
+        queryNote({ "parentId": 0 }).then((res) => {
           if (res.success) {
             that.topData = [];
             for (let i = 0; i < res.result.length; i++) {
               let temp = res.result[i]
               that.topData.push(temp)
             }
-            if(res.result.length>0){
+            if (res.result.length > 0) {
               that.topId = res.result[0].id;
               that.loadTree();
             }
@@ -194,9 +191,9 @@
       },
       loadTree() {
         this.currSelected = {};
-        if(this.topId) {
+        if (this.topId) {
           let that = this
-          queryNoteTree({'parentId':this.topId}).then((res) => {
+          queryNoteTree({ 'parentId': this.topId }).then((res) => {
             if (res.success) {
               that.treeData = []
               that.noteTree = []
@@ -205,7 +202,7 @@
                 that.treeData.push(temp)
                 that.noteTree.push(temp)
               }
-              if(res.result.length>0){
+              if (res.result.length > 0) {
                 that.selectedKeys[0] = res.result[0].key
                 that.loadForm(res.result[0].key)
               }
@@ -233,8 +230,8 @@
         }
 
       },
-      onDblclick(){
-        const {href} = this.$router.resolve({
+      onDblclick() {
+        const { href } = this.$router.resolve({
           path: '/blank/note/detail',
           query: {
             id: this.selectedKeys[0]
@@ -280,18 +277,19 @@
       hide() {
         this.visible = false
       },
-      onSelect(keys,e) {
+      onSelect(keys, e) {
         let record = e.node.dataRef
         this.selectedKeys[0] = record['key'];
         this.loadForm();
       },
-      loadForm(){
+      loadForm() {
         let that = this;
         that.spinning = true;
-        queryNoteById({'id':this.selectedKeys[0]}).then((res) => {
+        queryNoteById({ 'id': this.selectedKeys[0] }).then((res) => {
           if (res.success) {
             that.currSelected = Object.assign({}, res.result)
-            that.form.setFieldsValue(pick(that.currSelected, 'name','text'))
+            this.content = that.currSelected.text;
+            that.form.setFieldsValue(pick(that.currSelected, 'name', 'text'))
           }
           that.spinning = false;
         })
@@ -316,22 +314,22 @@
         this.$refs.sysDirectiveModal.show()
       },
       handleAdd() {
-          if(!this.topId){
-            this.$message.warning('请先选中一个笔记本!')
-            return false
-          }
+        if (!this.topId) {
+          this.$message.warning('请先选中一个笔记本!')
+          return false
+        }
 
         let key = this.currSelected.id
         this.currSelected = {};
         if (!key) {//顶级节点
           this.currSelected['parentId'] = this.topId;
-        }else {
+        } else {
           this.currSelected['parentId'] = key;
         }
 
         this.currSelected["name"] = "无标题文档";
         this.currSelected["text"] = "";
-        this.form.setFieldsValue(pick(this.currSelected, 'name','text'))
+        this.form.setFieldsValue(pick(this.currSelected, 'name', 'text'))
       },
       handleDelete() {
         deleteByDepartId({ id: this.rightClickSelectedKey }).then((resp) => {
@@ -365,29 +363,29 @@
         }
       },
       submitCurrForm() {
-        let text = this.$refs.editor.getText();
+
         let that = this;
         this.form.validateFields((err, values) => {
-          console.log(this.form.getFieldValue('name'));
           if (!err) {
-            if(that.topId) {
+            if (that.topId) {
               let reloadTree = false;
-              if(!that.currSelected['id']||values['name']!=that.currSelected['name']){
-                reloadTree=true;
+              if (!that.currSelected['id'] || values['name'] != that.currSelected['name']) {
+                reloadTree = true;
               }
               let formData = Object.assign(that.currSelected, values);
-              formData['text'] = text;
+              formData['text'] = this.$refs.jEditor.getText();
               let url = that.url.add;
               let method = 'post';
-              if(formData['id']){
+              if (formData['id']) {
                 url = that.url.edit;
                 method = 'put';
               }
+              console.log("开始保存");
               httpAction(url, formData, method).then((res) => {
                 if (res.success) {
                   console.log('保存成功!', formData)
                   that.currSelected = res.result;
-                  if(reloadTree){
+                  if (reloadTree) {
                     this.loadTree()
                   }
                 }
@@ -396,7 +394,35 @@
           }
         })
       },
-    },
+      onEditorBlur(quill) {
+
+        this.content = quill.container.firstChild.innerHTML;
+        this.submitCurrForm();
+      },
+
+      onEditorFocus(quill) {
+
+// console.log('editor focus!', quill)
+
+      },
+
+      onEditorReady(quill) {
+
+// console.log('editor ready!', quill)
+
+      },
+
+      onEditorChange({ quill, html, text }) {
+
+// console.log('editor change!', quill, html, text)
+
+        this.content = html
+
+      },
+      searchQuery() {
+
+      }
+    }
   }
 </script>
 <style lang="less" scoped>

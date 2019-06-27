@@ -40,16 +40,9 @@
           <a @click="handleEdit(record)">编辑</a>
 
           <a-divider type="vertical" />
-          <a-dropdown>
-            <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
-                  <a>删除</a>
-                </a-popconfirm>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
+          <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
+            <a>删除</a>
+          </a-popconfirm>
         </span>
 
         </a-table>
@@ -121,7 +114,7 @@
         url: {
           add: "/note/add",
           edit: "/note/edit",
-          list: "/note/list",
+          list: "/note/list?parentId=0",
           delete: "/note/delete",
           deleteBatch: "/note/deleteBatch",
           exportXlsUrl: "/note/exportXls",
