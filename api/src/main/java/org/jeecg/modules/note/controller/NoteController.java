@@ -119,7 +119,6 @@ public class NoteController {
 				Note parent = noteService.getById(note.getParentId());
 				note.setParentIds(parent.getParentIds()+"/"+note.getParentId());
 			}
-			note.setDelFlag("0");
 			noteService.save(note);
 			result.setResult(note);
 			result.success("添加成功！");
@@ -144,7 +143,6 @@ public class NoteController {
 			result.error500("未找到对应实体");
 		}else {
 			boolean ok = noteService.updateById(note);
-			//TODO 返回false说明什么？
 			if(ok) {
 				result.setResult(note);
 				result.success("修改成功!");
@@ -162,16 +160,10 @@ public class NoteController {
 	@DeleteMapping(value = "/delete")
 	public Result<Note> delete(@RequestParam(name="id",required=true) String id) {
 		Result<Note> result = new Result<Note>();
-		Note note = noteService.getById(id);
-		if(note==null) {
-			result.error500("未找到对应实体");
-		}else {
-			boolean ok = noteService.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
-			}
-		}
-		
+		SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+
+		noteService.delete(sysUser.getUsername(),id);
+		result.success("删除成功!");
 		return result;
 	}
 	

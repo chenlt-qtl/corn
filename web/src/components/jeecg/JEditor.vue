@@ -22,6 +22,7 @@
   import 'tinymce/plugins/colorpicker'
   import 'tinymce/plugins/textcolor'
   import 'tinymce/plugins/emoticons'
+  import 'tinymce/plugins/autoresize'
   import Vue from 'vue'
   import { ACCESS_TOKEN } from '@/store/mutation-types'
 
@@ -43,7 +44,7 @@
       },
       plugins: {
         type: [String, Array],
-        default: 'lists image media table textcolor wordcount contextmenu powerpaste'
+        default: 'lists image media table textcolor wordcount contextmenu powerpaste autoresize'
       },
       toolbar: {
         type: [String, Array],
@@ -60,7 +61,7 @@
           language_url: '/tinymce/langs/zh_CN.js',
           language: 'zh_CN',
           skin_url: '/tinymce/skins/lightgray',
-          height: 300,
+          min_height: 350,
           plugins: this.plugins,
           toolbar: this.toolbar,
           branding: false,
@@ -122,6 +123,9 @@
       },
       getText(){
         return tinymce.activeEditor.getContent();
+      },
+      setFocus(){
+        tinymce.activeEditor.focus();
       },
     },
     watch: {

@@ -94,6 +94,7 @@ const queryNoteTree = (params)=>getAction("/note/queryTreeList",params);
 const queryNoteById = (params)=>getAction("/note/queryById",params);
 
 const upload = (params)=>getAction("/sys/common/upload",params);
+const deleteNote = (params)=>deleteAction("/note/delete",params);
 
 
 export {
@@ -143,7 +144,8 @@ export {
   queryNote,
   queryNoteTree,
   queryNoteById,
-  upload
+  upload,
+  deleteNote
 }
 
 

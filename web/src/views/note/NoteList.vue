@@ -14,7 +14,7 @@
           </a-form>
         </a-col>
         <a-col :span="12" style="text-align: right;">
-          <a-select :defaultActiveFirstOption="true" style="width: 300px" placeholder="选择笔记本" @change="loadTree()" v-model="topId">
+          <a-select :defaultActiveFirstOption="true" style="width: 300px" placeholder="选择笔记本" @change="changeSelect()" v-model="topId">
             <a-select-option v-for="d in topData" :key="d.id">{{d.name}}</a-select-option>
           </a-select>
           <a-button @click="addSelect" type="primary" icon="setting">管理笔记本</a-button>
@@ -59,11 +59,20 @@
       <a-col :md="18" :sm="24">
         <a-spin :spinning="spinning">
           <a-card :bordered="false">
-            <a-form :form="form">
+            <a-tabs
+              v-model="activeTabKey"
+              type="editable-card"
+              @edit="onEdit"
+              @change="onChangeTab"
+            >
+              <a-tab-pane v-for="pane in panes" :tab="pane.name" :key="pane.id" :closable="pane.closable"></a-tab-pane>
+            </a-tabs>
+            <a-form>
               <a-form-item>
                 <a-input
                   v-decorator="['name']"
                   @blur="submitCurrForm"
+                  v-model="name"
                 />
               </a-form-item>
               <a-form-item>
@@ -87,9 +96,8 @@
   import NoteModal from './modules/NoteModal'
   import NoteSelectList from './NoteSelectList'
   import DepartModal from '../system/modules/DepartModal'
-  import pick from 'lodash.pick'
-  import { searchByKeywords, deleteByDepartId, queryNote, queryNoteTree, queryNoteById,upload} from '@/api/api'
-  import { httpAction, deleteAction } from '@/api/manage'
+  import { searchByKeywords, deleteNote, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
+  import { httpAction} from '@/api/manage'
   import JEditor from "@/components/jeecg/JEditor";
 
   export default {
@@ -106,10 +114,14 @@
     },
     data () {
       return {
+        panes:[],
+        newTabIndex: 0,
         content:'',
+        name:'',
         spinning:false,
         description: '笔记管理管理页面',
         selectedKeys:[],
+        activeTabKey:'',
         topData:[],
         topId:'',
         iExpandedKeys: [],
@@ -118,7 +130,6 @@
         currFlowId: '',
         currFlowName: '',
         disable: true,
-        treeData: [],
         visible: false,
         noteTree: [],
         rightClickSelectedKey: '',
@@ -158,7 +169,7 @@
       return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
     }
   },
-    created() {
+    created() {//初始数据加载
       this.loadTop();
       this.currFlowId = this.$route.params.id
       this.currFlowName = this.$route.params.name
@@ -189,22 +200,27 @@
         this.loading = true
         this.loadTree()
       },
-      loadTree() {
+      changeSelect(){
+        this.loadTree();
+        this.panes = [];
+        this.selectedKeys = [];
+      },
+      loadTree() {//加载笔记本树
         this.currSelected = {};
         if (this.topId) {
           let that = this
           queryNoteTree({ 'parentId': this.topId }).then((res) => {
             if (res.success) {
-              that.treeData = []
               that.noteTree = []
               for (let i = 0; i < res.result.length; i++) {
                 let temp = res.result[i]
-                that.treeData.push(temp)
                 that.noteTree.push(temp)
               }
-              if (res.result.length > 0) {
+              if (res.result.length > 0 && !that.selectedKeys[0]) {
                 that.selectedKeys[0] = res.result[0].key
-                that.loadForm(res.result[0].key)
+                that.getData(res.result[0].key)
+              }else {
+                this.loadForm({name:'',text:''});
               }
               this.loading = false
             }
@@ -239,14 +255,6 @@
         })
         window.open(href, '_blank')
       },
-      setThisExpandedKeys(node) {
-        if (node.children && node.children.length > 0) {
-          this.iExpandedKeys.push(node.key)
-          for (let a = 0; a < node.children.length; a++) {
-            this.setThisExpandedKeys(node.children[a])
-          }
-        }
-      },
       // 右键操作方法
       rightHandle(node) {
         this.dropTrigger = 'contextmenu'
@@ -280,110 +288,170 @@
       onSelect(keys, e) {
         let record = e.node.dataRef
         this.selectedKeys[0] = record['key'];
-        this.loadForm();
+        this.getData();
       },
-      loadForm() {
+      getData() {
         let that = this;
-        that.spinning = true;
-        queryNoteById({ 'id': this.selectedKeys[0] }).then((res) => {
-          if (res.success) {
-            that.currSelected = Object.assign({}, res.result)
-            this.content = that.currSelected.text;
-            that.form.setFieldsValue(pick(that.currSelected, 'name', 'text'))
-          }
-          that.spinning = false;
-        })
-      },
-      handleNodeTypeChange(val) {
-        this.currSelected.nodeType = val
-      },
-      notifyTriggerTypeChange(value) {
-        this.currSelected.notifyTriggerType = value
-      },
-      receiptTriggerTypeChange(value) {
-        this.currSelected.receiptTriggerType = value
-      },
-      nodeSettingFormSubmit() {
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            console.log('Received values of form: ', values)
+        let isExist = false;
+        this.panes.forEach((pane) => {
+          if (pane.id === this.selectedKeys[0]) {
+            isExist = true;
+            this.currSelected=pane;
+            this.loadForm(pane);
           }
         })
+        if (!isExist) {
+          that.spinning = true;
+          queryNoteById({ 'id': this.selectedKeys[0] }).then((res) => {
+            if (res.success) {
+              that.currSelected = Object.assign({}, res.result)
+              if(that.panes.length===0){
+                that.currSelected.closable = false;
+              }else if(that.panes.length===1){
+                delete that.currSelected.closable;
+              }
+              that.panes.push(that.currSelected);
+              this.loadForm(that.currSelected);
+            }
+            that.spinning = false;
+          })
+        }
       },
-      openSelect() {
-        this.$refs.sysDirectiveModal.show()
+      loadForm(data){
+        this.name = data.name;
+        this.content = data.text;
+        this.activeTabKey = data.id;
       },
       handleAdd() {
         if (!this.topId) {
           this.$message.warning('请先选中一个笔记本!')
-          return false
+          return false;
         }
-
         let key = this.currSelected.id
+        console.log(key);
         this.currSelected = {};
+        this.currSelected["name"] = this.currSelected["title"] = "无标题文档";
+        this.currSelected["text"] = "";
+        this.currSelected["id"] = this.currSelected["key"] = this.uuid();
+
         if (!key) {//顶级节点
           this.currSelected['parentId'] = this.topId;
+          this.noteTree.push(this.currSelected);
         } else {
           this.currSelected['parentId'] = key;
+          let parent = this.getTreeNote(this.noteTree,key);
+          console.log(this.noteTree);
+          console.log(parent);
+          if(parent){
+            if(!parent.children){
+              parent.children = [];
+            }
+            parent.isLeaf=false;
+            parent.children.push(this.currSelected);
+          }else {
+            this.noteTree.push(this.currSelected);
+          }
         }
 
-        this.currSelected["name"] = "无标题文档";
-        this.currSelected["text"] = "";
-        this.form.setFieldsValue(pick(this.currSelected, 'name', 'text'))
+        this.addTab(this.currSelected);
+        this.$refs.jEditor.setFocus();
+      },
+      getTreeNote(notes,id){
+        let result;
+        for(let key in notes) {
+          let node = notes[key];
+          if (node.key === id) {
+            result = node;
+            break;
+          }else {
+            if(node.children){
+              result = this.getTreeNote(node.children,id);
+              if(result){
+                break;
+              }
+            }
+          }
+        }
+        return result;
       },
       handleDelete() {
-        deleteByDepartId({ id: this.rightClickSelectedKey }).then((resp) => {
+        deleteNote({ id: this.rightClickSelectedKey }).then((resp) => {
           if (resp.success) {
             this.$message.success('删除成功!')
             this.loadTree()
+            this.remove(this.rightClickSelectedKey);
           } else {
             this.$message.warning('删除失败!')
           }
         })
       },
-      selectDirectiveOk(record) {
-        console.log('选中指令数据', record)
-        this.nodeSettingForm.setFieldsValue({ directiveCode: record.directiveCode })
-        this.currSelected.sysCode = record.sysCode
+      searchQuery() {
+
       },
-      getFlowGraphData(node) {
-        this.graphDatasource.nodes.push({
-          id: node.id,
-          text: node.flowNodeName
-        })
-        if (node.children.length > 0) {
-          for (let a = 0; a < node.children.length; a++) {
-            let temp = node.children[a]
-            this.graphDatasource.edges.push({
-              source: node.id,
-              target: temp.id
-            })
-            this.getFlowGraphData(temp)
-          }
+      onEdit (targetKey, action) {
+        this[action](targetKey)
+      },
+      addTab (data) {
+        const panes = this.panes
+        if(panes.length===1){
+          delete panes[0].closable;
         }
+        panes.push(data);
+        this.panes = panes
+        this.selectedKeys[0] = data['id'];
+        this.loadForm(data);
+      },
+      remove (targetKey) {//关闭tab
+        let that = this;
+        const panes = this.panes.filter(pane => pane.id !== targetKey)
+        if(panes.length===1){
+          panes[0].closable = false;
+        }
+
+        if(targetKey === this.activeTabKey ){
+          let index = -1;
+          this.panes.forEach((pane, i) => {
+            if (pane.id === targetKey) {
+              index = i - 1;
+              index = index>=0?index:0;
+              return false;
+            }
+          })
+          console.log(index);
+          if(index!=-1 && this.panes[index]){
+            that.activeTabKey = this.panes[index].id;
+          }
+          this.onChangeTab(that.activeTabKey);
+        }
+        this.panes = panes
+      },
+      onChangeTab(activeKey){
+        this.selectedKeys[0] = activeKey;
+        this.getData();
       },
       submitCurrForm() {
 
         let that = this;
-        this.form.validateFields((err, values) => {
+        this.form.validateFields((err) => {
           if (!err) {
             if (that.topId) {
               let reloadTree = false;
-              if (!that.currSelected['id'] || values['name'] != that.currSelected['name']) {
+              if (!that.currSelected['id'] || this.name != that.currSelected['name']) {
                 reloadTree = true;
               }
-              let formData = Object.assign(that.currSelected, values);
-              formData['text'] = this.$refs.jEditor.getText();
+              that.currSelected['text'] = this.$refs.jEditor.getText();
+              that.currSelected['name'] = this.name;
               let url = that.url.add;
               let method = 'post';
-              if (formData['id']) {
+              console.log(that.currSelected);
+              if (that.currSelected['createBy']) {
                 url = that.url.edit;
                 method = 'put';
               }
-              console.log("开始保存");
-              httpAction(url, formData, method).then((res) => {
+              console.log("开始保存",url,method);
+              httpAction(url, that.currSelected, method).then((res) => {
                 if (res.success) {
-                  console.log('保存成功!', formData)
+                  console.log('保存成功!', that.currSelected);
                   that.currSelected = res.result;
                   if (reloadTree) {
                     this.loadTree()
@@ -394,34 +462,17 @@
           }
         })
       },
-      onEditorBlur(quill) {
-
-        this.content = quill.container.firstChild.innerHTML;
-        this.submitCurrForm();
+      uuid() {//生成uuid
+        var s = [];
+        var hexDigits = "0123456789abcdef";
+        for (var i = 0; i < 32; i++) {
+          s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+        }
+        s[12] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+        s[16] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+        var uuid = s.join("");
+        return uuid;
       },
-
-      onEditorFocus(quill) {
-
-// console.log('editor focus!', quill)
-
-      },
-
-      onEditorReady(quill) {
-
-// console.log('editor ready!', quill)
-
-      },
-
-      onEditorChange({ quill, html, text }) {
-
-// console.log('editor change!', quill, html, text)
-
-        this.content = html
-
-      },
-      searchQuery() {
-
-      }
     }
   }
 </script>

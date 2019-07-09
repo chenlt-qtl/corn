@@ -19,4 +19,6 @@ public interface INoteService extends IService<Note> {
     List<Note> listNote(String createBy,String parentId);
 
     List<NoteTreeModel> queryTreeList(String createBy ,String parentId);
+
+    void delete(String userName, String id);
 }

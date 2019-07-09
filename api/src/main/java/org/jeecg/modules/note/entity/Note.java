@@ -11,7 +11,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 
 /**
  * @Description: 笔记管理
- * @author： jeecg-boot
+ * @author： chenlt
  * @date：   2019-04-23
  * @version： V1.0
  */
@@ -57,7 +57,5 @@ public class Note implements Serializable {
 	/**updateBy*/
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
-	/**delFlag*/
-	@Excel(name = "delFlag", width = 15)
-	private java.lang.String delFlag;
+
 }
