@@ -101,6 +101,18 @@
           },
           setup : function(ed) {
             ed.on('blur', that.onBlur);
+            ed.on('keydown', function (evt) {
+              if (evt.keyCode == 9) {
+                if (evt.shiftKey) {
+                  ed.execCommand('Outdent');
+                } else {
+                  ed.execCommand('Indent');
+                }
+
+                evt.preventDefault();
+                evt.stopPropagation();
+              }
+            });
           },
         },
         myValue: this.value

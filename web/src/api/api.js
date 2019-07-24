@@ -145,7 +145,7 @@ export {
   queryNoteTree,
   queryNoteById,
   upload,
-  deleteNote
+  deleteNote,
 }
 
 

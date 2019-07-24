@@ -129,6 +129,32 @@ public class NoteController {
 		}
 		return result;
 	}
+
+	 /**
+	  *   复制
+	  * @return
+	  */
+	 @PostMapping(value = "/copy")
+	 public Result<Note> copy(@RequestBody Note note) {
+		 Result<Note> result = new Result<Note>();
+		 try {
+			 Note parent = noteService.getById(note.getParentId());
+			 Note oldNote = noteService.getById(note.getId());
+			 Note newNote = new Note();
+			 newNote.setName(oldNote.getName()+"(1)");
+			 newNote.setText(oldNote.getText());
+			 newNote.setParentId(note.getParentId());
+			 newNote.setParentIds(parent.getParentIds()+"/"+note.getParentId());
+			 noteService.save(newNote);
+			 result.setResult(newNote);
+			 result.success("复制成功！");
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 log.info(e.getMessage());
+			 result.error500("操作失败");
+		 }
+		 return result;
+	 }
 	
 	/**
 	  *  编辑
