@@ -383,9 +383,8 @@
       selectNote(id){//选中某个笔记(数据已加载)
         if(id){
           this.selectedKeys[0] = this.activeTabKey = id;
-          let node = this.getTreeNode(this.noteTree,id);
-          console.log(node);
-          let note = node.model;//复制时此处出错
+          let note = this.getPane(id);
+          console.log(note);
           let expandedKeys = note.parentIds.split("/");
           expandedKeys.push(id);
           this.expandedKeys.forEach((key) => {
@@ -417,6 +416,15 @@
         }
         console.log(panes);
         this.panes = panes;
+      },
+      getPane(id){
+        let data = {};
+        this.panes.forEach((pane) => {
+          if(pane.id === id){
+            data = pane;
+          }
+        });
+        return data;
       },
       saveOpenKey(){
         console.log(this.panes);
