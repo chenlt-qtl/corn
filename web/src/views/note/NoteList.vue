@@ -37,9 +37,11 @@
                    <a-directory-tree
                      showIcon
                      :selectedKeys="selectedKeys"
+                     @rightClick="rightHandle"
                      @select="onTreeClick"
                      :treeData="noteTree"
                      style="width: 320px"
+                     :expandedKeys="expandedKeys"
                    />
                 </span>
                   <!--新增右键点击事件,和增加添加和删除功能-->
@@ -125,6 +127,7 @@
         copyKey:'',
         form: this.$form.createForm(this),
         dropTrigger: '',
+        expandedKeys:[],//打开的树节点
         visible: false,
         url: {
           list: "/note/list",
@@ -144,11 +147,18 @@
       this.loadTop();
     },
     methods: {
+      //右键事件
+      rightHandle(node) {
+        this.dropTrigger = 'contextmenu'
+        this.rightClickSelectedKey = node.node.eventKey
+      },
       dropStatus(visible) {
         if (visible == false) {
           this.dropTrigger = ''
         }
       },
+
+
       onTreeClick(key){
         this.getData(key[0],true,true);
       },
@@ -192,7 +202,7 @@
           }
         })
       },
-      loadTree() {//加载笔记本树
+      loadTree(callback) {//加载笔记本树
         if (this.topId) {
           this.loading = true;
           let that = this
@@ -206,6 +216,9 @@
               console.log('noteTree',that.noteTree);
               if(!that.selectedKeys[0]){
                 this.loadForm({name:'',text:''});
+              }
+              if(callback){
+                callback();
               }
             }
             this.loading = false
@@ -250,8 +263,10 @@
           if (pane.id === id) {
             isExist = true;
             if(select) {
-              this.selectedKeys[0] = this.activeTabKey = id;
-              this.loadForm(pane);
+              this.selectNote(id);
+            }
+            if(updateOpenKeys){
+              this.saveOpenKey();
             }
           }
         })
@@ -282,8 +297,7 @@
             if (res.success) {
               that.spinning = false;
               this.$message.success('复制成功!')
-              this.selectedKeys[0] = res.result.id;
-              this.loadTree();
+              this.loadTree(function (){that.getData(res.result.id,true,true);});
               this.copyKey = '';
             }
           })
@@ -316,6 +330,8 @@
             this.noteTree.push(newObj);
           }
         }
+
+        newObj["model"]=Object.assign({}, newObj);
 
         this.addTab(newObj,true,true);
         this.$refs.jEditor.setFocus();
@@ -356,12 +372,33 @@
         console.log('addTab');
         this.addPanes(data);
 
+        if(select){
+          this.selectNote(data.id);
+        }
+
         if(updateOpenKeys){
           this.saveOpenKey();
         }
-        if(select){
-          this.selectedKeys[0] = this.activeTabKey = data.id;
-          this.loadForm(data);
+      },
+      selectNote(id){//选中某个笔记(数据已加载)
+        if(id){
+          this.selectedKeys[0] = this.activeTabKey = id;
+          let node = this.getTreeNode(this.noteTree,id);
+          console.log(node);
+          let note = node.model;//复制时此处出错
+          let expandedKeys = note.parentIds.split("/");
+          expandedKeys.push(id);
+          this.expandedKeys.forEach((key) => {
+            if(key == id){
+              expandedKeys.pop();
+            }
+          })
+          this.expandedKeys = expandedKeys;
+          console.log(this.expandedKeys);
+          this.loadForm(note);
+        }else {
+          this.selectedKeys[0] = this.activeTabKey = '';
+          this.loadForm({name:'',text:''});
         }
       },
       addPanes(data){
@@ -387,7 +424,7 @@
         this.panes.forEach((pane) => {
           openKeys.push(pane.id);
         });
-        httpAction(this.url.saveOpenKey, {id:this.topId,openKeys:openKeys.join(","),selectedKey:this.selectedKeys[0]}, 'post');
+        httpAction(this.url.saveOpenKey, {id:this.topId,openKeys:openKeys.join(","),selectedKey:this.activeTabKey}, 'post');
       },
       remove (targetKey) {//关闭tab
         console.log('removeTab');
@@ -414,6 +451,7 @@
         this.form.validateFields((err) => {
           if (!err) {
             let node = this.getTreeNode(this.noteTree,this.activeTabKey);
+            console.log(node);
             let note = node.model;
             if(!that.name){
               that.name = note['name'];

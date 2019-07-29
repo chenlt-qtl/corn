@@ -13,7 +13,8 @@
     </select>
 
     <select id="listChildNote" resultType="org.jeecg.modules.note.entity.Note">
-        SELECT n.id,n.name,n.parent_id,n.parent_ids,n.tag
+        SELECT n.id,n.name,n.parent_id,n.parent_ids,n.tag,n.source,n.create_time,n.create_by,
+        n.update_time,n.update_by,n.status
         FROM  note_info n
         WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
         <if test="parentId != null">
