@@ -5,6 +5,7 @@
 	<groupId>org.jeecgframework.boot</groupId>
 	<artifactId>jeecg-boot</artifactId>
 	<version>1.1.0</version>
+	<packaging>war</packaging>
 
 	<parent>
 	    <groupId>org.springframework.boot</groupId>
@@ -43,6 +44,16 @@
     </properties>
     
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<!--集成springmvc框架并实现自动配置 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -202,6 +213,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>jeecg-boot</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

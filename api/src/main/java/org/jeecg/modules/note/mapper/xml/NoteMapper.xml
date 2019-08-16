@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.note.mapper.NoteMapper">
 
-    <select id="listNote" resultType="org.jeecg.modules.note.entity.Note">
+    <select id="listSon" resultType="org.jeecg.modules.note.entity.Note">
         SELECT n.*
 		   FROM  note_info n
 		   WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
@@ -12,13 +12,13 @@
 		   order by n.create_time DESC
     </select>
 
-    <select id="listChildNote" resultType="org.jeecg.modules.note.entity.Note">
+    <select id="listAllNote" resultType="org.jeecg.modules.note.entity.Note">
         SELECT n.id,n.name,n.parent_id,n.parent_ids,n.tag,n.source,n.create_time,n.create_by,
         n.update_time,n.update_by,n.status
         FROM  note_info n
         WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
         <if test="parentId != null">
-            <![CDATA[ and n.parent_ids like CONCAT('%','${parentId}','%' ) ]]>
+            <![CDATA[ and ( n.id=#{parentId,jdbcType=VARCHAR} or n.parent_ids like CONCAT('%','${parentId}','%' ) )]]>
         </if>
         order by n.create_time DESC
     </select>

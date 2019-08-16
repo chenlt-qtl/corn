@@ -39,9 +39,11 @@
                      :selectedKeys="selectedKeys"
                      @rightClick="rightHandle"
                      @select="onTreeClick"
+                     @drop="onDrop"
                      :treeData="noteTree"
                      style="width: 320px"
                      :expandedKeys="expandedKeys"
+                     draggable
                    />
                 </span>
                   <!--新增右键点击事件,和增加添加和删除功能-->
@@ -147,6 +149,25 @@
       this.loadTop();
     },
     methods: {
+      //拖动
+      onDrop (info) {
+        const newParent = this.getTreeNode(this.noteTree,info.node.eventKey);
+        const dragKey = info.dragNode.eventKey
+        if (!info.dropToGap) {
+
+            if(!newParent.children){
+              newParent.children = []
+            }
+            let drapNote = this.getTreeNode(this.noteTree,dragKey);
+            newParent.children.push(drapNote);
+            drapNote.model.parentId = info.node.eventKey;//更换父ID
+
+            //删除旧的
+            const oldParent = this.getTreeNode(this.noteTree,info.dragNode.$parent.eventKey);
+            oldParent.children = oldParent.children.filter(node => node.key !== dragKey);
+            httpAction(this.url.edit, drapNote.model, 'put');
+        }
+      },
       //右键事件
       rightHandle(node) {
         this.dropTrigger = 'contextmenu'
@@ -326,6 +347,7 @@
             }
             parent.isLeaf=false;
             parent.children.push(newObj);
+            newObj['parentIds'] = parent.model.parentIds+"/"+key;
           }else {
             this.noteTree.push(newObj);
           }

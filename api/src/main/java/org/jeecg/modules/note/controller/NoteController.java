@@ -112,13 +112,7 @@ public class NoteController {
 	public Result<Note> add(@RequestBody Note note) {
 		Result<Note> result = new Result<Note>();
 		try {
-			if(StringUtils.isBlank(note.getParentId())){
-				note.setParentId("0");
-				note.setParentIds("0");
-			}else {
-				Note parent = noteService.getById(note.getParentId());
-				note.setParentIds(parent.getParentIds()+"/"+note.getParentId());
-			}
+			setParents(note);
 			noteService.save(note);
 			result.setResult(note);
 			result.success("添加成功！");
@@ -168,6 +162,9 @@ public class NoteController {
 		if(noteEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
+			setParents(note);
+			note.setUpdateBy(null);
+			note.setUpdateTime(null);
 			boolean ok = noteService.updateById(note);
 			if(ok) {
 				result.setResult(note);
@@ -295,6 +292,20 @@ public class NoteController {
           }
       }
       return Result.ok("文件导入失败！");
+  }
+
+	 /**
+	  * 设置parents
+	  * @param note
+	  */
+  private void setParents(Note note){
+	  if(StringUtils.isBlank(note.getParentId())){
+		  note.setParentId("0");
+		  note.setParentIds("0");
+	  }else {
+		  Note parent = noteService.getById(note.getParentId());
+		  note.setParentIds(parent.getParentIds()+"/"+note.getParentId());
+	  }
   }
 
 }

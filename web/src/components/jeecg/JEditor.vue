@@ -62,6 +62,7 @@
           language: 'zh_CN',
           skin_url: '/tinymce/skins/lightgray',
           min_height: 350,
+          max_height:600,
           plugins: this.plugins,
           toolbar: this.toolbar,
           branding: false,

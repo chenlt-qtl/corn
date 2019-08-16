@@ -19,7 +19,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 @TableName("note_info")
 public class Note implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
 	/**id*/
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;

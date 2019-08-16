@@ -35,32 +35,31 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Override
     public List<Note> listNote(String createBy,String parentId) {
-        return noteMapper.listNote(createBy,parentId);
+        return noteMapper.listSon(createBy,parentId);
     }
 
     @Override
     public List<NoteTreeModel> queryTreeList(String createBy,String parentId) {
-        List<Note> list = noteMapper.listChildNote(createBy,parentId);
+        String rootId = parentId;
+        List<Note> list = noteMapper.listAllNote(createBy,parentId);
         List<NoteTreeModel> treeList = new ArrayList<>();
         for(Note note:list){
             NoteTreeModel model = new NoteTreeModel(note);
+            if(parentId.equals(model.getKey())){
+                rootId = model.getParentId();
+            }
             treeList.add(model);
         }
         // 调用wrapTreeDataToTreeList方法生成树状数据
-        return TreeUtil.wrapTreeDataToTreeList(treeList,parentId);
+        return TreeUtil.wrapTreeDataToTreeList(treeList,rootId);
     }
 
     public void delete(String userName, String id){
         List<String> deleteIds = new ArrayList<>();
         Date now = new Date();
-        Note note = getById(id);
-        deleteIds.add(id);
-        NoteDelete delete = new NoteDelete(note);
-        delete.setUpdateBy(userName);
-        delete.setUpdateTime(now);
-        noteDeleteService.save(delete);
+        NoteDelete delete;
 
-        List<Note> list = noteMapper.listChildNote(userName,id);//子笔记
+        List<Note> list = noteMapper.listAllNote(userName,id);//子笔记和自己
         for(Note child:list){
             deleteIds.add(child.getId());
             delete = new NoteDelete(child);
