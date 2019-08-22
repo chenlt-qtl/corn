@@ -7,9 +7,12 @@
         <a-col :span="12">
           <a-form layout="inline">
             <a-input-search
+              v-model="searchText"
               placeholder="input search text"
               style="width: 300px"
+              @change="searchNote"
             />
+            <a-button style="margin-left: 10px" @click="openSearch" type="default">高级查询</a-button>
           </a-form>
         </a-col>
         <a-col :span="12" style="text-align: right;">
@@ -44,6 +47,7 @@
                      style="width: 320px"
                      :expandedKeys="expandedKeys"
                      draggable
+                     :filterTreeNode="filterTreeNode"
                    />
                 </span>
                   <!--新增右键点击事件,和增加添加和删除功能-->
@@ -91,6 +95,7 @@
 
     <!-- 表单区域 -->
     <note-select-list ref="noteSelectList" @ok="loadTop"></note-select-list>
+    <note-search ref="noteSearch" @open="openNote"></note-search>
 
   </a-card>
 </template>
@@ -98,7 +103,8 @@
 <script>
   import NoteModal from './modules/NoteModal'
   import NoteSelectList from './NoteSelectList'
-  import { searchByKeywords, deleteNote, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
+  import NoteSearch from './NoteSearch'
+  import { deleteNote, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
   import { httpAction} from '@/api/manage'
   import JEditor from "@/components/jeecg/JEditor";
 
@@ -108,6 +114,7 @@
       JEditor,
       NoteModal,
       NoteSelectList,
+      NoteSearch,
       VNodes: {
         functional: true,
         render: (h, ctx) => ctx.props.vnodes
@@ -115,6 +122,7 @@
     },
     data () {
       return {
+        searchText:'',
         panes:[],
         content:'',
         name:'',
@@ -149,6 +157,26 @@
       this.loadTop();
     },
     methods: {
+      openNote(note){
+        let parentIds = note.parentIds;
+        let topId = parentIds.split("/")[1];//属于哪个笔记本
+        if(topId==this.topId){//当前目录
+          this.getData(note.id,true,true);
+        }else {//跨目录
+          this.topId = topId;
+          this.changeSelect(note.id);
+        }
+      },
+      openSearch(){
+        this.$refs.noteSearch.show(this.topId);
+      },
+      filterTreeNode(node){
+        if (this.searchText && node.title.indexOf(this.searchText)>-1) {
+          return true;
+        }else {
+          return false;
+        }
+      },
       //拖动
       onDrop (info) {
         const newParent = this.getTreeNode(this.noteTree,info.node.eventKey);
@@ -204,7 +232,7 @@
           }
         })
       },
-      changeSelect(){
+      changeSelect(selectKey){
         this.loadTree();
         this.panes = [];
         this.selectedKeys[0] = '';
@@ -214,12 +242,15 @@
             let noteOpenKeys = res.result;
             let openKeys = noteOpenKeys.openKeys;
             openKeys.split(",").forEach((key) => {
-              if(key == noteOpenKeys.selectedKey){
+              if(!selectKey && key == noteOpenKeys.selectedKey){
                 this.getData(key,false,true);
               }else{
                 this.getData(key,false,false);
               }
             })
+            if(selectKey){
+              this.getData(selectKey,false,true);
+            }
           }
         })
       },
@@ -227,7 +258,7 @@
         if (this.topId) {
           this.loading = true;
           let that = this
-          queryNoteTree({ 'parentId': this.topId }).then((res) => {
+          queryNoteTree({ 'parentId': this.topId,"text":that.searchText }).then((res) => {
             if (res.success) {
               that.noteTree = [];
               for (let i = 0; i < res.result.length; i++) {
@@ -246,24 +277,17 @@
           })
         }
       },
-      onSearch(value) {
-        let that = this
-        if (value) {
-          searchByKeywords({ keyWord: value }).then((res) => {
-            if (res.success) {
-              that.noteTree = []
-              for (let i = 0; i < res.result.length; i++) {
-                let temp = res.result[i]
-                that.noteTree.push(temp)
-              }
-            } else {
-              that.$message.warning(res.message)
-            }
-          })
-        } else {
-          that.loadTree()
-        }
-
+      searchNote() {
+        const expandedNotes = [];
+        this.searchByName(this.noteTree,expandedNotes,this.searchText);
+        let expandedKeys = [];
+        expandedNotes.forEach((node)=> {
+          const parentIds = node.model.parentIds;
+          expandedKeys = expandedKeys.concat(parentIds.split("/"));
+        });
+        Object.assign(this, {
+          expandedKeys,
+        })
       },
       onDblclick() {
         const { href } = this.$router.resolve({
@@ -375,6 +399,18 @@
           }
         }
         return result;
+      },
+      searchByName(notes,result,name){
+        for(let i in notes) {
+          let node = notes[i];
+          let title = node['title'];
+          if (name && title.indexOf(name)>-1) {
+            result.push(node);
+          }
+          if(node.children){
+              this.searchByName(node.children,result,name);
+          }
+        }
       },
       handleDelete() {
         deleteNote({ id: this.rightClickSelectedKey }).then((resp) => {

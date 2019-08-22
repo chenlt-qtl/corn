@@ -225,6 +225,22 @@ public class NoteController {
 		return result;
 	}
 
+	 /**
+	  * 通过text查询
+	  * @param text
+	  * @param parentId
+	  * @return
+	  */
+	 @GetMapping(value = "/queryByText")
+	 public Result<List> queryByText(String text,String parentId) {
+		 Result<List> result = new Result<List>();
+		 SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		 List<Note> noteList = noteService.searchNote(sysUser.getUsername(),parentId,text);
+		 result.setResult(noteList);
+		 result.setSuccess(true);
+		 return result;
+	 }
+
   /**
       * 导出excel
    *
@@ -299,12 +315,12 @@ public class NoteController {
 	  * @param note
 	  */
   private void setParents(Note note){
-	  if(StringUtils.isBlank(note.getParentId())){
+	  if(StringUtils.isBlank(note.getParentId())||"0".equals(note.getParentId())){
 		  note.setParentId("0");
 		  note.setParentIds("0");
 	  }else {
 		  Note parent = noteService.getById(note.getParentId());
-		  note.setParentIds(parent.getParentIds()+"/"+note.getParentId());
+		  note.setParentIds(parent.getParentIds() + "/" + note.getParentId());
 	  }
   }
 

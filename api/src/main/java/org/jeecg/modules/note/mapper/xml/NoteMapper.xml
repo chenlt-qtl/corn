@@ -20,6 +20,9 @@
         <if test="parentId != null">
             <![CDATA[ and ( n.id=#{parentId,jdbcType=VARCHAR} or n.parent_ids like CONCAT('%','${parentId}','%' ) )]]>
         </if>
+        <if test="text != null">
+            <![CDATA[ and (text like CONCAT('%','${text}','%' )  or name like CONCAT('%','${text}','%' ))]]>
+        </if>
         order by n.create_time DESC
     </select>
 </mapper>
