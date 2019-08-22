@@ -112,12 +112,9 @@ public class NoteController {
 	public Result<Note> add(@RequestBody Note note) {
 		Result<Note> result = new Result<Note>();
 		try {
-			if(StringUtils.isBlank(note.getParentId())){
-				note.setParentId("0");
-				note.setParentIds("0");
-			}
-			note.setDelFlag("0");
+			setParents(note);
 			noteService.save(note);
+			result.setResult(note);
 			result.success("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -126,6 +123,32 @@ public class NoteController {
 		}
 		return result;
 	}
+
+	 /**
+	  *   复制
+	  * @return
+	  */
+	 @PostMapping(value = "/copy")
+	 public Result<Note> copy(@RequestBody Note note) {
+		 Result<Note> result = new Result<Note>();
+		 try {
+			 Note parent = noteService.getById(note.getParentId());
+			 Note oldNote = noteService.getById(note.getId());
+			 Note newNote = new Note();
+			 newNote.setName(oldNote.getName()+"(1)");
+			 newNote.setText(oldNote.getText());
+			 newNote.setParentId(note.getParentId());
+			 newNote.setParentIds(parent.getParentIds()+"/"+note.getParentId());
+			 noteService.save(newNote);
+			 result.setResult(newNote);
+			 result.success("复制成功！");
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 log.info(e.getMessage());
+			 result.error500("操作失败");
+		 }
+		 return result;
+	 }
 	
 	/**
 	  *  编辑
@@ -139,9 +162,12 @@ public class NoteController {
 		if(noteEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
+			setParents(note);
+			note.setUpdateBy(null);
+			note.setUpdateTime(null);
 			boolean ok = noteService.updateById(note);
-			//TODO 返回false说明什么？
 			if(ok) {
+				result.setResult(note);
 				result.success("修改成功!");
 			}
 		}
@@ -157,16 +183,10 @@ public class NoteController {
 	@DeleteMapping(value = "/delete")
 	public Result<Note> delete(@RequestParam(name="id",required=true) String id) {
 		Result<Note> result = new Result<Note>();
-		Note note = noteService.getById(id);
-		if(note==null) {
-			result.error500("未找到对应实体");
-		}else {
-			boolean ok = noteService.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
-			}
-		}
-		
+		SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+
+		noteService.delete(sysUser.getUsername(),id);
+		result.success("删除成功!");
 		return result;
 	}
 	
@@ -204,6 +224,22 @@ public class NoteController {
 		}
 		return result;
 	}
+
+	 /**
+	  * 通过text查询
+	  * @param text
+	  * @param parentId
+	  * @return
+	  */
+	 @GetMapping(value = "/queryByText")
+	 public Result<List> queryByText(String text,String parentId) {
+		 Result<List> result = new Result<List>();
+		 SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		 List<Note> noteList = noteService.searchNote(sysUser.getUsername(),parentId,text);
+		 result.setResult(noteList);
+		 result.setSuccess(true);
+		 return result;
+	 }
 
   /**
       * 导出excel
@@ -272,6 +308,20 @@ public class NoteController {
           }
       }
       return Result.ok("文件导入失败！");
+  }
+
+	 /**
+	  * 设置parents
+	  * @param note
+	  */
+  private void setParents(Note note){
+	  if(StringUtils.isBlank(note.getParentId())||"0".equals(note.getParentId())){
+		  note.setParentId("0");
+		  note.setParentIds("0");
+	  }else {
+		  Note parent = noteService.getById(note.getParentId());
+		  note.setParentIds(parent.getParentIds() + "/" + note.getParentId());
+	  }
   }
 
 }

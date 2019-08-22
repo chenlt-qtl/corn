@@ -93,6 +93,9 @@ const queryNote = (params)=>getAction("/note/listNote",params);
 const queryNoteTree = (params)=>getAction("/note/queryTreeList",params);
 const queryNoteById = (params)=>getAction("/note/queryById",params);
 
+const upload = (params)=>getAction("/sys/common/upload",params);
+const deleteNote = (params)=>deleteAction("/note/delete",params);
+
 
 export {
   // imgView,
@@ -140,7 +143,9 @@ export {
   queryTreeListForRole,
   queryNote,
   queryNoteTree,
-  queryNoteById
+  queryNoteById,
+  upload,
+  deleteNote,
 }
 
 

@@ -22,6 +22,9 @@
   import 'tinymce/plugins/colorpicker'
   import 'tinymce/plugins/textcolor'
   import 'tinymce/plugins/emoticons'
+  import 'tinymce/plugins/autoresize'
+  import Vue from 'vue'
+  import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 
 
@@ -41,7 +44,7 @@
       },
       plugins: {
         type: [String, Array],
-        default: 'lists image media table textcolor wordcount contextmenu'
+        default: 'lists image media table textcolor wordcount contextmenu powerpaste autoresize'
       },
       toolbar: {
         type: [String, Array],
@@ -51,21 +54,67 @@
       }
     },
     data() {
+      let that = this;
       return {
         //初始化配置
         init: {
           language_url: '/tinymce/langs/zh_CN.js',
           language: 'zh_CN',
           skin_url: '/tinymce/skins/lightgray',
-          height: 300,
+          min_height: 350,
+          max_height:600,
           plugins: this.plugins,
           toolbar: this.toolbar,
           branding: false,
           menubar: false,
           images_upload_handler: (blobInfo, success) => {
-            const img = 'data:image/jpeg;base64,' + blobInfo.base64()
-            success(img)
-          }
+            var xhr, formData;
+
+            xhr = new XMLHttpRequest();
+
+            xhr.withCredentials = false;
+            xhr.open('POST', window._CONFIG['domianURL']+"/sys/common/upload");
+
+            const token = Vue.ls.get(ACCESS_TOKEN);
+            if (token) {
+              xhr.setRequestHeader( 'X-Access-Token', token);
+            }
+
+            xhr.onload = function() {
+              var json;
+              if (xhr.status != 200) {
+                return;
+              }
+
+              json = JSON.parse(xhr.responseText);
+              if (!json || typeof json.message != 'string') {
+                return;
+              }
+              console.log(window._CONFIG['domianURL']+"/"+json.message);
+
+              success(window._CONFIG['domianURL']+"/"+json.message);
+            };
+
+            formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+            xhr.send(formData);
+          },
+          setup : function(ed) {
+            ed.on('blur', that.onBlur);
+            ed.on('keydown', function (evt) {
+              if (evt.keyCode == 9) {
+                if (evt.shiftKey) {
+                  ed.execCommand('Outdent');
+                } else {
+                  ed.execCommand('Indent');
+                }
+
+                evt.preventDefault();
+                evt.stopPropagation();
+              }
+            });
+          },
         },
         myValue: this.value
       }
@@ -78,19 +127,27 @@
       onClick(e) {
         this.$emit('onClick', e, tinymce)
       },
+      onBlur(e) {
+        this.$emit('blur', e, tinymce)
+      },
       //可以添加一些自己的自定义事件，如清空内容
       clear() {
         this.myValue = ''
-      }
+      },
+      getText(){
+        return tinymce.activeEditor.getContent();
+      },
+      setFocus(){
+        tinymce.activeEditor.focus();
+      },
     },
     watch: {
       value(newValue) {
         this.myValue = newValue
       },
       myValue(newValue) {
-        console.log(newValue)
         this.$emit('input', newValue)
-      }
+      },
     }
   }
 

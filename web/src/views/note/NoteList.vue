@@ -7,14 +7,16 @@
         <a-col :span="12">
           <a-form layout="inline">
             <a-input-search
+              v-model="searchText"
               placeholder="input search text"
               style="width: 300px"
-              @search="searchQuery"
+              @change="searchNote"
             />
+            <a-button style="margin-left: 10px" @click="openSearch" type="default">高级查询</a-button>
           </a-form>
         </a-col>
         <a-col :span="12" style="text-align: right;">
-          <a-select :defaultActiveFirstOption="true" style="width: 300px" placeholder="选择笔记本" @change="selectTop">
+          <a-select :defaultActiveFirstOption="true" style="width: 300px;" placeholder="选择笔记本" @change="changeSelect()" v-model="topId">
             <a-select-option v-for="d in topData" :key="d.id">{{d.name}}</a-select-option>
           </a-select>
           <a-button @click="addSelect" type="primary" icon="setting">管理笔记本</a-button>
@@ -24,32 +26,34 @@
 
     <a-row :gutter="10">
       <a-col :md="6" :sm="24">
-        <a-card :bordered="false">
+        <a-card :bordered="false" style="padding: 0px;">
           <!-- 按钮操作区域 -->
           <a-row style="margin-left: 14px">
             <a-button @click="handleAdd" type="primary" icon="plus">新文档</a-button>
           </a-row>
-          <div style="background: #fff;padding-left:16px;height: 100%; margin-top: 5px">
+          <div style="padding-left:16px;height: 100%; margin-top: 5px;overflow:hidden;">
             <!-- 树-->
-            <a-col :md="10" :sm="24">
+            <a-col :md="10" :sm="24" style="padding-left: 1px;">
               <template>
                 <a-dropdown :trigger="[this.dropTrigger]" @visibleChange="dropStatus">
                <span style="user-select: none">
-            <a-tree
-              multiple
-              @select="onSelect"
-              @rightClick="rightHandle"
-              :selectedKeys="selectedKeys"
-              :checkedKeys="checkedKeys"
-              :treeData="noteTree"
-              :checkStrictly="true"
-              :expandedKeys="iExpandedKeys"
-              :autoExpandParent="autoExpandParent"
-              @expand="onExpand"/>
+                   <a-directory-tree
+                     showIcon
+                     :selectedKeys="selectedKeys"
+                     @rightClick="rightHandle"
+                     @select="onTreeClick"
+                     @drop="onDrop"
+                     :treeData="noteTree"
+                     style="width: 320px"
+                     :expandedKeys="expandedKeys"
+                     draggable
+                     :filterTreeNode="filterTreeNode"
+                   />
                 </span>
                   <!--新增右键点击事件,和增加添加和删除功能-->
                   <a-menu slot="overlay" style="padding: 10px 20px;">
-                    <a-menu-item @click="handleAdd(3)" key="1"><a-icon type="plus" />添加</a-menu-item>
+                    <a-menu-item @click="handlePaste" key="3" v-if="this.copyKey"><a-icon type="file" />粘贴</a-menu-item>
+                    <a-menu-item @click="handleCopy" key="1"><a-icon type="copy" />复制</a-menu-item>
                     <a-menu-item @click="handleDelete" key="2"><a-icon type="minus" />删除</a-menu-item>
                   </a-menu>
                 </a-dropdown>
@@ -59,20 +63,39 @@
         </a-card>
       </a-col>
       <a-col :md="18" :sm="24">
-        <a-card :bordered="false">
-          <a-form :form="form">
-            <a-input v-decorator="['name', {} ]"/>
-            <div style="margin-top: 5px;">
-              <j-editor :value="content"></j-editor>
-            </div>
-          </a-form>
-        </a-card>
+        <a-spin :spinning="spinning">
+          <a-card :bordered="false">
+            <a-tabs
+              hideAdd
+              v-model="activeTabKey"
+              type="editable-card"
+              @edit="onEdit"
+              @change="onChangeTab"
+            >
+              <a-tab-pane v-for="pane in panes" :tab="pane.name" :key="pane.id" :closable="pane.closable"></a-tab-pane>
+            </a-tabs>
+            <a-form>
+              <a-form-item>
+                <a-input
+                  v-decorator="['name']"
+                  @blur="submitCurrForm"
+                  v-model="name"
+                />
+              </a-form-item>
+              <a-form-item>
+                <div style="margin-top: 5px;">
+                  <j-editor ref="jEditor" :value="content" @blur="submitCurrForm"></j-editor>
+                </div>
+              </a-form-item>
+            </a-form>
+          </a-card>
+        </a-spin>
       </a-col>
-      <depart-modal ref="departModal" @ok="loadTree"></depart-modal>
     </a-row>
 
     <!-- 表单区域 -->
     <note-select-list ref="noteSelectList" @ok="loadTop"></note-select-list>
+    <note-search ref="noteSearch" @open="openNote"></note-search>
 
   </a-card>
 </template>
@@ -80,21 +103,18 @@
 <script>
   import NoteModal from './modules/NoteModal'
   import NoteSelectList from './NoteSelectList'
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import DepartModal from '../system/modules/DepartModal'
-  import pick from 'lodash.pick'
-  import { searchByKeywords, deleteByDepartId, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
-  import { httpAction, deleteAction } from '@/api/manage'
+  import NoteSearch from './NoteSearch'
+  import { deleteNote, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
+  import { httpAction} from '@/api/manage'
   import JEditor from "@/components/jeecg/JEditor";
 
   export default {
     name: "NoteList",
-    mixins:[JeecgListMixin],
     components: {
       JEditor,
       NoteModal,
       NoteSelectList,
-      DepartModal,
+      NoteSearch,
       VNodes: {
         functional: true,
         render: (h, ctx) => ctx.props.vnodes
@@ -102,373 +122,442 @@
     },
     data () {
       return {
-        content:'<h>ddd</h>',
-        description: '笔记管理管理页面',
+        searchText:'',
+        panes:[],
+        content:'',
+        name:'',
+        spinning:false,
+        selectedKeys:[],
+        activeTabKey:'',
         topData:[],
         topId:'',
-        iExpandedKeys: [],
         loading: false,
-        autoExpandParent: true,
-        currFlowId: '',
-        currFlowName: '',
-        disable: true,
-        treeData: [],
-        visible: false,
         noteTree: [],
         rightClickSelectedKey: '',
-        hiding: true,
-        model: {},
-        dropTrigger: '',
-        depart: {},
-        disableSubmit: false,
-        checkedKeys: [],
-        selectedKeys: [],
-        autoIncr: 1,
-        currSelected: {},
+        copyKey:'',
         form: this.$form.createForm(this),
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 5 }
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 16 }
-        },
-        graphDatasource: {
-          nodes: [],
-          edges: []
-        },
-        validatorRules: {
-          departName: { rules: [{ required: true, message: '请输入机构/部门名称!' }] },
-          orgCode: { rules: [{ required: true, message: '请输入机构编码!' }] },
-          mobile: { rules: [{ validator: this.validateMobile }] }
-        },
-        // 表头
-        columns: [
-          {
-            title: '#',
-            dataIndex: '',
-            key:'rowIndex',
-            width:60,
-            align:"center",
-            customRender:function (t,r,index) {
-              return parseInt(index)+1;
-            }
-           },{
-            title: 'name',
-            align:"center",
-            dataIndex: 'name'
-           },{
-            title: 'text',
-            align:"center",
-            dataIndex: 'text'
-           },{
-            title: 'tag',
-            align:"center",
-            dataIndex: 'tag'
-           },{
-            title: 'source',
-            align:"center",
-            dataIndex: 'source'
-           },{
-            title: '操作',
-            dataIndex: 'action',
-            align:"center",
-            scopedSlots: { customRender: 'action' },
-          }
-        ],
-		url: {
+        dropTrigger: '',
+        expandedKeys:[],//打开的树节点
+        visible: false,
+        url: {
           list: "/note/list",
           exportXlsUrl: "/note/exportXls",
           importExcelUrl: "/note/importExcel",
-          delete: '/sysdepart/sysDepart/delete',
-          edit: '/sysdepart/sysDepart/edit',
-          deleteBatch: '/sysdepart/sysDepart/deleteBatch'
+          delete: '/note/delete',
+          edit: '/note/edit',
+          add: "/note/add",
+          upload: window._CONFIG['domianURL']+"/sys/common/upload",
+          copy:"/note/copy",
+          saveOpenKey:'/note/noteOpenKeys/save',
+          getOpenKey:'/note/noteOpenKeys/queryById'
        },
     }
   },
-  computed: {
-    importExcelUrl: function(){
-      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-    }
-  },
-    created() {
+    created() {//初始数据加载
       this.loadTop();
-      this.currFlowId = this.$route.params.id
-      this.currFlowName = this.$route.params.name
-      this.loadTree();
     },
     methods: {
-      addSelect () {
+      openNote(note){
+        let parentIds = note.parentIds;
+        let topId = parentIds.split("/")[1];//属于哪个笔记本
+        if(topId==this.topId){//当前目录
+          this.getData(note.id,true,true);
+        }else {//跨目录
+          this.topId = topId;
+          this.changeSelect(note.id);
+        }
+      },
+      openSearch(){
+        this.$refs.noteSearch.show(this.topId);
+      },
+      filterTreeNode(node){
+        if (this.searchText && node.title.indexOf(this.searchText)>-1) {
+          return true;
+        }else {
+          return false;
+        }
+      },
+      //拖动
+      onDrop (info) {
+        const newParent = this.getTreeNode(this.noteTree,info.node.eventKey);
+        const dragKey = info.dragNode.eventKey
+        if (!info.dropToGap) {
+
+            if(!newParent.children){
+              newParent.children = []
+            }
+            let drapNote = this.getTreeNode(this.noteTree,dragKey);
+            newParent.children.push(drapNote);
+            drapNote.model.parentId = info.node.eventKey;//更换父ID
+
+            //删除旧的
+            const oldParent = this.getTreeNode(this.noteTree,info.dragNode.$parent.eventKey);
+            oldParent.children = oldParent.children.filter(node => node.key !== dragKey);
+            httpAction(this.url.edit, drapNote.model, 'put');
+        }
+      },
+      //右键事件
+      rightHandle(node) {
+        this.dropTrigger = 'contextmenu'
+        this.rightClickSelectedKey = node.node.eventKey
+      },
+      dropStatus(visible) {
+        if (visible == false) {
+          this.dropTrigger = ''
+        }
+      },
+
+
+      onTreeClick(key){
+        this.getData(key[0],true,true);
+      },
+      addSelect() {
         this.$refs.noteSelectList.show();
       },
-      loadTop (){//加载笔记本下拉框
+      loadTop() {//加载笔记本下拉框
+        this.loading = true
         const that = this;
-        queryNote({"parentId":0}).then((res) => {
+        queryNote({ "parentId": 0 }).then((res) => {
           if (res.success) {
             that.topData = [];
             for (let i = 0; i < res.result.length; i++) {
               let temp = res.result[i]
               that.topData.push(temp)
             }
+            if (res.result.length > 0) {
+              that.topId = res.result[0].id;
+              that.loadTree();
+            }
             this.loading = false
           }
         })
       },
-      refresh() {
-        this.loading = true
-        this.loadTree()
-      },
-      loadTree() {
-        if(this.topId) {
-          var that = this
-          that.treeData = []
-          that.noteTree = []
-          queryNoteTree({'parentId':this.topId}).then((res) => {
-            if (res.success) {
-              for (let i = 0; i < res.result.length; i++) {
-                let temp = res.result[i]
-                that.treeData.push(temp)
-                that.noteTree.push(temp)
-                that.setThisExpandedKeys(temp)
-                console.log(temp.id)
-              }
-              this.loading = false
-            }
-          })
-        }
-      },
-      onSearch(value) {
-        let that = this
-        if (value) {
-          searchByKeywords({ keyWord: value }).then((res) => {
-            if (res.success) {
-              that.noteTree = []
-              for (let i = 0; i < res.result.length; i++) {
-                let temp = res.result[i]
-                that.noteTree.push(temp)
-              }
-            } else {
-              that.$message.warning(res.message)
-            }
-          })
-        } else {
-          that.loadTree()
-        }
-
-      },
-      setThisExpandedKeys(node) {
-        if (node.children && node.children.length > 0) {
-          this.iExpandedKeys.push(node.key)
-          for (let a = 0; a < node.children.length; a++) {
-            this.setThisExpandedKeys(node.children[a])
-          }
-        }
-      },
-      // 右键操作方法
-      rightHandle(node) {
-        this.dropTrigger = 'contextmenu'
-        console.log(node.node.eventKey)
-        this.rightClickSelectedKey = node.node.eventKey
-      },
-      onExpand(expandedKeys) {
-        console.log('onExpand', expandedKeys)
-        // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-        // or, you can remove all expanded children keys.
-        this.iExpandedKeys = expandedKeys
-        this.autoExpandParent = false
-      },
-      backFlowList() {
-        this.$router.back(-1)
-      },
-      // 右键点击下拉框改变事件
-      dropStatus(visible) {
-        if (visible == false) {
-          this.dropTrigger = ''
-        }
-      },
-      // 右键店家下拉关闭下拉框
-      closeDrop() {
-        this.dropTrigger = ''
-      },
-      addRootNode() {
-        this.$refs.nodeModal.add(this.currFlowId, '')
-      },
-      batchDel: function() {
-        console.log(this.checkedKeys)
-        if (this.checkedKeys.length <= 0) {
-          this.$message.warning('请选择一条记录！')
-        } else {
-          var ids = ''
-          for (var a = 0; a < this.checkedKeys.length; a++) {
-            ids += this.checkedKeys[a] + ','
-          }
-          var that = this
-          this.$confirm({
-            title: '确认删除',
-            content: '确定要删除所选中的 ' + this.checkedKeys.length + ' 条数据?',
-            onOk: function() {
-              deleteAction(that.url.deleteBatch, { ids: ids }).then((res) => {
-                if (res.success) {
-                  that.$message.success(res.message)
-                  that.loadTree()
-                  that.onClearSelected()
-                } else {
-                  that.$message.warning(res.message)
-                }
-              })
-            }
-          })
-        }
-      },
-      nodeModalOk() {
-        this.loadTree()
-      },
-      nodeModalClose() {
-      },
-      hide() {
-        console.log(111)
-        this.visible = false
-      },
-      onSelect(selectedKeys, e) {
-        let record = e.node.dataRef
-        let that = this;
-        that.currSelected = Object.assign({}, record)
-        that.model = that.currSelected
-        that.selectedKeys = [record.key]
-        that.model.parentId = record.parentId
-        console.log(record);
-        this.setValuesToForm(record.model);
-        queryNoteById({'id':record['key']}).then((res) => {
+      changeSelect(selectKey){
+        this.loadTree();
+        this.panes = [];
+        this.selectedKeys[0] = '';
+        httpAction(this.url.getOpenKey+"?id="+this.topId, {}, 'get').then((res) => {
+          console.log('openKeys',res.result);
           if (res.success) {
-
-            let temp = res.result;
-            that.content = temp['text'] == undefined?'':temp['text'];
-          }
-        })
-
-      },
-      setValuesToForm(record) {
-        this.form.getFieldDecorator('fax', { initialValue: '' })
-        this.form.setFieldsValue(pick(record, 'name'))
-      },
-      getCurrSelectedTitle() {
-        return !this.currSelected.title ? '' : this.currSelected.title
-      },
-      onClearSelected() {
-        this.hiding = true
-        this.checkedKeys = {}
-        this.currSelected = {}
-        this.form.resetFields()
-        this.selectedKeys = []
-      },
-      handleNodeTypeChange(val) {
-        this.currSelected.nodeType = val
-      },
-      notifyTriggerTypeChange(value) {
-        this.currSelected.notifyTriggerType = value
-      },
-      receiptTriggerTypeChange(value) {
-        this.currSelected.receiptTriggerType = value
-      },
-      submitCurrForm() {
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            if (!this.currSelected.id) {
-              this.$message.warning('请点击选择要修改部门!')
-              return
-            }
-
-            let formData = Object.assign(this.currSelected, values)
-            console.log('Received values of form: ', formData)
-            httpAction(this.url.edit, formData, 'put').then((res) => {
-              if (res.success) {
-                this.$message.success('保存成功!')
-                this.loadTree()
+            let noteOpenKeys = res.result;
+            let openKeys = noteOpenKeys.openKeys;
+            openKeys.split(",").forEach((key) => {
+              if(!selectKey && key == noteOpenKeys.selectedKey){
+                this.getData(key,false,true);
+              }else{
+                this.getData(key,false,false);
               }
             })
+            if(selectKey){
+              this.getData(selectKey,false,true);
+            }
           }
         })
       },
-      emptyCurrForm() {
-        this.form.resetFields()
+      loadTree(callback) {//加载笔记本树
+        if (this.topId) {
+          this.loading = true;
+          let that = this
+          queryNoteTree({ 'parentId': this.topId,"text":that.searchText }).then((res) => {
+            if (res.success) {
+              that.noteTree = [];
+              for (let i = 0; i < res.result.length; i++) {
+                let temp = res.result[i]
+                that.noteTree.push(temp)
+              }
+              console.log('noteTree',that.noteTree);
+              if(!that.selectedKeys[0]){
+                this.loadForm({name:'',text:''});
+              }
+              if(callback){
+                callback();
+              }
+            }
+            this.loading = false
+          })
+        }
       },
-      nodeSettingFormSubmit() {
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            console.log('Received values of form: ', values)
-          }
+      searchNote() {
+        const expandedNotes = [];
+        this.searchByName(this.noteTree,expandedNotes,this.searchText);
+        let expandedKeys = [];
+        expandedNotes.forEach((node)=> {
+          const parentIds = node.model.parentIds;
+          expandedKeys = expandedKeys.concat(parentIds.split("/"));
+        });
+        Object.assign(this, {
+          expandedKeys,
         })
       },
-      openSelect() {
-        this.$refs.sysDirectiveModal.show()
+      onDblclick() {
+        const { href } = this.$router.resolve({
+          path: '/blank/note/detail',
+          query: {
+            id: this.selectedKeys[0]
+          }
+        })
+        window.open(href, '_blank')
+      },
+      getData(id,updateOpenKeys,select) {
+        console.log('getData:',id);
+        if(!id){
+          return;
+        }
+        let isExist = false;
+        this.panes.forEach((pane) => {
+          if (pane.id === id) {
+            isExist = true;
+            if(select) {
+              this.selectNote(id);
+            }
+            if(updateOpenKeys){
+              this.saveOpenKey();
+            }
+          }
+        })
+        if (!isExist) {
+          const that = this
+          that.spinning = true;
+          queryNoteById({ 'id': id }).then((res) => {
+            if (res.success) {
+              this.addTab(res.result,updateOpenKeys,select);
+            }
+            that.spinning = false;
+          })
+        }
+      },
+      loadForm(data){
+        this.name = data.name;
+        this.content = data.text;
+        this.activeTabKey = data.id;
+      },
+      handleCopy(){
+        this.copyKey = this.rightClickSelectedKey;
+      },
+      handlePaste(){//粘贴笔记
+        if(this.copyKey){
+          const that = this
+          that.spinning = true;
+          httpAction(this.url.copy, {parentId: this.rightClickSelectedKey,id:this.copyKey }, 'post').then((res) => {
+            if (res.success) {
+              that.spinning = false;
+              this.$message.success('复制成功!')
+              this.loadTree(function (){that.getData(res.result.id,true,true);});
+              this.copyKey = '';
+            }
+          })
+        }
       },
       handleAdd() {
-          if(!this.topId){
-            this.$message.warning('请先选中一个笔记本!')
-            return false
+        if (!this.topId) {
+          this.$message.warning('请先选中一个笔记本!')
+          return false;
+        }
+        let key = this.selectedKeys[0];
+        let newObj = {};
+        newObj["name"] = newObj["title"] = "无标题文档";
+        newObj["text"] = " ";
+        newObj["id"] = newObj["key"] = this.uuid();
+
+        if (!key) {//顶级节点
+          newObj['parentId'] = this.topId;
+          this.noteTree.push(newObj);
+        } else {
+          newObj['parentId'] = key;
+          let parent = this.getTreeNode(this.noteTree,key);
+          if(parent){
+            if(!parent.children){
+              parent.children = [];
+            }
+            parent.isLeaf=false;
+            parent.children.push(newObj);
+            newObj['parentIds'] = parent.model.parentIds+"/"+key;
+          }else {
+            this.noteTree.push(newObj);
           }
-          let key = this.currSelected.key
-          if (!key) {//顶级节点
+        }
+
+        newObj["model"]=Object.assign({}, newObj);
+
+        this.addTab(newObj,true,true);
+        this.$refs.jEditor.setFocus();
+      },
+      getTreeNode(notes,id){
+        let result;
+        for(let key in notes) {
+          let node = notes[key];
+          if (node.key === id) {
+            result = node;
+            break;
+          }else {
+            if(node.children){
+              result = this.getTreeNode(node.children,id);
+              if(result){
+                break;
+              }
+            }
           }
-        this.model = Object.assign({}, {});
-        this.model.name = "无标题文档";
-        this.form.setFieldsValue(pick(this.model, 'name'))
+        }
+        return result;
+      },
+      searchByName(notes,result,name){
+        for(let i in notes) {
+          let node = notes[i];
+          let title = node['title'];
+          if (name && title.indexOf(name)>-1) {
+            result.push(node);
+          }
+          if(node.children){
+              this.searchByName(node.children,result,name);
+          }
+        }
       },
       handleDelete() {
-        deleteByDepartId({ id: this.rightClickSelectedKey }).then((resp) => {
+        deleteNote({ id: this.rightClickSelectedKey }).then((resp) => {
           if (resp.success) {
             this.$message.success('删除成功!')
             this.loadTree()
+            this.remove(this.rightClickSelectedKey);
           } else {
             this.$message.warning('删除失败!')
           }
         })
       },
-      selectDirectiveOk(record) {
-        console.log('选中指令数据', record)
-        this.nodeSettingForm.setFieldsValue({ directiveCode: record.directiveCode })
-        this.currSelected.sysCode = record.sysCode
+      onEdit (targetKey, action) {
+        this[action](targetKey)
       },
-      selectTop(value){
-        this.topId = value;
-        this.loadTree();
+      addTab (data,updateOpenKeys,select) {
+        console.log('addTab');
+        this.addPanes(data);
+
+        if(select){
+          this.selectNote(data.id);
+        }
+
+        if(updateOpenKeys){
+          this.saveOpenKey();
+        }
       },
-      getFlowGraphData(node) {
-        this.graphDatasource.nodes.push({
-          id: node.id,
-          text: node.flowNodeName
-        })
-        if (node.children.length > 0) {
-          for (let a = 0; a < node.children.length; a++) {
-            let temp = node.children[a]
-            this.graphDatasource.edges.push({
-              source: node.id,
-              target: temp.id
-            })
-            this.getFlowGraphData(temp)
+      selectNote(id){//选中某个笔记(数据已加载)
+        if(id){
+          this.selectedKeys[0] = this.activeTabKey = id;
+          let note = this.getPane(id);
+          console.log(note);
+          let expandedKeys = note.parentIds.split("/");
+          expandedKeys.push(id);
+          this.expandedKeys.forEach((key) => {
+            if(key == id){
+              expandedKeys.pop();
+            }
+          })
+          this.expandedKeys = expandedKeys;
+          console.log(this.expandedKeys);
+          this.loadForm(note);
+        }else {
+          this.selectedKeys[0] = this.activeTabKey = '';
+          this.loadForm({name:'',text:''});
+        }
+      },
+      addPanes(data){
+        const panes = [];
+        let contain = false;
+        this.panes.forEach((pane) => {
+          if(pane.id != data.id){
+            panes.push(pane);
+          }else {
+            panes.push(data);
+            contain = true;
+          }
+        });
+        if(!contain){
+          panes.push(data);
+        }
+        console.log(panes);
+        this.panes = panes;
+      },
+      getPane(id){
+        let data = {};
+        this.panes.forEach((pane) => {
+          if(pane.id === id){
+            data = pane;
+          }
+        });
+        return data;
+      },
+      saveOpenKey(){
+        console.log(this.panes);
+        let openKeys = [];
+        this.panes.forEach((pane) => {
+          openKeys.push(pane.id);
+        });
+        httpAction(this.url.saveOpenKey, {id:this.topId,openKeys:openKeys.join(","),selectedKey:this.activeTabKey}, 'post');
+      },
+      remove (targetKey) {//关闭tab
+        console.log('removeTab');
+        const panes = this.panes.filter(pane => pane.id !== targetKey)
+        this.panes = panes;
+
+        if(targetKey === this.activeTabKey ){
+
+          if(this.panes.length>0){
+            this.getData(this.panes[0].id,false,true);
+          }else{
+            console.log('clear');
+            this.loadForm({name:'',text:''});
           }
         }
-      }
-    },
+        this.saveOpenKey();
+      },
+      onChangeTab(activeKey){
+        console.log(activeKey);
+        this.getData(activeKey,true,true);
+      },
+      submitCurrForm() {
+        let that = this;
+        this.form.validateFields((err) => {
+          if (!err) {
+            let node = this.getTreeNode(this.noteTree,this.activeTabKey);
+            console.log(node);
+            let note = node.model;
+            if(!that.name){
+              that.name = note['name'];
+              return;
+            }
+            if (that.topId) {
+              note['text'] = this.$refs.jEditor.getText();
+              note['name'] = node.title = this.name;
+              let url = that.url.add;
+              let method = 'post';
+              if (note['createBy']) {
+                url = that.url.edit;
+                method = 'put';
+              }
+              console.log("开始保存",url,method);
+              httpAction(url, note, method).then((res) => {
+                if (res.success) {
+                  this.$message.success('保存成功!')
+                  this.addPanes(res.result);
+                  node.model = res.result;
+                }
+              })
+            }
+          }
+        })
+      },
+      uuid() {//生成uuid
+        var s = [];
+        var hexDigits = "0123456789abcdef";
+        for (var i = 0; i < 32; i++) {
+          s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+        }
+        s[12] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+        s[16] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+        var uuid = s.join("");
+        return uuid;
+      },
+    }
   }
 </script>
 <style lang="less" scoped>
-/** Button按钮间距 */
-  .ant-btn {
-    margin-left: 3px
-  }
-  .ant-card-body .table-operator{
-    margin-bottom: 18px;
-  }
-  .ant-table-tbody .ant-table-row td{
-    padding-top:15px;
-    padding-bottom:15px;
-  }
-  .anty-row-operator button{margin: 0 5px}
-  .ant-btn-danger{background-color: #ffffff}
 
-  .ant-modal-cust-warp{height: 100%}
-  .ant-modal-cust-warp .ant-modal-body{height:calc(100% - 110px) !important;overflow-y: auto}
-  .ant-modal-cust-warp .ant-modal-content{height:90% !important;overflow-y: hidden}
 </style>

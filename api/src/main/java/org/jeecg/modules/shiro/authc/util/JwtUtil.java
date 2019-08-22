@@ -25,8 +25,8 @@ import org.jeecg.modules.system.util.JeecgDataAutorUtils;
  **/
 public class JwtUtil {
 
-	// 过期时间30分钟
-	public static final long EXPIRE_TIME = 30 * 60 * 1000;
+	// 过期时间300分钟
+	public static final long EXPIRE_TIME = 300 * 60 * 1000;
 
 	/**
 	 * 校验token是否正确

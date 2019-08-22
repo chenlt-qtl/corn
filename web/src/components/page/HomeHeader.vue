@@ -24,7 +24,6 @@
   import UserMenu from '../tools/UserMenu'
 
   import { mixin } from '@/utils/mixin.js'
-  import { topNavScrollToSelectItem } from '@/utils/util'
 
   export default {
     name: 'HomeHeader',
