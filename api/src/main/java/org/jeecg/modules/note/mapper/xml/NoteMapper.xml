@@ -9,7 +9,7 @@
             <if test="parentId != null">
                and n.parent_id = #{parentId,jdbcType=VARCHAR}
             </if>
-		   order by n.create_time DESC
+		   order by n.name
     </select>
 
     <select id="listAllNote" resultType="org.jeecg.modules.note.entity.Note">
@@ -23,6 +23,6 @@
         <if test="text != null">
             <![CDATA[ and (text like CONCAT('%','${text}','%' )  or name like CONCAT('%','${text}','%' ))]]>
         </if>
-        order by n.create_time DESC
+        order by n.name
     </select>
 </mapper>

@@ -12,14 +12,18 @@
               style="width: 300px"
               @change="searchNote"
             />
-            <a-button style="margin-left: 10px" @click="openSearch" type="default">高级查询</a-button>
+            <a-button style="margin-left: 5px" @click="openSearch" type="default">高级查询</a-button>
+            <a-button-group style="margin-left: 5px">
+              <a-button><a-icon type="cloud-download" style="font-size: 18px"/></a-button>
+              <a-button><a-icon type="cloud-upload" style="font-size: 18px"/></a-button>
+            </a-button-group>
           </a-form>
         </a-col>
         <a-col :span="12" style="text-align: right;">
           <a-select :defaultActiveFirstOption="true" style="width: 300px;" placeholder="选择笔记本" @change="changeSelect()" v-model="topId">
             <a-select-option v-for="d in topData" :key="d.id">{{d.name}}</a-select-option>
           </a-select>
-          <a-button @click="addSelect" type="primary" icon="setting">管理笔记本</a-button>
+          <a-button @click="addSelect" type="primary" icon="setting" style="margin-left: 5px">管理笔记本</a-button>
         </a-col>
       </a-row>
     </div>

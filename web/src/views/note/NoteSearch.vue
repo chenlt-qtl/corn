@@ -50,23 +50,17 @@
         <a-card style="height: 220px;overflow: auto">
           <span v-html="content"></span>
         </a-card>
-
-        <note-select-modal ref="noteSelectModel" @ok="modalFormOk"></note-select-modal>
     </a-spin>
   </a-modal>
 </template>
 
 <script>
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import NoteSelectModal from './modules/NoteSelectModal'
   import { httpAction} from '@/api/manage'
   import { queryNoteById} from '@/api/api'
   export default {
     name: "NoteSearch",
     mixins:[JeecgListMixin],
-    components: {
-      NoteSelectModal,
-    },
     data () {
       return {
         content:'',
