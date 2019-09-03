@@ -33,7 +33,15 @@
         <a-card :bordered="false" style="padding: 0px;">
           <!-- 按钮操作区域 -->
           <a-row style="margin-left: 14px">
-            <a-button @click="handleAddButton" type="primary" icon="plus">新文档</a-button>
+            <a-dropdown>
+              <a-menu slot="overlay" @click="handleAddButton">
+                <a-menu-item key="1"><a-icon type="book" />新建分区</a-menu-item>
+                <a-menu-item key="2"><a-icon type="file-add" />新建文档</a-menu-item>
+              </a-menu>
+              <a-button icon="plus">
+                新建 <a-icon type="down" />
+              </a-button>
+            </a-dropdown>
           </a-row>
           <div style="padding-left:16px;height: 100%; margin-top: 5px;overflow:hidden;">
             <!-- 树-->
@@ -357,21 +365,25 @@
         let parentKey = this.rightClickSelectedKey;
         this.handleAdd(parentKey,false);
       },
-      handleAddButton(){
-        let parentKey;
-        let isTop = false;
+      handleAddButton(e){
         if (!this.topId) {
           this.$message.warning('请先选中一个笔记本!')
           return false;
         }
-        let key = this.selectedKeys[0];
-
-        if (!key) {//顶级节点
-          parentKey = this.topId;
+        let isTop = false;
+        let parentKey;
+        if(e.key == 1){//增加分区
           isTop = true;
-        } else {
+          parentKey = this.topId;
+        }else{
+          let key = this.selectedKeys[0];
+          if (!key) {//顶级节点
+            this.$message.warning('请选择分区!')
+            return;
+          }
           parentKey = key;
         }
+
         this.handleAdd(parentKey,isTop);
       },
       handleAdd(parentKey,isTop) {
@@ -383,9 +395,14 @@
 
         if (isTop) {//顶级节点
           this.noteTree.push(newObj);
+          newObj["name"] = newObj["title"] = "新分区";
         } else {
           let parent = this.getTreeNode(this.noteTree,parentKey);
           if(parent){
+            if(parent.model.parentIds.split("/").length>=7){
+              this.$message.warning('笔记本目录最多只能6层!');
+              return;
+            }
             if(!parent.children){
               parent.children = [];
             }
