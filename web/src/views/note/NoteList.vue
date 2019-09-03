@@ -239,6 +239,9 @@
       },
       changeSelect(selectKey){
         this.loadTree();
+        this.loadOpenKey(selectKey)
+      },
+      loadOpenKey(selectKey){
         this.panes = [];
         this.selectedKeys[0] = '';
         httpAction(this.url.getOpenKey+"?id="+this.topId, {}, 'get').then((res) => {
@@ -433,6 +436,7 @@
           if (resp.success) {
             this.$message.success('删除成功!')
             this.loadTree()
+            this.loadOpenKey(this.selectedKeys[0]);
             this.remove(this.rightClickSelectedKey);
           } else {
             this.$message.warning('删除失败!')
@@ -526,6 +530,9 @@
         this.form.validateFields((err) => {
           if (!err) {
             let node = this.getTreeNode(this.noteTree,this.activeTabKey);
+            if(!node){
+              return;
+            }
             let note = node.model;
             if(!that.name){
               that.name = note['name'];

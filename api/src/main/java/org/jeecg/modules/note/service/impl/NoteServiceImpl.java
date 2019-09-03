@@ -40,13 +40,13 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Override
     public List<Note> searchNote(String createBy,String parentId, String text) {
-        return noteMapper.listAllNote(createBy,parentId,text);
+        return noteMapper.listAllChildren(createBy,parentId,text);
     }
 
     @Override
     public List<NoteTreeModel> queryTreeList(String createBy,String parentId) {
         String rootId = parentId;
-        List<Note> list = noteMapper.listAllNote(createBy,parentId,null);
+        List<Note> list = noteMapper.listAllChildren(createBy,parentId,null);
         List<NoteTreeModel> treeList = new ArrayList<>();
         for(Note note:list){
             NoteTreeModel model = new NoteTreeModel(note);
@@ -64,7 +64,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         Date now = new Date();
         NoteDelete delete;
 
-        List<Note> list = noteMapper.listAllNote(userName,id,null);//子笔记和自己
+        List<Note> list = noteMapper.listAllChildren(userName,id,null);//子笔记
+        list.add(getById(id));//自己
         for(Note child:list){
             deleteIds.add(child.getId());
             delete = new NoteDelete(child);
