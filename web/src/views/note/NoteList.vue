@@ -33,7 +33,7 @@
         <a-card :bordered="false" style="padding: 0px;">
           <!-- 按钮操作区域 -->
           <a-row style="margin-left: 14px">
-            <a-button @click="handleAdd" type="primary" icon="plus">新文档</a-button>
+            <a-button @click="handleAddButton" type="primary" icon="plus">新文档</a-button>
           </a-row>
           <div style="padding-left:16px;height: 100%; margin-top: 5px;overflow:hidden;">
             <!-- 树-->
@@ -57,6 +57,7 @@
                   <!--新增右键点击事件,和增加添加和删除功能-->
                   <a-menu slot="overlay" style="padding: 10px 20px;">
                     <a-menu-item @click="handlePaste" key="3" v-if="this.copyKey"><a-icon type="file" />粘贴</a-menu-item>
+                    <a-menu-item @click="handleAddByParent" key="4"><a-icon type="plus" />新文档</a-menu-item>
                     <a-menu-item @click="handleCopy" key="1"><a-icon type="copy" />复制</a-menu-item>
                     <a-menu-item @click="handleDelete" key="2"><a-icon type="minus" />删除</a-menu-item>
                   </a-menu>
@@ -241,7 +242,6 @@
         this.panes = [];
         this.selectedKeys[0] = '';
         httpAction(this.url.getOpenKey+"?id="+this.topId, {}, 'get').then((res) => {
-          console.log('openKeys',res.result);
           if (res.success) {
             let noteOpenKeys = res.result;
             let openKeys = noteOpenKeys.openKeys;
@@ -269,7 +269,6 @@
                 let temp = res.result[i]
                 that.noteTree.push(temp)
               }
-              console.log('noteTree',that.noteTree);
               if(!that.selectedKeys[0]){
                 this.loadForm({name:'',text:''});
               }
@@ -303,7 +302,6 @@
         window.open(href, '_blank')
       },
       getData(id,updateOpenKeys,select) {
-        console.log('getData:',id);
         if(!id){
           return;
         }
@@ -352,37 +350,51 @@
           })
         }
       },
-      handleAdd() {
+      handleAddByParent(){
+        let parentKey = this.rightClickSelectedKey;
+        this.handleAdd(parentKey,false);
+      },
+      handleAddButton(){
+        let parentKey;
+        let isTop = false;
         if (!this.topId) {
           this.$message.warning('请先选中一个笔记本!')
           return false;
         }
         let key = this.selectedKeys[0];
+
+        if (!key) {//顶级节点
+          parentKey = this.topId;
+          isTop = true;
+        } else {
+          parentKey = key;
+        }
+        this.handleAdd(parentKey,isTop);
+      },
+      handleAdd(parentKey,isTop) {
         let newObj = {};
         newObj["name"] = newObj["title"] = "无标题文档";
         newObj["text"] = " ";
         newObj["id"] = newObj["key"] = this.uuid();
+        newObj['parentId'] = parentKey;
 
-        if (!key) {//顶级节点
-          newObj['parentId'] = this.topId;
+        if (isTop) {//顶级节点
           this.noteTree.push(newObj);
         } else {
-          newObj['parentId'] = key;
-          let parent = this.getTreeNode(this.noteTree,key);
+          let parent = this.getTreeNode(this.noteTree,parentKey);
           if(parent){
             if(!parent.children){
               parent.children = [];
             }
             parent.isLeaf=false;
             parent.children.push(newObj);
-            newObj['parentIds'] = parent.model.parentIds+"/"+key;
+            newObj['parentIds'] = parent.model.parentIds+"/"+parentKey;
           }else {
             this.noteTree.push(newObj);
           }
         }
 
         newObj["model"]=Object.assign({}, newObj);
-
         this.addTab(newObj,true,true);
         this.$refs.jEditor.setFocus();
       },
@@ -431,13 +443,10 @@
         this[action](targetKey)
       },
       addTab (data,updateOpenKeys,select) {
-        console.log('addTab');
         this.addPanes(data);
-
         if(select){
           this.selectNote(data.id);
         }
-
         if(updateOpenKeys){
           this.saveOpenKey();
         }
@@ -446,8 +455,10 @@
         if(id){
           this.selectedKeys[0] = this.activeTabKey = id;
           let note = this.getPane(id);
-          console.log(note);
-          let expandedKeys = note.parentIds.split("/");
+          let expandedKeys = [];
+          if(note.parentIds){
+            expandedKeys = note.parentIds.split("/");
+          }
           expandedKeys.push(id);
           this.expandedKeys.forEach((key) => {
             if(key == id){
@@ -455,7 +466,6 @@
             }
           })
           this.expandedKeys = expandedKeys;
-          console.log(this.expandedKeys);
           this.loadForm(note);
         }else {
           this.selectedKeys[0] = this.activeTabKey = '';
@@ -476,7 +486,6 @@
         if(!contain){
           panes.push(data);
         }
-        console.log(panes);
         this.panes = panes;
       },
       getPane(id){
@@ -489,7 +498,6 @@
         return data;
       },
       saveOpenKey(){
-        console.log(this.panes);
         let openKeys = [];
         this.panes.forEach((pane) => {
           openKeys.push(pane.id);
@@ -497,7 +505,6 @@
         httpAction(this.url.saveOpenKey, {id:this.topId,openKeys:openKeys.join(","),selectedKey:this.activeTabKey}, 'post');
       },
       remove (targetKey) {//关闭tab
-        console.log('removeTab');
         const panes = this.panes.filter(pane => pane.id !== targetKey)
         this.panes = panes;
 
@@ -506,14 +513,12 @@
           if(this.panes.length>0){
             this.getData(this.panes[0].id,false,true);
           }else{
-            console.log('clear');
             this.loadForm({name:'',text:''});
           }
         }
         this.saveOpenKey();
       },
       onChangeTab(activeKey){
-        console.log(activeKey);
         this.getData(activeKey,true,true);
       },
       submitCurrForm() {
@@ -521,7 +526,6 @@
         this.form.validateFields((err) => {
           if (!err) {
             let node = this.getTreeNode(this.noteTree,this.activeTabKey);
-            console.log(node);
             let note = node.model;
             if(!that.name){
               that.name = note['name'];

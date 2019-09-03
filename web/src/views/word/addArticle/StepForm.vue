@@ -51,6 +51,8 @@
         // form
         form: null,
         visible: false,
+        confirmLoading: false,
+        title:'',
       }
     },
     methods: {
