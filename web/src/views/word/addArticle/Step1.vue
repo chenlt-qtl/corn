@@ -6,14 +6,14 @@
         :labelCol="{span: 2}"
         :wrapperCol="{span: 22}"
       >
-        <a-input v-model="title"/>
+        <a-input v-model="name1"/>
       </a-form-item>
       <a-form-item
         label="内容"
         :labelCol="{span: 2}"
         :wrapperCol="{span: 22}"
       >
-        <a-textarea v-model="content" placeholder="输入内容，单词之间用空格或标点符号隔开" :autosize="{ minRows: 5, maxRows: 10 }" />
+        <a-textarea v-model="content1" placeholder="输入内容，单词之间用空格或标点符号隔开" :autosize="{ minRows: 5, maxRows: 10 }" />
       </a-form-item>
       <a-form-item :wrapperCol="{span: 24, offset: 11}">
         <a-button type="primary" @click="nextStep">下一步</a-button>
@@ -25,33 +25,47 @@
 <script>
   export default {
     name: "Step1",
+    props: {
+      name: {
+        type: String
+      },
+      content: {
+        type: String
+      },
+    },
+    created(){
+      this.name1 = this.name;
+      this.content1 = this.content;
+    },
     data () {
       return {
-        title:"",
-        content:"",
-        words:[],
+        name1:"",
+        content1:"",
       }
     },
     methods: {
       nextStep () {
+        let key = 1;
+        let sentences = [];
         let patt4=new RegExp("[a-zA-Z]+");
         if(this.content){
           this.content.split(/[.;?!\r]+/).forEach((sentence)=>{
             if(!sentence){
               return;
             }
-            let sentences = [];
+            let words = [];
             sentence.split(" ").forEach((word)=>{
               if(patt4.test(word)) {
-                sentences.push({text:word,type:1});
+                words.push({wordName:word,type:1,key:key});
+                key ++;
               }else {
-                sentences.push({text:word,type:0});
+                words.push({wordName:word,type:0});
               }
             });
-            this.words.push(sentences);
+            sentences.push({content:sentence,words:words});
           });
         }
-        this.$emit('nextStep',this.words);
+        this.$emit('nextStep',{name:this.name1,content:this.content1,sentences:sentences});
       }
     }
   }

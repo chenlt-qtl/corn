@@ -1,6 +1,5 @@
 <template>
   <a-modal
-    :title="title"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -25,8 +24,8 @@
         </a-step>
       </a-steps>
       <div class="content">
-        <step1 v-if="currentTab === 0" @nextStep="nextStep"/>
-        <step2 v-if="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep"/>
+        <step1 v-if="currentTab === 0" :name="name" :content="content" @nextStep="nextStep"/>
+        <step2 v-if="currentTab === 1" :name="name" :sentences="sentences" @nextStep="nextStep" @prevStep="prevStep"/>
         <step3 v-if="currentTab === 2" @prevStep="prevStep" @finish="finish"/>
       </div>
     </a-card>
@@ -48,19 +47,26 @@
     data () {
       return {
         currentTab: 0,
-        // form
         form: null,
         visible: false,
         confirmLoading: false,
-        title:'',
+        name:'',
+        sentences:[],
+        content:"",
       }
     },
     methods: {
 
       // handler
-      nextStep () {
-        if (this.currentTab < 2) {
-          this.currentTab += 1
+      nextStep (data) {
+        console.log(data);
+        if (this.currentTab == 0) {
+          this.currentTab = 1;
+          this.sentences = data.sentences;
+          this.name = data.name;
+          this.content = data.content;
+        }else if(this.currentTab == 1){
+          this.currentTab = 2;
         }
       },
       prevStep () {
