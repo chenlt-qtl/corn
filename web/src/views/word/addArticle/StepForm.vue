@@ -11,66 +11,174 @@
         Close
       </a-button>
     </template>
-    <a-card :bordered="false">
-      <a-steps class="steps" :current="currentTab">
-        <a-step title="输入内容">
-          <a-icon type="form" slot="icon"/>
-        </a-step>
-        <a-step title="选择生词">
-          <a-icon type="scissor" slot="icon"/>
-        </a-step>
-        <a-step title="完成">
-          <a-icon type="check-circle" slot="icon"/>
-        </a-step>
-      </a-steps>
-      <div class="content">
-        <step1 v-if="currentTab === 0" :name="name" :content="content" @nextStep="nextStep"/>
-        <step2 v-if="currentTab === 1" :name="name" :sentences="sentences" @nextStep="nextStep" @prevStep="prevStep"/>
-        <step3 v-if="currentTab === 2" @prevStep="prevStep" @finish="finish"/>
-      </div>
-    </a-card>
+    <a-spin :spinning="spinning">
+      <a-card :bordered="false">
+        <a-steps class="steps" :current="currentTab">
+          <a-step title="输入内容">
+            <a-icon type="form" slot="icon"/>
+          </a-step>
+          <a-step title="选择生词">
+            <a-icon type="scissor" slot="icon"/>
+          </a-step>
+          <a-step title="完成">
+            <a-icon type="check-circle" slot="icon"/>
+          </a-step>
+        </a-steps>
+        <div class="content">
+          <div v-if="currentTab === 0">
+            <a-form
+              style="max-width: 700px; margin: 40px auto 0;"
+              :form="form">
+              <a-form-item
+                label="标题"
+                :labelCol="{span: 2}"
+                :wrapperCol="{span: 22}"
+              >
+                <a-input
+                  placeholder="请输入标题"
+                  v-decorator="[
+                    'name',
+                    {initialValue:this.formValue.name,rules: [{ required: true, message: '标题不能为空!' }]}
+                  ]"
+                />
+              </a-form-item>
+              <a-form-item
+                label="内容"
+                :labelCol="{span: 2}"
+                :wrapperCol="{span: 22}"
+              >
+                <a-textarea
+                  placeholder="输入内容，单词之间用空格或标点符号隔开"
+                  :autosize="{ minRows: 5, maxRows: 10 }"
+                  v-decorator="[
+                    'content',
+                    {initialValue:this.formValue.content,rules: [{ required: true, message: '内容不能为空!' }]}
+                  ]"
+                />
+              </a-form-item>
+              <a-form-item :wrapperCol="{span: 24, offset: 11}">
+                <a-button type="primary" @click="handlerArticle">下一步</a-button>
+              </a-form-item>
+            </a-form>
+          </div>
+
+          <div v-if="currentTab === 1">
+
+            <div class="words_div">
+            <span v-for="sentence in sentences" :key="sentence.key">
+                <span :class="{'word_select':word.selected}" class="word_span" :key="word.key" v-for="word in sentence.words" @click="selectWord(word.key)">
+                  {{word.wordName}}
+                </span>
+            </span>
+            </div>
+            <a-button :loading="loading" type="primary" @click="saveArticle">提交</a-button>
+            <a-button style="margin-left: 8px" @click="prevStep">上一步</a-button>
+          </div>
+
+          <step3 v-if="currentTab === 2" :value="formValue"  @prevStep="prevStep" @finish="finish"/>
+        </div>
+      </a-card>
+    </a-spin>
   </a-modal>
 </template>
 
 <script>
-  import Step1 from './Step1'
-  import Step2 from './Step2'
   import Step3 from './Step3'
+  import { httpAction} from '@/api/manage'
+
 
   export default {
     name: "StepForm",
     components: {
-      Step1,
-      Step2,
       Step3
     },
     data () {
       return {
+        loading: false,
         currentTab: 0,
-        form: null,
+        form: this.$form.createForm(this),
+        formValue:{
+          name:"",
+          content:"",
+        },
         visible: false,
         confirmLoading: false,
-        name:'',
+        spinning:false,
         sentences:[],
-        content:"",
+        url:{
+          save:"/word/sentence/save",
+        },
       }
     },
     methods: {
 
       // handler
-      nextStep (data) {
-        console.log(data);
-        if (this.currentTab == 0) {
-          this.currentTab = 1;
-          this.sentences = data.sentences;
-          this.name = data.name;
-          this.content = data.content;
-        }else if(this.currentTab == 1){
-          this.currentTab = 2;
+      handlerArticle () {
+        this.form.validateFields((err,values) => {
+          if (!err) {
+            this.formValue = values;
+            let key = 1;
+            let sentences = [];
+            let patt4=new RegExp("[a-zA-Z]+");
+            if(this.formValue.content){
+              this.formValue.content.split(/[.;?!\r]+/).forEach((sentence)=>{
+                if(!sentence){
+                  return;
+                }
+                let words = [];
+                sentence.split(" ").forEach((word)=>{
+                  if(patt4.test(word)) {
+                    words.push({wordName:word,type:1,key:key});
+                  }else {
+                    words.push({wordName:word,type:0,key:key});
+                  }
+                  key ++;
+                });
+                sentences.push({key:key,content:sentence,words:words});
+                key++;
+              });
+            }
+            this.sentences = sentences;
+            this.currentTab = 1;
+          }
+        });
+      },
+      saveArticle(){
+        let that = this;
+        that.spinning = true;
+        httpAction(this.url.save, {title:this.formValue.name,sentences:this.sentences}, 'post').then((res) => {
+          if (res.success) {
+            that.spinning = false;
+            this.currentTab = 2;
+          }else {
+            console.log(res);
+            this.$message.warning('保存失败')
+          }
+          that.spinning = false;
+        })
+      },
+      selectWord(key){
+        let found = false;
+        let sentences = [];
+        for(let sentence of this.sentences){
+          sentences.push(sentence);
+          if(found){
+            continue;
+          }
+          for(let word of sentence.words){
+            if(word.key == key){
+              word.selected = !word.selected;
+              found = true;
+              break;
+            }
+          }
         }
+        this.sentences = sentences;
       },
       prevStep () {
-        if (this.currentTab > 0) {
+        if (this.currentTab == 1){
+          this.currentTab = 0;
+        }else if (this.currentTab > 0) {
           this.currentTab -= 1
         }
       },
@@ -78,6 +186,8 @@
         this.currentTab = 0
       },
       show(){
+        this.currentTab = 0;
+        this.formValue = {};
         this.visible = true;
       },
       close () {
@@ -91,5 +201,25 @@
   .steps {
     max-width: 750px;
     margin: 16px auto;
+  }
+
+  .words_div{
+    margin: 30px 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .word_span{
+    display: inline-block;
+    margin: 1px;
+    padding: 0 2px 2px 2px;
+    cursor: pointer;
+    border:2px solid #fff;
+  }
+
+  .word_select {
+    background-color: #E1F0FD;
+    border-radius: 6px;
+    border:2px solid #1890FF;
   }
 </style>
