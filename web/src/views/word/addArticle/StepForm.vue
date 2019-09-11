@@ -31,8 +31,7 @@
               :form="form">
               <a-form-item
                 label="标题"
-                :labelCol="{span: 2}"
-                :wrapperCol="{span: 22}"
+                v-bind="formItemLayout"
               >
                 <a-input
                   placeholder="请输入标题"
@@ -42,10 +41,29 @@
                   ]"
                 />
               </a-form-item>
+
+              <a-form-item
+                label="MP3"
+                v-bind="formItemLayout">
+                <a-upload
+                  listType="text"
+                  :action="url.upload"
+                  :headers="headers"
+                  :beforeUpload="beforeUpload"
+                  :multiple="false"
+                  @change="handleChange"
+                >
+                  <div v-if="showUpBtn">
+                    <a-button>
+                      <a-icon type="upload" /> Click to Upload
+                    </a-button>
+                  </div>
+                </a-upload>
+              </a-form-item>
+
               <a-form-item
                 label="内容"
-                :labelCol="{span: 2}"
-                :wrapperCol="{span: 22}"
+                v-bind="formItemLayout"
               >
                 <a-textarea
                   placeholder="输入内容，单词之间用空格或标点符号隔开"
@@ -85,6 +103,8 @@
 <script>
   import Step3 from './Step3'
   import { httpAction} from '@/api/manage'
+  import Vue from 'vue'
+  import { ACCESS_TOKEN } from "@/store/mutation-types"
 
 
   export default {
@@ -107,11 +127,53 @@
         sentences:[],
         url:{
           save:"/word/sentence/save",
+          upload:window._CONFIG['domianURL']+"/sys/common/upload",
         },
+        formItemLayout: {
+          labelCol: { span: 2 },
+          wrapperCol: { span: 22 },
+        },
+        headers:{},
+        showUpBtn:true,
+        mp3:"",
       }
     },
+    created(){
+      const token = Vue.ls.get(ACCESS_TOKEN);
+      this.headers = {"X-Access-Token":token}
+    },
     methods: {
-
+      handleChange (info) {
+        if (info.file.status === 'uploading') {
+          this.spinning = true
+          return
+        }else if (info.file.status === 'done') {
+          this.spinning = false;
+          this.showUpBtn = false;
+          this.mp3 = info.file.response.message;
+        }else if(info.file.status === 'removed'){
+          this.showUpBtn = true;
+          this.mp3 = "";
+        }
+      },
+      beforeUpload (file) {
+        var fileType = file.type;
+        if(fileType.indexOf('mp3')<0){
+          this.$message.warning('请上传Mp3');
+          return false;
+        }
+        const isLt2M = file.size / 1024 / 1024 < 100
+        if (!isLt2M) {
+          this.$message.error('文件大小不能超过 100MB!')
+          return false;
+        }
+      },
+      normFile  (e) {
+        if (Array.isArray(e)) {
+          return e;
+        }
+        return e && e.fileList;
+      },
       // handler
       handlerArticle () {
         this.form.validateFields((err,values) => {
@@ -146,7 +208,7 @@
       saveArticle(){
         let that = this;
         that.spinning = true;
-        httpAction(this.url.save, {title:this.formValue.name,sentences:this.sentences}, 'post').then((res) => {
+        httpAction(this.url.save, {title:this.formValue.name,mp3:this.mp3,sentences:this.sentences}, 'post').then((res) => {
           if (res.success) {
             that.spinning = false;
             this.currentTab = 2;
@@ -189,6 +251,7 @@
         this.currentTab = 0;
         this.formValue = {};
         this.visible = true;
+        this.showUpBtn = true;
       },
       close () {
         this.visible = false;

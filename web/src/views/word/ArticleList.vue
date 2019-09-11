@@ -17,6 +17,9 @@
       </a-row>
     </a-card>
 
+    <audio autoplay="autoplay" id="audioPlayer" preload="auto">
+      你的浏览器不支持audio标签
+    </audio>
     <a-card
       style="margin-top: 24px"
       :bordered="false"
@@ -28,38 +31,53 @@
           <a-radio-button>进行中</a-radio-button>
           <a-radio-button>已完成</a-radio-button>
         </a-radio-group>
-        <a-input-search style="margin-left: 16px; width: 272px;" />
+        <a-input-search :valud="title" style="margin-left: 16px; width: 272px;" />
       </div>
 
       <div class="operate">
         <a-button type="dashed" style="width: 100%" icon="plus" @click="handleAdd">添加</a-button>
       </div>
 
-      <a-list size="large" :pagination="{showSizeChanger: true, showQuickJumper: true, pageSize: 5, total: 50}">
-        <a-list-item :key="index" v-for="(item, index) in data">
-          <a-list-item-meta :description="item.description">
-            <a slot="title">{{ item.title }}</a>
-          </a-list-item-meta>
-          <div slot="actions">
-            <a-icon type="eye" style="color:#008000"/>
-          </div>
-          <div slot="actions">
-            <a-icon type="star" style="color:#FE9325" :theme="item.heart"/>
-          </div>
-          <div slot="actions">
-            <a-icon type="delete" style="color:#E35151"/>
-          </div>
-          <div class="list-content">
-            <div class="list-content-item">
-              <span>添加时间</span>
-              <p>{{ item.startAt }}</p>
+      <a-spin :spinning="spinning">
+        <a-list size="large" :pagination="{showSizeChanger: true, showQuickJumper: true, pageSize: 5, total: 50}">
+          <a-list-item :key="index" v-for="(item, index) in data">
+            <a-list-item-meta :description="item.description">
+              <a slot="title">{{ item.title }}</a>
+            </a-list-item-meta>
+            <div v-if="item.mp3 != null ">
+              <div v-if="isPlay && item.id == nowPlayId " slot="actions">
+                  <a-radio-group v-model="multiple" style="margin-right: 15px;" @change="changeMultiple">
+                    <a-radio-button value=0.5>0.5</a-radio-button>
+                    <a-radio-button value=0.75>0.75</a-radio-button>
+                    <a-radio-button value=1>1.0</a-radio-button>
+                    <a-radio-button value=1.5>1.5</a-radio-button>
+                  </a-radio-group>
+                  <a-icon type="pause-circle" style="color:#008000" @click="pauseAudio"/>
+              </div>
+              <div v-if="!isPlay || item.id != nowPlayId " slot="actions">
+                <a-icon type="play-circle" style="color:#008000" @click="playAudio(item.id,item.mp3)"/>
+              </div>
             </div>
-            <div class="list-content-item">
-              <a-progress :percent="item.progress.value" :status="!item.progress.status ? null : item.progress.status" style="width: 180px" />
+            <div slot="actions">
+              <a-icon type="eye" style="color:#008000"/>
             </div>
-          </div>
-        </a-list-item>
-      </a-list>
+            <div slot="actions">
+              <a-icon type="star" style="color:#FE9325" :theme="item.heart"/>
+            </div>
+            <div slot="actions">
+              <a-icon type="delete" style="color:#E35151"/>
+            </div>
+            <div class="list-content">
+              <div class="list-content-item">
+                <span>添加时间</span>
+                <p>{{ item.createTime }}</p>
+              </div>
+              <div class="list-content-item">
+              </div>
+            </div>
+          </a-list-item>
+        </a-list>
+      </a-spin>
 
       <!-- 表单区域 -->
       <step-form ref="stepForm" @ok="reload"></step-form>
@@ -70,60 +88,7 @@
 <script>
   import HeadInfo from '@/components/tools/HeadInfo'
   import StepForm from './addArticle/StepForm'
-
-  const data = []
-  data.push({
-    title: 'Alipay',
-    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-    description: '那是一种内在的东西， 他们到达不了，也无法触及的',
-    owner: '付晓晓',
-    startAt: '2018-07-26 22:44',
-    heart:'filled',
-    progress: {
-      value: 90
-    }
-  })
-  data.push({
-    title: 'Angular',
-    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png',
-    description: '希望是一个好东西，也许是最好的，好东西是不会消亡的',
-    owner: '曲丽丽',
-    startAt: '2018-07-26 22:44',
-    progress: {
-      value: 54
-    }
-  })
-  data.push({
-    title: 'Ant Design',
-    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/dURIMkkrRFpPgTuzkwnB.png',
-    description: '生命就像一盒巧克力，结果往往出人意料',
-    owner: '林东东',
-    startAt: '2018-07-26 22:44',
-    progress: {
-      value: 66
-    }
-  })
-  data.push({
-    title: 'Ant Design Pro',
-    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png',
-    description: '城镇中有那么多的酒馆，她却偏偏走进了我的酒馆',
-    owner: '周星星',
-    startAt: '2018-07-26 22:44',
-    progress: {
-      value: 30
-    }
-  })
-  data.push({
-    title: 'Bootstrap',
-    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/siCrBXXhmvTQGWPNLBow.png',
-    description: '那时候我只会想自己想要什么，从不想自己拥有什么',
-    owner: '吴加好',
-    startAt: '2018-07-26 22:44',
-    progress: {
-      status: 'exception',
-      value: 100
-    }
-  })
+  import { httpAction} from '@/api/manage'
 
   export default {
     name: "StandardList",
@@ -133,10 +98,55 @@
     },
     data () {
       return {
-        data
+        data:[],
+        spinning:true,
+        title:"",
+        audioTime:0,//音频进度百分比
+        audioCurrentTime:'00:00',//音频当前播放时间
+        audioAllTime:'00:00',//音频总播放时间
+        audioAllDuration:0,//音频总播放秒数
+        isPlay:false,//是否正在播放
+        nowPlayId:'',
+        multipleArray:[0.5,0.75,1,1.5],
+        multiple:"1",
+        url: {
+          list: "word/article/list",
+          mp3: window._CONFIG['domianURL']+"/resource/",
+        }
       }
     },
+    created() {//初始数据加载
+      httpAction(this.url.list+"?title="+this.title, {}, 'get').then((res) => {
+        if (res.success) {
+          let data = [];
+          res.result.records.forEach((article)=>{
+            data.push(article);
+          });
+          this.data = data;
+        }
+        this.spinning = false;
+      })
+    },
     methods: {
+      //播放
+      playAudio(id,mp3){
+        console.log(mp3);
+        let audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.src = this.url.mp3+mp3;
+        audioPlayer.play();
+        this.nowPlayId = id;
+        this.isPlay=true;
+      },
+      //暂停
+      pauseAudio(){
+        document.getElementById('audioPlayer').pause();
+        this.isPlay=false;
+      },
+      //设置倍速播放
+      changeMultiple(){
+        let audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.playbackRate = this.multiple;
+      },
       reload() {
 
       },

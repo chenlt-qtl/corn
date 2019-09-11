@@ -11,7 +11,7 @@ public class ArticalVo extends Article{
     private List<SentenceVo> sentences;
     public Article getArticle(){
         Article article = new Article();
-        article.setTitle(this.getTitle());
+        BeanUtils.copyProperties(this,article);
         return article;
     }
 }
