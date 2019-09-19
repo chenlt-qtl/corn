@@ -157,8 +157,7 @@
         }
       },
       beforeUpload (file) {
-        var fileType = file.type;
-        if(fileType.indexOf('mp3')<0){
+        if(file.name.indexOf('mp3')<0){
           this.$message.warning('请上传Mp3');
           return false;
         }

@@ -86,6 +86,7 @@
               @change="onChangeTab"
             >
               <a-tab-pane v-for="pane in panes" :tab="pane.name" :key="pane.id" :closable="pane.closable"></a-tab-pane>
+              <a-icon type="close-circle" slot="tabBarExtraContent" style="cursor: pointer" @click="closeAll" title="关闭所有"/>
             </a-tabs>
             <a-form>
               <a-form-item>
@@ -219,8 +220,12 @@
           this.dropTrigger = ''
         }
       },
-
-
+      //关闭所有tab
+      closeAll() {
+        this.panes = [];
+        this.selectNote();
+        this.saveOpenKey();
+      },
       onTreeClick(key){
         this.getData(key[0],true,true);
       },
@@ -240,6 +245,7 @@
             if (res.result.length > 0) {
               that.topId = res.result[0].id;
               that.loadTree();
+              that.loadOpenKey();
             }
             this.loading = false
           }

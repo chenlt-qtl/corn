@@ -130,7 +130,6 @@
     methods: {
       //播放
       playAudio(id,mp3){
-        console.log(mp3);
         let audioPlayer = document.getElementById('audioPlayer');
         audioPlayer.src = this.url.mp3+mp3;
         audioPlayer.play();
