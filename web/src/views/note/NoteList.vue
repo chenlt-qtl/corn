@@ -98,7 +98,7 @@
               </a-form-item>
               <a-form-item>
                 <div style="margin-top: 5px;">
-                  <j-editor ref="jEditor" :value="content" @blur="submitCurrForm"></j-editor>
+                  <j-editor ref="jEditor" :value="content" @blur="submitCurrForm" :max_height="max_height"></j-editor>
                 </div>
               </a-form-item>
             </a-form>
@@ -153,6 +153,7 @@
         dropTrigger: '',
         expandedKeys:[],//打开的树节点
         visible: false,
+        max_height: 600,
         url: {
           list: "/note/list",
           exportXlsUrl: "/note/exportXls",
@@ -169,6 +170,7 @@
   },
     created() {//初始数据加载
       this.loadTop();
+      this.max_height = Number(`${document.documentElement.clientHeight}`)-72;
     },
     methods: {
       openNote(note){
@@ -346,6 +348,7 @@
         }
       },
       loadForm(data){
+        this.$refs.jEditor.clear();
         this.name = data.name;
         this.content = data.text;
         this.activeTabKey = data.id;
