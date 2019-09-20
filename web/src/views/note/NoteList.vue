@@ -75,7 +75,7 @@
           </div>
         </a-card>
       </a-col>
-      <a-col :md="18" :sm="24">
+      <a-col :md="16" :sm="24">
         <a-spin :spinning="spinning">
           <a-card :bordered="false">
             <a-tabs
@@ -105,6 +105,9 @@
           </a-card>
         </a-spin>
       </a-col>
+      <a-col :md="2" :sm="24">
+        <select-tab></select-tab>
+      </a-col>
     </a-row>
 
     <!-- 表单区域 -->
@@ -116,6 +119,7 @@
 
 <script>
   import NoteModal from './modules/NoteModal'
+  import SelectTab from './components/SelectTab'
   import NoteSelectList from './NoteSelectList'
   import NoteSearch from './NoteSearch'
   import { deleteNote, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
@@ -129,6 +133,7 @@
       NoteModal,
       NoteSelectList,
       NoteSearch,
+      SelectTab,
       VNodes: {
         functional: true,
         render: (h, ctx) => ctx.props.vnodes
@@ -348,7 +353,9 @@
         }
       },
       loadForm(data){
-        this.$refs.jEditor.clear();
+        if(!data.text) {
+          this.$refs.jEditor.clear();
+        }
         this.name = data.name;
         this.content = data.text;
         this.activeTabKey = data.id;
@@ -480,6 +487,7 @@
         if(updateOpenKeys){
           this.saveOpenKey();
         }
+        this.loadForm(data);
       },
       selectNote(id){//选中某个笔记(数据已加载)
         if(id){
