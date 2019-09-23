@@ -1,33 +1,63 @@
-<template functional>
+<template>
   <div class="tab-content">
-    <a-tabs defaultActiveKey="1" tabPosition="left" style="height: 100%">
-      <a-tab-pane tab="Tab 1" key="1"></a-tab-pane>
-      <a-tab-pane tab="Tab 2" key="2"></a-tab-pane>
-      <a-tab-pane tab="Tab 3" key="3"></a-tab-pane>
-      <a-tab-pane tab="Tab 4" key="4"></a-tab-pane>
-      <a-tab-pane tab="Tab 5" key="5"></a-tab-pane>
-      <a-tab-pane tab="Tab 6" key="6"></a-tab-pane>
-      <a-tab-pane tab="Tab 7" key="7"></a-tab-pane>
-      <a-tab-pane tab="Tab 8" key="8"></a-tab-pane>
-      <a-tab-pane tab="Tab 9" key="9"></a-tab-pane>
-      <a-tab-pane tab="Tab 10" key="10"></a-tab-pane>
-      <a-tab-pane tab="Tab 11" key="11"></a-tab-pane>
-    </a-tabs>
+    <a-spin :spinning="spinning">
+      <a-tabs defaultActiveKey="1" tabPosition="left" style="height: 100%" @change="changeTop">
+        <template v-for="(data) in topData">
+          <a-tab-pane :tab="data.name" :key=data.id ></a-tab-pane>
+        </template>
+      </a-tabs>
+    </a-spin>
   </div>
 </template>
-<script>
-  export default {
-    name: "SelectTab",
 
-  };
+<script>
+  import { queryNote,} from '@/api/api'
+
+
+  export default {
+    name:'SelectTab',
+    data() {
+      return {
+        spinning: false,
+        topData:[],
+      }
+    },
+    created() {
+      this.loadData();
+    },
+    methods:{
+      loadData(){
+        this.spinning = true
+        const that = this;
+        queryNote({ "parentId": 0 }).then((res) => {
+          if (res.success) {
+            that.topData = [];
+            for (let i = 0; i < res.result.length; i++) {
+              let temp = res.result[i]
+              that.topData.push(temp)
+            }
+            this.spinning = false
+            if(that.topData.length>0){
+              this.$emit('changeTop', that.topData[0].id);
+            }
+          }
+        })
+      },
+      changeTop(e){
+        this.$emit('changeTop', e)
+      }
+    }
+  }
+
 </script>
 
 <style>
   .ant-tabs .ant-tabs-left-bar .ant-tabs-tab{
     background-color: #fff;
     color: #595959;
-    padding: 10px 24px;
+    padding: 10px 10px;
     margin: 0;
+    text-align: center;
   }
   .ant-tabs .ant-tabs-left-bar .ant-tabs-tab-active{
     background-color: #1890ff;

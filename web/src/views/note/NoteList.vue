@@ -20,9 +20,6 @@
           </a-form>
         </a-col>
         <a-col :span="12" style="text-align: right;">
-          <a-select :defaultActiveFirstOption="true" style="width: 300px;" placeholder="选择笔记本" @change="changeSelect()" v-model="topId">
-            <a-select-option v-for="d in topData" :key="d.id">{{d.name}}</a-select-option>
-          </a-select>
           <a-button @click="addSelect" type="primary" icon="setting" style="margin-left: 5px">管理笔记本</a-button>
         </a-col>
       </a-row>
@@ -106,7 +103,7 @@
         </a-spin>
       </a-col>
       <a-col :md="2" :sm="24">
-        <select-tab></select-tab>
+        <select-tab @changeTop="changeTop"></select-tab>
       </a-col>
     </a-row>
 
@@ -148,7 +145,6 @@
         spinning:false,
         selectedKeys:[],
         activeTabKey:'',
-        topData:[],
         topId:'',
         loading: false,
         noteTree: [],
@@ -174,10 +170,13 @@
     }
   },
     created() {//初始数据加载
-      this.loadTop();
       this.max_height = Number(`${document.documentElement.clientHeight}`)-72;
     },
     methods: {
+      changeTop(id){
+        this.topId = id;
+        this.changeSelect();
+      },
       openNote(note){
         let parentIds = note.parentIds;
         let topId = parentIds.split("/")[1];//属于哪个笔记本
@@ -238,25 +237,6 @@
       },
       addSelect() {
         this.$refs.noteSelectList.show();
-      },
-      loadTop() {//加载笔记本下拉框
-        this.loading = true
-        const that = this;
-        queryNote({ "parentId": 0 }).then((res) => {
-          if (res.success) {
-            that.topData = [];
-            for (let i = 0; i < res.result.length; i++) {
-              let temp = res.result[i]
-              that.topData.push(temp)
-            }
-            if (res.result.length > 0) {
-              that.topId = res.result[0].id;
-              that.loadTree();
-              that.loadOpenKey();
-            }
-            this.loading = false
-          }
-        })
       },
       changeSelect(selectKey){
         this.loadTree();
