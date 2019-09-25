@@ -85,6 +85,7 @@
               <a-tab-pane v-for="pane in panes" :tab="pane.name" :key="pane.id" :closable="pane.closable"></a-tab-pane>
               <a-icon type="close-circle" slot="tabBarExtraContent" style="cursor: pointer" @click="closeAll" title="关闭所有"/>
             </a-tabs>
+            <main-tab ref="mainTab" :topId="topId" @onChangeTab="onChangeTab"></main-tab>
             <a-form>
               <a-form-item>
                 <a-input
@@ -117,6 +118,7 @@
 <script>
   import NoteModal from './modules/NoteModal'
   import SelectTab from './components/SelectTab'
+  import MainTab from './components/MainTab'
   import NoteSelectList from './NoteSelectList'
   import NoteSearch from './NoteSearch'
   import { deleteNote, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
@@ -131,6 +133,7 @@
       NoteSelectList,
       NoteSearch,
       SelectTab,
+      MainTab,
       VNodes: {
         functional: true,
         render: (h, ctx) => ctx.props.vnodes
@@ -173,6 +176,25 @@
       this.max_height = Number(`${document.documentElement.clientHeight}`)-72;
     },
     methods: {
+      loadTop() {//加载笔记本下拉框
+        this.loading = true
+        const that = this;
+        queryNote({ "parentId": 0 }).then((res) => {
+          if (res.success) {
+            that.topData = [];
+            for (let i = 0; i < res.result.length; i++) {
+              let temp = res.result[i]
+              that.topData.push(temp)
+            }
+            if (res.result.length > 0) {
+              that.topId = res.result[0].id;
+              that.loadTree();
+              that.loadOpenKey();
+            }
+            this.loading = false
+          }
+        })
+      },
       changeTop(id){
         this.topId = id;
         this.changeSelect();
@@ -232,7 +254,8 @@
         this.selectNote();
         this.saveOpenKey();
       },
-      onTreeClick(key){
+      onTreeClick(key,e){
+        this.$refs.mainTab.activeTab({id:key[0],name:e.node.title});
         this.getData(key[0],true,true);
       },
       addSelect() {
@@ -520,7 +543,7 @@
         this.panes.forEach((pane) => {
           openKeys.push(pane.id);
         });
-        httpAction(this.url.saveOpenKey, {id:this.topId,openKeys:openKeys.join(","),selectedKey:this.activeTabKey}, 'post');
+        httpAction(this.url.saveOpenKey, {topKey:this.topId,openKeys:openKeys.join(","),activeKey:this.activeTabKey}, 'post');
       },
       remove (targetKey) {//关闭tab
         const panes = this.panes.filter(pane => pane.id !== targetKey)
