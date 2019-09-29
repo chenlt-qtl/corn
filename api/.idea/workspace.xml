@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a08562e3-4f01-45ef-ac19-d0f109dc26d6" name="Default Changelist" comment="删除不必要的文件">
+    <list default="true" id="a08562e3-4f01-45ef-ac19-d0f109dc26d6" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application-baidu.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-tengxun.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-tengxun.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-tengxun.yml" afterDir="false" />
     </list>
     <list id="3ea3041f-abf2-4f77-961c-b7e0bac57bb9" name="other" comment="">
       <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__redis_clients_jedis_2_9_0.xml" afterDir="false" />
@@ -18,200 +17,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_projectreactor_reactor_core_3_1_8_RELEASE.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_reactivestreams_reactive_streams_1_0_2.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application-dev.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application-prod.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/jeecg/jeecg_config.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/JeecgApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/JeecgOneGUI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/JeecgOneToMainUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/api/vo/Result.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/aspect/AutoLogAspect.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/aspect/DictAspect.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/aspect/PermissionDataAspect.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/exception/JeecgBootException.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/exception/JeecgBootExceptionHandler.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/jsonschema/CommonProperty.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/jsonschema/JsonSchemaDescrip.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/jsonschema/JsonschemaUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/jsonschema/validate/NumberProperty.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/jsonschema/validate/StringProperty.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/system/api/ISysBaseAPI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/system/controller/CommonController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/system/query/QueryCondition.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/system/query/QueryGenerator.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/system/query/QueryRuleEnum.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/DateUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/IPUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/MD5Util.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/MyClassLoader.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/PasswordUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/RedisUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/SpringContextUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/UUIDGenerator.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/YouBianCodeUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/oConvertUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/superSearch/ObjectParseUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/superSearch/QueryRuleEnum.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/common/util/superSearch/QueryRuleVo.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/config/RedisConfig$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/config/RedisConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/config/ShiroConfig.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/config/Swagger2Config.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/config/WebMvcConfiguration.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/config/mybatis/MybatisInterceptor.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/mock/MockController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/controller/JeecgDemoController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/controller/JeecgOrderDMainController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/controller/JeecgOrderMainController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/entity/JeecgDemo.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/entity/JeecgOrderCustomer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/entity/JeecgOrderMain.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/entity/JeecgOrderTicket.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/mapper/JeecgDemoMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/mapper/JeecgOrderCustomerMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/mapper/JeecgOrderTicketMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/service/IJeecgDemoService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/service/IJeecgOrderCustomerService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/service/IJeecgOrderMainService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/service/IJeecgOrderTicketService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/service/impl/JeecgDemoServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/service/impl/JeecgOrderCustomerServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/service/impl/JeecgOrderMainServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/service/impl/JeecgOrderTicketServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/demo/test/vo/JeecgOrderMainPage.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/controller/SysMessageController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/controller/SysMessageTemplateController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/entity/MsgParams.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/entity/SysMessage.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/entity/SysMessageTemplate.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/handle/ISendMsgHandle.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/handle/enums/SendMsgStatusEnum.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/handle/enums/SendMsgTypeEnum.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/handle/impl/EmailSendMsgHandle.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/handle/impl/SmsSendMsgHandle.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/handle/impl/WxSendMsgHandle.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/job/SendMsgJob.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/mapper/SysMessageTemplateMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/service/ISysMessageTemplateService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/service/impl/SysMessageTemplateServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/message/util/PushMsgUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/monitor/domain/RedisInfo.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/monitor/exception/RedisConnectException.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/ngalain/aop/LogRecordAspect.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/ngalain/controller/NgAlainController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/ngalain/mapper/NgAlainMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/ngalain/service/NgAlainService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/ngalain/service/impl/NgAlainServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/note/controller/NoteController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/note/entity/Note.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/note/mapper/NoteMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/note/mapper/xml/NoteMapper.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/note/service/INoteService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/note/service/impl/NoteServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/controller/OnlCgreportAPI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/controller/OnlCgreportHeadController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/controller/OnlCgreportItemController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/controller/OnlCgreportParamController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/entity/OnlCgreportHead.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/entity/OnlCgreportItem.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/entity/OnlCgreportParam.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/mapper/OnlCgreportHeadMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/model/OnlCgreportModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/service/CgReportExcelServiceI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/service/IOnlCgreportHeadService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/service/IOnlCgreportItemService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/service/impl/CgReportExcelServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/service/impl/OnlCgreportHeadServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/service/impl/OnlCgreportItemServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/util/BrowserType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/util/BrowserUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/util/CgReportQueryParamUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/online/cgreport/util/SqlUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/quartz/controller/QuartzJobController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/quartz/entity/QuartzJob.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/quartz/job/SampleJob.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/quartz/job/SampleParamJob.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/quartz/mapper/QuartzJobMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/quartz/service/IQuartzJobService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/quartz/service/impl/QuartzJobServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/shiro/authc/JwtToken.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/shiro/authc/MyRealm.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/shiro/authc/aop/JwtFilter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/shiro/authc/aop/ResourceCheckFilter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/shiro/authc/util/JwtUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/shiro/vo/ResponseBean.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/shiro/vo/UserBean.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/shiro/web/TestWebController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/DuplicateCheckController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/LoginController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysAnnouncementController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysDataLogController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysDepartController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysDictController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysDictItemController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysLogController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysPermissionController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysRoleController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/controller/SysUserController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysAnnouncement.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysDataLog.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysDepart.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysDict.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysDictItem.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysLog.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysPermission.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysPermissionDataRule.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysRole.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysRolePermission.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysUser.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysUserDepart.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/entity/SysUserRole.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysDataLogMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysDepartMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysDictItemMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysDictMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysPermissionDataRuleMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysPermissionMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysUserDepartMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysUserMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/mapper/SysUserRoleMapper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/DepartIdModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/DuplicateCheckVo.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/SysDepartTreeModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/SysDictTree.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/SysLoginModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/SysPermissionTree.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/SysUserCacheInfo.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/SysUserDepartsVO.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/TreeModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/model/TreeSelectModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysDataLogService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysDepartService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysDictItemService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysDictService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysPermissionDataRuleService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysPermissionService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysRolePermissionService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysUserDepartService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/ISysUserService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/AutoPoiDictService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysBaseAPI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysDataLogServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysDepartServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysDictItemServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysDictServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysPermissionDataRuleImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysPermissionServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysRolePermissionServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysUserDepartServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysUserRoleServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/service/impl/SysUserServiceImpl.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/util/FindsDepartsChildrenUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/util/JeecgDataAutorUtils.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/util/PermissionDataUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/org/jeecg/modules/system/vo/SysDictPage.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../logs/error-log.html" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -298,7 +103,7 @@
           <entry key="vuei" value="3" />
           <entry key="xml" value="40" />
           <entry key="yarn-integrity" value="1" />
-          <entry key="yml" value="21" />
+          <entry key="yml" value="23" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -311,7 +116,7 @@
           <entry key="PLAIN_TEXT" value="5" />
           <entry key="Properties" value="6" />
           <entry key="XML" value="40" />
-          <entry key="YAML" value="21" />
+          <entry key="YAML" value="23" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -319,20 +124,20 @@
           <entry key="gitignore" value="20" />
           <entry key="java" value="3414" />
           <entry key="properties" value="31" />
-          <entry key="txt" value="102" />
+          <entry key="txt" value="108" />
           <entry key="xml" value="476" />
-          <entry key="yml" value="91" />
+          <entry key="yml" value="95" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Git file" value="20" />
           <entry key="JAVA" value="3414" />
-          <entry key="PLAIN_TEXT" value="102" />
+          <entry key="PLAIN_TEXT" value="108" />
           <entry key="Properties" value="31" />
           <entry key="SQL" value="8" />
           <entry key="XML" value="468" />
-          <entry key="YAML" value="91" />
+          <entry key="YAML" value="95" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -346,10 +151,19 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/application.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="11" column="59" selection-start-line="11" selection-start-column="59" selection-end-line="11" selection-end-column="59" />
+            <state relative-caret-position="135">
+              <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/application-tengxun.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="351">
+              <caret line="13" column="4" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -362,17 +176,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/resources/application-prod.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="737">
+            <state relative-caret-position="710">
               <caret line="86" column="41" selection-start-line="86" selection-start-column="28" selection-end-line="86" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/application-tengxun.yml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
-              <caret line="99" column="19" lean-forward="true" selection-start-line="99" selection-start-column="19" selection-end-line="99" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -555,7 +360,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1569738448582" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1569738505896" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -950,7 +755,7 @@
       <workItem from="1569317702695" duration="7013000" />
       <workItem from="1569547974496" duration="2100000" />
       <workItem from="1569576571918" duration="621000" />
-      <workItem from="1569721370047" duration="3759000" />
+      <workItem from="1569721370047" duration="4936000" />
     </task>
     <task id="LOCAL-00001" summary="增加英语模块">
       <created>1567157273102</created>
@@ -980,11 +785,18 @@
       <option name="project" value="LOCAL" />
       <updated>1569723782990</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="增加线上配置">
+      <created>1569738500769</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1569738500769</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="123458000" />
+    <option name="totallyTimeSpent" value="124635000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -997,8 +809,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1014" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.4188172" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.4188172" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -1077,7 +890,8 @@
     <MESSAGE value="保存文章" />
     <MESSAGE value="1.笔记本左边树独立出来&#10;2.radis驱动换掉&#10;3.补提交些东西" />
     <MESSAGE value="删除不必要的文件" />
-    <option name="LAST_COMMIT_MESSAGE" value="删除不必要的文件" />
+    <MESSAGE value="增加线上配置" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加线上配置" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/system/mapper/SysUserMapper.java">
@@ -1317,13 +1131,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/application-dev.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2700">
@@ -1403,6 +1210,16 @@
     <entry file="file://$PROJECT_DIR$/jeecg-boot.iml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application-test.yml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application-prod.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="710">
+          <caret line="86" column="41" selection-start-line="86" selection-start-column="28" selection-end-line="86" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
@@ -1410,20 +1227,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application-test.yml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application-prod.yml">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="737">
-          <caret line="86" column="41" selection-start-line="86" selection-start-column="28" selection-end-line="86" selection-end-column="41" />
+        <state relative-caret-position="135">
+          <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/application-tengxun.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="99" column="19" lean-forward="true" selection-start-line="99" selection-start-column="19" selection-end-line="99" selection-end-column="19" />
+        <state relative-caret-position="351">
+          <caret line="13" column="4" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
         </state>
       </provider>
     </entry>

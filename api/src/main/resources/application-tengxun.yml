@@ -11,7 +11,14 @@ management:
   web:
    exposure:
     include: metrics,httptrace
-    
+
+logging:
+  level:
+    root: DEBUG
+  root:
+    appender: RollingFile
+    path: /root/app/api
+
 spring:
   mail:
     host: smtp.163.com
