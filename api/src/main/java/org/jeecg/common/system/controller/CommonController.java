@@ -51,22 +51,22 @@ public class CommonController {
 		try {
 			String ctxPath = uploadpath;
 			String fileName = null;
-			String bizPath = "user";
 			String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
 			SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-			File file = new File(ctxPath + File.separator + bizPath + File.separator + nowday);
+			String bizPath = "user"+ File.separator + nowday + File.separator + sysUser.getUsername();
+			File file = new File(ctxPath + File.separator + bizPath );
 			if (!file.exists()) {
 				file.mkdirs();// 创建文件根目录
 			}
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 			MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
 			String orgName = mf.getOriginalFilename();// 获取文件名
-			fileName = sysUser.getUsername() + "_" + System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
+			fileName = System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
 			String savePath = file.getPath() + File.separator + fileName;
 			File savefile = new File(savePath);
 			FileCopyUtils.copy(mf.getBytes(), savefile);
-			String dbpath = bizPath + File.separator + nowday + File.separator + fileName;
-			if (dbpath.contains("\\")) {
+			String dbpath = bizPath + File.separator + fileName;
+			if (bizPath.contains("\\")) {
 				dbpath = dbpath.replace("\\", "/");
 			}
 			result.setMessage(dbpath);

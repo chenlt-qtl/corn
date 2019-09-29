@@ -34,6 +34,10 @@
       Editor
     },
     props: {
+      max_height:{
+        type:Number,
+        default: 600
+      },
       value: {
         type: String,
         required:false
@@ -62,7 +66,7 @@
           language: 'zh_CN',
           skin_url: '/tinymce/skins/lightgray',
           min_height: 350,
-          max_height:600,
+          max_height:this.max_height,
           plugins: this.plugins,
           toolbar: this.toolbar,
           branding: false,

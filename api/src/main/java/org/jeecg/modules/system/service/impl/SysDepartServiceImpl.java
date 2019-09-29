@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.util.YouBianCodeUtil;
 import org.jeecg.modules.system.entity.SysDepart;
 import org.jeecg.modules.system.mapper.SysDepartMapper;
@@ -16,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-import io.netty.util.internal.StringUtil;
 
 /**
  * <p>
@@ -92,7 +91,7 @@ public class SysDepartServiceImpl<T> extends ServiceImpl<SysDepartMapper, SysDep
 				// 定义部门类型
 				String orgType = "";		
 				// 如果是最高级,则查询出同级的org_code, 调用工具类生成编码并返回                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-				if (StringUtil.isNullOrEmpty(parentId)) {
+				if (StringUtils.isBlank(parentId)) {
 					// 线判断数据库中的表是否为空,空则直接返回初始编码
 					query1.eq(SysDepart::getParentId, "");
 					query1.orderByDesc(SysDepart::getOrgCode);

@@ -9,20 +9,28 @@
             <if test="parentId != null">
                and n.parent_id = #{parentId,jdbcType=VARCHAR}
             </if>
-		   order by n.create_time DESC
+		   order by n.name
     </select>
 
-    <select id="listAllNote" resultType="org.jeecg.modules.note.entity.Note">
+    <select id="listAllChildren" resultType="org.jeecg.modules.note.entity.Note">
         SELECT n.id,n.name,n.parent_id,n.parent_ids,n.tag,n.source,n.create_time,n.create_by,
         n.update_time,n.update_by,n.status
         FROM  note_info n
         WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
         <if test="parentId != null">
-            <![CDATA[ and ( n.id=#{parentId,jdbcType=VARCHAR} or n.parent_ids like CONCAT('%','${parentId}','%' ) )]]>
+            <![CDATA[ and n.parent_ids like CONCAT('%','${parentId}','%' ) ]]>
         </if>
         <if test="text != null">
             <![CDATA[ and (text like CONCAT('%','${text}','%' )  or name like CONCAT('%','${text}','%' ))]]>
         </if>
-        order by n.create_time DESC
+        order by n.name
+    </select>
+    <select id="getByIds" resultType="org.jeecg.modules.note.entity.Note">
+        SELECT n.id,n.name
+        FROM  note_info n
+        where id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            <![CDATA[ #{id} ]]>
+        </foreach>
     </select>
 </mapper>
