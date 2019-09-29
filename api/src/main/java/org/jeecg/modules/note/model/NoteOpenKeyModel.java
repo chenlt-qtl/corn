@@ -1,7 +1,6 @@
 package org.jeecg.modules.note.model;
 
 import lombok.Data;
-import org.jeecg.common.util.tree.TreeModel;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.entity.NoteOpenKeys;
 
