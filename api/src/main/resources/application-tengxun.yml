@@ -1,6 +1,6 @@
 logging:
   level:
-    root: DEBUG
+    root: WARN
   root:
     appender: RollingFile
     path: /root/app/api/logs/
