@@ -21,7 +21,6 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
@@ -37,9 +36,6 @@ import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
 @Configuration
 @EnableCaching // 开启缓存支持
 public class RedisConfig extends CachingConfigurerSupport {
-
-	@Resource
-	private LettuceConnectionFactory lettuceConnectionFactory;
 
 	/**
 	 * @description 自定义的缓存key的生成策略 若想使用这个key
@@ -67,7 +63,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 	 * RedisTemplate配置
 	 */
 	@Bean
-	public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
+	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 		// 设置序列化
 		Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<Object>(Object.class);
 		ObjectMapper om = new ObjectMapper();
@@ -76,7 +72,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 		jackson2JsonRedisSerializer.setObjectMapper(om);
 		// 配置redisTemplate
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
-		redisTemplate.setConnectionFactory(lettuceConnectionFactory);
+		redisTemplate.setConnectionFactory(factory);
 		RedisSerializer<?> stringSerializer = new StringRedisSerializer();
 		redisTemplate.setKeySerializer(stringSerializer);// key序列化
 		redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);// value序列化

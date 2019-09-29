@@ -1,7 +1,6 @@
 package org.jeecg.modules.note.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.util.tree.TreeUtil;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.entity.NoteDelete;
@@ -9,7 +8,6 @@ import org.jeecg.modules.note.mapper.NoteMapper;
 import org.jeecg.modules.note.model.NoteTreeModel;
 import org.jeecg.modules.note.service.INoteDeleteService;
 import org.jeecg.modules.note.service.INoteService;
-import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +39,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     @Override
     public List<Note> searchNote(String createBy,String parentId, String text) {
         return noteMapper.listAllChildren(createBy,parentId,text);
+    }
+
+    @Override
+    public List<Note> getByIds(String[] ids) {
+        return noteMapper.getByIds(ids);
     }
 
     @Override

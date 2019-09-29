@@ -20,6 +20,8 @@ public interface INoteService extends IService<Note> {
 
     List<Note> searchNote(String createBy,String parentId,String text);
 
+    List<Note> getByIds(String[] ids);
+
     List<NoteTreeModel> queryTreeList(String createBy ,String parentId);
 
     void delete(String userName, String id);

@@ -68,6 +68,7 @@
                   </a-menu>
                 </a-dropdown>
               </template>
+              <note-tree ref="noteTree" :topId="topId" @onTreeClick='onTreeClick1' @spinning="setSpinning" @removeNode="onRemoveNode" :searchText="searchText"></note-tree>
             </a-col>
           </div>
         </a-card>
@@ -119,6 +120,7 @@
   import NoteModal from './modules/NoteModal'
   import SelectTab from './components/SelectTab'
   import MainTab from './components/MainTab'
+  import NoteTree from './components/NoteTree'
   import NoteSelectList from './NoteSelectList'
   import NoteSearch from './NoteSearch'
   import { deleteNote, queryNote, queryNoteTree, queryNoteById} from '@/api/api'
@@ -134,6 +136,7 @@
       NoteSearch,
       SelectTab,
       MainTab,
+      NoteTree,
       VNodes: {
         functional: true,
         render: (h, ctx) => ctx.props.vnodes
@@ -176,6 +179,12 @@
       this.max_height = Number(`${document.documentElement.clientHeight}`)-72;
     },
     methods: {
+      onRemoveNode(key){
+        this.$refs.mainTab.remove(key);
+      },
+      setSpinning(spinning){
+        this.spinning = spinning;
+      },
       loadTop() {//加载笔记本下拉框
         this.loading = true
         const that = this;
@@ -257,6 +266,13 @@
       onTreeClick(key,e){
         this.$refs.mainTab.activeTab({id:key[0],name:e.node.title});
         this.getData(key[0],true,true);
+      },
+      onTreeClick1(note,focus){
+        this.$refs.mainTab.activeTab({id:note.id,name:note.name});
+        this.loadForm(note);
+        if(focus){
+          this.$refs.jEditor.setFocus();
+        }
       },
       addSelect() {
         this.$refs.noteSelectList.show();
@@ -561,11 +577,14 @@
       },
       onChangeTab(activeKey){
         this.getData(activeKey,true,true);
+        this.$refs.noteTree.onTreeClick([activeKey]);
       },
       submitCurrForm() {
+        console.log('save');
         let that = this;
         this.form.validateFields((err) => {
           if (!err) {
+            console.log('1');
             let node = this.getTreeNode(this.noteTree,this.activeTabKey);
             if(!node){
               return;
@@ -575,15 +594,21 @@
               that.name = note['name'];
               return;
             }
+            console.log(that.topId);
             if (that.topId) {
+              console.log('1');
               note['text'] = this.$refs.jEditor.getText();
+              console.log('2');
               note['name'] = node.title = this.name;
+              console.log('2');
               let url = that.url.add;
               let method = 'post';
+              console.log('2');
               if (note['createBy']) {
                 url = that.url.edit;
                 method = 'put';
               }
+              console.log('3');
               console.log("开始保存",url,method);
               httpAction(url, note, method).then((res) => {
                 if (res.success) {
