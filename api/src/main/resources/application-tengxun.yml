@@ -3,7 +3,7 @@ logging:
     root: DEBUG
   root:
     appender: RollingFile
-    path: /root/app/api/logs
+    path: /root/app/api/logs/
 
 spring:
   datasource:
