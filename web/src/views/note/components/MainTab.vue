@@ -79,9 +79,23 @@
       },
       //关闭所有tab
       closeAll() {
+        this.$emit('closeAll');
+      },
+      clear(){
         this.panes = [];
         this.activeTabKey = '';
       },
+      updateTab(note){
+        let panes = [];
+        this.panes.forEach((pane) => {
+          if(pane.id == note.key){
+            panes.push(note.model);
+          }else {
+            panes.push(pane);
+          }
+        });
+        this.panes = panes;
+      }
     },
     watch: {
       activeTabKey(newKey){

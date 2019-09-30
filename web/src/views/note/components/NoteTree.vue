@@ -94,7 +94,6 @@
         this.handleAdd(parentKey,isTop);
       },
       handleAdd(parentKey,isTop) {
-        console.log(parentKey);
         let newObj = {};
         newObj["name"] = newObj["title"] = "无标题文档";
         newObj["text"] = " ";
@@ -106,7 +105,6 @@
           newObj["name"] = newObj["title"] = "新分区";
         } else {
           let parent = this.getTreeNode(this.noteTree,parentKey);
-          console.log(parent);
           if(parent){
             if(parent.model.parentIds.split("/").length>=7){
               this.$message.warning('笔记本目录最多只能6层!');
@@ -123,7 +121,7 @@
           }
         }
         newObj["model"]=Object.assign({}, newObj);
-        this.noteData[newObj["id"]] = newObj;
+        this.noteData[newObj["id"]] = newObj["model"];
         this.loadNote(newObj["id"],true);
       },
       loadTree(callback) {//加载笔记本树
@@ -145,7 +143,8 @@
         }
       },
       handleAddByParent(){
-
+        let parentKey = this.rightClickSelectedKey;
+        this.handleAdd(parentKey,false);
       },
       //右键事件
       rightHandle(node) {
@@ -172,17 +171,29 @@
           this.loadNote(id);
         }
       },
+      updateNote(note){
+        let oldNote = this.getTreeNode(this.noteTree,note.key);
+        oldNote = note;
+        this.noteData[oldNote.key] = oldNote.model;
+      },
       loadNote(id,focus){
-        let expandedKeys = [];
-        if(this.noteData[id].parentIds){
-          expandedKeys = this.noteData[id].parentIds.split("/");
+        if(id) {
+          let expandedKeys = [];
+          if (this.noteData[id].parentIds) {
+            expandedKeys = this.noteData[id].parentIds.split("/");
+          }
+          if (this.expandedKeys[this.expandedKeys.length - 1] != id) {
+            expandedKeys.push(id);
+          }
+          this.expandedKeys = expandedKeys;
+          this.selectedKeys[0] = id;
+          this.$emit('onTreeClick', this.noteData[id], focus);
+        }else{
+          this.selectedKeys = [];
         }
-        if(this.expandedKeys[this.expandedKeys.length-1] != id){
-          expandedKeys.push(id);
-        }
-        this.expandedKeys = expandedKeys;
-        this.selectedKeys[0] = id;
-        this.$emit('onTreeClick',this.noteData[id],focus);
+      },
+      getSelected(){
+        return this.getTreeNode(this.noteTree,this.selectedKeys[0]);
       },
       getTreeNode(notes,id){
         let result;
