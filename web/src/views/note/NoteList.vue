@@ -16,10 +16,8 @@
               <a-button><a-icon type="cloud-download" style="font-size: 18px"/></a-button>
               <a-button><a-icon type="cloud-upload" style="font-size: 18px"/></a-button>
             </a-button-group>
+            <a-button @click="addSelect" type="primary" icon="setting" style="margin-left: 5px">管理笔记本</a-button>
           </a-form>
-        </a-col>
-        <a-col :span="12" style="text-align: right;">
-          <a-button @click="addSelect" type="primary" icon="setting" style="margin-left: 5px">管理笔记本</a-button>
         </a-col>
       </a-row>
     </div>
