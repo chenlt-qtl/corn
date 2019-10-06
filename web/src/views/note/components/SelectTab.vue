@@ -1,7 +1,7 @@
 <template>
   <div class="tab-content">
     <a-spin :spinning="spinning">
-      <a-tabs defaultActiveKey="1" tabPosition="left" style="height: 100%" @change="changeTop">
+      <a-tabs defaultActiveKey="1" tabPosition="right" style="height: 100%" @change="changeTop">
         <template v-for="(data) in topData">
           <a-tab-pane :tab="data.name" :key=data.id ></a-tab-pane>
         </template>
@@ -52,18 +52,18 @@
 </script>
 
 <style>
-  .ant-tabs .ant-tabs-left-bar .ant-tabs-tab{
-    background-color: #fff;
-    color: #595959;
+  .ant-tabs .ant-tabs-right-bar .ant-tabs-tab{
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
     padding: 10px 10px;
     margin: 0;
     text-align: center;
   }
-  .ant-tabs .ant-tabs-left-bar .ant-tabs-tab-active{
-    background-color: #1890ff;
-    color: #fff;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
+  .ant-tabs .ant-tabs-right-bar .ant-tabs-tab-active{
+    background-color: #fff;
+    color: #595959;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
   .ant-tabs-ink-bar ant-tabs-ink-bar-animated{
     height:41px;
