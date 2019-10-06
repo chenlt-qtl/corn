@@ -70,8 +70,8 @@
   .ant-tabs .ant-tabs-right-bar .ant-tabs-tab-active{
     background-color: #fff;
     color: #595959;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
   .ant-tabs-ink-bar ant-tabs-ink-bar-animated{
     height:41px;
