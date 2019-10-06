@@ -5,7 +5,14 @@ import { UserLayout, TabLayout, RouteView, BlankLayout, PageView } from '@/compo
  * @type {[null,null]}
  */
 export const asyncRouterMap = [
-
+  {
+    path: '/',
+    name: 'blank',
+    component: BlankLayout,
+    meta: { title: '首页' },
+    redirect: '/blank/index',
+    children: []
+  },
   {
     path: '/',
     name: 'dashboard',
@@ -393,15 +400,23 @@ export const asyncRouterMap = [
 export const constantRouterMap = [
   {
     path: '/user',
-    component: UserLayout,
+    component: BlankLayout,
     redirect: '/user/login',
     hidden: true,
     children: [
       {
         path: 'login',
         name: 'login',
-        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login')
+        component: () => import(/* webpackChunkName: "user" */ '@/views/user/NewLogin')
       },
+    ]
+  },
+  {
+    path: '/user',
+    component: UserLayout,
+    redirect: '/user/register',
+    hidden: true,
+    children: [
       {
         path: 'register',
         name: 'register',
