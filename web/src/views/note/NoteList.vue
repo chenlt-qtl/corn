@@ -12,7 +12,6 @@
               style="width: 300px"
             />
             <a-button style="margin-left: 5px" @click="openSearch" type="default">高级查询</a-button>
-            <a-button @click="addSelect" type="primary" icon="setting" style="margin-left: 5px">管理笔记本</a-button>
           </a-form>
         </a-col>
       </a-row>
@@ -62,7 +61,6 @@
     </a-row>
 
     <!-- 表单区域 -->
-    <note-select-list ref="noteSelectList" @ok="loadTop"></note-select-list>
     <note-search ref="noteSearch" @open="openNote"></note-search>
 
   </a-card>
@@ -73,7 +71,6 @@
   import SelectTab from './components/SelectTab'
   import MainTab from './components/MainTab'
   import NoteTree from './components/NoteTree'
-  import NoteSelectList from './NoteSelectList'
   import NoteSearch from './NoteSearch'
   import { httpAction} from '@/api/manage'
   import JEditor from "@/components/jeecg/JEditor";
@@ -83,7 +80,6 @@
     components: {
       JEditor,
       NoteModal,
-      NoteSelectList,
       NoteSearch,
       SelectTab,
       MainTab,

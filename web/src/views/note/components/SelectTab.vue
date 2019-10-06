@@ -1,21 +1,26 @@
 <template>
   <div class="tab-content">
     <a-spin :spinning="spinning">
+      <a-button @click="addSelect" type="primary" icon="setting" style="width: 100%">管理</a-button>
       <a-tabs defaultActiveKey="1" tabPosition="right" style="height: 100%" @change="changeTop">
         <template v-for="(data) in topData">
           <a-tab-pane :tab="data.name" :key=data.id ></a-tab-pane>
         </template>
       </a-tabs>
     </a-spin>
+    <note-select-list ref="noteSelectList" @ok="loadTop"></note-select-list>
   </div>
 </template>
 
 <script>
   import { queryNote,} from '@/api/api'
-
+  import NoteSelectList from '../NoteSelectList'
 
   export default {
     name:'SelectTab',
+    components: {
+      NoteSelectList,
+    },
     data() {
       return {
         spinning: false,
@@ -26,6 +31,9 @@
       this.loadData();
     },
     methods:{
+      addSelect() {
+        this.$refs.noteSelectList.show();
+      },
       loadData(){
         this.spinning = true
         const that = this;
