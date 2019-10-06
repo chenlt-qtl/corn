@@ -12,18 +12,13 @@
               style="width: 300px"
             />
             <a-button style="margin-left: 5px" @click="openSearch" type="default">高级查询</a-button>
-            <a-button-group style="margin-left: 5px">
-              <a-button><a-icon type="cloud-download" style="font-size: 18px"/></a-button>
-              <a-button><a-icon type="cloud-upload" style="font-size: 18px"/></a-button>
-            </a-button-group>
-            <a-button @click="addSelect" type="primary" icon="setting" style="margin-left: 5px">管理笔记本</a-button>
           </a-form>
         </a-col>
       </a-row>
     </div>
 
-    <a-row :gutter="10">
-      <a-col :md="6" :sm="24">
+    <a-row class='note-row'>
+      <a-col class='note-tree' :md="6" :sm="24">
         <a-card :bordered="false" style="padding: 0px;">
           <div style="padding-left:16px;height: 100%; margin-top: 5px;overflow:hidden;">
             <!-- 树-->
@@ -39,7 +34,7 @@
           </div>
         </a-card>
       </a-col>
-      <a-col :md="16" :sm="24">
+      <a-col class='note-content' :md="16" :sm="24">
         <a-spin :spinning="spinning">
           <a-card :bordered="false">
             <main-tab ref="mainTab" :topId="topId" @onChangeTab="onChangeTab" @closeAll="closeAll"></main-tab>
@@ -60,13 +55,12 @@
           </a-card>
         </a-spin>
       </a-col>
-      <a-col :md="2" :sm="24">
+      <a-col class='note-select' :md="2" :sm="24">
         <select-tab @changeTop="changeTop"></select-tab>
       </a-col>
     </a-row>
 
     <!-- 表单区域 -->
-    <note-select-list ref="noteSelectList" @ok="loadTop"></note-select-list>
     <note-search ref="noteSearch" @open="openNote"></note-search>
 
   </a-card>
@@ -77,7 +71,6 @@
   import SelectTab from './components/SelectTab'
   import MainTab from './components/MainTab'
   import NoteTree from './components/NoteTree'
-  import NoteSelectList from './NoteSelectList'
   import NoteSearch from './NoteSearch'
   import { httpAction} from '@/api/manage'
   import JEditor from "@/components/jeecg/JEditor";
@@ -87,7 +80,6 @@
     components: {
       JEditor,
       NoteModal,
-      NoteSelectList,
       NoteSearch,
       SelectTab,
       MainTab,
@@ -210,3 +202,57 @@
     }
   }
 </script>
+<style>
+  .ant-btn-primary{
+    background-color: #12b776;
+    border-color: #12b776;
+  }
+  ::selection{
+    background-color: #12b776;
+    background: #12b776;
+    border-color: #12b776;
+  }
+  .ant-btn-primary:hover, .ant-btn-primary:focus{
+    background-color: #16dd8f;
+    border-color: #12b776;
+  }
+  .ant-btn:hover, .ant-btn:focus {
+    color:#12b776;
+    border-color: #12b776;
+  }
+  .ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled){
+    border-color: #12b776;
+  }
+  .note-row{
+    border-radius: 4px;
+  }
+  .note-tree{
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    padding: 4px;
+    background-color: #fff;
+    min-height: 558px;
+  }
+  .note-content{
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    padding: 4px;
+    background-color: #fff;
+  }
+  .note-select{
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  .ant-tree.ant-tree-directory > li.ant-tree-treenode-selected > span.ant-tree-node-content-wrapper:before, .ant-tree.ant-tree-directory .ant-tree-child-tree > li.ant-tree-treenode-selected > span.ant-tree-node-content-wrapper:before{
+    background: #12b776;
+  }
+  .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active{
+    color: #12b776;
+  }
+  .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active{
+    border-color: #12b776!important;
+  }
+  .ant-tabs-nav .ant-tabs-tab:hover{
+    color: #12b776;
+  }
+</style>

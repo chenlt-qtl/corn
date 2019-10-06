@@ -1,21 +1,26 @@
 <template>
   <div class="tab-content">
     <a-spin :spinning="spinning">
-      <a-tabs defaultActiveKey="1" tabPosition="left" style="height: 100%" @change="changeTop">
+      <a-button @click="addSelect" type="primary" icon="setting" style="width: 100%">管理</a-button>
+      <a-tabs defaultActiveKey="1" tabPosition="right" style="height: 100%" @change="changeTop">
         <template v-for="(data) in topData">
           <a-tab-pane :tab="data.name" :key=data.id ></a-tab-pane>
         </template>
       </a-tabs>
     </a-spin>
+    <note-select-list ref="noteSelectList" @ok="loadTop"></note-select-list>
   </div>
 </template>
 
 <script>
   import { queryNote,} from '@/api/api'
-
+  import NoteSelectList from '../NoteSelectList'
 
   export default {
     name:'SelectTab',
+    components: {
+      NoteSelectList,
+    },
     data() {
       return {
         spinning: false,
@@ -26,6 +31,9 @@
       this.loadData();
     },
     methods:{
+      addSelect() {
+        this.$refs.noteSelectList.show();
+      },
       loadData(){
         this.spinning = true
         const that = this;
@@ -52,18 +60,18 @@
 </script>
 
 <style>
-  .ant-tabs .ant-tabs-left-bar .ant-tabs-tab{
-    background-color: #fff;
-    color: #595959;
+  .ant-tabs .ant-tabs-right-bar .ant-tabs-tab{
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
     padding: 10px 10px;
     margin: 0;
     text-align: center;
   }
-  .ant-tabs .ant-tabs-left-bar .ant-tabs-tab-active{
-    background-color: #1890ff;
-    color: #fff;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
+  .ant-tabs .ant-tabs-right-bar .ant-tabs-tab-active{
+    background-color: #fff;
+    color: #595959;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
   .ant-tabs-ink-bar ant-tabs-ink-bar-animated{
     height:41px;
