@@ -10,16 +10,16 @@
     </div>
     <div class="w3ls-container text-center">
 
-      <div class="w3l-content main-agile">
-        <div class="left-grid">
+      <a-row class="main-agile">
+        <a-col :span="14" class="left-grid">
           <a-carousel autoplay>
             <div><h3>便捷笔记，多层目录，随时记录</h3></div>
             <div><h3>自定义英语背诵内容</h3></div>
             <div><h3>多种速度听英语短文和单词</h3></div>
             <div><h3>边游戏边背诵单词，娱乐学习两不误</h3></div>
           </a-carousel>
-        </div>
-        <div class="right-grid">
+        </a-col>
+        <a-col :span="10" class="right-grid">
           <div class="sub-form">
             <a-form class="user-layout-login" ref="formLogin" :autoFormCreate="(form)=>{this.form = form}" id="formLogin">
               <a-form-item
@@ -59,8 +59,8 @@
               </a-form-item>
             </a-form>
           </div>
-        </div>
-      </div>
+        </a-col>
+      </a-row>
       <div class="agile-social-icons">
         <p>免费提供以下服务，欢迎使用</p>
         <ul class="social_list">
@@ -394,7 +394,7 @@
 
   .user-layout-login {
     padding: 0.8em;
-    width: 70%;
+    width: 90%;
     font-size: 1em;
     color: #000000;
     outline: none;
@@ -412,7 +412,7 @@
     cursor: pointer;
     text-decoration: none;
     background: #12b776;
-    border: solid 1px #000000;
+    border: solid 1px #12b776;
     transition: 0.5s all;
     -webkit-transition: 0.5s all;
     -moz-transition: 0.5s all;
@@ -604,24 +604,10 @@
   }
   @media screen and (min-width: 801px) {
 
-    .w3l-content {
-      display: -webkit-box;
-      display: -moz-box;
-      display: -ms-flexbox;
-      display: -webkit-flex;
-      display: flex;
+    .main-agile {
       margin-bottom: 5em;
     }
 
-    .left-grid,
-    .right-grid {
-      -webkit-box-flex: 1;
-      -moz-box-flex: 1;
-      width: 20%;
-      -webkit-flex: 1;
-      -ms-flex: 1;
-      flex: 1;
-    }
   }
 
   @media screen and (max-width: 800px) {
@@ -727,9 +713,6 @@
   @media screen and (max-width: 320px) {
     .logo h1 a {
       font-size: 2.3em;
-    }
-    .sub-form input[type="email"] {
-      width: 63%;
     }
     .sub-form button {
       width: 18%;
