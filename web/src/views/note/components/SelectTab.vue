@@ -61,7 +61,7 @@
 
 <style>
   .ant-tabs .ant-tabs-right-bar .ant-tabs-tab{
-    background-color: rgba(255, 255, 255, 0.15);
+    background:rgba(0, 0, 0, 0.24);
     color: #fff;
     padding: 10px 10px;
     margin: 0;
@@ -78,5 +78,9 @@
   }
   .tab-content{
     border-top-right-radius: 20px;
+  }
+  .ant-tabs .ant-tabs-right-bar{
+    float: none;
+    margin-left:-2px;
   }
 </style>
