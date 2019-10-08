@@ -240,9 +240,6 @@
     padding: 4px;
     background-color: #fff;
   }
-  .note-select{
-    background-color: rgba(255, 255, 255, 0.15);
-  }
   .ant-tree.ant-tree-directory > li.ant-tree-treenode-selected > span.ant-tree-node-content-wrapper:before, .ant-tree.ant-tree-directory .ant-tree-child-tree > li.ant-tree-treenode-selected > span.ant-tree-node-content-wrapper:before{
     background: #12b776;
   }

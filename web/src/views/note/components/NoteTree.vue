@@ -19,7 +19,7 @@
                        @select="onTreeClick"
                        @drop="onDrop"
                        :treeData="noteTree"
-                       style="width: 320px"
+                       class="note-left-tree"
                        :expandedKeys="expandedKeys"
                        draggable
                        :filterTreeNode="filterTreeNode"
@@ -316,4 +316,13 @@
 </script>
 
 <style>
+  .note-left-tree{
+    width: 320px;
+    max-height: 600px;
+    min-height: 437px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border:1px solid #d9d9d9;
+    margin-top: 5px;
+  }
 </style>
