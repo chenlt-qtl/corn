@@ -156,19 +156,23 @@
           this.dropTrigger = ''
         }
       },
-      onTreeClick(key){
+      onTreeClick(key) {
         let id = key[0];
-        if(!this.noteData[id]){
-          this.$emit('spinning',true);
-          queryNoteById({ 'id': id }).then((res) => {
-            if (res.success) {
-              this.noteData[id] = res.result;
-              this.loadNote(id);
-            }
-            this.$emit('spinning',false);
-          })
-        }else{
-          this.loadNote(id);
+        if (!id) {
+          this.loadNote();
+        } else {
+          if (!this.noteData[id]) {
+            this.$emit('spinning', true);
+            queryNoteById({ 'id': id }).then((res) => {
+              if (res.success) {
+                this.noteData[id] = res.result;
+                this.loadNote(id);
+              }
+              this.$emit('spinning', false);
+            })
+          } else {
+            this.loadNote(id);
+          }
         }
       },
       updateNote(note){
@@ -190,6 +194,7 @@
           this.$emit('onTreeClick', this.noteData[id], focus);
         }else{
           this.selectedKeys = [];
+          this.$emit('onTreeClick', {});
         }
       },
       getSelected(){

@@ -136,7 +136,8 @@
       },
       //可以添加一些自己的自定义事件，如清空内容
       clear() {
-        this.myValue = ''
+        this.myValue = '';
+        tinymce.activeEditor.setContent('');
       },
       getText(){
         return tinymce.activeEditor.getContent();
@@ -148,9 +149,6 @@
     watch: {
       value(newValue) {
         this.myValue = newValue
-      },
-      myValue(newValue) {
-        this.$emit('input', newValue)
       },
     }
   }

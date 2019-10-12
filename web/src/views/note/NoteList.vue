@@ -132,18 +132,20 @@
         this.$refs.noteTree.loadNote();
         this.$refs.mainTab.clear();
       },
-      onTreeClick(note,focus){
-        this.$refs.mainTab.activeTab({id:note.id,name:note.name});
-        this.loadForm(note);
-        if(focus){
-          this.$refs.jEditor.setFocus();
+      onTreeClick(note,focus) {
+        if (note.id) {
+          this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
+          if (focus) {
+            this.$refs.jEditor.setFocus();
+          }
         }
+        this.loadForm(note);
       },
       addSelect() {
         this.$refs.noteSelectList.show();
       },
       loadForm(data){
-        if(!data.text) {
+        if(this.$refs.jEditor&&!data.text) {
           this.$refs.jEditor.clear();
         }
         this.name = data.name;
