@@ -8,7 +8,7 @@
         </template>
       </a-tabs>
     </a-spin>
-    <note-select-list ref="noteSelectList" @ok="loadTop"></note-select-list>
+    <note-select-list ref="noteSelectList" @ok="loadData"></note-select-list>
   </div>
 </template>
 
@@ -25,6 +25,7 @@
       return {
         spinning: false,
         topData:[],
+        selectTab:'',
       }
     },
     created() {
@@ -45,14 +46,33 @@
               that.topData.push(temp)
             }
             this.spinning = false
-            if(that.topData.length>0){
-              this.$emit('changeTop', that.topData[0].id);
+            if(this.selectTab) {
+              let selectExist = false;
+              that.topData.forEach(note => {
+                if(note.id == this.selectTab){
+                  selectExist = true;
+                }
+              });
+              if(!selectExist){
+                this.selectTab = '';
+              }
+            }
+
+            if(!this.selectTab) {
+              if (that.topData.length > 0) {
+                this.selectTab = that.topData[0].id;
+              }
             }
           }
         })
       },
       changeTop(e){
-        this.$emit('changeTop', e)
+        this.selectTab = e;
+      }
+    },
+    watch:{
+      selectTab(tabId){
+        this.$emit('changeTop', tabId)
       }
     }
   }

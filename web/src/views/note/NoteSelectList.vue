@@ -53,7 +53,6 @@
 </template>
 
 <script>
-  import pick from 'lodash.pick'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import NoteSelectModal from './modules/NoteSelectModal'
 
@@ -129,13 +128,8 @@
       handleAdd () {
         this.$refs.noteSelectModel.show();
       },
-      edit (record) {
-        this.form.resetFields();
-        this.model = Object.assign({}, record);
-        this.visible = true;
-        this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'name','parentIds','text','tag','source'))
-        });
+      handleEdit (record) {
+        this.$refs.noteSelectModel.edit(record);
 
       },
       close () {

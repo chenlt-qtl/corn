@@ -67,7 +67,6 @@
 </template>
 
 <script>
-  import NoteModal from './modules/NoteModal'
   import SelectTab from './components/SelectTab'
   import MainTab from './components/MainTab'
   import NoteTree from './components/NoteTree'
@@ -79,7 +78,6 @@
     name: "NoteList",
     components: {
       JEditor,
-      NoteModal,
       NoteSearch,
       SelectTab,
       MainTab,
@@ -114,8 +112,6 @@
       },
       setSpinning(spinning){
         this.spinning = spinning;
-      },
-      loadTop() {//加载笔记本下拉框
       },
       changeTop(id){
         this.topId = id;
