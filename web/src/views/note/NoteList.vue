@@ -67,7 +67,6 @@
 </template>
 
 <script>
-  import NoteModal from './modules/NoteModal'
   import SelectTab from './components/SelectTab'
   import MainTab from './components/MainTab'
   import NoteTree from './components/NoteTree'
@@ -79,7 +78,6 @@
     name: "NoteList",
     components: {
       JEditor,
-      NoteModal,
       NoteSearch,
       SelectTab,
       MainTab,
@@ -115,8 +113,6 @@
       setSpinning(spinning){
         this.spinning = spinning;
       },
-      loadTop() {//加载笔记本下拉框
-      },
       changeTop(id){
         this.topId = id;
       },
@@ -136,18 +132,20 @@
         this.$refs.noteTree.loadNote();
         this.$refs.mainTab.clear();
       },
-      onTreeClick(note,focus){
-        this.$refs.mainTab.activeTab({id:note.id,name:note.name});
-        this.loadForm(note);
-        if(focus){
-          this.$refs.jEditor.setFocus();
+      onTreeClick(note,focus) {
+        if (note.id) {
+          this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
+          if (focus) {
+            this.$refs.jEditor.setFocus();
+          }
         }
+        this.loadForm(note);
       },
       addSelect() {
         this.$refs.noteSelectList.show();
       },
       loadForm(data){
-        if(!data.text) {
+        if(this.$refs.jEditor&&!data.text) {
           this.$refs.jEditor.clear();
         }
         this.name = data.name;

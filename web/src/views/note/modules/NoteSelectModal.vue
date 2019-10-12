@@ -63,17 +63,15 @@
     },
     methods: {
       show(){
+        this.form.resetFields();
         this.visible = true;
-      },
-      add () {
-        this.edit({});
       },
       edit (record) {
+        this.visible = true;
         this.form.resetFields();
         this.model = Object.assign({}, record);
-        this.visible = true;
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'name','parentIds','text','tag','source'))
+          this.form.setFieldsValue(pick(this.model,'name','tag'))
         });
 
       },
