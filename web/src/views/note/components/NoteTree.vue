@@ -66,6 +66,7 @@
         url: {
           copy: "/note/copy",
           edit: '/note/edit',
+          updateParent: '/note/updateParent',
         }
       }
     },
@@ -95,18 +96,19 @@
       },
       handleAdd(parentKey,isTop) {
         let newObj = {};
-        newObj["name"] = newObj["title"] = "无标题文档";
+        newObj["title"] = "无标题文档";
         newObj["text"] = " ";
-        newObj["id"] = newObj["key"] = this.uuid();
+        newObj["key"] = this.uuid();
         newObj['parentId'] = parentKey;
+        newObj["isLeaf"] = true;
 
         if (isTop) {//顶级节点
           this.noteTree.push(newObj);
-          newObj["name"] = newObj["title"] = "新分区";
+          newObj["title"] = "新分区";
         } else {
           let parent = this.getTreeNode(this.noteTree,parentKey);
           if(parent){
-            if(parent.model.parentIds.split("/").length>=7){
+            if(parent.parentIds.split("/").length>=7){
               this.$message.warning('笔记本目录最多只能6层!');
               return;
             }
@@ -115,14 +117,13 @@
             }
             parent.isLeaf=false;
             parent.children.push(newObj);
-            newObj['parentIds'] = parent.model.parentIds+"/"+parentKey;
+            newObj['parentIds'] = parent.parentIds+"/"+parentKey;
           }else {
             this.noteTree.push(newObj);
           }
         }
-        newObj["model"]=Object.assign({}, newObj);
-        this.noteData[newObj["id"]] = newObj["model"];
-        this.loadNote(newObj["id"],true);
+        this.noteData[newObj["key"]] = {id:newObj["key"],name:newObj["title"],parentId:newObj['parentId'],parentIds:newObj['parentIds']};
+        this.loadNote(newObj["key"],true);
       },
       loadTree(callback) {//加载笔记本树
         if (this.topId) {
@@ -176,15 +177,17 @@
         }
       },
       updateNote(note){
-        let oldNote = this.getTreeNode(this.noteTree,note.key);
-        oldNote = note;
-        this.noteData[oldNote.key] = oldNote.model;
+        let noteTree = this.noteTree;
+        this.updateTreeNode(note.id,note.name,noteTree);
+        this.noteTree = noteTree;
+        this.noteData[note.id] = note;
       },
       loadNote(id,focus){
         if(id) {
           let expandedKeys = [];
-          if (this.noteData[id].parentIds) {
-            expandedKeys = this.noteData[id].parentIds.split("/");
+          const note = this.getTreeNode(this.noteTree,id);
+          if (note.parentIds) {
+            expandedKeys = note.parentIds.split("/");
           }
           if (this.expandedKeys[this.expandedKeys.length - 1] != id) {
             expandedKeys.push(id);
@@ -198,7 +201,7 @@
         }
       },
       getSelected(){
-        return this.getTreeNode(this.noteTree,this.selectedKeys[0]);
+        return this.noteData[this.selectedKeys[0]];
       },
       getTreeNode(notes,id){
         let result;
@@ -218,22 +221,56 @@
         }
         return result;
       },
+      updateTreeNode(id,title,notes,found){
+        if(!found) {
+          for (let i = 0; i < notes.length; i++) {
+            let node = notes[i];
+            if (node.key == id) {
+              node.title = title;
+              found = true;
+              break;
+            } else {
+              if (node.children) {
+                this.updateTreeNode(id, title, node.children,found);
+                if(found){
+                  break;
+                }
+              }
+            }
+          }
+        }
+      },
       //拖动
       onDrop (info) {
         const newParent = this.getTreeNode(this.noteTree,info.node.eventKey);
-        const dragKey = info.dragNode.eventKey
+        const dragKey = info.dragNode.eventKey;
         if (!info.dropToGap) {
-          if (!newParent.children) {
-            newParent.children = [];
-          }
-          let drapNote = this.getTreeNode(this.noteTree, dragKey);
-          newParent.children.push(drapNote);
-          drapNote.model.parentId = info.node.eventKey;//更换父ID
-
-          //删除旧的
           const oldParent = this.getTreeNode(this.noteTree, info.dragNode.$parent.eventKey);
-          oldParent.children = oldParent.children.filter(node => node.key !== dragKey);
-          httpAction(this.url.edit, drapNote.model, 'put');
+          if (oldParent.key != newParent.key) {
+            if (!newParent.children) {
+              newParent.children = [];
+            }
+
+            let drapNote = this.getTreeNode(this.noteTree, dragKey);
+            newParent.children.push(drapNote);
+            drapNote.parentId = info.node.eventKey;//更换父ID
+            drapNote.parentIds = newParent.parentIds + "/" + drapNote.parentId;
+
+            //删除旧的
+            oldParent.children = oldParent.children.filter(node => node.key !== dragKey);
+
+            this.$emit('spinning',true);
+            let that = this;
+            httpAction(this.url.updateParent, { id: drapNote.key, parentId: drapNote.parentId }, 'put').then((res) => {
+              if (res.success) {
+                that.$message.success('保存成功!')
+              }else {
+                that.$message.error(res.message);
+              }
+              that.loadTree();
+              that.$emit('spinning',false);
+            });
+          }
         }
       },
       handleCopy(){

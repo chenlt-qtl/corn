@@ -88,8 +88,8 @@
       updateTab(note){
         let panes = [];
         this.panes.forEach((pane) => {
-          if(pane.id == note.key){
-            panes.push(note.model);
+          if(pane.id == note.id){
+            panes.push(note);
           }else {
             panes.push(pane);
           }
