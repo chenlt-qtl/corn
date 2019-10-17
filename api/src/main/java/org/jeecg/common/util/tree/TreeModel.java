@@ -17,6 +17,8 @@ public abstract class TreeModel<T>{
 
     private T model;
 
+    public TreeModel() {}
+
     public TreeModel(T model) {
         this.model=model;
     }
