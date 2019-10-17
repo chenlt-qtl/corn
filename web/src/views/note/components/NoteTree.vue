@@ -108,10 +108,6 @@
         } else {
           let parent = this.getTreeNode(this.noteTree,parentKey);
           if(parent){
-            if(parent.parentIds.split("/").length>=7){
-              this.$message.warning('笔记本目录最多只能6层!');
-              return;
-            }
             if(!parent.children){
               parent.children = [];
             }
