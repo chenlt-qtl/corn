@@ -148,7 +148,8 @@
     },
     watch: {
       value(newValue) {
-        this.myValue = newValue
+        this.myValue = newValue;
+        tinymce.activeEditor.setContent(newValue);
       },
     }
   }

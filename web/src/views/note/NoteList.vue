@@ -145,7 +145,7 @@
         this.$refs.noteSelectList.show();
       },
       loadForm(data){
-        if(this.$refs.jEditor&&!data.text) {
+        if(this.$refs.jEditor) {
           this.$refs.jEditor.clear();
         }
         this.name = data.name;
