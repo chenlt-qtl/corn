@@ -172,27 +172,26 @@
         if(!node){
           return;
         }
-        let note = node.model;
         if(!that.name){
-          that.name = note['name'];
+          that.name = node['name'];
           return;
         }
         if (that.topId) {
-          note['text'] = this.$refs.jEditor.getText();
-          note['name'] = node.title = this.name;
+          node['text'] = this.$refs.jEditor.getText();
+          node['name'] = this.name;
           let url = that.url.add;
           let method = 'post';
-          if (note['createBy']) {
+          if (node['createBy']) {
             url = that.url.edit;
             method = 'put';
           }
           console.log("开始保存",url,method);
-          httpAction(url, note, method).then((res) => {
+          httpAction(url, node, method).then((res) => {
             if (res.success) {
-              this.$message.success('保存成功!')
-              node.model = res.result;
+              node = res.result;
               this.$refs.noteTree.updateNote(node);
               this.$refs.mainTab.updateTab(node);
+              this.$message.success('保存成功!')
             }
           })
         }

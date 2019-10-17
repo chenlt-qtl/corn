@@ -1,6 +1,9 @@
 package org.jeecg.modules.note.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.util.tree.TreeUtil;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.entity.NoteDelete;
@@ -8,8 +11,11 @@ import org.jeecg.modules.note.mapper.NoteMapper;
 import org.jeecg.modules.note.model.NoteTreeModel;
 import org.jeecg.modules.note.service.INoteDeleteService;
 import org.jeecg.modules.note.service.INoteService;
+import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -38,7 +44,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Override
     public List<Note> searchNote(String createBy,String parentId, String text) {
-        return noteMapper.listAllChildren(createBy,parentId,text);
+        return noteMapper.listAllChildren(createBy,parentId,text,false);
     }
 
     @Override
@@ -49,7 +55,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     @Override
     public List<NoteTreeModel> queryTreeList(String createBy,String parentId) {
         String rootId = parentId;
-        List<Note> list = noteMapper.listAllChildren(createBy,parentId,null);
+        List<Note> list = noteMapper.listAllChildren(createBy,parentId,null,false);
         List<NoteTreeModel> treeList = new ArrayList<>();
         for(Note note:list){
             NoteTreeModel model = new NoteTreeModel(note);
@@ -62,12 +68,43 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         return TreeUtil.wrapTreeDataToTreeList(treeList,rootId);
     }
 
+    @Transactional
+    @Override
+    public void updateParent(Note note,String oldParents) {
+        setParents(note);
+        note.setUpdateBy(null);
+        note.setUpdateTime(null);
+        updateNote(note);
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        List<Note> list = noteMapper.listAllChildren(sysUser.getUsername(),note.getId(),null,true);//子笔记
+        for(Note child : list){
+            child.setParentIds(child.getParentIds().replace(oldParents,note.getParentIds()));
+            updateNote(child);
+        }
+    }
+
+    public boolean updateNote(Note note){
+        try {
+            return updateById(note);
+        }catch (DataIntegrityViolationException e){
+            throw new JeecgBootException("笔记本目录最多只能6层!");
+        }
+    }
+
+    public boolean saveNote(Note note){
+        try {
+            return save(note);
+        }catch (DataIntegrityViolationException e){
+            throw new JeecgBootException("笔记本目录最多只能6层!");
+        }
+    }
+
     public void delete(String userName, String id){
         List<String> deleteIds = new ArrayList<>();
         Date now = new Date();
         NoteDelete delete;
 
-        List<Note> list = noteMapper.listAllChildren(userName,id,null);//子笔记
+        List<Note> list = noteMapper.listAllChildren(userName,id,null,true);//子笔记
         list.add(getById(id));//自己
         for(Note child:list){
             deleteIds.add(child.getId());
@@ -78,5 +115,19 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         }
 
         this.removeByIds(deleteIds);
+    }
+
+    /**
+     * 设置parents
+     * @param note
+     */
+    public void setParents(Note note){
+        if(StringUtils.isBlank(note.getParentId())||"0".equals(note.getParentId())){
+            note.setParentId("0");
+            note.setParentIds("0");
+        }else {
+            Note parent = getById(note.getParentId());
+            note.setParentIds(parent.getParentIds() + "/" + note.getParentId());
+        }
     }
 }

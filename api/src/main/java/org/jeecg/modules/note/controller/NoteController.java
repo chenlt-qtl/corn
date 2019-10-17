@@ -112,8 +112,8 @@ public class NoteController {
 	public Result<Note> add(@RequestBody Note note) {
 		Result<Note> result = new Result<Note>();
 		try {
-			setParents(note);
-			noteService.save(note);
+			noteService.setParents(note);
+			noteService.saveNote(note);
 			result.setResult(note);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -139,7 +139,7 @@ public class NoteController {
 			 newNote.setText(oldNote.getText());
 			 newNote.setParentId(note.getParentId());
 			 newNote.setParentIds(parent.getParentIds()+"/"+note.getParentId());
-			 noteService.save(newNote);
+			 noteService.saveNote(newNote);
 			 result.setResult(newNote);
 			 result.success("复制成功！");
 		 } catch (Exception e) {
@@ -162,10 +162,10 @@ public class NoteController {
 		if(noteEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
-			setParents(note);
+			noteService.setParents(note);
 			note.setUpdateBy(null);
 			note.setUpdateTime(null);
-			boolean ok = noteService.updateById(note);
+			boolean ok = noteService.updateNote(note);
 			if(ok) {
 				result.setResult(note);
 				result.success("修改成功!");
@@ -174,6 +174,28 @@ public class NoteController {
 		
 		return result;
 	}
+
+	 /**
+	  *  编辑
+	  * @param note
+	  * @return
+	  */
+	 @PutMapping(value = "/updateParent")
+	 public Result<Note> updateParent(@RequestBody Note note) {
+		 Result<Note> result = new Result<Note>();
+		 Note noteEntity = noteService.getById(note.getId());
+		 if(noteEntity==null) {
+			 result.error500("未找到对应实体");
+		 }else {
+		 	 String oldParents = noteEntity.getParentId();
+			 noteEntity.setParentId(note.getParentId());
+			 noteService.updateParent(noteEntity,oldParents);
+			 result.setResult(note);
+			 result.success("修改成功!");
+		 }
+
+		 return result;
+	 }
 	
 	/**
 	  *   通过id删除
@@ -293,7 +315,7 @@ public class NoteController {
           try {
               List<Note> listNotes = ExcelImportUtil.importExcel(file.getInputStream(), Note.class, params);
               for (Note noteExcel : listNotes) {
-                  noteService.save(noteExcel);
+                  noteService.saveNote(noteExcel);
               }
               return Result.ok("文件导入成功！数据行数：" + listNotes.size());
           } catch (Exception e) {
@@ -308,20 +330,6 @@ public class NoteController {
           }
       }
       return Result.ok("文件导入失败！");
-  }
-
-	 /**
-	  * 设置parents
-	  * @param note
-	  */
-  private void setParents(Note note){
-	  if(StringUtils.isBlank(note.getParentId())||"0".equals(note.getParentId())){
-		  note.setParentId("0");
-		  note.setParentIds("0");
-	  }else {
-		  Note parent = noteService.getById(note.getParentId());
-		  note.setParentIds(parent.getParentIds() + "/" + note.getParentId());
-	  }
   }
 
 }
