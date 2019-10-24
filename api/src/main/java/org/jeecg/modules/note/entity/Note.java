@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import jdk.nashorn.internal.objects.annotations.Where;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.util.Base64Utils;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Data
 @TableName("note_info")
+@Slf4j
 public class Note implements Serializable {
     private static final long serialVersionUID = 1L;
 	private static final Pattern BASE64_PATTERN = Pattern.compile("data\\:image/(jpeg|png|gif|jpg|bmp);base64\\,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?");
@@ -46,9 +48,11 @@ public class Note implements Serializable {
 		StringBuffer sbr = new StringBuffer();
 		//---------------处理旧的数据----------------
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		log.info("============ContextPath:"+request.getContextPath());
 		Pattern imgPattern = Pattern.compile("(?<=<img src=\")([/|:|0-9a-z]+?)"+request.getContextPath()+"/");
 		Matcher matcher = imgPattern.matcher(getText());
 		while (matcher.find()) {
+			log.info("============ContextPath:"+matcher.group(0));
 			matcher.appendReplacement(sbr, IMG_PRE);
 		}
 
@@ -122,6 +126,7 @@ public class Note implements Serializable {
 		matcher = imgPattern.matcher("<p><img src=\"http://localhost:8089/jeecg-boot/user/20191024/damu/1571887153443.jpg\" alt=\"\" width=\"656\" height=\"369\" /></p>\n");
 		sbr = new StringBuffer();
 		while (matcher.find()) {
+			System.out.println("group0"+matcher.group(0));
 			matcher.appendReplacement(sbr, "baseUrl/");
 		}
 
