@@ -165,7 +165,7 @@ public class NoteController {
 			noteService.setParents(note);
 			note.setUpdateBy(null);
 			note.setUpdateTime(null);
-			boolean ok = noteService.updateNote(note);
+			boolean ok = noteService.updateNote(note,noteEntity.getText());
 			if(ok) {
 				result.setResult(note);
 				result.success("修改成功!");

@@ -28,7 +28,7 @@ public interface INoteService extends IService<Note> {
 
     void setParents(Note note);
 
-    boolean updateNote(Note note);
+    boolean updateNote(Note note,String oldText);
 
     boolean saveNote(Note note);
 }

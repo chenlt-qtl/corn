@@ -1,27 +1,25 @@
 package org.jeecg.modules.note.entity;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import jdk.nashorn.internal.objects.annotations.Where;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.util.Base64Utils;
 import org.jeecg.common.util.UpLoadUtil;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Description: 笔记管理
@@ -36,30 +34,21 @@ public class Note implements Serializable {
     private static final long serialVersionUID = 1L;
 	private static final Pattern BASE64_PATTERN = Pattern.compile("data\\:image/(jpeg|png|gif|jpg|bmp);base64\\,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?");
 
-	private static final String IMG_PRE = "baseUrl/";
-
 
 	/**
 	 * 将base64图片存到硬盘
 	 * 处理图片路径
 	 * @param uploadPath
 	 */
-    public void preSave(String uploadPath){
+    public void preSave(String uploadPath,String oldText){
 		StringBuffer sbr = new StringBuffer();
 		//---------------处理旧的数据----------------
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		log.info("============ContextPath:"+request.getContextPath());
-		Pattern imgPattern = Pattern.compile("(?<=<img src=\")([/|:|0-9a-z]+?)"+request.getContextPath()+"/");
-		Matcher matcher = imgPattern.matcher(getText());
-		while (matcher.find()) {
-			log.info("============ContextPath:"+matcher.group(0));
-			matcher.appendReplacement(sbr, IMG_PRE);
-		}
-
-		matcher.appendTail(sbr);
+		text = UpLoadUtil.parseOldImg(text,request.getContextPath());
 
 		//---------------处理base64------------------
-		matcher = BASE64_PATTERN.matcher(sbr);
+		Matcher matcher = BASE64_PATTERN.matcher(text);
 		sbr = new StringBuffer();
 		while (matcher.find()) {
 			String data = matcher.group(0);//数据
@@ -70,7 +59,7 @@ public class Note implements Serializable {
 					String pathArr[] = UpLoadUtil.getFilePath(uploadPath,"."+type);
 					try {
 						if(Base64Utils.GenerateImage(imgData,pathArr[0])) {
-							matcher.appendReplacement(sbr, IMG_PRE+pathArr[1]);
+							matcher.appendReplacement(sbr, UpLoadUtil.IMG_PRE+pathArr[1]);
 						}
 					} catch (IOException e) {
 						throw new JeecgBootException("保存图片出错");
@@ -81,7 +70,17 @@ public class Note implements Serializable {
 
 		matcher.appendTail(sbr);
 
-		setText(sbr.toString());
+		String newText = sbr.toString();
+
+		if(StringUtils.isNotBlank(oldText)){
+			String[] imgs = UpLoadUtil.getImgUrls(oldText, request.getContextPath());
+			for(String imgUrl:imgs){
+				if(newText.indexOf(imgUrl)==-1){//图片被删除了
+					UpLoadUtil.delImg(uploadPath,imgUrl);
+				}
+			}
+        }
+		setText(newText);
 	}
 
 	/**
@@ -94,7 +93,7 @@ public class Note implements Serializable {
 			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 			String preUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
 
-			Pattern imgPattern = Pattern.compile("(?<=<img src=\")" + IMG_PRE);
+			Pattern imgPattern = Pattern.compile("(?<=<img src=\")" + UpLoadUtil.IMG_PRE);
 			Matcher matcher = imgPattern.matcher(text);
 			while (matcher.find()) {
 				matcher.appendReplacement(sbr, preUrl);
@@ -136,7 +135,7 @@ public class Note implements Serializable {
 		System.out.println("=======================");
 		sbr = new StringBuffer();
 		String preUrl = "http://localhost:8080/jeecg-boot/";
-		imgPattern = Pattern.compile("(?<=<img src=\")"+IMG_PRE);
+		imgPattern = Pattern.compile("(?<=<img src=\")"+UpLoadUtil.IMG_PRE);
 		matcher = imgPattern.matcher("<p><img src=\"baseUrl/user/20191024/damu/1571887545610.jpg\" alt=\"\" width=\"650\" height=\"366\" /><img src=\"baseUrl/user/20191024/damu/1571891981499.png\" alt=\"\" /></p>");
 		while (matcher.find()) {
 			matcher.appendReplacement(sbr, preUrl);

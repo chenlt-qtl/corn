@@ -78,18 +78,18 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         setParents(note);
         note.setUpdateBy(null);
         note.setUpdateTime(null);
-        updateNote(note);
+        updateNote(note,"");
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         List<Note> list = noteMapper.listAllChildren(sysUser.getUsername(),note.getId(),null,true);//子笔记
         for(Note child : list){
             child.setParentIds(child.getParentIds().replace(oldParents,note.getParentIds()));
-            updateNote(child);
+            updateNote(child,"");
         }
     }
 
-    public boolean updateNote(Note note){
+    public boolean updateNote(Note note,String oldNote){
         try {
-            note.preSave(uploadpath);
+            note.preSave(uploadpath,oldNote);
             return updateById(note);
         }catch (DataIntegrityViolationException e){
             throw new JeecgBootException("笔记本目录最多只能60层!");
@@ -98,7 +98,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     public boolean saveNote(Note note){
         try {
-            note.preSave(uploadpath);
+            note.preSave(uploadpath,"");
             return save(note);
         }catch (DataIntegrityViolationException e){
             throw new JeecgBootException("笔记本目录最多只能60层!");
