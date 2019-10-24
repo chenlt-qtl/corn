@@ -43,18 +43,6 @@
         <commons.version>2.6</commons.version>
     </properties>
 
-	<profiles>
-		<profile>
-			<id>prod</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<profile>tengxun</profile>
-			</properties>
-		</profile>
-	</profiles>
-    
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

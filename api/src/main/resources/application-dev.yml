@@ -16,4 +16,8 @@ jeecg :
     webapp: D://webapp
 logging:
   level:
+    root: INFO
     org.jeecg.modules: DEBUG
+  root:
+    appender: Console
+    path: .
