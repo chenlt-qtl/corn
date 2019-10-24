@@ -241,6 +241,7 @@ public class NoteController {
 		if(note==null) {
 			result.error500("未找到对应实体");
 		}else {
+			note.parseText();
 			result.setResult(note);
 			result.setSuccess(true);
 		}

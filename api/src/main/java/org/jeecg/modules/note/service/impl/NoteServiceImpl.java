@@ -13,6 +13,7 @@ import org.jeecg.modules.note.service.INoteDeleteService;
 import org.jeecg.modules.note.service.INoteService;
 import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,9 @@ import java.util.List;
  */
 @Service
 public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements INoteService {
+
+    @Value(value = "${jeecg.path.upload}")
+    private String uploadpath;
 
     @Resource
     private NoteMapper noteMapper;
@@ -85,6 +89,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     public boolean updateNote(Note note){
         try {
+            note.preSave(uploadpath);
             return updateById(note);
         }catch (DataIntegrityViolationException e){
             throw new JeecgBootException("笔记本目录最多只能6层!");
@@ -93,6 +98,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     public boolean saveNote(Note note){
         try {
+            note.preSave(uploadpath);
             return save(note);
         }catch (DataIntegrityViolationException e){
             throw new JeecgBootException("笔记本目录最多只能6层!");

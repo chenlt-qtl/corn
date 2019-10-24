@@ -63,18 +63,19 @@ module.exports = {
           '/jeecg-boot': ''  //默认所有请求都加了jeecg-boot前缀，需要去掉
         }
       },*/
-     /*
+/*
       '/jeecg-boot': {
-        target: 'http://192.168.15.95:8089/', //请求本地 需要jeecg-boot后台项目
+        target: 'http://106.54.210.5/', //请求本地 需要jeecg-boot后台项目
         changeOrigin: true
       },*/
-      '/jeecg-boot': {
-        target: 'http://localhost:8089', //请求本地 需要jeecg-boot后台项目
-        ws: false,
-        changeOrigin: true
-      },
-    }
-  },
 
-  lintOnSave: undefined
+       '/jeecg-boot': {
+         target: 'http://localhost:8089', //请求本地 需要jeecg-boot后台项目
+         ws: false,
+         changeOrigin: true
+       },
+}
+},
+
+lintOnSave: undefined
 }

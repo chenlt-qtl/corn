@@ -182,6 +182,7 @@
         if(id) {
           let expandedKeys = [];
           const note = this.getTreeNode(this.noteTree,id);
+          console.log(note);
           if (note.parentIds) {
             expandedKeys = note.parentIds.split("/");
           }

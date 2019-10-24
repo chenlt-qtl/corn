@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.AntPathMatcher;
@@ -46,29 +47,18 @@ public class CommonController {
 	private String uploadpath;
 
 	@PostMapping(value = "/upload")
-	public Result<SysUser> upload(HttpServletRequest request, HttpServletResponse response) {
+	public Result<SysUser> upload(HttpServletRequest request) {
 		Result<SysUser> result = new Result<>();
 		try {
-			String ctxPath = uploadpath;
-			String fileName = null;
-			String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
-			SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-			String bizPath = "user"+ File.separator + nowday + File.separator + sysUser.getUsername();
-			File file = new File(ctxPath + File.separator + bizPath );
-			if (!file.exists()) {
-				file.mkdirs();// 创建文件根目录
-			}
+
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 			MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
 			String orgName = mf.getOriginalFilename();// 获取文件名
-			fileName = System.currentTimeMillis() + orgName.substring(orgName.indexOf("."));
-			String savePath = file.getPath() + File.separator + fileName;
-			File savefile = new File(savePath);
+
+			String[] path = UpLoadUtil.getFilePath(uploadpath,orgName.substring(orgName.indexOf(".")));
+			File savefile = new File(path[0]);
 			FileCopyUtils.copy(mf.getBytes(), savefile);
-			String dbpath = bizPath + File.separator + fileName;
-			if (bizPath.contains("\\")) {
-				dbpath = dbpath.replace("\\", "/");
-			}
+			String dbpath = path[1];
 			result.setMessage(dbpath);
 			result.setSuccess(true);
 		} catch (IOException e) {
