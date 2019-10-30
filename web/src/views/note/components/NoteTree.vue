@@ -74,7 +74,6 @@
     },
     methods:{
       onExpand(e){
-        console.log("onExpand");
         this.expandedKeys = e;
       },
       handleAddButton(e){
@@ -100,15 +99,15 @@
       },
       handleAdd(parentKey,isTop) {
         let newObj = {};
-        newObj["title"] = "无标题文档";
+        newObj["title"] = newObj["name"] = "无标题文档";
         newObj["text"] = " ";
-        newObj["key"] = this.uuid();
+        newObj["key"] = newObj["id"] = this.uuid();
         newObj['parentId'] = parentKey;
         newObj["isLeaf"] = true;
 
         if (isTop) {//顶级节点
           this.noteTree.push(newObj);
-          newObj["title"] = "新分区";
+          newObj["title"] = newObj["name"]= "新分区";
         } else {
           let parent = this.getTreeNode(this.noteTree,parentKey);
           if(parent){
@@ -122,8 +121,8 @@
             this.noteTree.push(newObj);
           }
         }
-        this.noteData[newObj["key"]] = {id:newObj["key"],name:newObj["title"],parentId:newObj['parentId'],parentIds:newObj['parentIds']};
-        this.loadNote(newObj["key"],true);
+        this.$emit('addNote', newObj);
+        this.selectNote(newObj["key"]);
       },
       loadTree(callback) {//加载笔记本树
         if (this.topId) {
@@ -134,6 +133,9 @@
               that.noteTree = [];
               for (let i = 0; i < res.result.length; i++) {
                 that.noteTree.push(res.result[i])
+              }
+              if(this.selectedKeys[0]){
+                this.selectNote(this.selectedKeys[0]);
               }
               if(callback){
                 callback();
@@ -165,16 +167,16 @@
       selectNote(id){
         if(id) {
           const note = this.getTreeNode(this.noteTree, id);
-          let expandedKeys = [];
-          if (note.parentIds) {
-            expandedKeys = note.parentIds.split("/");
+          if(note) {
+            let expandedKeys = [];
+            if (note.parentIds) {
+              expandedKeys = note.parentIds.split("/");
+            }
+            expandedKeys.push(id);
+            this.expandedKeys = expandedKeys;
           }
-          expandedKeys.push(id);
-          this.expandedKeys = expandedKeys;
-          this.selectedKeys = [id];
-          return;
         }
-        this.selectedKeys = [];
+        this.selectedKeys = [id];
       },
       updateNote(note){
         let noteTree = this.noteTree;

@@ -59,6 +59,8 @@
           this.panes.push(note);
         }
         this.activeTabKey = note.id;
+        this.allPanes[this.topId] = this.panes;
+        this.allActiveTabKeys[this.topId] = note.id;
       },
       onEdit (targetKey, action) {
         this[action](targetKey)
@@ -98,14 +100,8 @@
       }
     },
     watch: {
-      activeTabKey(newKey){
-        this.allActiveTabKeys[this.topId] = newKey;
-      },
       topId(){
         this.initPanes();
-      },
-      panes(newData){
-        this.allPanes[this.topId] = newData;
       }
     }
   }

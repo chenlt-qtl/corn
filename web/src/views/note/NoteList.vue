@@ -29,6 +29,7 @@
                 @loadNote='loadNote'
                 @spinning="setSpinning"
                 @removeNode="onRemoveNode"
+                @addNote="addNote"
                 :searchText="searchText"></note-tree>
             </a-col>
           </div>
@@ -110,6 +111,10 @@
       this.max_height = Number(`${document.documentElement.clientHeight}`)-72;
     },
     methods: {
+      addNote(note){
+        this.noteData[note.key] = note;
+        this.loadNote(note.key,true);
+      },
       onRemoveNode(key){
         this.$refs.mainTab.remove(key);
       },
@@ -154,6 +159,7 @@
             })
           }else{
             let note = this.noteData[id];
+            console.log(note);
             this.loadForm(note);
             this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
             if (focus) {
@@ -191,6 +197,7 @@
       },
       onChangeTab(activeKey){
         this.loadNote(activeKey,false);
+        this.$refs.noteTree.selectNote(activeKey);
       },
       submitCurrForm() {
         let that = this;
