@@ -62,7 +62,6 @@
       ...mapActions(["Logout"]),
       ...mapGetters(["nickname", "avatar"]),
       getAvatar(){
-        console.log('url = '+ window._CONFIG['imgDomainURL']+"/"+this.avatar())
         return window._CONFIG['imgDomainURL']+"/"+this.avatar()
       },
       handleLogout() {
@@ -87,12 +86,9 @@
         });
       },
       active(index){
-        console.log('active',index);
-          this.activeIndex = index;
+        this.activeIndex = index;
       },
       show(index){
-        console.log(index);
-        console.log(this.activeIndex);
         if(this.activeIndex == index){
           return true;
         }else {

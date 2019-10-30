@@ -15,12 +15,13 @@
                      <a-directory-tree
                        showIcon
                        :selectedKeys="selectedKeys"
+                       :expandedKeys="expandedKeys"
+                       @expand="onExpand"
                        @rightClick="rightHandle"
                        @select="onTreeClick"
                        @drop="onDrop"
                        :treeData="noteTree"
                        class="note-left-tree"
-                       :expandedKeys="expandedKeys"
                        draggable
                        :filterTreeNode="filterTreeNode"
                      />
@@ -72,6 +73,10 @@
     created() {
     },
     methods:{
+      onExpand(e){
+        console.log("onExpand");
+        this.expandedKeys = e;
+      },
       handleAddButton(e){
         if (!this.topId) {
           this.$message.warning('请先选中一个笔记本!')
@@ -155,30 +160,21 @@
       onTreeClick(key) {
         let id = key[0];
         this.$emit('loadNote', id, false);
+        this.selectNote(id);
       },
-      selectNote(note){
-        if(note && note.id){
-          let exist = false;
-          this.expandedKeys.forEach((key)=> {
-            if(key == note.id){
-              exist = true;
-            }
-          });
-          if(!exist||this.selectedKeys[0] ==note.id) {//不存在就更新展开树
-            let expandedKeys = [];
-            if (note.parentIds) {
-              expandedKeys = note.parentIds.split("/");
-            }
-            if (this.selectedKeys[0] != note.id) {
-              expandedKeys.push(note.id);
-            }
-            this.expandedKeys = expandedKeys;
+      selectNote(id){
+        if(id) {
+          const note = this.getTreeNode(this.noteTree, id);
+          let expandedKeys = [];
+          if (note.parentIds) {
+            expandedKeys = note.parentIds.split("/");
           }
-
-          this.selectedKeys = [note.id];
-        }else {
-          this.selectedKeys = [];
+          expandedKeys.push(id);
+          this.expandedKeys = expandedKeys;
+          this.selectedKeys = [id];
+          return;
         }
+        this.selectedKeys = [];
       },
       updateNote(note){
         let noteTree = this.noteTree;

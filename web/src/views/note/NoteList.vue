@@ -146,7 +146,6 @@
                 let note = this.noteData[id];
                 this.loadForm(note);
                 this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
-                this.$refs.noteTree.selectNote(note);
                 if (focus) {
                   this.$refs.jEditor.setFocus();
                 }
@@ -157,7 +156,6 @@
             let note = this.noteData[id];
             this.loadForm(note);
             this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
-            this.$refs.noteTree.selectNote(note);
             if (focus) {
               this.$refs.jEditor.setFocus();
             }
