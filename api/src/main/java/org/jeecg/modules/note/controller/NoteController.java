@@ -166,6 +166,7 @@ public class NoteController {
 			note.setUpdateBy(null);
 			note.setUpdateTime(null);
 			boolean ok = noteService.updateNote(note,noteEntity.getText());
+			note.parseText();
 			if(ok) {
 				result.setResult(note);
 				result.success("修改成功!");

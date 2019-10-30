@@ -39,7 +39,7 @@
 
 <script>
   import { httpAction} from '@/api/manage'
-  import { deleteNote, queryNoteTree, queryNoteById} from '@/api/api'
+  import { deleteNote, queryNoteTree} from '@/api/api'
 
   export default {
     name:'NoteTree',
@@ -61,7 +61,6 @@
         selectedKeys:[],
         noteTree: [],
         expandedKeys:[],//打开的树节点
-        noteData:[],//保存所有note信息
         copyKey:'',
         url: {
           copy: "/note/copy",
@@ -155,50 +154,39 @@
       },
       onTreeClick(key) {
         let id = key[0];
-        if (!id) {
-          this.loadNote();
-        } else {
-          if (!this.noteData[id]) {
-            this.$emit('spinning', true);
-            queryNoteById({ 'id': id }).then((res) => {
-              if (res.success) {
-                this.noteData[id] = res.result;
-                this.loadNote(id);
-              }
-              this.$emit('spinning', false);
-            })
-          } else {
-            this.loadNote(id);
+        this.$emit('loadNote', id, false);
+      },
+      selectNote(note){
+        if(note && note.id){
+          let exist = false;
+          this.expandedKeys.forEach((key)=> {
+            if(key == note.id){
+              exist = true;
+            }
+          });
+          if(!exist||this.selectedKeys[0] ==note.id) {//不存在就更新展开树
+            let expandedKeys = [];
+            if (note.parentIds) {
+              expandedKeys = note.parentIds.split("/");
+            }
+            if (this.selectedKeys[0] != note.id) {
+              expandedKeys.push(note.id);
+            }
+            this.expandedKeys = expandedKeys;
           }
+
+          this.selectedKeys = [note.id];
+        }else {
+          this.selectedKeys = [];
         }
       },
       updateNote(note){
         let noteTree = this.noteTree;
         this.updateTreeNode(note.id,note.name,noteTree);
         this.noteTree = noteTree;
-        this.noteData[note.id] = note;
-      },
-      loadNote(id,focus){
-        if(id) {
-          let expandedKeys = [];
-          const note = this.getTreeNode(this.noteTree,id);
-          console.log(note);
-          if (note.parentIds) {
-            expandedKeys = note.parentIds.split("/");
-          }
-          if (this.expandedKeys[this.expandedKeys.length - 1] != id) {
-            expandedKeys.push(id);
-          }
-          this.expandedKeys = expandedKeys;
-          this.selectedKeys[0] = id;
-          this.$emit('onTreeClick', this.noteData[id], focus);
-        }else{
-          this.selectedKeys = [];
-          this.$emit('onTreeClick', {});
-        }
       },
       getSelected(){
-        return this.noteData[this.selectedKeys[0]];
+        return this.selectedKeys[0];
       },
       getTreeNode(notes,id){
         let result;
