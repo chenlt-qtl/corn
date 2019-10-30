@@ -26,9 +26,10 @@
               <note-tree
                 ref="noteTree"
                 :topId="topId"
-                @onTreeClick='onTreeClick'
+                @loadNote='loadNote'
                 @spinning="setSpinning"
                 @removeNode="onRemoveNode"
+                @addNote="addNote"
                 :searchText="searchText"></note-tree>
             </a-col>
           </div>
@@ -73,6 +74,7 @@
   import NoteSearch from './NoteSearch'
   import { httpAction} from '@/api/manage'
   import JEditor from "@/components/jeecg/JEditor";
+  import { queryNoteById} from '@/api/api'
 
   export default {
     name: "NoteList",
@@ -96,9 +98,11 @@
         topId:'',
         form: this.$form.createForm(this),
         max_height: 600,
+        noteData:[],//保存所有note信息
         url: {
           edit: '/note/edit',
           add: "/note/add",
+          get: "/note/queryById",
           upload: window._CONFIG['domianURL']+"/sys/common/upload",
        },
     }
@@ -107,6 +111,10 @@
       this.max_height = Number(`${document.documentElement.clientHeight}`)-72;
     },
     methods: {
+      addNote(note){
+        this.noteData[note.id] = note;
+        this.loadNote(note.id,true);
+      },
       onRemoveNode(key){
         this.$refs.mainTab.remove(key);
       },
@@ -122,32 +130,53 @@
         if(topId!=this.topId){//当前目录
           this.topId = topId;
         }
-        this.onTreeClick(note);
+        this.loadNote(note.id,false);
       },
       openSearch(){
         this.$refs.noteSearch.show(this.topId);
       },
       //关闭所有tab
       closeAll() {
-        this.$refs.noteTree.loadNote();
-        this.$refs.mainTab.clear();
+        this.$refs.noteTree.selectNote();
+        this.loadForm({});
       },
-      onTreeClick(note,focus) {
-        if (note.id) {
-          this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
-          if (focus) {
-            this.$refs.jEditor.setFocus();
+      loadNote(id,focus) {
+        if (id) {
+          this.spinning = true;
+          if (!this.noteData[id]) {
+            queryNoteById({ 'id': id }).then((res) => {
+              console.log(res);
+              if (res.success) {
+                this.noteData[id] = res.result;
+                let note = this.noteData[id];
+                this.loadForm(note);
+                this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
+                if (focus) {
+                  this.$refs.jEditor.setFocus();
+                }
+              }
+              this.spinning = false;
+            })
+          }else{
+            let note = this.noteData[id];
+            console.log(note);
+            this.loadForm(note);
+            this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
+            if (focus) {
+              this.$refs.jEditor.setFocus();
+            }
+            this.spinning = false;
           }
+
+        }else {
+          this.loadForm({});
+          return {};
         }
-        this.loadForm(note);
       },
       addSelect() {
         this.$refs.noteSelectList.show();
       },
       loadForm(data){
-        if(this.$refs.jEditor) {
-          this.$refs.jEditor.clear();
-        }
         this.name = data.name;
         this.content = data.text;
       },
@@ -164,14 +193,16 @@
         }
       },
       onChangeTab(activeKey){
-        this.$refs.noteTree.onTreeClick([activeKey]);
+        this.loadNote(activeKey,false);
+        this.$refs.noteTree.selectNote(activeKey);
       },
       submitCurrForm() {
         let that = this;
-        let node = this.$refs.noteTree.getSelected();
-        if(!node){
+        let id = this.$refs.noteTree.getSelected();
+        if(!id){
           return;
         }
+        let node = this.noteData[id];
         if(!that.name){
           that.name = node['name'];
           return;
@@ -189,6 +220,7 @@
           httpAction(url, node, method).then((res) => {
             if (res.success) {
               node = res.result;
+              this.noteData[id] = node;
               this.$refs.noteTree.updateNote(node);
               this.$refs.mainTab.updateTab(node);
               this.$message.success('保存成功!')

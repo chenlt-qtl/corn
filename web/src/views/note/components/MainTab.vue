@@ -59,6 +59,8 @@
           this.panes.push(note);
         }
         this.activeTabKey = note.id;
+        this.allPanes[this.topId] = this.panes;
+        this.allActiveTabKeys[this.topId] = note.id;
       },
       onEdit (targetKey, action) {
         this[action](targetKey)
@@ -79,11 +81,9 @@
       },
       //关闭所有tab
       closeAll() {
+        this.allPanes[this.topId] = this.panes = [];
+        this.allActiveTabKeys[this.topId] = this.activeTabKey = '';
         this.$emit('closeAll');
-      },
-      clear(){
-        this.panes = [];
-        this.activeTabKey = '';
       },
       updateTab(note){
         let panes = [];
@@ -98,14 +98,8 @@
       }
     },
     watch: {
-      activeTabKey(newKey){
-        this.allActiveTabKeys[this.topId] = newKey;
-      },
       topId(){
         this.initPanes();
-      },
-      panes(newData){
-        this.allPanes[this.topId] = newData;
       }
     }
   }

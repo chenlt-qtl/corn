@@ -15,12 +15,13 @@
                      <a-directory-tree
                        showIcon
                        :selectedKeys="selectedKeys"
+                       :expandedKeys="expandedKeys"
+                       @expand="onExpand"
                        @rightClick="rightHandle"
                        @select="onTreeClick"
                        @drop="onDrop"
                        :treeData="noteTree"
                        class="note-left-tree"
-                       :expandedKeys="expandedKeys"
                        draggable
                        :filterTreeNode="filterTreeNode"
                      />
@@ -39,7 +40,7 @@
 
 <script>
   import { httpAction} from '@/api/manage'
-  import { deleteNote, queryNoteTree, queryNoteById} from '@/api/api'
+  import { deleteNote, queryNoteTree} from '@/api/api'
 
   export default {
     name:'NoteTree',
@@ -61,7 +62,6 @@
         selectedKeys:[],
         noteTree: [],
         expandedKeys:[],//打开的树节点
-        noteData:[],//保存所有note信息
         copyKey:'',
         url: {
           copy: "/note/copy",
@@ -73,6 +73,9 @@
     created() {
     },
     methods:{
+      onExpand(e){
+        this.expandedKeys = e;
+      },
       handleAddButton(e){
         if (!this.topId) {
           this.$message.warning('请先选中一个笔记本!')
@@ -96,15 +99,15 @@
       },
       handleAdd(parentKey,isTop) {
         let newObj = {};
-        newObj["title"] = "无标题文档";
+        newObj["title"] = newObj["name"] = "无标题文档";
         newObj["text"] = " ";
-        newObj["key"] = this.uuid();
+        newObj["key"] = newObj["id"] = this.uuid();
         newObj['parentId'] = parentKey;
         newObj["isLeaf"] = true;
 
         if (isTop) {//顶级节点
           this.noteTree.push(newObj);
-          newObj["title"] = "新分区";
+          newObj["title"] = newObj["name"]= "新分区";
         } else {
           let parent = this.getTreeNode(this.noteTree,parentKey);
           if(parent){
@@ -118,8 +121,8 @@
             this.noteTree.push(newObj);
           }
         }
-        this.noteData[newObj["key"]] = {id:newObj["key"],name:newObj["title"],parentId:newObj['parentId'],parentIds:newObj['parentIds']};
-        this.loadNote(newObj["key"],true);
+        this.$emit('addNote', newObj);
+        this.selectNote(newObj["key"]);
       },
       loadTree(callback) {//加载笔记本树
         if (this.topId) {
@@ -130,6 +133,9 @@
               that.noteTree = [];
               for (let i = 0; i < res.result.length; i++) {
                 that.noteTree.push(res.result[i])
+              }
+              if(this.selectedKeys[0]){
+                this.selectNote(this.selectedKeys[0]);
               }
               if(callback){
                 callback();
@@ -155,50 +161,30 @@
       },
       onTreeClick(key) {
         let id = key[0];
-        if (!id) {
-          this.loadNote();
-        } else {
-          if (!this.noteData[id]) {
-            this.$emit('spinning', true);
-            queryNoteById({ 'id': id }).then((res) => {
-              if (res.success) {
-                this.noteData[id] = res.result;
-                this.loadNote(id);
-              }
-              this.$emit('spinning', false);
-            })
-          } else {
-            this.loadNote(id);
+        this.$emit('loadNote', id, false);
+        this.selectNote(id);
+      },
+      selectNote(id){
+        if(id) {
+          const note = this.getTreeNode(this.noteTree, id);
+          if(note) {
+            let expandedKeys = [];
+            if (note.parentIds) {
+              expandedKeys = note.parentIds.split("/");
+            }
+            expandedKeys.push(id);
+            this.expandedKeys = expandedKeys;
           }
         }
+        this.selectedKeys = [id];
       },
       updateNote(note){
         let noteTree = this.noteTree;
         this.updateTreeNode(note.id,note.name,noteTree);
         this.noteTree = noteTree;
-        this.noteData[note.id] = note;
-      },
-      loadNote(id,focus){
-        if(id) {
-          let expandedKeys = [];
-          const note = this.getTreeNode(this.noteTree,id);
-          console.log(note);
-          if (note.parentIds) {
-            expandedKeys = note.parentIds.split("/");
-          }
-          if (this.expandedKeys[this.expandedKeys.length - 1] != id) {
-            expandedKeys.push(id);
-          }
-          this.expandedKeys = expandedKeys;
-          this.selectedKeys[0] = id;
-          this.$emit('onTreeClick', this.noteData[id], focus);
-        }else{
-          this.selectedKeys = [];
-          this.$emit('onTreeClick', {});
-        }
       },
       getSelected(){
-        return this.noteData[this.selectedKeys[0]];
+        return this.selectedKeys[0];
       },
       getTreeNode(notes,id){
         let result;
@@ -282,8 +268,8 @@
               that.$message.success('复制成功!')
               that.loadTree(function (){
                 let note = res.result;
-                that.noteData[note.id] = note;
-                that.onTreeClick([note.id]);
+                that.$emit('addNote', note);
+                that.selectNote(note.id);
               });
               that.copyKey = '';
             }
@@ -342,7 +328,7 @@
         this.searchByName(this.noteTree,expandedNotes,this.searchText);
         let expandedKeys = [];
         expandedNotes.forEach((node)=> {
-          const parentIds = node.model.parentIds;
+          const parentIds = node.parentIds;
           expandedKeys = expandedKeys.concat(parentIds.split("/"));
         });
         Object.assign(this, {
