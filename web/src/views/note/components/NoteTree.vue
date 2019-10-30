@@ -268,8 +268,8 @@
               that.$message.success('复制成功!')
               that.loadTree(function (){
                 let note = res.result;
-                that.noteData[note.id] = note;
-                that.onTreeClick([note.id]);
+                that.$emit('addNote', note);
+                that.selectNote(note.id);
               });
               that.copyKey = '';
             }
@@ -328,7 +328,7 @@
         this.searchByName(this.noteTree,expandedNotes,this.searchText);
         let expandedKeys = [];
         expandedNotes.forEach((node)=> {
-          const parentIds = node.model.parentIds;
+          const parentIds = node.parentIds;
           expandedKeys = expandedKeys.concat(parentIds.split("/"));
         });
         Object.assign(this, {

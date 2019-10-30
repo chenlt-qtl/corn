@@ -112,8 +112,8 @@
     },
     methods: {
       addNote(note){
-        this.noteData[note.key] = note;
-        this.loadNote(note.key,true);
+        this.noteData[note.id] = note;
+        this.loadNote(note.id,true);
       },
       onRemoveNode(key){
         this.$refs.mainTab.remove(key);
@@ -137,8 +137,8 @@
       },
       //关闭所有tab
       closeAll() {
-        this.$refs.noteTree.loadNote();
-        this.$refs.mainTab.clear();
+        this.$refs.noteTree.selectNote();
+        this.loadForm({});
       },
       loadNote(id,focus) {
         if (id) {
@@ -177,9 +177,6 @@
         this.$refs.noteSelectList.show();
       },
       loadForm(data){
-        if(this.$refs.jEditor) {
-          this.$refs.jEditor.clear();
-        }
         this.name = data.name;
         this.content = data.text;
       },

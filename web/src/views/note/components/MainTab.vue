@@ -81,11 +81,9 @@
       },
       //关闭所有tab
       closeAll() {
+        this.allPanes[this.topId] = this.panes = [];
+        this.allActiveTabKeys[this.topId] = this.activeTabKey = '';
         this.$emit('closeAll');
-      },
-      clear(){
-        this.panes = [];
-        this.activeTabKey = '';
       },
       updateTab(note){
         let panes = [];

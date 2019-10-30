@@ -134,11 +134,6 @@
       onBlur(e) {
         this.$emit('blur', e, tinymce)
       },
-      //可以添加一些自己的自定义事件，如清空内容
-      clear() {
-        this.myValue = '';
-        tinymce.activeEditor.setContent('');
-      },
       getText(){
         return tinymce.activeEditor.getContent();
       },
@@ -148,8 +143,9 @@
     },
     watch: {
       value(newValue) {
+        newValue = newValue||"";
         this.myValue = newValue;
-        tinymce.activeEditor.setContent(newValue||'');
+        tinymce.activeEditor.setContent(newValue);
       },
     }
   }
