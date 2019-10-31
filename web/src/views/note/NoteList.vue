@@ -179,6 +179,7 @@
       loadForm(data){
         this.name = data.name;
         this.content = data.text;
+        console.log("content",this.content);
       },
       searchByName(notes,result,name){
         for(let i in notes) {

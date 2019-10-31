@@ -143,6 +143,7 @@
     },
     watch: {
       value(newValue) {
+        console.log("newValue",newValue);
         newValue = newValue||"";
         this.myValue = newValue;
         tinymce.activeEditor.setContent(newValue);
