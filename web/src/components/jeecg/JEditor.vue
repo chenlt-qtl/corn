@@ -137,13 +137,18 @@
       getText(){
         return tinymce.activeEditor.getContent();
       },
+      setText(value){
+        value = value||"";
+        console.log("myValue",value);
+        this.myValue = value;
+        tinymce.activeEditor.setContent(value);
+      },
       setFocus(){
         tinymce.activeEditor.focus();
       },
     },
     watch: {
       value(newValue) {
-        console.log("newValue",newValue);
         newValue = newValue||"";
         this.myValue = newValue;
         tinymce.activeEditor.setContent(newValue);

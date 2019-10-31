@@ -49,7 +49,7 @@
               </a-form-item>
               <a-form-item>
                 <div style="margin-top: 5px;">
-                  <j-editor ref="jEditor" :value="content" @blur="submitCurrForm" :max_height="max_height"></j-editor>
+                  <j-editor ref="jEditor" @blur="submitCurrForm" :max_height="max_height"></j-editor>
                 </div>
               </a-form-item>
             </a-form>
@@ -92,7 +92,6 @@
     data () {
       return {
         searchText:'',
-        content:'',
         name:'',
         spinning:false,
         topId:'',
@@ -178,8 +177,7 @@
       },
       loadForm(data){
         this.name = data.name;
-        this.content = data.text;
-        console.log("content",this.content);
+        this.$refs.jEditor.setValue(data.text);
       },
       searchByName(notes,result,name){
         for(let i in notes) {
