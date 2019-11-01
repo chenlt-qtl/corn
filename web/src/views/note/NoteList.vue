@@ -177,7 +177,9 @@
       },
       loadForm(data){
         this.name = data.name;
-        this.$refs.jEditor.setText(data.text);
+        if(this.$refs.jEditor) {
+          this.$refs.jEditor.setText(data.text);
+        }
       },
       searchByName(notes,result,name){
         for(let i in notes) {

@@ -58,6 +58,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/**/*.png", "anon");
 		filterChainDefinitionMap.put("/**/*.jpeg", "anon");
 		filterChainDefinitionMap.put("/**/*.gif", "anon");
+		filterChainDefinitionMap.put("/**/*.bmp", "anon");
 		filterChainDefinitionMap.put("/**/*.ico", "anon");
 		filterChainDefinitionMap.put("/**/*.mp3", "anon");
 		filterChainDefinitionMap.put("/druid/**", "anon");

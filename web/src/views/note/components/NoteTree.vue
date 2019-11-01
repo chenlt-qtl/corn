@@ -32,6 +32,7 @@
           <a-menu-item @click="handleAddByParent" key="4"><a-icon type="plus" />新文档</a-menu-item>
           <a-menu-item @click="handleCopy" key="1"><a-icon type="copy" />复制</a-menu-item>
           <a-menu-item @click="handleDelete" key="2"><a-icon type="minus" />删除</a-menu-item>
+          <a-menu-item @click="handleOpen" key="5"><a-icon type="folder-open" />展开</a-menu-item>
         </a-menu>
       </a-dropdown>
     </a-spin>
@@ -73,6 +74,18 @@
     created() {
     },
     methods:{
+      handleOpen(){
+        const note = this.getTreeNode(this.noteTree,this.rightClickSelectedKey);
+        let ids = [];
+        getChildIds(ids,note);
+        function getChildIds(ids,note) {
+          ids.push(note.key);
+          (note.children||[]).forEach((child)=>{
+            getChildIds(ids,child);
+          });
+        }
+        this.expandedKeys = ids;
+      },
       onExpand(e){
         this.expandedKeys = e;
       },
