@@ -38,7 +38,7 @@ public class Word implements Serializable {
 	private java.lang.String parts;
 	/**phAnMp3*/
 	@Excel(name = "phAnMp3", width = 15)
-	private byte[] phAnMp3;
+	private String phAnMp3;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.String status;

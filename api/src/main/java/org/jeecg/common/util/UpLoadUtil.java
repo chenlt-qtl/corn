@@ -16,9 +16,16 @@ import java.util.regex.Pattern;
 public class UpLoadUtil {
 
     public static final String IMG_PRE = "baseUrl/";
+    public static final String WORD_DIR = "word";
 
-    public static String[] getFilePath(String uploadpath,String type){
-        log.info("========uploadpath:"+uploadpath);
+    /**
+     * 获取用户文件夹path
+     * @param uploadpath
+     * @param type
+     * @return
+     */
+    public static String[] getUserFilePath(String uploadpath, String type){
+        log.info("========upload path:"+uploadpath);
         String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         String bizPath = "user"+ File.separator + nowday + File.separator + sysUser.getUsername();
@@ -32,6 +39,31 @@ public class UpLoadUtil {
         result[0] = file.getPath() + File.separator + fileName;
         log.info("========realPath:"+result[0]);
         String dbpath = bizPath + File.separator + fileName;
+        if (dbpath.contains("\\")) {
+            dbpath = dbpath.replace("\\", "/");
+        }
+        result[1] = dbpath;
+        return result;
+    }
+
+    /**
+     * 获取单词文件夹path
+     * @param uploadpath
+     * @param name
+     * @return
+     */
+    public static String[] getWordFilePath(String uploadpath,String name){
+        log.info("========upload path:"+uploadpath);
+        File file = new File(uploadpath + File.separator + WORD_DIR );
+        if (!file.exists()) {
+            file.mkdirs();// 创建文件根目录
+        }
+
+        String fileName = name;
+        String[] result = new String[2];
+        result[0] = file.getPath() + File.separator + fileName;
+        log.info("========realPath:"+result[0]);
+        String dbpath = WORD_DIR + File.separator + fileName;
         if (dbpath.contains("\\")) {
             dbpath = dbpath.replace("\\", "/");
         }

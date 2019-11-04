@@ -6,14 +6,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.system.entity.SysUser;
@@ -55,7 +51,7 @@ public class CommonController {
 			MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
 			String orgName = mf.getOriginalFilename();// 获取文件名
 
-			String[] path = UpLoadUtil.getFilePath(uploadpath,orgName.substring(orgName.indexOf(".")));
+			String[] path = UpLoadUtil.getUserFilePath(uploadpath,orgName.substring(orgName.indexOf(".")));
 			File savefile = new File(path[0]);
 			FileCopyUtils.copy(mf.getBytes(), savefile);
 			String dbpath = path[1];

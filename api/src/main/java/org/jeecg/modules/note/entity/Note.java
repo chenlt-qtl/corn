@@ -56,7 +56,7 @@ public class Note implements Serializable {
 			if(data.startsWith("data:image")&&data.contains(",")){
 				String imgData = data.split(",")[1];
 				if(StringUtils.isNotBlank(imgData)){
-					String pathArr[] = UpLoadUtil.getFilePath(uploadPath,"."+type);
+					String pathArr[] = UpLoadUtil.getUserFilePath(uploadPath,"."+type);
 					try {
 						if(Base64Utils.GenerateImage(imgData,pathArr[0])) {
 							matcher.appendReplacement(sbr, UpLoadUtil.IMG_PRE+pathArr[1]);

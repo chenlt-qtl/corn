@@ -16,6 +16,7 @@ import org.jeecg.modules.word.util.ParseIciba;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -48,6 +49,9 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     @Autowired
     private IIcibaSentenceService icibaSentenceService;
 
+    @Value(value = "${jeecg.path.upload}")
+    private String uploadpath;
+
     @Override
     public void saveWord(Word word) {
         String wordName = word.getWordName();
@@ -67,7 +71,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {
                 try {
-                    detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(), "UTF-8"), word);
+                    detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(), "UTF-8"),uploadpath, word);
                 } catch (Exception e) {
                     logger.error("解析查词结果失败:", e);
                 }

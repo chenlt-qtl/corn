@@ -18,16 +18,14 @@ import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.word.entity.Acceptation;
 import org.jeecg.modules.word.entity.IcibaSentence;
 import org.jeecg.modules.word.entity.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
@@ -41,7 +39,7 @@ public class ParseIciba {
 
 	private final static Logger logger = LoggerFactory.getLogger(ParseIciba.class);
 
-	public static Map parse(String data, Word word) throws Exception{
+	public static Map parse(String data, String upload, Word word) throws Exception{
 		Map result = new HashMap();
 		Document doc = DocumentHelper.parseText(data);
 		Element rootElt = doc.getRootElement(); // 获取根节点
@@ -58,25 +56,28 @@ public class ParseIciba {
 			System.out.println("-----------"+pronElement.getText());
 			if(!pronIter.hasNext()) {//最后一个元素
 				InputStream in = null;
-				ByteArrayOutputStream baos = null;
+				String pathArr[] = UpLoadUtil.getWordFilePath(upload,word.getWordName()+".mp3");
+				File mp3File = new File(pathArr[0]);
+				if(mp3File.exists()){
+					mp3File.delete();
+				}
+				OutputStream out = null;
 				try {
 					in = new URL(pronElement.getTextTrim()).openConnection().getInputStream();//创建连接、输入流
-					baos = new ByteArrayOutputStream();
+					out = new FileOutputStream(mp3File);
 			        
 					byte [] mp3=new byte[1024];  //接收缓存
 					int len;
 					while( (len=in.read(mp3))>0){ //接收
-					    baos.write(mp3,0,len);
+						out.write(mp3,0,len);
 					}
-			        word.setPhAnMp3(baos.toByteArray());
+					word.setPhAnMp3(pathArr[1]);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally{
-						baos.close();
-						in.close();
+					out.close();
+					in.close();
 				}
-				
-		        
 			}
 		}
 		
@@ -117,10 +118,10 @@ public class ParseIciba {
 	}
 	
 	public static void main(String args[]) throws IOException, Exception{
-		File file = new File(ParseIciba.class.getClassLoader().getResource("").getPath() + "a.xml");
+		File file = new File("D://upFiles//a.xml");
 		Word word = new Word();
 		word.setWordName("identify");
-		Map map = ParseIciba.parse(FileUtils.readFileToString(file, "UTF-8"),word);
+		Map map = ParseIciba.parse(FileUtils.readFileToString(file, "UTF-8"),"D://upFiles",word);
 		List list1= (List)map.get("acceptations");
 		List list2= (List)map.get("icibaSentence");
 		System.out.println(map.get("acceptations").toString());
