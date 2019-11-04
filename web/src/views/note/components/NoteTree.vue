@@ -76,7 +76,7 @@
     methods:{
       handleOpen(){
         const note = this.getTreeNode(this.noteTree,this.rightClickSelectedKey);
-        let ids = [];
+        let ids = note.parentIds.split("/");
         getChildIds(ids,note);
         function getChildIds(ids,note) {
           ids.push(note.key);
