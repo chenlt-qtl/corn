@@ -46,6 +46,7 @@
                 label="MP3"
                 v-bind="formItemLayout">
                 <a-upload
+                  :defaultFileList="defaultFileList"
                   listType="text"
                   :action="url.upload"
                   :headers="headers"
@@ -114,6 +115,7 @@
     },
     data () {
       return {
+        id:'',
         loading: false,
         currentTab: 0,
         form: this.$form.createForm(this),
@@ -125,6 +127,8 @@
         confirmLoading: false,
         spinning:false,
         sentences:[],
+        words:[],
+        defaultFileList:[],
         url:{
           save:"/word/sentence/save",
           upload:window._CONFIG['domianURL']+"/sys/common/upload",
@@ -189,7 +193,13 @@
                 let words = [];
                 sentence.split(" ").forEach((word)=>{
                   if(patt4.test(word)) {
-                    words.push({wordName:word,type:1,key:key});
+                    let selected = false;
+                    this.words.forEach((w)=>{
+                      if(w.wordName==word) {
+                        selected = true;
+                      }
+                    });
+                    words.push({wordName:word,type:1,key:key,selected:selected});
                   }else {
                     words.push({wordName:word,type:0,key:key});
                   }
@@ -207,7 +217,7 @@
       saveArticle(){
         let that = this;
         that.spinning = true;
-        httpAction(this.url.save, {title:this.formValue.name,mp3:this.mp3,sentences:this.sentences}, 'post').then((res) => {
+        httpAction(this.url.save, {id:this.id,title:this.formValue.name,mp3:this.mp3,sentences:this.sentences}, 'post').then((res) => {
           if (res.success) {
             that.spinning = false;
             this.currentTab = 2;
@@ -246,14 +256,25 @@
       finish () {
         this.currentTab = 0
       },
-      show(){
+      show(words,article){
         this.currentTab = 0;
-        this.formValue = {};
+        if(article){
+          this.id = article.id;
+          this.formValue = article;
+          if(article.mp3){
+            this.defaultFileList = article.mp3;
+            this.mp3 = article.mp3[0].url;
+          }
+          this.words = words;
+        }else {
+          this.formValue = {};
+        }
         this.visible = true;
         this.showUpBtn = true;
       },
       close () {
         this.visible = false;
+        this.$emit('ok');
       },
     }
   }

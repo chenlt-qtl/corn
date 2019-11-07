@@ -1,12 +1,14 @@
 <template>
-  <div>
+  <div  style="margin: 20px 150px;">
     <a-card :bordered="false">
       <a-row>
         <a-col :sm="6" :xs="24">
           <head-info title="我的文章" content="25篇" :bordered="true"/>
         </a-col>
         <a-col :sm="6" :xs="24">
-          <head-info title="我的生词" content="32个" :bordered="true"/>
+          <router-link :to="{path:'/blank/word'}">
+            <head-info title="我的生词" content="32个" :bordered="true"/>
+          </router-link>
         </a-col>
         <a-col :sm="6" :xs="24">
           <head-info title="我的积分" content="352分":bordered="true"/>
@@ -42,7 +44,7 @@
         <a-list size="large" :pagination="{showSizeChanger: true, showQuickJumper: true, pageSize: 5, total: 50}">
           <a-list-item :key="index" v-for="(item, index) in data">
             <a-list-item-meta :description="item.description">
-              <a slot="title">{{ item.title }}</a>
+                <a slot="title" @click="onEdit(item.id)">{{ item.title }}</a>
             </a-list-item-meta>
             <div v-if="item.mp3 != null ">
               <div v-if="isPlay && item.id == nowPlayId " slot="actions">
@@ -128,6 +130,9 @@
       })
     },
     methods: {
+      onEdit(id){
+        this.$router.push({path: '/blank/word/articleDetail',query:{id:id}});
+      },
       //播放
       playAudio(id,mp3){
         let audioPlayer = document.getElementById('audioPlayer');

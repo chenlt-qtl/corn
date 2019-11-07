@@ -32,6 +32,9 @@ public class Sentence implements Serializable {
 	/**content*/
 	@Excel(name = "content", width = 15)
 	private java.lang.String content;
+
+	@Excel(name = "idx", width = 15)
+	private int idx;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.String status;

@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.model.NoteTreeModel;
@@ -166,7 +166,7 @@ public class NoteController {
 			note.setUpdateBy(null);
 			note.setUpdateTime(null);
 			boolean ok = noteService.updateNote(note,noteEntity.getText());
-			note.parseText();
+			note.setText(UpLoadUtil.parseImgText(note.getText()));
 			if(ok) {
 				result.setResult(note);
 				result.success("修改成功!");
@@ -242,7 +242,7 @@ public class NoteController {
 		if(note==null) {
 			result.error500("未找到对应实体");
 		}else {
-			note.parseText();
+			note.setText(UpLoadUtil.parseImgText(note.getText()));
 			result.setResult(note);
 			result.setSuccess(true);
 		}

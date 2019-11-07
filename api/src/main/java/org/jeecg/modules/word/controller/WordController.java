@@ -1,6 +1,7 @@
 package org.jeecg.modules.word.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
@@ -8,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.MapUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -48,23 +51,21 @@ public class WordController {
 	
 	/**
 	  * 分页列表查询
-	 * @param word
 	 * @param pageNo
 	 * @param pageSize
-	 * @param req
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<Word>> queryPageList(Word word,
+	public Result<IPage<Map>> queryPageList(String wordName,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-									  HttpServletRequest req) {
-		Result<IPage<Word>> result = new Result<IPage<Word>>();
-		QueryWrapper<Word> queryWrapper = QueryGenerator.initQueryWrapper(word, req.getParameterMap());
-		Page<Word> page = new Page<Word>(pageNo, pageSize);
-		IPage<Word> pageList = wordService.page(page, queryWrapper);
+									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize) {
+
+
+
+		Result<IPage<Map>> result = new Result<IPage<Map>>();
+		IPage<Map> rows =  wordService.pageSearchWord(wordName,pageNo,pageSize);
 		result.setSuccess(true);
-		result.setResult(pageList);
+		result.setResult(rows);
 		return result;
 	}
 	
@@ -163,6 +164,16 @@ public class WordController {
 			result.setSuccess(true);
 		}
 		return result;
+	}
+
+	 @GetMapping(value = "/queryByArticle")
+	 public Result<Map> queryByArticle(@RequestParam(name="id",required=true) String id) {
+		 Result<Map> result = new Result<Map>();
+		 //获取word
+		 List<Map> words = wordService.searchWordByArticle(id);
+		 result.setResult(new HashMap(){{put("records",words);}});
+		 result.setSuccess(true);
+		 return result;
 	}
 
   /**

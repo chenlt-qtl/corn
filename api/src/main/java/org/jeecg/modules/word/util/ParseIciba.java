@@ -15,6 +15,10 @@
 package org.jeecg.modules.word.util;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.util.EntityUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -24,6 +28,8 @@ import org.jeecg.modules.word.entity.IcibaSentence;
 import org.jeecg.modules.word.entity.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.net.URL;
@@ -38,8 +44,29 @@ import java.util.*;
 public class ParseIciba {
 
 	private final static Logger logger = LoggerFactory.getLogger(ParseIciba.class);
+	private final static String KEY="C772DB1F60B2839AD948507D91E7B04A";
 
-	public static Map parse(String data, String upload, Word word) throws Exception{
+	public static Map getWordFromIciba(String wordName, String uploadpath) throws Exception {
+		Map detailMap = new HashMap();
+		HttpRequestBase httpRequest = new HttpGet("http://dict-co.iciba.com/api/dictionary.php?w=" + wordName + "&key=" + KEY);
+		CloseableHttpResponse response = HttpClientFactory.getHttpClient().execute(httpRequest);
+		int status = response.getStatusLine().getStatusCode();
+		if (status == 200) {
+			detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(), "UTF-8"),uploadpath, wordName);
+		}
+		return detailMap;
+	}
+
+	/**
+	 * 解析查询结果
+	 * @param data
+	 * @param upload
+	 * @param wordName
+	 * @return
+	 * @throws Exception
+	 */
+	private static Map parse(String data, String upload, String wordName) throws Exception{
+		Word word = new Word(wordName);
 		Map result = new HashMap();
 		Document doc = DocumentHelper.parseText(data);
 		Element rootElt = doc.getRootElement(); // 获取根节点
@@ -51,12 +78,12 @@ public class ParseIciba {
 			}
 		}
 		Iterator pronIter = rootElt.elementIterator("pron"); // 美式发音
-		while (pronIter.hasNext()) {
+		while (pronIter.hasNext()) {//下载发音MP3
 			Element pronElement = (Element) pronIter.next();
-			System.out.println("-----------"+pronElement.getText());
+			logger.info("-----------"+pronElement.getText());
 			if(!pronIter.hasNext()) {//最后一个元素
 				InputStream in = null;
-				String pathArr[] = UpLoadUtil.getWordFilePath(upload,word.getWordName()+".mp3");
+				String pathArr[] = UpLoadUtil.getWordFilePath(upload,word.getWordName()+".mp3");//获取保存路径
 				File mp3File = new File(pathArr[0]);
 				if(mp3File.exists()){
 					mp3File.delete();
@@ -95,7 +122,7 @@ public class ParseIciba {
 			Element acceptationElement = (Element) acceptationElements.get(i);
 			Acceptation acceptation = new Acceptation();
 			acceptation.setPos(posElement.getText());
-			acceptation.setAcceptation(acceptationElement.getText());
+			acceptation.setAcceptation(acceptationElement.getText().replace("\n",""));
 			acceptationList.add(acceptation);
 		}
 		
@@ -114,14 +141,13 @@ public class ParseIciba {
 		
 		result.put("acceptations", acceptationList);
 		result.put("icibaSentence", isList);
+		result.put("word", word);
 		return result;
 	}
 	
 	public static void main(String args[]) throws IOException, Exception{
 		File file = new File("D://upFiles//a.xml");
-		Word word = new Word();
-		word.setWordName("identify");
-		Map map = ParseIciba.parse(FileUtils.readFileToString(file, "UTF-8"),"D://upFiles",word);
+		Map map = ParseIciba.parse(FileUtils.readFileToString(file, "UTF-8"),"D://upFiles","identify");
 		List list1= (List)map.get("acceptations");
 		List list2= (List)map.get("icibaSentence");
 		System.out.println(map.get("acceptations").toString());

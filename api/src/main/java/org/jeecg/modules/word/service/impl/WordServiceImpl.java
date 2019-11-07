@@ -1,9 +1,12 @@
 package org.jeecg.modules.word.service.impl;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.util.EntityUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.jeecg.common.util.UpLoadUtil;
+import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.Acceptation;
 import org.jeecg.modules.word.entity.IcibaSentence;
 import org.jeecg.modules.word.entity.Word;
@@ -11,7 +14,7 @@ import org.jeecg.modules.word.mapper.WordMapper;
 import org.jeecg.modules.word.service.IAcceptationService;
 import org.jeecg.modules.word.service.IIcibaSentenceService;
 import org.jeecg.modules.word.service.IWordService;
-import org.jeecg.modules.word.util.HttpClientFactory;
+import org.jeecg.modules.word.service.IWordUserService;
 import org.jeecg.modules.word.util.ParseIciba;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +26,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,13 +40,14 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
 
     private final static Logger logger = LoggerFactory.getLogger(WordServiceImpl.class);
 
-    private final static String KEY="C772DB1F60B2839AD948507D91E7B04A";
-
     @Resource
     private WordMapper wordMapper;
 
     @Autowired
     private IAcceptationService acceptationService;
+
+    @Autowired
+    private IWordUserService wordUserService;
 
     @Autowired
     private IIcibaSentenceService icibaSentenceService;
@@ -53,45 +56,77 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     private String uploadpath;
 
     @Override
-    public void saveWord(Word word) {
-        String wordName = word.getWordName();
+    public Word saveWord(String wordName) throws Exception {
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         List<Word> list = wordMapper.selectByMap(new HashMap(){{this.put("word_name",wordName);}});
+        Word word;
         if(!list.isEmpty()){
             word = list.get(0);//已存在数据库中
-            return;
         }else {//查API
-            Map detailMap = new HashMap();
-            CloseableHttpResponse response = null;
-            HttpRequestBase httpRequest = new HttpGet("http://dict-co.iciba.com/api/dictionary.php?w=" + wordName + "&key=" + KEY);
-            try {
-                response = HttpClientFactory.getHttpClient().execute(httpRequest);
-            } catch (Exception e1) {
-                logger.error("查词失败:", e1);
-            }
-            int status = response.getStatusLine().getStatusCode();
-            if (status == 200) {
-                try {
-                    detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(), "UTF-8"),uploadpath, word);
-                } catch (Exception e) {
-                    logger.error("解析查词结果失败:", e);
-                }
-
-            }
+            Map detailMap = ParseIciba.getWordFromIciba(wordName,uploadpath);
+            word = (Word) detailMap.get("word");
             save(word);
-            if (detailMap.containsKey("acceptations")) {
+            if (detailMap.containsKey("acceptations")) {//解释
                 List<Acceptation> acceptations = (List) detailMap.get("acceptations");
-                for (Acceptation acceptation:acceptations) {
+                for (Acceptation acceptation : acceptations) {
                     acceptation.setWordId(word.getId());
                     acceptationService.save(acceptation);
                 }
             }
-            if (detailMap.containsKey("icibaSentence")) {
+            if (detailMap.containsKey("icibaSentence")) {//例句
                 List<IcibaSentence> icibaSentences = (List) detailMap.get("icibaSentence");
-                for (IcibaSentence icibaSentence:icibaSentences) {
+                for (IcibaSentence icibaSentence : icibaSentences) {
                     icibaSentence.setWordId(word.getId());
                     icibaSentenceService.save(icibaSentence);
                 }
             }
         }
+        //保存word用户关联信息
+        wordUserService.saveRel(sysUser.getUsername(),word.getId());
+
+        return word;
+    }
+
+    /**
+     * 分页查询word
+     * @param wordName
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public IPage<Map> pageSearchWord(String wordName, int pageNo, int pageSize) {
+
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        QueryWrapper<Map> wrapper = new QueryWrapper();
+        wrapper.like("wordName", wordName).eq("user", sysUser.getUsername());
+        Page<Map> page = new Page<Map>(pageNo, pageSize);
+        IPage<Map> mapIPage = wordMapper.pageSeachWord(page, wrapper);
+
+        handleMapUrl(mapIPage.getRecords());
+        return mapIPage;
+    }
+
+    @Override
+    public List<Map> searchWordByArticle(String articleId) {
+        QueryWrapper<Map> wrapper = new QueryWrapper();
+        wrapper.eq("article_id", articleId);
+        List<Map> list = wordMapper.seachWordByArticle(wrapper);
+        handleMapUrl(list);
+        return list;
+    }
+
+    private void handleMapUrl(List<Map> list){
+        String preUrl = UpLoadUtil.getPreUrl();
+        list.forEach((map)->{
+            Object mp3 = map.get("mp3");
+            if(null != mp3){
+                String mp3Str = String.valueOf(mp3);
+                if(StringUtils.isNotBlank(mp3Str)){
+                    map.put("mp3", preUrl + mp3Str);
+                    map.put("key", preUrl + mp3Str);
+                }
+            }
+        });
     }
 }

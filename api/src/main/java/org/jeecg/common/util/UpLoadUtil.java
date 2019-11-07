@@ -1,9 +1,13 @@
 package org.jeecg.common.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.modules.system.entity.SysUser;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -112,6 +116,40 @@ public class UpLoadUtil {
         if(file.exists()){
             file.delete();
         }
+    }
+
+    /**
+     * 处理图片路径
+     * @return
+     */
+    public static String parseImgText(String text) {
+        if(StringUtils.isNotBlank(text)) {
+            StringBuffer sbr = new StringBuffer();
+            String preUrl = getPreUrl();
+
+            Pattern imgPattern = Pattern.compile("(?<=<img src=\")" + UpLoadUtil.IMG_PRE);
+            Matcher matcher = imgPattern.matcher(text);
+            while (matcher.find()) {
+                matcher.appendReplacement(sbr, preUrl);
+            }
+
+            matcher.appendTail(sbr);
+            return sbr.toString();
+        }else {
+            return " ";
+        }
+
+    }
+
+    /**
+     * 处理MP3路径
+     * @return
+     */
+    public static String getPreUrl() {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            String preUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
+            return preUrl;
+
     }
 
     public static void main(String args[]){
