@@ -71,6 +71,9 @@ public class ParseIciba {
 		Document doc = DocumentHelper.parseText(data);
 		Element rootElt = doc.getRootElement(); // 获取根节点
 		Iterator phIter = rootElt.elementIterator("ps"); // 美式音标
+		if(!phIter.hasNext()){
+			throw new Exception("没有找到 "+wordName+" 对应的信息");
+		}
 		while (phIter.hasNext()) {
 			Element phElement = (Element) phIter.next();
 			if(!phIter.hasNext()) {//最后一个元素
