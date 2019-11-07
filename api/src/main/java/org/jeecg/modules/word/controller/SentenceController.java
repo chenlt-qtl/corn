@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -223,7 +225,7 @@ public class SentenceController {
 
 	 @RequestMapping("/save")
 	 public Result<Article> save(@RequestBody ArticalVo articleVo){
-		 Article article = articleService.saveNewWord(articleVo);
+		 Article article = articleService.saveOrUpdate(articleVo);
 		 Result<Article> result = new Result<Article>();
 		 result.setResult(article);
 		 result.setSuccess(true);

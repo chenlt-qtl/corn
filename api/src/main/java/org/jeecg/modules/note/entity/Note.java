@@ -83,30 +83,6 @@ public class Note implements Serializable {
 		setText(newText);
 	}
 
-	/**
-	 * 处理图片路径
-	 * @return
-	 */
-	public void parseText() {
-    	if(StringUtils.isNotBlank(text)) {
-			StringBuffer sbr = new StringBuffer();
-			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-			String preUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
-
-			Pattern imgPattern = Pattern.compile("(?<=<img src=\")" + UpLoadUtil.IMG_PRE);
-			Matcher matcher = imgPattern.matcher(text);
-			while (matcher.find()) {
-				matcher.appendReplacement(sbr, preUrl);
-			}
-
-			matcher.appendTail(sbr);
-			setText(sbr.toString());
-		}else {
-			setText("");
-		}
-
-	}
-
 	public static void main(String[] args){
 		Matcher matcher = BASE64_PATTERN.matcher("<p style=\"text-align: justify; line-height: 100%; margin-top: 0pt; margin-bottom: 0pt;\"><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAAAuCAYAAACcYs/JAAAAdklEQVRoge3ZoQ3EMBBFQdeQYtPa1eJqNuSFHo3BPOlza7TMazQzM+vrB5wSiAJRa+89tl3EG4gCUSAKRIEoEAWiQNS6fvfYDQIECBAgQIAAAQIECBAgQIAAAQIEiDMGAgQIEH8hvv5YOSUQBaJAFIgCUSAKRD2TA12pbP/UpwAAAABJRU5ErkJggg==\" alt=\"\" /></p>\n" +
 				"<!--polaris office 260 -->");

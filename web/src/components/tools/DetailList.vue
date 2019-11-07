@@ -1,6 +1,7 @@
 <template>
   <div :class="['detail-list', size, layout === 'vertical' ? 'vertical': 'horizontal']">
     <div v-if="title" class="title">{{ title }}</div>
+    <slot name="action"></slot>
     <a-row>
       <slot></slot>
     </a-row>
@@ -86,6 +87,7 @@
       font-size: 14px;
       font-weight: 500;
       margin-bottom: 16px;
+      display: inline-block;
     }
 
     .term {

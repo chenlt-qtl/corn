@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface IArticleService extends IService<Article> {
 
-    Article saveNewWord(ArticalVo articleVo);
+    Article saveOrUpdate(ArticalVo articleVo);
 }

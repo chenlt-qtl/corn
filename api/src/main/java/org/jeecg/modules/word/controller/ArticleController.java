@@ -1,6 +1,7 @@
 package org.jeecg.modules.word.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.Article;
+import org.jeecg.modules.word.entity.Sentence;
 import org.jeecg.modules.word.service.IArticleService;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -22,6 +24,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.word.service.ISentenceService;
+import org.jeecg.modules.word.service.IWordService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -48,6 +52,12 @@ import com.alibaba.fastjson.JSON;
 public class ArticleController {
 	@Autowired
 	private IArticleService articleService;
+
+	 @Autowired
+	 private ISentenceService sentenceService;
+
+	 @Autowired
+	 private IWordService wordService;
 	
 	/**
 	  * 分页列表查询
@@ -155,90 +165,31 @@ public class ArticleController {
 	}
 	
 	/**
-	  * 通过id查询
+	  * 通过id查询文章
 	 * @param id
 	 * @return
 	 */
 	@GetMapping(value = "/queryById")
-	public Result<Article> queryById(@RequestParam(name="id",required=true) String id) {
-		Result<Article> result = new Result<Article>();
+	public Result<Map> queryById(@RequestParam(name="id",required=true) String id) {
+		Result<Map> result = new Result<Map>();
+		Map map = new HashMap();
 		Article article = articleService.getById(id);
+		map.put("article",article);
+
+		//获取句子
+		QueryWrapper<Sentence> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("article_id",id);
+		queryWrapper.orderByAsc("idx");
+		List<Sentence> sentencesList = sentenceService.list(queryWrapper);
+		map.put("sentences",sentencesList);
+
 		if(article==null) {
 			result.error500("未找到对应实体");
 		}else {
-			result.setResult(article);
+			result.setResult(map);
 			result.setSuccess(true);
 		}
 		return result;
 	}
-
-  /**
-      * 导出excel
-   *
-   * @param request
-   * @param response
-   */
-  @RequestMapping(value = "/exportXls")
-  public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
-      // Step.1 组装查询条件
-      QueryWrapper<Article> queryWrapper = null;
-      try {
-          String paramsStr = request.getParameter("paramsStr");
-          if (oConvertUtils.isNotEmpty(paramsStr)) {
-              String deString = URLDecoder.decode(paramsStr, "UTF-8");
-              Article article = JSON.parseObject(deString, Article.class);
-              queryWrapper = QueryGenerator.initQueryWrapper(article, request.getParameterMap());
-          }
-      } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-      }
-
-      //Step.2 AutoPoi 导出Excel
-      ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
-      List<Article> pageList = articleService.list(queryWrapper);
-      //导出文件名称
-      mv.addObject(NormalExcelConstants.FILE_NAME, "article列表");
-      mv.addObject(NormalExcelConstants.CLASS, Article.class);
-      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("article列表数据", "导出人:Jeecg", "导出信息"));
-      mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
-      return mv;
-  }
-
-  /**
-      * 通过excel导入数据
-   *
-   * @param request
-   * @param response
-   * @return
-   */
-  @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-  public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-      MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-      Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-      for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-          MultipartFile file = entity.getValue();// 获取上传文件对象
-          ImportParams params = new ImportParams();
-          params.setTitleRows(2);
-          params.setHeadRows(1);
-          params.setNeedSave(true);
-          try {
-              List<Article> listArticles = ExcelImportUtil.importExcel(file.getInputStream(), Article.class, params);
-              for (Article articleExcel : listArticles) {
-                  articleService.save(articleExcel);
-              }
-              return Result.ok("文件导入成功！数据行数：" + listArticles.size());
-          } catch (Exception e) {
-              log.error(e.getMessage());
-              return Result.error("文件导入失败！");
-          } finally {
-              try {
-                  file.getInputStream().close();
-              } catch (IOException e) {
-                  e.printStackTrace();
-              }
-          }
-      }
-      return Result.ok("文件导入失败！");
-  }
 
 }

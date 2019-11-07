@@ -7,10 +7,7 @@ import org.jeecg.modules.word.entity.Word;
 @Data
 public class WordVo extends Word{
     private boolean selected;
-
-    public Word getWord(){
-        Word word = new Word();
-        word.setWordName(getWordName());
-        return word;
+    public WordVo(String wordName){
+        super(wordName);
     }
 }

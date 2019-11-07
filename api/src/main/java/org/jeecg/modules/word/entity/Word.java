@@ -58,4 +58,9 @@ public class Word implements Serializable {
 	/**updateBy*/
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
+
+	public Word(){}
+	public Word(String wordName){
+		setWordName(wordName);
+	}
 }
