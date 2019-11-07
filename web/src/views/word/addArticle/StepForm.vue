@@ -195,7 +195,7 @@
                   if(patt4.test(word)) {
                     let selected = false;
                     this.words.forEach((w)=>{
-                      if(w.wordName==word) {
+                      if(w.wordName==word.toLowerCase()) {
                         selected = true;
                       }
                     });
