@@ -156,7 +156,7 @@ public class NoteController {
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<Note> edit(@RequestBody Note note) throws Exception {
+	public Result<Note> edit(@RequestBody Note note) {
 		Result<Note> result = new Result<Note>();
 		Note noteEntity = noteService.getById(note.getId());
 		if(noteEntity==null) {
@@ -182,7 +182,7 @@ public class NoteController {
 	  * @return
 	  */
 	 @PutMapping(value = "/updateParent")
-	 public Result<Note> updateParent(@RequestBody Note note) throws Exception {
+	 public Result<Note> updateParent(@RequestBody Note note) {
 		 Result<Note> result = new Result<Note>();
 		 Note noteEntity = noteService.getById(note.getId());
 		 if(noteEntity==null) {

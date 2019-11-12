@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.modules.system.entity.SysUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -18,9 +16,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class UpLoadUtil {
-
-    static Logger log = LoggerFactory.getLogger(UpLoadUtil.class);
 
     public static final String IMG_PRE = "baseUrl/";
     public static final String WORD_DIR = "word";
@@ -114,14 +111,12 @@ public class UpLoadUtil {
      * @param uploadpath
      * @param imgUrl
      */
-    public static void delImg(String uploadpath,String imgUrl) throws Exception {
+    public static void delImg(String uploadpath,String imgUrl){
         log.info("-----------------imgUrl:"+uploadpath + File.separator + imgUrl);
         File file = new File(uploadpath + File.separator + imgUrl );
         if(file.exists()){
             log.info("-----------------file exists : true ");
             file.delete();
-        }else {
-            throw new Exception("图片不存在:"+uploadpath + File.separator + imgUrl);
         }
     }
 
