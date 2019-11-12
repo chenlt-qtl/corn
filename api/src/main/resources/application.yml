@@ -113,4 +113,4 @@ logging:
     root: WARN
   root:
     appender: RollingFile
-    path: /root/app/api/logs/
+    path: /usr/local/tomcat9/logs
