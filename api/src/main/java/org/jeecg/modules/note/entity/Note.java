@@ -40,7 +40,7 @@ public class Note implements Serializable {
 	 * 处理图片路径
 	 * @param uploadPath
 	 */
-    public void preSave(String uploadPath,String oldText){
+    public void preSave(String uploadPath,String oldText) throws Exception {
 		StringBuffer sbr = new StringBuffer();
 		//---------------处理旧的数据----------------
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();

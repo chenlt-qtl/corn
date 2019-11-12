@@ -74,7 +74,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Transactional
     @Override
-    public void updateParent(Note note,String oldParents) {
+    public void updateParent(Note note,String oldParents) throws Exception {
         setParents(note);
         note.setUpdateBy(null);
         note.setUpdateTime(null);
@@ -87,7 +87,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         }
     }
 
-    public boolean updateNote(Note note,String oldNote){
+    public boolean updateNote(Note note,String oldNote) throws Exception {
         try {
             note.preSave(uploadpath,oldNote);
             return updateById(note);
@@ -96,7 +96,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         }
     }
 
-    public boolean saveNote(Note note){
+    public boolean saveNote(Note note) throws Exception {
         try {
             note.preSave(uploadpath,"");
             return save(note);

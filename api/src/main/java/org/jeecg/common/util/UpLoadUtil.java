@@ -114,12 +114,14 @@ public class UpLoadUtil {
      * @param uploadpath
      * @param imgUrl
      */
-    public static void delImg(String uploadpath,String imgUrl){
+    public static void delImg(String uploadpath,String imgUrl) throws Exception {
         log.info("-----------------imgUrl:"+uploadpath + File.separator + imgUrl);
         File file = new File(uploadpath + File.separator + imgUrl );
         if(file.exists()){
             log.info("-----------------file exists : true ");
             file.delete();
+        }else {
+            throw new Exception("图片不存在:"+uploadpath + File.separator + imgUrl);
         }
     }
 

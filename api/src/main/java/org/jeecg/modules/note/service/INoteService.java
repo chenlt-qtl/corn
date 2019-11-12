@@ -22,13 +22,13 @@ public interface INoteService extends IService<Note> {
 
     List<NoteTreeModel> queryTreeList(String createBy ,String parentId);
 
-    void updateParent(Note note,String oldParents);
+    void updateParent(Note note,String oldParents) throws Exception;
 
     void delete(String userName, String id);
 
     void setParents(Note note);
 
-    boolean updateNote(Note note,String oldText);
+    boolean updateNote(Note note,String oldText) throws Exception;
 
-    boolean saveNote(Note note);
+    boolean saveNote(Note note) throws Exception;
 }
