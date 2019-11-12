@@ -112,8 +112,10 @@ public class UpLoadUtil {
      * @param imgUrl
      */
     public static void delImg(String uploadpath,String imgUrl){
+        log.info("-----------------imgUrl:"+uploadpath + File.separator + imgUrl);
         File file = new File(uploadpath + File.separator + imgUrl );
         if(file.exists()){
+            log.info("-----------------file exists : true ");
             file.delete();
         }
     }
