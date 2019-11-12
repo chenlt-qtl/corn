@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.modules.system.entity.SysUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -16,8 +18,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
 public class UpLoadUtil {
+
+    static Logger log = LoggerFactory.getLogger(UpLoadUtil.class);
 
     public static final String IMG_PRE = "baseUrl/";
     public static final String WORD_DIR = "word";
