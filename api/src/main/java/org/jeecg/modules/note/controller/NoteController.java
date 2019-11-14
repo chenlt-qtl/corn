@@ -188,9 +188,8 @@ public class NoteController {
 		 if(noteEntity==null) {
 			 result.error500("未找到对应实体");
 		 }else {
-		 	 String oldParents = noteEntity.getParentId();
 			 noteEntity.setParentId(note.getParentId());
-			 noteService.updateParent(noteEntity,oldParents);
+			 noteService.updateParent(noteEntity,noteEntity.getParentIds());
 			 result.setResult(note);
 			 result.success("修改成功!");
 		 }
