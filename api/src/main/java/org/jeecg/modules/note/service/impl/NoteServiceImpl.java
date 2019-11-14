@@ -92,7 +92,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             note.preSave(uploadpath,oldNote);
             return updateById(note);
         }catch (DataIntegrityViolationException e){
-            throw new JeecgBootException("笔记本目录最多只能60层!");
+            throw new JeecgBootException("笔记本目录最多只能60层!"+note.getParentIds());
         }
     }
 
@@ -101,7 +101,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             note.preSave(uploadpath,"");
             return save(note);
         }catch (DataIntegrityViolationException e){
-            throw new JeecgBootException("笔记本目录最多只能60层!");
+            throw new JeecgBootException("笔记本目录最多只能60层!"+note.getParentIds());
         }
     }
 
