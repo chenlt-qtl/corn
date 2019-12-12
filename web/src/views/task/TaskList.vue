@@ -28,7 +28,7 @@
         width="300">
         <template slot-scope="{row}">
           <template v-if="row.edit">
-            <j-editor ref="jEditor" :toolbar=toolbar v-model="row.comment" max_height="80"></j-editor>
+            <j-editor ref="jEditor" :toolbar=toolbar v-model="row.comment" max_height=80></j-editor>
           </template>
           <span v-else class="link-type" @click="handleUpdate(row)">
             <div v-html="row.comment">{{ row.comment }}</div>
@@ -125,7 +125,7 @@
         </el-form-item>
 
         <el-form-item label="描述">
-          <j-editor ref="jEditor" :toolbar=toolbar v-model="temp.comment" max_height="150"></j-editor>
+          <j-editor ref="jEditor" :toolbar=toolbar v-model="temp.comment" max_height=150></j-editor>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
@@ -322,6 +322,7 @@
 
       },
       updateData(){
+        this.temp.comment = this.$refs.jEditor.getText();
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.updateTask(this.temp);
