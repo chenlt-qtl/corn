@@ -349,6 +349,7 @@
       createData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
+            this.temp.comment = this.$refs.jEditor.getText();
             httpAction(this.url.add, this.temp, 'post').then(() => {
               this.tableData.unshift(this.temp)
               this.dialogFormVisible = false
