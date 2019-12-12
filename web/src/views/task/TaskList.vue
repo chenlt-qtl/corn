@@ -51,7 +51,8 @@
       <el-table-column
         v-if="showSprint"
         label="迭代"
-        prop="sprint">
+        prop="sprint"
+        width="100">
       </el-table-column>
       <el-table-column
         prop="status"
@@ -60,7 +61,7 @@
         align="center">
         <template slot-scope="{row}">
           <i v-if="row.status!=0" class="el-icon-caret-left link-type" style="color: #909399;font-weight: bold;margin-left: 5px;" @click="setStatus(row,-1)"></i>
-          <el-tag :type="row.status | statusFilter">
+          <el-tag :type="row.status | statusFilter" effect="dark">
             {{getStatus(row.status)}}
           </el-tag>
           <i v-if="row.status!=99" class="el-icon-caret-right link-type" style="color: #909399;font-weight: bold;margin-left: 5px;" @click="setStatus(row,1)"></i>
