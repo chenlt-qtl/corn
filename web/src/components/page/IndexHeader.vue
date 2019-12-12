@@ -7,12 +7,15 @@
       <!------Navigation starts--------->
       <div class="nav">
         <ul>
-          <li><router-link :to="{ name: 'blank-note' }" @click.native="active(1)">
-            <span>笔记</span>
+          <li><router-link :to="{ name: 'blank-task' }" @click.native="active(1)">
+            <span>任务</span>
           </router-link><span :class="{'active':show(1)}"> </span></li>
-          <li><router-link :to="{ name: 'blank-word-articleList' }" @click.native="active(2)">
-            <span>英语</span>
+          <li><router-link :to="{ name: 'blank-note' }" @click.native="active(2)">
+            <span>笔记</span>
           </router-link><span :class="{'active':show(2)}"> </span></li>
+          <li><router-link :to="{ name: 'blank-word-articleList' }" @click.native="active(3)">
+            <span>英语</span>
+          </router-link><span :class="{'active':show(3)}"> </span></li>
           <li>
             <a-dropdown>
               <span class="drop-title">
@@ -55,7 +58,7 @@
     mixins: [mixinDevice],
     data(){
       return {
-        activeIndex:1,
+        activeIndex:2,
       }
     },
     methods:{

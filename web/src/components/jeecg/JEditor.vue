@@ -65,7 +65,7 @@
           language_url: '/tinymce/langs/zh_CN.js',
           language: 'zh_CN',
           skin_url: '/tinymce/skins/lightgray',
-          min_height: 350,
+          min_height: this.max_height>350?350:this.max_height,
           max_height:this.max_height,
           plugins: this.plugins,
           toolbar: this.toolbar,
