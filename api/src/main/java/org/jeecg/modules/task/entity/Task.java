@@ -59,7 +59,7 @@ public class Task implements Serializable {
 
 	/**importance*/
 	@Excel(name = "importance", width = 15)
-	private java.lang.String importance;
+	private Integer importance;
 
 	/**lesson*/
 	@Excel(name = "lesson", width = 15)

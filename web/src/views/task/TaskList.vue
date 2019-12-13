@@ -133,6 +133,16 @@
             <el-option v-for="item in statusOptions" :key="item.code" :label="item.text" :value="item.code" />
           </el-select>
         </el-form-item>
+        <el-form-item label="总结">
+          <el-switch
+            v-model="temp.lesson"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-value=1
+            inactive-value=0
+          >
+          </el-switch>
+        </el-form-item>
         <el-form-item label="优先级">
           <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" />
         </el-form-item>
@@ -167,7 +177,7 @@
 
 <script>
   import Vue from 'vue';
-  import { Table,TableColumn,Loading,Button,MessageBox,Dialog, Form, FormItem,DatePicker,Select,Input,Option,Rate,Notification,Checkbox,Tag,InputNumber } from 'element-ui';
+  import { Table,TableColumn,Loading,Button,MessageBox,Dialog, Form, FormItem,DatePicker,Select,Input,Option,Rate,Notification,Checkbox,Tag,InputNumber,Switch } from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
@@ -188,6 +198,7 @@
   Vue.component(Checkbox.name, Checkbox);
   Vue.component(Tag.name, Tag);
   Vue.component(InputNumber.name, InputNumber);
+  Vue.component(Switch.name, Switch);
   Vue.use(Loading.directive);
   Vue.prototype.$prompt = MessageBox.prompt;
 
