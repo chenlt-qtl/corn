@@ -61,6 +61,10 @@ public class Task implements Serializable {
 	@Excel(name = "importance", width = 15)
 	private Integer importance;
 
+	/**type*/
+	@Excel(name = "type", width = 15)
+	private Integer type;
+
 	/**lesson*/
 	@Excel(name = "lesson", width = 15)
 	private java.lang.String lesson;

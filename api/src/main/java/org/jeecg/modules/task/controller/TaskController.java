@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -55,14 +57,14 @@ public class TaskController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<Task>> queryPageList(Task task,@RequestParam(name="toFinish", defaultValue="false") boolean toFinish,
+	public Result<IPage<Task>> queryPageList(Task task,@RequestParam(name="statusStr") String statusStr,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<Task>> result = new Result<IPage<Task>>();
 		QueryWrapper<Task> queryWrapper = QueryGenerator.initQueryWrapper(task, req.getParameterMap());
-		if(toFinish){
-			queryWrapper.ne("status",99);
+		if(StringUtils.isNotBlank(statusStr)){
+			queryWrapper.in("status",statusStr.split(","));
 		}
 		Page<Task> page = new Page<Task>(pageNo, pageSize);
 		IPage<Task> pageList = taskService.page(page, queryWrapper);

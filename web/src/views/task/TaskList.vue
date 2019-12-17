@@ -1,6 +1,11 @@
 <template>
   <div style="margin: 20px 150px;padding: 20px;background-color: #fff">
-    <el-button type="primary" icon="el-icon-plus" @click="open">增加</el-button>
+    <el-select v-model="type" style="margin-right: 10px;width: 110px;" class="filter-item" placeholder="类型" @change="getTaskData" clearable=true>
+      <el-option v-for="item in typeOptions" :key="item.code" :label="item.text" :value="item.code" />
+    </el-select>
+    <el-select v-model="statusStr" style="margin-right: 10px;width: 160px;" class="filter-item" placeholder="状态" @change="getTaskData" clearable=true multiple collapse-tags>
+      <el-option v-for="item in statusOptions" :key="item.code" :label="item.text" :value="item.code" />
+    </el-select>
     <el-checkbox v-model="showJira" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
       Jira信息
     </el-checkbox>
@@ -13,9 +18,7 @@
     <el-checkbox v-model="showSprint" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
       迭代
     </el-checkbox>
-    <el-checkbox v-model="showToFinish" class="filter-item" style="margin-left:15px;" @change="getTaskData">
-      未完成
-    </el-checkbox>
+    <el-button type="primary" icon="el-icon-plus" style="float: right;margin-right: 10px;" @click="open">增加</el-button>
     <el-table
       :key="tableKey"
       v-loading="loading"
@@ -124,13 +127,17 @@
         <el-form-item label="迭代" prop="sprint">
           <el-input-number v-model="temp.sprint" />
         </el-form-item>
-
+        <el-form-item label="类型">
+          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in typeOptions" :key="item.code" :label="item.text" :value="item.code" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="描述">
           <j-editor ref="jEditor" :toolbar=toolbar v-model="temp.comment" max_height=150></j-editor>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item.code" :label="item.text" :value="item.code" />
+            <el-option v-for="item in statusKeyVal" :key="item.code" :label="item.text" :value="item.code" />
           </el-select>
         </el-form-item>
         <el-form-item label="总结">
@@ -177,7 +184,9 @@
 
 <script>
   import Vue from 'vue';
-  import { Table,TableColumn,Loading,Button,MessageBox,Dialog, Form, FormItem,DatePicker,Select,Input,Option,Rate,Notification,Checkbox,Tag,InputNumber,Switch } from 'element-ui';
+  import { Table,TableColumn,Loading,Button,MessageBox,Dialog, Form,
+    FormItem,DatePicker,Select,Input,Option,Rate,Notification,Checkbox,
+    Tag,InputNumber,Switch ,OptionGroup } from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
@@ -199,8 +208,23 @@
   Vue.component(Tag.name, Tag);
   Vue.component(InputNumber.name, InputNumber);
   Vue.component(Switch.name, Switch);
+  Vue.component(OptionGroup.name, OptionGroup);
   Vue.use(Loading.directive);
   Vue.prototype.$prompt = MessageBox.prompt;
+
+  const statusData = [{label:'未开始',options:[{code:0,text:"未开始"}]},{label:'开发中',options:[{code:10,text:'开发中'},{code:11,text:'开发完成'}]},
+    {label:'测试中',options:[{code:20,text:'单元测试'},{code:21,text:'QA测试'},{code:22,text:'线上测试'}]},{label:'已完成',options:[{code:99,text:'完成'}]}];
+
+  const statusOptions = [];
+  const statusKeyVal = [];
+  statusData.forEach((group)=>{
+    let status = [];
+    group.options.forEach((option)=>{
+      statusKeyVal.push({code:option.code,text:option.text});
+      status.push(option.code);
+    });
+    statusOptions.push({code:status.toString(),text:group.label});
+  });
 
   export default {
     components: {
@@ -226,7 +250,7 @@
     methods: {
       setStatus(row,i){
         let index = 0;
-        this.statusOptions.forEach((data,i)=>{
+        this.statusKeyVal.forEach((data,i)=>{
           if(data.code == row.status){
             index = i;
           }
@@ -235,10 +259,10 @@
         if(index<0){
           index = 0;
         }
-        if(index>this.statusOptions.length-1){
-          index = this.statusOptions.length-1;
+        if(index>this.statusKeyVal.length-1){
+          index = this.statusKeyVal.length-1;
         }
-        row.status = this.statusOptions[index].code;
+        row.status = this.statusKeyVal[index].code;
         this.updateTask(row);
       },
       cancelEdit(row){
@@ -264,7 +288,7 @@
       },
       getTaskData(){
         this.loading = true;
-        httpAction(this.url.list+'?toFinish='+this.showToFinish, {}, 'get').then((res) => {
+        httpAction(this.url.list+"?type="+this.type+"&statusStr="+this.statusStr, {}, 'get').then((res) => {
           if (res.success) {
             let tableData = [];
             res.result.records.forEach((task)=>{
@@ -287,7 +311,7 @@
       getStatus(status){
         let code = status||0;
         let text = "";
-        this.statusOptions.forEach((item)=>{
+        this.statusKeyVal.forEach((item)=>{
           if(item.code.toString() == code.toString()){
             text = item.text;
           }
@@ -378,7 +402,8 @@
     },
     data() {
       return {
-        showToFinish:true,
+        type:3,
+        statusStr:'0',
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
         colors: ['#909399', '#E6A23C', '#F56C6C'],
         tableKey:0,
@@ -413,9 +438,10 @@
           timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
           comment: [{ required: true, message: '请输入描述', trigger: 'blur' }]
         },
-        statusOptions: [{code:0,text:"未开始"},{code:10,text:'开发中'},{code:11,text:'开发完成'},
-                        {code:20,text:'单元测试'},{code:21,text:'QA测试'},{code:22,text:'线上测试'},
-                        {code:99,text:'完成'}],
+        statusOptions,
+        statusKeyVal,
+        typeOptions: [{code:0,text:"task"},{code:1,text:'note'},{code:2,text:'word'},
+          {code:3,text:'hdt'}],
         statusTxt:'未开始',
         pickerOptions: {
           shortcuts: [{
