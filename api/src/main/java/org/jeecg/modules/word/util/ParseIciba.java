@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -85,28 +86,14 @@ public class ParseIciba {
 			Element pronElement = (Element) pronIter.next();
 			logger.info("-----------"+pronElement.getText());
 			if(!pronIter.hasNext()) {//最后一个元素
-				InputStream in = null;
-				String pathArr[] = UpLoadUtil.getWordFilePath(upload,word.getWordName()+".mp3");//获取保存路径
-				File mp3File = new File(pathArr[0]);
-				if(mp3File.exists()){
-					mp3File.delete();
-				}
-				OutputStream out = null;
+
+				String pathArr[] = UpLoadUtil.getWordFilePath(upload,word.getWordName()+".mp3",true);//获取保存路径
 				try {
-					in = new URL(pronElement.getTextTrim()).openConnection().getInputStream();//创建连接、输入流
-					out = new FileOutputStream(mp3File);
-			        
-					byte [] mp3=new byte[1024];  //接收缓存
-					int len;
-					while( (len=in.read(mp3))>0){ //接收
-						out.write(mp3,0,len);
-					}
+					InputStream in = new URL(pronElement.getTextTrim()).openConnection().getInputStream();//创建连接、输入流
+					UpLoadUtil.saveFile(in,pathArr[0]);
 					word.setPhAnMp3(pathArr[1]);
 				} catch (Exception e) {
 					e.printStackTrace();
-				} finally{
-					out.close();
-					in.close();
 				}
 			}
 		}

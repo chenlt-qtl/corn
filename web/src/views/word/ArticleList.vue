@@ -82,7 +82,7 @@
       </a-spin>
 
       <!-- 表单区域 -->
-      <step-form ref="stepForm" @ok="reload"></step-form>
+      <step-form ref="stepForm" @ok="loadData"></step-form>
     </a-card>
   </div>
 </template>
@@ -118,18 +118,21 @@
       }
     },
     created() {//初始数据加载
-      httpAction(this.url.list+"?title="+this.title, {}, 'get').then((res) => {
-        if (res.success) {
-          let data = [];
-          res.result.records.forEach((article)=>{
-            data.push(article);
-          });
-          this.data = data;
-        }
-        this.spinning = false;
-      })
+      this.loadData();
     },
     methods: {
+      loadData(){
+        httpAction(this.url.list+"?title="+this.title, {}, 'get').then((res) => {
+          if (res.success) {
+            let data = [];
+            res.result.records.forEach((article)=>{
+              data.push(article);
+            });
+            this.data = data;
+          }
+          this.spinning = false;
+        })
+      },
       onEdit(id){
         this.$router.push({path: '/blank/word/articleDetail',query:{id:id}});
       },
@@ -150,9 +153,6 @@
       changeMultiple(){
         let audioPlayer = document.getElementById('audioPlayer');
         audioPlayer.playbackRate = this.multiple;
-      },
-      reload() {
-
       },
       handleAdd() {
         this.$refs.stepForm.show();

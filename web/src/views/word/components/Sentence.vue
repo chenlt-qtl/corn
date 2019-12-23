@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div style="max-height: 400px;overflow-y: auto;">
     <span v-for="sentence in sentences">
-          <span :class="{'word_select':word.selected}" class="word_span" v-for="word in sentence.words">
-            {{word.wordName}}
-          </span>
-        </span>
+      <span :class="{'word_select':word.selected}" class="word_span" v-for="word in sentence.words">
+        {{word.wordName}}
+      </span>
+      .<br/>
+    </span>
   </div>
 </template>
 

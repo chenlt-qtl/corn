@@ -85,9 +85,10 @@
 
             <div class="words_div">
             <span v-for="sentence in sentences" :key="sentence.key">
-                <span :class="{'word_select':word.selected}" class="word_span" :key="word.key" v-for="word in sentence.words" @click="selectWord(word.key)">
+                <span :class="[{'word_select':word.selected},{'word_span':word.type}]" :key="word.key" v-for="word in sentence.words" @click="selectWord(word.key,word.type)">
                   {{word.wordName}}
                 </span>
+              .<br/>
             </span>
             </div>
             <a-button :loading="loading" type="primary" @click="saveArticle">提交</a-button>
@@ -131,7 +132,7 @@
         defaultFileList:[],
         url:{
           save:"/word/sentence/save",
-          upload:window._CONFIG['domianURL']+"/sys/common/upload",
+          upload:window._CONFIG['domianURL']+"/sys/common/uploadMp3",
         },
         formItemLayout: {
           labelCol: { span: 2 },
@@ -184,26 +185,30 @@
             this.formValue = values;
             let key = 1;
             let sentences = [];
-            let patt4=new RegExp("[a-zA-Z]+");
+            let patt4=new RegExp("[a-z|A-Z|']");
             if(this.formValue.content){
-              this.formValue.content.split(/[.;?!\r]+/).forEach((sentence)=>{
-                if(!sentence){
+              this.formValue.content.split(/[.;?!\r\n]+/).forEach((sentence)=>{
+                if(!sentence||!(sentence.trim())){
                   return;
                 }
                 let words = [];
                 sentence.split(" ").forEach((word)=>{
-                  if(patt4.test(word)) {
-                    let selected = false;
-                    this.words.forEach((w)=>{
-                      if(w.wordName==word.toLowerCase()) {
-                        selected = true;
-                      }
-                    });
-                    words.push({wordName:word,type:1,key:key,selected:selected});
-                  }else {
-                    words.push({wordName:word,type:0,key:key});
+                  if(!word||!(word.trim())){
+                    return;
                   }
-                  key ++;
+                  let newWord = '';
+                  word.split('').forEach((letter)=>{
+                    if(patt4.test(letter)) {
+                      newWord += letter;
+                    }else {
+                      if(newWord) {
+                        addWord(newWord,key++,words,this.words);
+                        newWord = "";
+                      }
+                      words.push({ wordName: letter, type: 0, key: key++ });
+                    }
+                  });
+                  addWord(newWord,key++,words,this.words);
                 });
                 sentences.push({key:key,content:sentence,words:words});
                 key++;
@@ -211,6 +216,18 @@
             }
             this.sentences = sentences;
             this.currentTab = 1;
+          }
+
+          function addWord(word,key,words,selectWords) {
+            let selected = false;
+            if(word) {
+              selectWords.forEach((w) => {
+                if (w.wordName == word.toLowerCase()) {
+                  selected = true;
+                }
+              });
+              words.push({ wordName: word, type: 1, key: key, selected: selected });
+            }
           }
         });
       },
@@ -228,7 +245,10 @@
           that.spinning = false;
         })
       },
-      selectWord(key){
+      selectWord(key,type){
+        if(!type){
+          return;
+        }
         let found = false;
         let sentences = [];
         for(let sentence of this.sentences){
@@ -290,6 +310,8 @@
     margin: 30px 20px;
     font-size: 18px;
     font-weight: bold;
+    max-height: 320px;
+    overflow-y: auto;
   }
 
   .word_span{

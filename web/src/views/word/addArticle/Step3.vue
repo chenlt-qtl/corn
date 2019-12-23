@@ -8,8 +8,12 @@
             <a-col :sm="16" :xs="24">{{value.name}}</a-col>
           </a-row>
           <a-row>
-            <a-col :sm="8" :xs="24">内容：</a-col>
-            <a-col :sm="16" :xs="24">{{value.content}}</a-col>
+            <a-col :sm="8" :xs="24">内容1：</a-col>
+            <a-col :sm="16" :xs="24">
+              <div style="max-height: 200px;overflow-y: auto">
+                {{value.content}}
+              </div>
+            </a-col>
           </a-row>
         </div>
       </result>

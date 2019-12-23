@@ -212,7 +212,7 @@
   Vue.use(Loading.directive);
   Vue.prototype.$prompt = MessageBox.prompt;
 
-  const statusData = [{label:'未开始',options:[{code:0,text:"未开始"}]},{label:'开发中',options:[{code:10,text:'开发中'},{code:11,text:'开发完成'}]},
+  const statusData = [{label:'未开始',options:[{code:0,text:"未开始"}]},{label:'开发中',options:[{code:10,text:'开发中'},{code:11,text:'合并代码'}]},
     {label:'测试中',options:[{code:20,text:'单元测试'},{code:21,text:'QA测试'},{code:22,text:'线上测试'}]},{label:'已完成',options:[{code:99,text:'完成'}]}];
 
   const statusOptions = [];
@@ -403,7 +403,7 @@
     data() {
       return {
         type:3,
-        statusStr:'0',
+        statusStr:'',
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
         colors: ['#909399', '#E6A23C', '#F56C6C'],
         tableKey:0,

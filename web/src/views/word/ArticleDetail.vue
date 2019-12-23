@@ -7,7 +7,7 @@
               <a-button type="primary" style="float: right;margin-left: 5px;" @click="back">
                 <a-icon type="left" />返回列表
               </a-button>
-              <a-button style="float: right" @click="handleAdd">修改</a-button>
+              <a-button style="float: right" @click="handleEdit">修改</a-button>
           </template>
         </detail-list>
         <a-divider style="margin-bottom: 32px"/>
@@ -70,7 +70,7 @@
           this.spinning = false;
         });
       },
-      handleAdd() {
+      handleEdit() {
         let content = "";
         this.sentences.forEach((sentence)=>{
             content += sentence.content + ".";
@@ -111,16 +111,23 @@
       },
       handleSentence(sentence){
         let key = 1;
-        let patt4=new RegExp("[a-zA-Z]+");
+        let patt4=new RegExp("[a-z|A-Z|']");
 
         let words = [];
         sentence.split(" ").forEach((word)=>{
-          if(patt4.test(word)) {
-            words.push({wordName:word,type:1,key:key});
-            key ++;
-          }else {
-            words.push({wordName:word,type:0});
-          }
+          let newWord = '';
+          word.split('').forEach((letter)=>{
+            if(patt4.test(letter)) {
+              newWord += letter;
+            }else {
+              if(newWord) {
+                words.push({ wordName: newWord, type: 1, key: key++ });
+                newWord = "";
+              }
+              words.push({ wordName: letter, type: 0, key: key++ });
+            }
+          });
+          words.push({ wordName: newWord, type: 1, key: key++ });
         });
         this.sentences.push({content:sentence,words:words});
       }

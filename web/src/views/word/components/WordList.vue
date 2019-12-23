@@ -21,7 +21,7 @@
         <slot></slot>
         <a-input-search v-model="title" style="margin-left: 16px; width: 272px;" @change="reload"/>
       </div>
-      <a-table :columns="columns" :dataSource="data" size="small" :rowSelection="{onChange: onSelectChange}" />
+      <a-table :columns="columns" :pagination="pagination" :dataSource="data" size="small" :rowSelection="{onChange: onSelectChange}"/>
 
     </a-card>
   </div>
@@ -40,6 +40,17 @@
     },
     data () {
       return {
+        pagination: {
+          current: 1,
+          pageSize: 10,
+          pageSizeOptions: ['10', '50', '100'],
+          showTotal: (total, range) => {
+            return range[0] + '-' + range[1] + ' 共' + total + '条'
+          },
+          showQuickJumper: true,
+          showSizeChanger: true,
+          total: 0
+        },
         url:'',
         data:[],
         spinning:true,

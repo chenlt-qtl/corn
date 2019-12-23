@@ -54,8 +54,27 @@ public class CommonController {
 			String[] path = UpLoadUtil.getUserFilePath(uploadpath,orgName.substring(orgName.indexOf(".")));
 			File savefile = new File(path[0]);
 			FileCopyUtils.copy(mf.getBytes(), savefile);
-			String dbpath = path[1];
-			result.setMessage(dbpath);
+			result.setMessage(path[1]);
+			result.setSuccess(true);
+		} catch (IOException e) {
+			result.setSuccess(false);
+			result.setMessage(e.getMessage());
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@PostMapping(value = "/uploadMp3")
+	public Result<SysUser> uploadMp3(HttpServletRequest request) {
+		Result<SysUser> result = new Result<>();
+		try {
+
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+			MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
+
+			String[] path = UpLoadUtil.getWordFilePath(uploadpath,mf.getOriginalFilename(),false);
+			UpLoadUtil.saveFile(mf.getInputStream(),path[0]);
+			result.setMessage(path[1]);
 			result.setSuccess(true);
 		} catch (IOException e) {
 			result.setSuccess(false);

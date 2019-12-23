@@ -13,6 +13,10 @@ management:
         include: metrics,httptrace
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100000000
+      max-request-size: 100000000
   ## quartz定时任务,采用数据库方式
   quartz:
     job-store-type: jdbc

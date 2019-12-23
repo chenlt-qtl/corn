@@ -4,11 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.modules.system.entity.SysUser;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +22,8 @@ public class UpLoadUtil {
 
     public static final String IMG_PRE = "baseUrl/";
     public static final String WORD_DIR = "word";
+    public static final String WORD_PRON = "pron";
+    public static final String USER = "user";
 
     /**
      * 获取用户文件夹path
@@ -32,7 +35,7 @@ public class UpLoadUtil {
         log.info("========upload path:"+uploadpath);
         String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        String bizPath = "user"+ File.separator + nowday + File.separator + sysUser.getUsername();
+        String bizPath = USER + File.separator + nowday + File.separator + sysUser.getUsername();
         File file = new File(uploadpath + File.separator + bizPath );
         if (!file.exists()) {
             file.mkdirs();// 创建文件根目录
@@ -56,9 +59,20 @@ public class UpLoadUtil {
      * @param name
      * @return
      */
-    public static String[] getWordFilePath(String uploadpath,String name){
+    public static String[] getWordFilePath(String uploadpath,String name,boolean isWord){
         log.info("========upload path:"+uploadpath);
-        File file = new File(uploadpath + File.separator + WORD_DIR );
+        String dbpath = WORD_DIR;
+
+        String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        if(!isWord) {
+            SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+            dbpath = dbpath + File.separator + USER + File.separator + nowday + File.separator + sysUser.getUsername();
+        }else{
+            dbpath = dbpath + File.separator + WORD_PRON + File.separator + nowday ;
+        }
+
+        uploadpath = uploadpath + File.separator + dbpath;
+        File file = new File(uploadpath);
         if (!file.exists()) {
             file.mkdirs();// 创建文件根目录
         }
@@ -67,12 +81,34 @@ public class UpLoadUtil {
         String[] result = new String[2];
         result[0] = file.getPath() + File.separator + fileName;
         log.info("========realPath:"+result[0]);
-        String dbpath = WORD_DIR + File.separator + fileName;
+        dbpath = dbpath + File.separator + fileName;
         if (dbpath.contains("\\")) {
             dbpath = dbpath.replace("\\", "/");
         }
         result[1] = dbpath;
         return result;
+    }
+
+
+    public static void saveFile(InputStream in,String path){
+        File file = new File(path);
+        if(file.exists()){
+            file.delete();
+        }
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            FileCopyUtils.copy(in,out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally{
+            try {
+                out.close();
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static String parseOldImg(String text,String contextPath){
