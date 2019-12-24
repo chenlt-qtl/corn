@@ -279,19 +279,20 @@
       },
       show(words,article){
         this.currentTab = 0;
+        this.showUpBtn = true;
         if(article){
           this.id = article.id;
           this.formValue = article;
           if(article.mp3){
             this.defaultFileList = article.mp3;
             this.mp3 = article.mp3[0].url;
+            this.showUpBtn = false;
           }
           this.words = words;
         }else {
           this.formValue = {};
         }
         this.visible = true;
-        this.showUpBtn = true;
       },
       close () {
         this.visible = false;
