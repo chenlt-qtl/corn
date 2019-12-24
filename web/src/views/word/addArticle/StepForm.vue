@@ -146,7 +146,7 @@
     created(){
       const token = Vue.ls.get(ACCESS_TOKEN);
       this.headers = {"X-Access-Token":token}
-      console.log(this.headers);
+      console.log("head",this.headers);
     },
     methods: {
       handleChange (info) {
