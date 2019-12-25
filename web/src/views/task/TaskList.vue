@@ -1,9 +1,9 @@
 <template>
   <div style="margin: 20px 150px;padding: 20px;background-color: #fff">
-    <el-select v-model="type" style="margin-right: 10px;width: 110px;" class="filter-item" placeholder="类型" @change="getTaskData" clearable=true>
+    <el-select v-model="type" style="margin-right: 10px;width: 110px;" class="filter-item" placeholder="类型" @change="getTaskData" clearable>
       <el-option v-for="item in typeOptions" :key="item.code" :label="item.text" :value="item.code" />
     </el-select>
-    <el-select v-model="statusStr" style="margin-right: 10px;width: 160px;" class="filter-item" placeholder="状态" @change="getTaskData" clearable=true multiple collapse-tags>
+    <el-select v-model="statusStr" style="margin-right: 10px;width: 160px;" class="filter-item" placeholder="状态" @change="getTaskData" clearable multiple collapse-tags>
       <el-option v-for="item in statusOptions" :key="item.code" :label="item.text" :value="item.code" />
     </el-select>
     <el-checkbox v-model="showJira" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
@@ -18,7 +18,10 @@
     <el-checkbox v-model="showSprint" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
       迭代
     </el-checkbox>
-    <el-button type="primary" icon="el-icon-plus" style="float: right;margin-right: 10px;" @click="open">增加</el-button>
+    <div style="float: right;margin-right: 10px;display: inline-block">
+      <el-button type="primary" icon="el-icon-plus" @click="open">增加</el-button>
+      <span style="margin: 0 10px;color: #e8e8e8;">|</span><a-icon type="setting" class="link-type" @click="handleSetting()"></a-icon>
+    </div>
     <el-table
       :key="tableKey"
       v-loading="loading"
@@ -177,6 +180,8 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <task-type-list ref="taskTypeList"></task-type-list>
   </div>
 
 
@@ -190,6 +195,7 @@
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
+  import TaskTypeList from "./TaskTypeList"
 
   Vue.component(Table.name, Table);
   Vue.component(TableColumn.name, TableColumn);
@@ -229,6 +235,7 @@
   export default {
     components: {
       JEditor,
+      TaskTypeList,
     },
     created(){
       this.getTaskData();
@@ -248,6 +255,9 @@
       },
     },
     methods: {
+      handleSetting(){
+        this.$refs.taskTypeList.show();
+      },
       setStatus(row,i){
         let index = 0;
         this.statusKeyVal.forEach((data,i)=>{
@@ -274,7 +284,6 @@
         this.updateTask(row);
       },
       tableRowClassName({row}) {
-        console.log(row.status,row.status >= 10 && status<20);
         let result = '';
         if (row.status >= 10 && row.status<20) {//开发中
           result = 'dev-row';
