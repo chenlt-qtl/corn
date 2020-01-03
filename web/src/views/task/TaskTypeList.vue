@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="设置" :visible.sync="visible">
+  <el-dialog title="设置" :visible.sync="visible" @close="close">
     <el-container>
       <el-aside width="120px;">
         <div style="padding: 10px 10px 10px 0px;width: 100%;text-align: right;">
@@ -208,6 +208,9 @@
         }).catch(() => {});
 
       },
+      close(){
+        this.$emit('ok');
+      }
     },
     data() {
       return {
@@ -231,8 +234,11 @@
           label: '未开始',
           disabled : true,
           children: [{
-            id : '0',
+            id: '0',
             label: '未开始',
+          },{
+              id : '1',
+              label: '取消',
           }],
         }, {
           label: '开发',
@@ -241,7 +247,10 @@
             id : '10',
             label: '开发中',
           }, {
-            id : '11',
+            id: '11',
+            label: '单元测试',
+          }, {
+            id : '12',
             label: '合并代码',
           }]
         }, {
@@ -250,9 +259,6 @@
           children: [{
             id: '23',
             label: '测试中',
-          }, {
-            id: '20',
-            label: '单元测试',
           }, {
             id: '21',
             label: 'QA测试',
@@ -264,9 +270,6 @@
             label: '完成',
             disabled: true,
             children: [{
-              id : '90',
-              label: '总结',
-            }, {
               id : '99',
               label: '完成',
             }]

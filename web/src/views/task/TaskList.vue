@@ -1,7 +1,11 @@
 <template>
   <div style="margin: 20px 150px;padding: 20px;background-color: #fff">
-    <el-select v-model="type" style="margin-right: 10px;width: 110px;" class="filter-item" placeholder="类型" @change="getTaskData" clearable>
-      <el-option v-for="item in typeOptions" :key="item.code" :label="item.text" :value="item.code" />
+    <el-select v-model="type" style="margin-right: 10px;width: 110px;" class="filter-item" placeholder="类型" @change="changeType" clearable>
+      <span slot="prefix" :style="{color:prefixColor,fontSize:'22px'}">■</span>
+      <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
+        <span :style="{borderLeftWidth: '4px',borderLeftStyle:'solid',borderLeftColor:item.color}"></span>
+        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+      </el-option>
     </el-select>
     <el-select v-model="statusStr" style="margin-right: 10px;width: 160px;" class="filter-item" placeholder="状态" @change="getTaskData" clearable multiple collapse-tags>
       <el-option v-for="item in statusOptions" :key="item.code" :label="item.text" :value="item.code" />
@@ -34,10 +38,10 @@
         width="300">
         <template slot-scope="{row}">
           <template v-if="row.edit">
-            <j-editor ref="jEditor" :toolbar=toolbar v-model="row.comment" max_height=80></j-editor>
+            <j-editor ref="jEditor" :toolbar=toolbar v-model="row.comment" :max_height=80></j-editor>
           </template>
           <span v-else class="link-type" @click="handleUpdate(row)">
-            <div v-html="row.comment">{{ row.comment }}</div>
+            <div :style="getRowStyle(row)" v-html="row.comment">{{ row.comment }}</div>
           </span>
           <div v-if="row.edit">
             <el-button size="mini" style="float: right;margin-left:5px;margin-top: 5px;" type="warning" @click="cancelEdit(row)">取消</el-button>
@@ -66,11 +70,12 @@
         width="150"
         align="center">
         <template slot-scope="{row}">
-          <i v-if="row.status!=0" class="el-icon-caret-left link-type" style="color: #909399;font-weight: bold;margin-left: 5px;" @click="setStatus(row,-1)"></i>
-          <el-tag :type="row.status | statusFilter" effect="dark">
-            {{getStatus(row.status)}}
-          </el-tag>
-          <i v-if="row.status!=99" class="el-icon-caret-right link-type" style="color: #909399;font-weight: bold;margin-left: 5px;" @click="setStatus(row,1)"></i>
+          <el-dropdown  @command="changeStatus">
+            <el-button>{{getStatus(row.status)}}</el-button>
+            <el-dropdown-menu slot="dropdown" divided>
+              <el-dropdown-item v-for="item in getStatusOption(row.status,row.type)" :command="[item.id,row]" >{{item.label}}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </template>
       </el-table-column>
       <el-table-column
@@ -132,16 +137,24 @@
         </el-form-item>
         <el-form-item label="类型">
           <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in typeOptions" :key="item.code" :label="item.text" :value="item.code" />
+            <span slot="prefix" :style="{color:getColorByType(temp.type),fontSize:'22px'}">■</span>
+            <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
+              <span :style="{borderLeftWidth: '4px',borderLeftStyle:'solid',borderLeftColor:item.color}"></span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="描述">
-          <j-editor ref="jEditor" :toolbar=toolbar v-model="temp.comment" max_height=150></j-editor>
+          <j-editor ref="jEditor" :toolbar=toolbar v-model="temp.comment" :max_height=150></j-editor>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusKeyVal" :key="item.code" :label="item.text" :value="item.code" />
-          </el-select>
+          <el-dropdown v-if="showDrop" @command="changeStatus">
+            <el-button>{{getStatus(temp.status)}}<i class="el-icon-arrow-down el-icon--right" style="margin-left: 10px"></i></el-button>
+            <el-dropdown-menu slot="dropdown" divided>
+              <el-dropdown-item v-for="item in nextStatusOptions" :command="[item.id,temp]" >{{item.label}}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <div v-else>{{getStatus(temp.status)}}</div>
         </el-form-item>
         <el-form-item label="总结">
           <el-switch
@@ -181,7 +194,7 @@
       </div>
     </el-dialog>
 
-    <task-type-list ref="taskTypeList"></task-type-list>
+    <task-type-list ref="taskTypeList" @ok="getTypeData"></task-type-list>
   </div>
 
 
@@ -191,7 +204,7 @@
   import Vue from 'vue';
   import { Table,TableColumn,Loading,Button,MessageBox,Dialog, Form,
     FormItem,DatePicker,Select,Input,Option,Rate,Notification,Checkbox,
-    Tag,InputNumber,Switch ,OptionGroup } from 'element-ui';
+    Tag,InputNumber,Switch ,OptionGroup, Dropdown, DropdownMenu, DropdownItem } from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
@@ -215,19 +228,64 @@
   Vue.component(InputNumber.name, InputNumber);
   Vue.component(Switch.name, Switch);
   Vue.component(OptionGroup.name, OptionGroup);
+  Vue.component(Dropdown.name, Dropdown);
+  Vue.component(DropdownMenu.name, DropdownMenu);
+  Vue.component(DropdownItem.name, DropdownItem);
   Vue.use(Loading.directive);
   Vue.prototype.$prompt = MessageBox.prompt;
 
-  const statusData = [{label:'未开始',options:[{code:0,text:"未开始"}]},{label:'开发中',options:[{code:10,text:'开发中'},{code:11,text:'合并代码'}]},
-    {label:'测试中',options:[{code:20,text:'单元测试'},{code:21,text:'QA测试'},{code:22,text:'线上测试'}]},{label:'已完成',options:[{code:99,text:'完成'}]}];
-
+  const cancel = {
+    id : 1,
+    label: '取消',
+  };
+  const statusData = [{
+    label: '未开始',
+    disabled : true,
+    children: [{
+      id: 0,
+      label: '未开始',
+    }, cancel],
+  }, {
+    label: '开发',
+    disabled : true,
+    children: [{
+      id : 10,
+      label: '开发中',
+    }, {
+      id: 11,
+      label: '单元测试',
+    }, {
+      id : 12,
+      label: '合并代码',
+    }]
+  }, {
+    label: '测试',
+    disabled: true,
+    children: [{
+      id: 23,
+      label: '测试中',
+    }, {
+      id: 21,
+      label: 'QA测试',
+    }, {
+      id: 22,
+      label: '线上测试',
+    }]
+  }, {
+    label: '完成',
+    disabled: true,
+    children: [{
+      id : 99,
+      label: '完成',
+    }]
+  }]
   const statusOptions = [];
   const statusKeyVal = [];
   statusData.forEach((group)=>{
     let status = [];
-    group.options.forEach((option)=>{
-      statusKeyVal.push({code:option.code,text:option.text});
-      status.push(option.code);
+    group.children.forEach((option)=>{
+      statusKeyVal.push({code:option.id,text:option.label});
+      status.push(option.id);
     });
     statusOptions.push({code:status.toString(),text:group.label});
   });
@@ -238,7 +296,10 @@
       TaskTypeList,
     },
     created(){
-      this.getTaskData();
+      const that = this;
+      this.getTypeData(function() {
+        that.changeType(that.type);
+      });
     },
     filters: {
       statusFilter(status) {
@@ -255,6 +316,11 @@
       },
     },
     methods: {
+      changeStatus(data){
+        let typeObj = data[1];
+        typeObj.status = data[0];
+        this.updateTask(typeObj);
+      },
       handleSetting(){
         this.$refs.taskTypeList.show();
       },
@@ -273,7 +339,63 @@
           index = this.statusKeyVal.length-1;
         }
         row.status = this.statusKeyVal[index].code;
-        this.updateTask(row);
+        this.updateTask(row,true);
+      },
+      getStatusOption(status,type){
+        let hasCancel = false;//是否有取消
+        let result = [];
+        this.typeOptions.forEach((typeObj) => {
+          if (typeObj.id == type) {
+            const statusIdArr = (typeObj.statusStr||'').split(",");
+            statusIdArr.forEach((statusId)=> {
+              if (statusId == String(cancel.id)) {
+                hasCancel = true;
+              } else {
+                statusData.forEach((a,index) => {
+                  if(!result[index]){
+                    result[index]=[];
+                  }
+                  a.children.forEach((b) => {
+                    if (statusId == String(b.id) && statusId != String(status)) {
+                      result[index].push(b);
+                    }
+                  });
+                });
+              }
+            });
+          }
+        });
+
+
+        let nowPhase = 0;
+        let nextPhase = -1;
+        if(status && status<10){
+          nowPhase = 0;
+        }else if(10 <= status && status<20){
+          nowPhase = 1;
+        }else if(20 <=status&&status<30){
+          nowPhase = 2;
+        }else if(status>=30){
+          nowPhase = 3;
+        }
+
+        let options = result[nowPhase];
+
+        for(let i = (nowPhase+1);i<result.length;i++){
+          console.log(i);
+          if(result[i].length>0){
+            nextPhase = i;
+            break;
+          }
+        }
+        if(nextPhase != -1){
+          options = options.concat(result[nextPhase]);
+        }
+        console.log('now',nowPhase,'next',nextPhase);
+        if(hasCancel&&nowPhase<3){
+          options.push(cancel);
+        }
+        return options;
       },
       cancelEdit(row){
         row.edit = false;
@@ -281,7 +403,7 @@
       confirmEdit(row) {
         row.edit = false;
         row.comment = this.$refs.jEditor.getText();
-        this.updateTask(row);
+        this.updateTask(row,true);
       },
       tableRowClassName({row}) {
         let result = '';
@@ -292,8 +414,25 @@
         } else if (row.status == 99 ){
           result = 'finish-row';
         }
-        console.log(result);
         return result;
+      },
+      getColorByType(type){
+        let color = "#fff";
+        if(type||type===0) {
+          this.typeOptions.forEach((option) => {
+            if (option.id == type) {
+              color = option.color;
+            }
+          });
+        }
+        return color;
+      },
+      changeType(value){
+        this.prefixColor = this.getColorByType(value);
+        this.getTaskData();
+      },
+      getRowStyle(row){
+        return "min-height:60px;border-left: 4px solid "+this.getColorByType(row.type);
       },
       getTaskData(){
         this.loading = true;
@@ -309,10 +448,22 @@
           this.loading = false;
         })
       },
+      getTypeData(callback){
+        httpAction("/taskType/list", {}, 'get').then((res) => {
+          if (res.success) {
+            let typeOptions = [];
+            res.result.records.forEach((type)=>{
+              typeOptions.push(type);
+            });
+            this.typeOptions = typeOptions;
+          }
+          callback();
+        })
+      },
       open() {
         this.resetTemp();
         this.dialogStatus = 'create';
-        this.dialogFormVisible = true
+        this.dialogFormVisible = true;
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
         })
@@ -336,17 +487,28 @@
           planStartDate: new Date(),
           dataChange:'',
           status:0,
+          type:this.type,
           workTime:0.5,
           lesson:0,
         }
+        this.setNextStatusOptions();
       },
       handleUpdate(row) {
         this.temp = Object.assign({}, row) // copy obj
         this.dialogStatus = 'update'
-        this.dialogFormVisible = true
+        this.dialogFormVisible = true;
+        this.setNextStatusOptions();
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
         })
+      },
+      setNextStatusOptions(){
+        this.nextStatusOptions = this.getStatusOption(this.temp.status,this.temp.type);
+        if(this.nextStatusOptions.length>0){
+          this.showDrop = true;
+        }else{
+          this.showDrop = false;
+        }
       },
       deleteTask(row){
         MessageBox.confirm('此操作将永久删除该任务, 是否继续?', '提示', {
@@ -370,25 +532,27 @@
         this.temp.comment = this.$refs.jEditor.getText();
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            this.updateTask(this.temp);
+            this.updateTask(this.temp,true);
           }
         })
       },
-      updateTask(data){
+      updateTask(data,notice){
         httpAction(this.url.edit, data, 'put').then(() => {
           for (const v of this.tableData) {
             if (v.id === data.id) {
               const index = this.tableData.indexOf(v)
               this.tableData.splice(index, 1, data)
-              break
+              break;
             }
           }
-          this.dialogFormVisible = false
-          Notification.success({
-            title: 'Success',
-            message: 'Update Successfully',
-            duration: 2000
-          })
+          if(notice) {
+            this.dialogFormVisible = false
+            Notification.success({
+              title: 'Success',
+              message: 'Update Successfully',
+              duration: 2000
+            })
+          }
         })
       },
       createData() {
@@ -411,6 +575,7 @@
     },
     data() {
       return {
+        prefixColor: '#fff',
         type:3,
         statusStr:'',
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
@@ -420,6 +585,7 @@
         showImp:true,
         showDate:true,
         showSprint:false,
+        showDrop:false,
         searchText:'',
         url:{
           list:"/task/list",
@@ -448,9 +614,9 @@
           comment: [{ required: true, message: '请输入描述', trigger: 'blur' }]
         },
         statusOptions,
+        nextStatusOptions:[],
         statusKeyVal,
-        typeOptions: [{code:0,text:"task"},{code:1,text:'note'},{code:2,text:'word'},
-          {code:3,text:'hdt'}],
+        typeOptions: [],
         statusTxt:'未开始',
         pickerOptions: {
           shortcuts: [{
