@@ -10,7 +10,7 @@
     <el-select v-model="statusStr" style="margin-right: 10px;width: 160px;" class="filter-item" placeholder="状态" @change="getTaskData" clearable multiple collapse-tags>
       <el-option v-for="item in statusOptions" :key="item.code" :label="item.text" :value="item.code" />
     </el-select>
-    <el-input v-model="sprint" placeholder="迭代" @change="getTaskData" style="width: 70px"/>
+    <el-input v-model="sprint" placeholder="迭代" @change="getTaskData" style="width: 70px" clearable/>
     <el-checkbox v-model="showJira" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
       Jira信息
     </el-checkbox>
