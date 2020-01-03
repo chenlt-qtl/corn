@@ -135,7 +135,7 @@
         <el-form-item label="迭代" prop="sprint">
           <el-input-number v-model="temp.sprint" />
         </el-form-item>
-        <el-form-item label="类型">
+        <el-form-item label="类型" prop="type">
           <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
             <span slot="prefix" :style="{color:getColorByType(temp.type),fontSize:'22px'}">■</span>
             <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
@@ -609,9 +609,7 @@
         dialogStatus:'',
         dialogFormVisible:false,
         rules: {
-          type: [{ required: true, message: 'type is required', trigger: 'change' }],
-          timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-          comment: [{ required: true, message: '请输入描述', trigger: 'blur' }]
+          type: [{ required: true, message: '请输入类型', trigger: 'change' }]
         },
         statusOptions,
         nextStatusOptions:[],
