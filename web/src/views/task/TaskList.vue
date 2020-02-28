@@ -34,15 +34,25 @@
       style="width: 100%"
       :row-class-name="tableRowClassName">
       <el-table-column
+        prop="title"
+        label="标题"
+        width="200">
+        <template slot-scope="{row}">
+          <span class="link-type" @click="handleUpdate(row)">
+            <div :style="getRowStyle(row)" v-html="row.title">{{ row.title }}</div>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="comment"
         label="描述"
-        width="300">
+        width="500">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <j-editor ref="jEditorTable" :toolbar=toolbar v-model="row.comment" :min_height=80 :max_height="300"></j-editor>
           </template>
           <span v-else class="link-type" @click="handleUpdate(row)">
-            <div :style="getRowStyle(row)" v-html="row.comment">{{ row.comment }}</div>
+            <div v-html="row.comment">{{ row.comment }}</div>
           </span>
           <div v-if="row.edit">
             <el-button size="mini" style="float: right;margin-left:5px;margin-top: 5px;" type="warning" @click="cancelEdit(row)">取消</el-button>
@@ -127,6 +137,9 @@
                label-position="left"
                label-width="70px"
                style="width: 604px; height:400px;overflow-y:auto;margin-left:50px;padding-right: 50px;">
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
         <el-form-item label="Jira编号" prop="jiraNo">
           <el-input v-model="temp.jiraNo" />
         </el-form-item>
@@ -583,9 +596,9 @@
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
         colors: ['#909399', '#E6A23C', '#F56C6C'],
         tableKey:0,
-        showJira:true,
-        showImp:true,
-        showDate:true,
+        showJira:false,
+        showImp:false,
+        showDate:false,
         showSprint:false,
         showDrop:false,
         searchText:'',
@@ -611,7 +624,8 @@
         dialogStatus:'',
         dialogFormVisible:false,
         rules: {
-          type: [{ required: true, message: '请输入类型', trigger: 'change' }]
+          type: [{ required: true, message: '请输入类型', trigger: 'change' }],
+          title: [{ required: true, message: '请输入标题', trigger: 'change' }]
         },
         statusOptions,
         nextStatusOptions:[],
