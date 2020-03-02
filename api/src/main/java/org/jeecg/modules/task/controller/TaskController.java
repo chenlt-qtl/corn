@@ -66,6 +66,8 @@ public class TaskController {
 		if(StringUtils.isNotBlank(statusStr)){
 			queryWrapper.in("status",statusStr.split(","));
 		}
+		queryWrapper.orderByDesc("update_time");
+
 		Page<Task> page = new Page<Task>(pageNo, pageSize);
 		IPage<Task> pageList = taskService.page(page, queryWrapper);
 		result.setSuccess(true);

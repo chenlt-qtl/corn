@@ -555,7 +555,8 @@
           for (const v of this.tableData) {
             if (v.id === data.id) {
               const index = this.tableData.indexOf(v)
-              this.tableData.splice(index, 1, data)
+              this.tableData.splice(index, 1);
+              this.tableData.unshift(data);
               break;
             }
           }

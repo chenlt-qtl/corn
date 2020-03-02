@@ -28,6 +28,11 @@ public class Task implements Serializable {
 	/**pId*/
 	@Excel(name = "pId", width = 32)
 	private java.lang.String pId;
+
+	/**title*/
+	@Excel(name = "title", width = 15)
+	private java.lang.String title;
+
 	/**jiraNo*/
 	@Excel(name = "jiraNo", width = 15)
 	private java.lang.String jiraNo;

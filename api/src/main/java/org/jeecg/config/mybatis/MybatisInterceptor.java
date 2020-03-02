@@ -99,30 +99,28 @@ public class MybatisInterceptor implements Interceptor {
 						field.setAccessible(true);
 						Object local_updateBy = field.get(parameter);
 						field.setAccessible(false);
-						if (local_updateBy == null || local_updateBy.equals("")) {
-							String updateBy = "jeecg-boot";
-							// 获取登录用户信息
-							SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-							if (sysUser != null) {
-								// 登录账号
-								updateBy = sysUser.getUsername();
-							}
-							if (!oConvertUtils.isEmpty(updateBy)) {
-								field.setAccessible(true);
-								field.set(parameter, updateBy);
-								field.setAccessible(false);
-							}
+						String updateBy = "jeecg-boot";
+						// 获取登录用户信息
+						SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+						if (sysUser != null) {
+							// 登录账号
+							updateBy = sysUser.getUsername();
 						}
+						if (!oConvertUtils.isEmpty(updateBy)) {
+							field.setAccessible(true);
+							field.set(parameter, updateBy);
+							field.setAccessible(false);
+						}
+
 					}
 					if ("updateTime".equals(field.getName())) {
 						field.setAccessible(true);
 						Object local_updateDate = field.get(parameter);
 						field.setAccessible(false);
-						if (local_updateDate == null || local_updateDate.equals("")) {
-							field.setAccessible(true);
-							field.set(parameter, new Date());
-							field.setAccessible(false);
-						}
+						field.setAccessible(true);
+						field.set(parameter, new Date());
+						field.setAccessible(false);
+
 					}
 				} catch (Exception e) {
 				}
