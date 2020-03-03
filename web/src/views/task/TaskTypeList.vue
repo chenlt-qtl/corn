@@ -73,6 +73,7 @@
     FormItem,Select,Input,Option,Notification ,Container ,Aside ,Main ,Tree} from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
+  import statusData from "./statusData";
 
   Vue.component(Table.name, Table);
   Vue.component(TableColumn.name, TableColumn);
@@ -230,50 +231,7 @@
         temp: {},
         dialogStatus:'',
         dialogFormVisible:false,
-        treeData: [{
-          label: '未开始',
-          disabled : true,
-          children: [{
-            id: '0',
-            label: '未开始',
-          },{
-              id : '1',
-              label: '取消',
-          }],
-        }, {
-          label: '开发',
-          disabled : true,
-          children: [{
-            id : '10',
-            label: '开发中',
-          }, {
-            id: '11',
-            label: '单元测试',
-          }, {
-            id : '12',
-            label: '合并代码',
-          }]
-        }, {
-          label: '测试',
-          disabled: true,
-          children: [{
-            id: '23',
-            label: '测试中',
-          }, {
-            id: '21',
-            label: 'QA测试',
-          }, {
-            id: '22',
-            label: '线上测试',
-          }]
-        }, {
-            label: '完成',
-            disabled: true,
-            children: [{
-              id : '99',
-              label: '完成',
-            }]
-        }],
+        treeData: statusData.statusData
       }
     }
   }

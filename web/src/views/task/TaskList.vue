@@ -81,12 +81,7 @@
         width="150"
         align="center">
         <template slot-scope="{row}">
-          <el-dropdown  @command="$refs.taskDetail.changeStatus">
-            <el-button>{{getStatus(row.status)}}</el-button>
-            <el-dropdown-menu slot="dropdown" divided>
-              <el-dropdown-item v-for="item in getStatusOption(row.status,row.type)" :command="[item.id,row]" >{{item.label}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          <task-status :data="row" :typeOptions="typeOptions" ref="taskStatus" @changeStatus="$refs.taskDetail.changeStatus"></task-status>
         </template>
       </el-table-column>
       <el-table-column
@@ -115,7 +110,7 @@
       </el-table-column>
       <el-table-column
         align="right">
-        <template slot="header" slot-scope="{row}">
+        <template slot="header">
           <el-input
             v-model="searchText"
             prefix-icon="el-icon-search"
@@ -144,8 +139,10 @@
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
-  import TaskTypeList from "./TaskTypeList"
-  import TaskDetail from "./TaskDetail"
+  import TaskStatus from "./TaskStatus";
+  import TaskTypeList from "./TaskTypeList";
+  import TaskDetail from "./TaskDetail";
+  import statusData from "./statusData";
 
   Vue.component(Table.name, Table);
   Vue.component(TableColumn.name, TableColumn);
@@ -171,67 +168,14 @@
   Vue.use(Loading.directive);
   Vue.prototype.$prompt = MessageBox.prompt;
 
-  const cancel = {
-    id : 1,
-    label: '取消',
-  };
-  const statusData = [{
-    label: '未开始',
-    disabled : true,
-    children: [{
-      id: 0,
-      label: '未开始',
-    }, cancel],
-  }, {
-    label: '开发',
-    disabled : true,
-    children: [{
-      id : 10,
-      label: '开发中',
-    }, {
-      id: 11,
-      label: '单元测试',
-    }, {
-      id : 12,
-      label: '合并代码',
-    }]
-  }, {
-    label: '测试',
-    disabled: true,
-    children: [{
-      id: 23,
-      label: '测试中',
-    }, {
-      id: 21,
-      label: 'QA测试',
-    }, {
-      id: 22,
-      label: '线上测试',
-    }]
-  }, {
-    label: '完成',
-    disabled: true,
-    children: [{
-      id : 99,
-      label: '完成',
-    }]
-  }]
-  const statusOptions = [];
-  const statusKeyVal = [];
-  statusData.forEach((group)=>{
-    let status = [];
-    group.children.forEach((option)=>{
-      statusKeyVal.push({code:option.id,text:option.label});
-      status.push(option.id);
-    });
-    statusOptions.push({code:status.toString(),text:group.label});
-  });
+
 
   export default {
     components: {
       JEditor,
       TaskTypeList,
       TaskDetail,
+      TaskStatus,
     },
     created(){
       const that = this;
@@ -239,77 +183,15 @@
         that.changeType(that.type);
       });
     },
-    filters: {
-      statusFilter(status) {
-        status = status||0;
-        if(status<10) {
-          return 'info';
-        }else if(status>=10 && status<20) {
-          return 'warning';
-        }else if(status>=20 && status<30) {
-          return 'primary';
-        }else{
-          return 'success';
-        }
-      },
-    },
     methods: {
+      tableRowClassName(row){
+          return statusData.tableRowClassName(row);
+      },
+      getStatus(status){
+        return statusData.getStatus(status);
+      },
       handleSetting(){
         this.$refs.taskTypeList.show();
-      },
-      getStatusOption(status,type){
-        let hasCancel = false;//是否有取消
-        let result = [];
-        this.typeOptions.forEach((typeObj) => {
-          if (typeObj.id == type) {
-            const statusIdArr = (typeObj.statusStr||'').split(",");
-            statusIdArr.forEach((statusId)=> {
-              if (statusId == String(cancel.id)) {
-                hasCancel = true;
-              } else {
-                statusData.forEach((a,index) => {
-                  if(!result[index]){
-                    result[index]=[];
-                  }
-                  a.children.forEach((b) => {
-                    if (statusId == String(b.id) && statusId != String(status)) {
-                      result[index].push(b);
-                    }
-                  });
-                });
-              }
-            });
-          }
-        });
-
-
-        let nowPhase = 0;
-        let nextPhase = -1;
-        if(status && status<10){
-          nowPhase = 0;
-        }else if(10 <= status && status<20){
-          nowPhase = 1;
-        }else if(20 <=status&&status<30){
-          nowPhase = 2;
-        }else if(status>=30){
-          nowPhase = 3;
-        }
-
-        let options = result[nowPhase];
-
-        for(let i = (nowPhase+1);i<result.length;i++){
-          if(result[i].length>0){
-            nextPhase = i;
-            break;
-          }
-        }
-        if(nextPhase != -1){
-          options = options.concat(result[nextPhase]);
-        }
-        if(hasCancel&&nowPhase<3){
-          options.push(cancel);
-        }
-        return options;
       },
       cancelEdit(row){
         row.edit = false;
@@ -318,28 +200,6 @@
         row.edit = false;
         row.comment = this.$refs.jEditorTable.getText();
         this.$refs.taskDetail.updateTask(row);
-      },
-      tableRowClassName({row}) {
-        let result = '';
-        if (row.status >= 10 && row.status<20) {//开发中
-          result = 'dev-row';
-        } else if (row.status >= 20 && row.status<30) {//测试中
-          result = 'test-row';
-        } else if (row.status == 99 ){
-          result = 'finish-row';
-        }
-        return result;
-      },
-      getColorByType(type){
-        let color = "#fff";
-        if(type||type===0) {
-          this.typeOptions.forEach((option) => {
-            if (option.id == type) {
-              color = option.color;
-            }
-          });
-        }
-        return color;
       },
       changeType(value){
         this.prefixColor = this.getColorByType(value);
@@ -362,6 +222,17 @@
           this.loading = false;
         })
       },
+      getColorByType(type){
+        let color = "#fff";
+        if(type||type===0) {
+          this.typeOptions.forEach((option) => {
+            if (option.id == type) {
+              color = option.color;
+            }
+          });
+        }
+        return color;
+      },
       getTypeData(callback){
         httpAction("/taskType/list", {}, 'get').then((res) => {
           if (res.success) {
@@ -378,16 +249,6 @@
         this.resetTemp();
         this.handleUpdate(this.temp,'create');
       },
-      getStatus(status){
-        let code = status||0;
-        let text = "";
-        this.statusKeyVal.forEach((item)=>{
-          if(item.code.toString() == code.toString()){
-            text = item.text;
-          }
-        });
-        return text;
-      },
       resetTemp() {
         this.temp = {
           id: undefined,
@@ -401,7 +262,7 @@
           workTime:0.5,
           lesson:0,
         }
-        this.setNextStatusOptions(this.temp);
+        this.$refs.taskStatus.setNextStatusOptions(this.temp);
       },
       handleUpdate(row,type) {
         if(!type){
@@ -409,15 +270,6 @@
         }
         this.temp = Object.assign({}, row) // copy obj
         this.$refs.taskDetail.open(this.temp,type);
-      },
-      setNextStatusOptions(data){
-        this.nextStatusOptions = this.getStatusOption(data.status,data.type);
-        if(this.nextStatusOptions.length>0){
-          this.showDrop = true;
-        }else{
-          this.showDrop = false;
-        }
-        return {nextStatusOptions:this.nextStatusOptions,showDrop:this.showDrop};
       },
       deleteTask(row){
         MessageBox.confirm('此操作将永久删除该任务, 是否继续?', '提示', {
@@ -476,7 +328,6 @@
         showImp:false,
         showDate:false,
         showSprint:false,
-        showDrop:false,
         searchText:'',
         url:{
           list:"/task/list",
@@ -486,6 +337,8 @@
         },
         tableData: [],
         loading:true,
+        typeOptions: [],
+        statusOptions: statusData.statusOptions,
         temp: {
           id: undefined,
           jiraNo: '',
@@ -497,10 +350,6 @@
           workTime:0.5,
           lesson:0,
         },
-        statusOptions,
-        nextStatusOptions:[],
-        statusKeyVal,
-        typeOptions: [],
       }
     }
   }

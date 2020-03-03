@@ -33,13 +33,7 @@
           <j-editor ref="jEditorDetail" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500"></j-editor>
         </el-form-item>
         <el-form-item label="状态">
-          <el-dropdown v-if="showDrop" @command="setStatus">
-            <el-button>{{this.$parent.getStatus(temp.status)}}<i class="el-icon-arrow-down el-icon--right" style="margin-left: 10px"></i></el-button>
-            <el-dropdown-menu slot="dropdown" divided>
-              <el-dropdown-item v-for="item in nextStatusOptions" :command="[item.id,temp]" >{{item.label}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          <div v-else>{{this.$parent.getStatus(temp.status)}}</div>
+          <task-status ref="taskStatus" :typeOptions="typeOptions" :data="temp" @changeStatus="setStatus"></task-status>
         </el-form-item>
         <el-form-item label="总结">
           <el-switch
@@ -88,6 +82,7 @@
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
+  import TaskStatus from "./TaskStatus";
 
   Vue.component(Button.name, Button);
   Vue.component(MessageBox.name, MessageBox);
@@ -115,6 +110,7 @@
     name:'TaskDetail',
     components: {
       JEditor,
+      TaskStatus,
     },
     methods: {
       changeStatus(data){
@@ -129,9 +125,9 @@
         this.dialogStatus = dialogStatus;
         this.dialogFormVisible = true;
         this.temp = data;
-        Object.assign(this,this.$parent.setNextStatusOptions(this.temp));
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
+          this.$refs.taskStatus.getStatusOption();
         })
       },
       updateData(){
@@ -168,7 +164,6 @@
     },
     data() {
       return {
-        showDrop:false,
         sprint:'',
         type:3,
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
@@ -185,7 +180,6 @@
           type: [{ required: true, message: '请输入类型', trigger: 'change' }],
           title: [{ required: true, message: '请输入标题', trigger: 'change' }]
         },
-        nextStatusOptions:[],
         statusTxt:'未开始',
         pickerOptions: {
           shortcuts: [{
