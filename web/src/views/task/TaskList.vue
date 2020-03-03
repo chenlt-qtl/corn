@@ -24,7 +24,7 @@
       迭代
     </el-checkbox>
     <div style="float: right;margin-right: 10px;display: inline-block">
-      <el-button type="primary" icon="el-icon-plus" @click="open">增加</el-button>
+      <el-button type="primary" icon="el-icon-plus" @click="handleAdd">增加</el-button>
       <span style="margin: 0 10px;color: #e8e8e8;">|</span><a-icon type="setting" class="link-type" @click="handleSetting()"></a-icon>
     </div>
     <el-table
@@ -49,9 +49,9 @@
         width="500">
         <template slot-scope="{row}">
           <template v-if="row.edit">
-            <j-editor ref="jEditorTable" :toolbar=toolbar v-model="row.comment" :min_height=80 :max_height="300"></j-editor>
+            <j-editor ref="jEditorTable" :toolbar=toolbar v-model="row.comment" :min_height=80 :max_height="300" @blur="confirmEdit(row)"></j-editor>
           </template>
-          <span v-else class="link-type" @click="handleUpdate(row)">
+          <span v-else class="link-type" @click="row.edit=true">
             <div v-html="row.comment">{{ row.comment }}</div>
           </span>
           <div v-if="row.edit">
@@ -81,7 +81,7 @@
         width="150"
         align="center">
         <template slot-scope="{row}">
-          <el-dropdown  @command="changeStatus">
+          <el-dropdown  @command="$refs.taskDetail.changeStatus">
             <el-button>{{getStatus(row.status)}}</el-button>
             <el-dropdown-menu slot="dropdown" divided>
               <el-dropdown-item v-for="item in getStatusOption(row.status,row.type)" :command="[item.id,row]" >{{item.label}}</el-dropdown-item>
@@ -129,86 +129,8 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog title="任务明细" :visible.sync="dialogFormVisible">
-      <el-form
-               ref="dataForm"
-               :rules="rules"
-               :model="temp"
-               label-position="left"
-               label-width="70px"
-               style="width: 604px; height:400px;overflow-y:auto;margin-left:50px;padding-right: 50px;">
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Jira编号" prop="jiraNo">
-          <el-input v-model="temp.jiraNo" />
-        </el-form-item>
-        <el-form-item label="Jira标题" prop="jiraDesc">
-          <el-input v-model="temp.jiraDesc" />
-        </el-form-item>
-        <el-form-item label="迭代" prop="sprint">
-          <el-input-number v-model="temp.sprint" />
-        </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <span slot="prefix" :style="{color:getColorByType(temp.type),fontSize:'22px'}">■</span>
-            <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
-              <span :style="{borderLeftWidth: '4px',borderLeftStyle:'solid',borderLeftColor:item.color}"></span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="描述">
-          <j-editor ref="jEditorDetail" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500"></j-editor>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-dropdown v-if="showDrop" @command="changeStatus">
-            <el-button>{{getStatus(temp.status)}}<i class="el-icon-arrow-down el-icon--right" style="margin-left: 10px"></i></el-button>
-            <el-dropdown-menu slot="dropdown" divided>
-              <el-dropdown-item v-for="item in nextStatusOptions" :command="[item.id,temp]" >{{item.label}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          <div v-else>{{getStatus(temp.status)}}</div>
-        </el-form-item>
-        <el-form-item label="总结">
-          <el-switch
-            v-model="temp.lesson"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            active-value=1
-            inactive-value=0
-          >
-          </el-switch>
-        </el-form-item>
-        <el-form-item label="优先级">
-          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" />
-        </el-form-item>
-        <el-form-item label="计划开始">
-          <el-date-picker v-model="temp.planStartDate" type="date" value-format="yyyy-MM-dd" placeholder="Please pick a date" :picker-options="pickerOptions"/>
-        </el-form-item>
-        <el-form-item label="实际开始">
-          <el-date-picker v-model="temp.realStartDate" type="date" value-format="yyyy-MM-dd" placeholder="Please pick a date" :picker-options="pickerOptions"/>
-        </el-form-item>
-        <el-form-item label="所需工时">
-          <el-select v-model="temp.workTime" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in workTimeOptions" :key="item.id" :label="item.value" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="数据修改">
-          <el-input v-model="temp.dataChange" :autosize="{ minRows: 4, maxRows: 10}" type="textarea" placeholder="Please input" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确定
-        </el-button>
-      </div>
-    </el-dialog>
-
     <task-type-list ref="taskTypeList" @ok="getTypeData"></task-type-list>
+    <task-detail ref="taskDetail" :typeOptions="typeOptions" @ok="reloadData"></task-detail>
   </div>
 
 
@@ -223,6 +145,7 @@
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
   import TaskTypeList from "./TaskTypeList"
+  import TaskDetail from "./TaskDetail"
 
   Vue.component(Table.name, Table);
   Vue.component(TableColumn.name, TableColumn);
@@ -308,6 +231,7 @@
     components: {
       JEditor,
       TaskTypeList,
+      TaskDetail,
     },
     created(){
       const that = this;
@@ -330,30 +254,8 @@
       },
     },
     methods: {
-      changeStatus(data){
-        let typeObj = data[1];
-        typeObj.status = data[0];
-        this.updateTask(typeObj);
-      },
       handleSetting(){
         this.$refs.taskTypeList.show();
-      },
-      setStatus(row,i){
-        let index = 0;
-        this.statusKeyVal.forEach((data,i)=>{
-          if(data.code == row.status){
-            index = i;
-          }
-        });
-        index = index+i;
-        if(index<0){
-          index = 0;
-        }
-        if(index>this.statusKeyVal.length-1){
-          index = this.statusKeyVal.length-1;
-        }
-        row.status = this.statusKeyVal[index].code;
-        this.updateTask(row,true);
       },
       getStatusOption(status,type){
         let hasCancel = false;//是否有取消
@@ -396,7 +298,6 @@
         let options = result[nowPhase];
 
         for(let i = (nowPhase+1);i<result.length;i++){
-          console.log(i);
           if(result[i].length>0){
             nextPhase = i;
             break;
@@ -405,7 +306,6 @@
         if(nextPhase != -1){
           options = options.concat(result[nextPhase]);
         }
-        console.log('now',nowPhase,'next',nextPhase);
         if(hasCancel&&nowPhase<3){
           options.push(cancel);
         }
@@ -417,7 +317,7 @@
       confirmEdit(row) {
         row.edit = false;
         row.comment = this.$refs.jEditorTable.getText();
-        this.updateTask(row,true);
+        this.$refs.taskDetail.updateTask(row);
       },
       tableRowClassName({row}) {
         let result = '';
@@ -474,13 +374,9 @@
           callback();
         })
       },
-      open() {
+      handleAdd() {
         this.resetTemp();
-        this.dialogStatus = 'create';
-        this.dialogFormVisible = true;
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
+        this.handleUpdate(this.temp,'create');
       },
       getStatus(status){
         let code = status||0;
@@ -505,24 +401,23 @@
           workTime:0.5,
           lesson:0,
         }
-        this.setNextStatusOptions();
+        this.setNextStatusOptions(this.temp);
       },
-      handleUpdate(row) {
+      handleUpdate(row,type) {
+        if(!type){
+          type = "update";
+        }
         this.temp = Object.assign({}, row) // copy obj
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true;
-        this.setNextStatusOptions();
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
+        this.$refs.taskDetail.open(this.temp,type);
       },
-      setNextStatusOptions(){
-        this.nextStatusOptions = this.getStatusOption(this.temp.status,this.temp.type);
+      setNextStatusOptions(data){
+        this.nextStatusOptions = this.getStatusOption(data.status,data.type);
         if(this.nextStatusOptions.length>0){
           this.showDrop = true;
         }else{
           this.showDrop = false;
         }
+        return {nextStatusOptions:this.nextStatusOptions,showDrop:this.showDrop};
       },
       deleteTask(row){
         MessageBox.confirm('此操作将永久删除该任务, 是否继续?', '提示', {
@@ -542,49 +437,29 @@
         }).catch(() => {});
 
       },
-      updateData(){
-        this.temp.comment = this.$refs.jEditorDetail.getText();
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            this.updateTask(this.temp,true);
+      reloadData(data) {
+        let exist = false;
+        for (const v of this.tableData) {
+          if (v.id === data.id) {
+            exist = true;
+            const index = this.tableData.indexOf(v)
+            this.tableData.splice(index, 1);
+            break;
           }
-        })
-      },
-      updateTask(data,notice){
-        httpAction(this.url.edit, data, 'put').then(() => {
-          for (const v of this.tableData) {
-            if (v.id === data.id) {
-              const index = this.tableData.indexOf(v)
-              this.tableData.splice(index, 1);
-              this.tableData.unshift(data);
-              break;
-            }
-          }
-          if(notice) {
-            this.dialogFormVisible = false
-            Notification.success({
-              title: 'Success',
-              message: 'Update Successfully',
-              duration: 2000
-            })
-          }
-        })
-      },
-      createData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            this.temp.comment = this.$refs.jEditorDetail.getText();
-            httpAction(this.url.add, this.temp, 'post').then(() => {
-              this.tableData.unshift(this.temp)
-              this.dialogFormVisible = false
-              this.$notify({
-                title: 'Success',
-                message: 'Created Successfully',
-                type: 'success',
-                duration: 2000
-              })
-            })
-          }
+        }
+
+        this.tableData.unshift(data);
+        let message = "";
+
+        if (exist) {
+          message = "Update Successfully";
+        }else {
+          message = "Created Successfully";
+        }
+        Notification.success({
+          title: 'Success',
+          message: message,
+          duration: 2000
         })
       },
     },
@@ -622,47 +497,10 @@
           workTime:0.5,
           lesson:0,
         },
-        dialogStatus:'',
-        dialogFormVisible:false,
-        rules: {
-          type: [{ required: true, message: '请输入类型', trigger: 'change' }],
-          title: [{ required: true, message: '请输入标题', trigger: 'change' }]
-        },
         statusOptions,
         nextStatusOptions:[],
         statusKeyVal,
         typeOptions: [],
-        statusTxt:'未开始',
-        pickerOptions: {
-          shortcuts: [{
-            text: '今天',
-            onClick(picker) {
-              picker.$emit('pick', new Date());
-            }
-          }, {
-            text: '明天',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() + 3600 * 1000 * 24);
-              picker.$emit('pick', date);
-            }
-          }, {
-            text: '两天后',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() + 3600 * 1000 * 24 * 2);
-              picker.$emit('pick', date);
-            }
-          }, {
-            text: '一周后',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', date);
-            }
-          }]
-        },
-        workTimeOptions:[{id:0.5,value:"半天"},{id:1,value:"一天"},{id:1.5,value:"一天半"},{id:2,value:"两天"},{id:3,value:'三天'}],
       }
     }
   }
@@ -685,4 +523,11 @@
   .link-type:hover{
     color: #2eabff;
   }
+  .el-table__body{
+    border-color: #000;
+  }
+
+  table{border-collapse: collapse;}
+
+
 </style>
