@@ -216,10 +216,4 @@
   }
 </script>
 <style>
-  .link-type{
-    cursor: pointer;
-  }
-  .link-type:hover{
-    color: #2eabff;
-  }
 </style>

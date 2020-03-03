@@ -51,14 +51,14 @@
           <template v-if="row.edit">
             <j-editor ref="jEditorTable" :toolbar=toolbar v-model="row.comment" :min_height=80 :max_height="300" @blur="confirmEdit(row)"></j-editor>
           </template>
-          <span v-else class="link-type" @click="row.edit=true">
+          <span v-else class="link-type" @click="changeEdit(row,true)">
             <div v-html="row.comment">{{ row.comment }}</div>
           </span>
           <div v-if="row.edit">
             <el-button size="mini" style="float: right;margin-left:5px;margin-top: 5px;" type="warning" @click="cancelEdit(row)">取消</el-button>
             <el-button size="mini" style="float: right;margin-top: 5px;" type="success" @click="confirmEdit(row)">保存</el-button>
           </div>
-          <i v-else class="el-icon-edit link-type" style="color: #909399;float:right;font-weight: bold;" @click="row.edit=!row.edit"></i>
+          <i v-else class="el-icon-edit link-type" style="color: #909399;float:right;font-weight: bold;" @click="changeEdit(row,!row.edit)"></i>
         </template>
       </el-table-column>
       <el-table-column
@@ -184,6 +184,19 @@
       });
     },
     methods: {
+      changeEdit(row,edit){
+        row.edit=edit;
+        if(row.edit){
+          let tableData = [];
+          this.tableData.forEach(data=>{
+            if(data.id != row.id && data.edit != false){
+              data.edit = false;
+            }
+            tableData.push(data);
+          });
+          this.tableData = tableData;
+        }
+      },
       tableRowClassName(row){
           return statusData.tableRowClassName(row);
       },

@@ -69,7 +69,7 @@ button::-moz-focus-inner {
   border: 0;
 }
 .tox-silver-sink {
-  z-index: 1300;
+  z-index: 3000;
 }
 .tox[dir='rtl'] {
   direction: rtl;
