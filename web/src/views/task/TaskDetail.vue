@@ -1,88 +1,99 @@
 <template>
-
-    <el-dialog title="任务明细" :visible.sync="dialogFormVisible">
+    <div style="padding: 20px 50px;">
       <el-form
                ref="dataForm"
-               :rules="rules"
+               :rules="edit?rules:null"
                :model="temp"
-               label-position="left"
-               label-width="70px"
-               style="width: 604px; height:400px;overflow-y:auto;margin-left:50px;padding-right: 50px;">
-        <el-form-item label="标题" prop="title">
+               label-position="right"
+               label-width="80px">
+
+        <el-form-item v-if="edit" label="标题 :" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
-        <el-form-item label="Jira编号" prop="jiraNo">
-          <el-input v-model="temp.jiraNo" />
+        <div v-else-if="!editTitle" style="padding-bottom: 30px;">
+          <span  @click="editTitle=true"><h2>{{temp.title}}</h2></span>
+          <i style="float: right;vertical-align: top;" class="el-icon-edit link-type" @click="$emit('editTask',temp)"></i>
+        </div>
+        <el-input v-else v-model="temp.title" :autosize="{ minRows: 4, maxRows: 10}" type="textarea" @blur="editTitle=false;updateData();" style="padding-bottom: 30px"/>
+
+        <el-form-item label="描述 :">
+          <j-editor ref="jEditorDetail" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="updateData"></j-editor>
         </el-form-item>
-        <el-form-item label="Jira标题" prop="jiraDesc">
-          <el-input v-model="temp.jiraDesc" />
+        <el-form-item label="Jira编号 :" prop="jiraNo">
+          <el-input v-if="edit" v-model="temp.jiraNo" />
+          <span v-else>{{temp.jiraNo}}</span>
         </el-form-item>
-        <el-form-item label="迭代" prop="sprint">
-          <el-input-number v-model="temp.sprint" />
+        <el-form-item label="Jira标题 :" prop="jiraDesc">
+          <el-input v-if="edit" v-model="temp.jiraDesc" />
+          <span v-else>{{temp.jiraDesc}}</span>
         </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <span slot="prefix" :style="{color:this.$parent.getColorByType(temp.type),fontSize:'22px'}">■</span>
+        <el-form-item label="迭代 :" prop="sprint">
+          <el-input-number v-if="edit" v-model="temp.sprint" />
+          <span v-else>{{temp.sprint}}</span>
+        </el-form-item>
+        <el-form-item label="类型 :" prop="type">
+          <el-select v-model="temp.type" class="filter-item" placeholder="Please select" :disabled="!edit">
+            <span slot="prefix" :style="{color:getColor(),fontSize:'22px'}">■</span>
             <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
               <span :style="{borderLeftWidth: '4px',borderLeftStyle:'solid',borderLeftColor:item.color}"></span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="描述">
-          <j-editor ref="jEditorDetail" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500"></j-editor>
-        </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态 :">
           <task-status ref="taskStatus" :typeOptions="typeOptions" :data="temp" @changeStatus="setStatus"></task-status>
         </el-form-item>
-        <el-form-item label="总结">
+        <el-form-item label="总结 :">
           <el-switch
             v-model="temp.lesson"
             active-color="#13ce66"
             inactive-color="#ff4949"
             active-value=1
             inactive-value=0
+            :disabled="!edit"
           >
           </el-switch>
         </el-form-item>
-        <el-form-item label="优先级">
-          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" />
+        <el-form-item label="优先级 :">
+          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" :disabled="!edit"/>
         </el-form-item>
-        <el-form-item label="计划开始">
-          <el-date-picker v-model="temp.planStartDate" type="date" value-format="yyyy-MM-dd" placeholder="Please pick a date" :picker-options="pickerOptions"/>
+        <el-form-item label="计划开始 :">
+          <el-date-picker :disabled="!edit" v-model="temp.planStartDate" type="date" value-format="yyyy-MM-dd" :picker-options="pickerOptions"/>
         </el-form-item>
-        <el-form-item label="实际开始">
-          <el-date-picker v-model="temp.realStartDate" type="date" value-format="yyyy-MM-dd" placeholder="Please pick a date" :picker-options="pickerOptions"/>
+        <el-form-item label="实际开始 :">
+          <el-date-picker :disabled="!edit" v-model="temp.realStartDate" type="date" value-format="yyyy-MM-dd" :picker-options="pickerOptions"/>
         </el-form-item>
-        <el-form-item label="所需工时">
-          <el-select v-model="temp.workTime" class="filter-item" placeholder="Please select">
+        <el-form-item label="所需工时 :">
+          <el-select v-model="temp.workTime" class="filter-item" placeholder="Please select" :disabled="!edit">
             <el-option v-for="item in workTimeOptions" :key="item.id" :label="item.value" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="数据修改">
-          <el-input v-model="temp.dataChange" :autosize="{ minRows: 4, maxRows: 10}" type="textarea" placeholder="Please input" />
+        <el-form-item label="数据修改 :">
+          <el-input v-if="edit" v-model="temp.dataChange" :autosize="{ minRows: 4, maxRows: 10}" type="textarea" placeholder="Please input" />
+          <span v-else>{{temp.dataChange}}</span>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
+      <div slot="footer" v-if="edit" class="dialog-footer">
+        <el-button @click="$emit('cancel')">
           取消
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           确定
         </el-button>
       </div>
-    </el-dialog>
+    </div>
 </template>
 
 <script>
   import Vue from 'vue';
   import { Loading,Button,MessageBox,Dialog, Form,
     FormItem,DatePicker,Select,Input,Option,Rate,Notification,Checkbox,
-    InputNumber,Switch ,OptionGroup, Dropdown, DropdownMenu, DropdownItem } from 'element-ui';
+    InputNumber,Switch ,OptionGroup } from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
   import TaskStatus from "./TaskStatus";
+  import taskCommon from "./taskCommon";
 
   Vue.component(Button.name, Button);
   Vue.component(MessageBox.name, MessageBox);
@@ -99,9 +110,6 @@
   Vue.component(InputNumber.name, InputNumber);
   Vue.component(Switch.name, Switch);
   Vue.component(OptionGroup.name, OptionGroup);
-  Vue.component(Dropdown.name, Dropdown);
-  Vue.component(DropdownMenu.name, DropdownMenu);
-  Vue.component(DropdownItem.name, DropdownItem);
   Vue.use(Loading.directive);
   Vue.prototype.$prompt = MessageBox.prompt;
 
@@ -113,6 +121,26 @@
       TaskStatus,
     },
     methods: {
+      getColor(){
+        return taskCommon.getColorByType(this.temp.type,this.typeOptions);
+      },
+      getTextByType(){
+        return taskCommon.getTextByType(this.temp.type,this.typeOptions);
+      },
+      resetTemp() {
+        this.temp = {
+          id: undefined,
+          jiraNo: '',
+          jiraDesc: '',
+          comment: '',
+          planStartDate: new Date(),
+          dataChange:'',
+          status:0,
+          type:this.type,
+          workTime:0.5,
+          lesson:0,
+        }
+      },
       changeStatus(data){
         let typeObj = data[1];
         typeObj.status = data[0];
@@ -121,10 +149,13 @@
       setStatus(data){
         this.temp.status = data[0];
       },
-      open(data,dialogStatus) {
+      initFormData(data,dialogStatus) {
         this.dialogStatus = dialogStatus;
-        this.dialogFormVisible = true;
-        this.temp = data;
+        if(dialogStatus == 'create'){
+          this.resetTemp();
+        }else {
+          this.temp = data;
+        }
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
           this.$refs.taskStatus.getStatusOption();
@@ -140,7 +171,6 @@
       },
       updateTask(data){
         httpAction(this.url.edit, data, 'put').then(() => {
-          this.dialogFormVisible = false
           this.$emit('ok',data);
         })
       },
@@ -149,7 +179,6 @@
           if (valid) {
             this.temp.comment = this.$refs.jEditorDetail.getText();
             httpAction(this.url.add, this.temp, 'post').then(() => {
-              this.dialogFormVisible = false
               this.$emit('ok',this.temp);
             })
           }
@@ -160,10 +189,20 @@
       typeOptions:{
         type:Array,
         default:()=>[],
-      }
+      },
+      edit:{
+        type:Boolean,
+        default:false
+      },
+      typeColor: {
+        type: String,
+        default: '#fff'
+      },
     },
     data() {
       return {
+        prefixColor:this.typeColor,
+        editTitle:false,
         sprint:'',
         type:3,
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
@@ -175,7 +214,6 @@
         loading:true,
         temp: {},
         dialogStatus:'',
-        dialogFormVisible:false,
         rules: {
           type: [{ required: true, message: '请输入类型', trigger: 'change' }],
           title: [{ required: true, message: '请输入标题', trigger: 'change' }]

@@ -97,7 +97,28 @@ export default{
     });
     return text;
   },
-
+  getColorByType(type,option){
+    let color = "#fff";
+    if(type||type===0) {
+      option.forEach((option) => {
+        if (option.id == type) {
+          color = option.color;
+        }
+      });
+    }
+    return color;
+  },
+  getTextByType(type,option){
+    let name = "";
+    if(type||type===0) {
+      option.forEach((option) => {
+        if (option.id == type) {
+          name = option.name;
+        }
+      });
+    }
+    return name;
+  }
 }
 
 </script>

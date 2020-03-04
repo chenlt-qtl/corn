@@ -1,6 +1,5 @@
 const hasPermission = {
-    install (Vue, options) {
-        console.log(options);
+    install (Vue) {
           Vue.directive('has', {
             inserted: (el, binding, vnode)=>{
               console.log("页面权限----",el);

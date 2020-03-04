@@ -14,7 +14,7 @@
   import Vue from 'vue';
   import { Loading, Dropdown, DropdownMenu, DropdownItem } from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
-  import statusData from "./statusData";
+  import taskCommon from "./taskCommon";
 
 
   Vue.component(Dropdown.name, Dropdown);
@@ -28,7 +28,7 @@
     name:'TaskStatus',
     filters: {
       statusFilter(status) {
-        return statusData.statusFilter(status);
+        return taskCommon.statusFilter(status);
       },
     },
     props:{
@@ -50,7 +50,7 @@
     },
     methods: {
       getStatus(status){
-        return statusData.getStatus(status);
+        return taskCommon.getStatus(status);
       },
       setStatus(data){
         this.$emit("changeStatus",data);
@@ -64,10 +64,10 @@
           if (typeObj.id == type) {
             const statusIdArr = (typeObj.statusStr||'').split(",");
             statusIdArr.forEach((statusId)=> {
-              if (statusId == String(statusData.cancel.id)) {
+              if (statusId == String(taskCommon.cancel.id)) {
                 hasCancel = true;
               } else {
-                statusData.statusData.forEach((a,index) => {
+                taskCommon.statusData.forEach((a,index) => {
                   if(!result[index]){
                     result[index]=[];
                   }
@@ -107,10 +107,10 @@
           options = options.concat(result[nextPhase]);
         }
         if(hasCancel&&nowPhase<3){
-          options.push(statusData.cancel);
+          options.push(taskCommon.cancel);
         }
 
-        if(options.length>0){
+        if(options && options.length>0){
           this.showDrop = true;
         }else{
           this.showDrop = false;
@@ -121,8 +121,8 @@
     data() {
       return {
         showDrop:false,
-        statusOptions:statusData.statusOptions,
-        statusKeyVal:statusData.statusKeyVal,
+        statusOptions:taskCommon.statusOptions,
+        statusKeyVal:taskCommon.statusKeyVal,
       }
     },
   }
