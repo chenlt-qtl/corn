@@ -55,6 +55,14 @@
               </template>
             </el-table-column>
           </el-table>
+
+          <el-pagination
+            small
+            layout="prev, pager, next"
+            :total="total"
+            :current-page="currentPage"
+            @current-change="getTaskData">
+          </el-pagination>
         </el-col>
 
         <el-col
@@ -82,7 +90,7 @@
   import Vue from 'vue';
   import { Table,TableColumn,Loading,Button,MessageBox,Dialog, Form,
     FormItem,DatePicker,Select,Input,Option,Rate,Notification,Checkbox,
-    Tag,InputNumber,Switch , Row, Col } from 'element-ui';
+    Tag,InputNumber,Switch , Row, Col, Pagination } from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
@@ -110,6 +118,7 @@
   Vue.component(Switch.name, Switch);
   Vue.component(Row.name, Row);
   Vue.component(Col.name, Col);
+  Vue.component(Pagination.name, Pagination);
   Vue.use(Loading.directive);
   Vue.prototype.$prompt = MessageBox.prompt;
 
@@ -142,15 +151,19 @@
       getRowStyle(row){
         return "min-height:60px;border-left: 4px solid "+taskCommon.getColorByType(row.type,this.typeOptions);
       },
-      getTaskData(){//获取任务数据
+      getTaskData(currentPage){//获取任务数据
+        if(currentPage){
+          this.currentPage = currentPage;
+        }
         this.loading = true;
-        httpAction(this.url.list+"?type="+this.type+"&statusStr="+this.statusStr+"&sprint="+this.sprint, {}, 'get').then((res) => {
+        httpAction(this.url.list+"?type="+this.type+"&statusStr="+this.statusStr+"&sprint="+this.sprint+"&pageNo="+this.currentPage, {}, 'get').then((res) => {
           if (res.success) {
             let tableData = [];
             res.result.records.forEach((task)=>{
               task.edit = false;
               tableData.push(task);
             });
+            this.total = res.result.total;
             this.tableData = tableData;
             if(this.tableData.length>0){
               this.$refs.taskTable.setCurrentRow(this.tableData[0]);
@@ -253,6 +266,8 @@
         typeOptions: [],
         statusOptions: taskCommon.statusOptions,
         dialogFormVisible: false,
+        total:0,
+        currentPage:1,
       }
     }
   }
