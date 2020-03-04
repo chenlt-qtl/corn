@@ -8,10 +8,13 @@
           <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
         </el-option>
       </el-select>
-      <el-select v-model="statusStr" style="margin-right: 10px;width: 160px;" class="filter-item" placeholder="状态" @change="getTaskData" clearable multiple collapse-tags>
+      <el-select v-model="statusStr" style="margin-right: 10px;width: 160px;" class="filter-item" placeholder="状态" @change="getTaskData(1)" clearable multiple collapse-tags>
         <el-option v-for="item in statusOptions" :key="item.code" :label="item.text" :value="item.code" />
       </el-select>
-      <el-input v-model="sprint" placeholder="迭代" @change="getTaskData" style="width: 100px" clearable/>
+      <el-input v-model="sprint" placeholder="迭代" @change="getTaskData(1)" style="width: 100px" clearable/>
+      <el-checkbox v-model="notFinish" class="filter-item" style="margin-left:15px;" @change="getNotFinish">
+        未完成
+      </el-checkbox>
       <div style="float: right;margin-right: 10px;display: inline-block">
         <el-button type="primary" icon="el-icon-plus" @click="openDetailForm(null,'create')">增加</el-button>
         <span style="margin: 0 10px;color: #e8e8e8;">|</span><a-icon type="setting" class="link-type" @click="handleSetting()"></a-icon>
@@ -138,6 +141,16 @@
       });
     },
     methods: {
+      getNotFinish(){
+        if(this.notFinish){
+          let statusStr = this.statusOptions[0].code+","+this.statusOptions[1].code+","+this.statusOptions[2].code;
+          this.statusStr = statusStr;
+          this.getTaskData(1);
+        }else {
+          this.statusStr = "";
+          this.getTaskData(1);
+        }
+      },
       getStatus(status){
         return taskCommon.getStatus(status);
       },
@@ -146,7 +159,7 @@
       },
       changeType(value){
         this.prefixColor = taskCommon.getColorByType(value,this.typeOptions);
-        this.getTaskData();
+        this.getTaskData(1);
       },
       getRowStyle(row){
         return "min-height:60px;border-left: 4px solid "+taskCommon.getColorByType(row.type,this.typeOptions);
@@ -250,10 +263,6 @@
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
         colors: ['#909399', '#E6A23C', '#F56C6C'],
         tableKey:0,
-        showJira:false,
-        showImp:false,
-        showDate:false,
-        showSprint:false,
         searchText:'',
         url:{
           list:"/task/list",
@@ -268,6 +277,7 @@
         dialogFormVisible: false,
         total:0,
         currentPage:1,
+        notFinish:false,
       }
     }
   }

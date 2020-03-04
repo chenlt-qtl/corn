@@ -150,6 +150,7 @@
         this.temp.status = data[0];
       },
       initFormData(data,dialogStatus) {
+        this.editTitle = false;
         this.dialogStatus = dialogStatus;
         if(dialogStatus == 'create'){
           this.resetTemp();
