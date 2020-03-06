@@ -61,6 +61,8 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/**/*.bmp", "anon");
 		filterChainDefinitionMap.put("/**/*.ico", "anon");
 		filterChainDefinitionMap.put("/**/*.mp3", "anon");
+		filterChainDefinitionMap.put("/**/*.mp4", "anon");
+		filterChainDefinitionMap.put("/**/*.flv", "anon");
 		filterChainDefinitionMap.put("/druid/**", "anon");
 		filterChainDefinitionMap.put("/swagger-ui.html", "anon");
 		filterChainDefinitionMap.put("/swagger**/**", "anon");

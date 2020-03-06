@@ -24,6 +24,51 @@ public class UpLoadUtil {
     public static final String WORD_DIR = "word";
     public static final String WORD_PRON = "pron";
     public static final String USER = "user";
+    public static final String GYM = "gym";
+
+    /**
+     * 处理视频和图片
+     * @param uploadPath
+     */
+    public static String replace(String uploadPath,String oldUrl,String newUrl,String type){
+        if(StringUtils.isNotBlank(newUrl)) {
+            log.info("============newUrl:" + newUrl);
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            log.info("============ContextPath:" + request.getContextPath());
+            int index = newUrl.indexOf(request.getContextPath() + "/" + type + "/");
+            log.info("============index:" + index);
+            if(index!=-1){
+                newUrl = UpLoadUtil.IMG_PRE + newUrl.substring(index+(request.getContextPath() + "/").length());
+            }
+        }
+        if(oldUrl!=null && !oldUrl.equals(newUrl)){//删除旧文件
+            oldUrl = oldUrl.substring(oldUrl.indexOf(UpLoadUtil.IMG_PRE)+UpLoadUtil.IMG_PRE.length());
+            log.info("============delete old vedio:" + oldUrl);
+            UpLoadUtil.delImg(uploadPath,oldUrl);
+        }
+        return newUrl;
+
+    }
+
+    /**
+     * 处理数据库里的图片路径
+     * @return
+     */
+    public static String parseUrlText(String text) {
+        if(StringUtils.isNotBlank(text)) {
+            String result = getPreUrl() + text.substring(text.indexOf(UpLoadUtil.IMG_PRE)+UpLoadUtil.IMG_PRE.length());
+            log.info("===========url:"+result);
+            return result;
+        }else {
+            return "";
+        }
+
+    }
+
+    public static String getRealPath(String uploadPath, String baseUrl){
+        baseUrl = baseUrl.substring(baseUrl.indexOf(UpLoadUtil.IMG_PRE)+UpLoadUtil.IMG_PRE.length());
+        return uploadPath + File.separator + baseUrl;
+    }
 
     /**
      * 获取用户文件夹path
@@ -36,22 +81,9 @@ public class UpLoadUtil {
         String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         String bizPath = USER + File.separator + nowday + File.separator + sysUser.getUsername();
-        File file = new File(uploadpath + File.separator + bizPath );
-        if (!file.exists()) {
-            file.mkdirs();// 创建文件根目录
-        }
-
-        String fileName = System.currentTimeMillis() + type;
-        String[] result = new String[2];
-        result[0] = file.getPath() + File.separator + fileName;
-        log.info("========realPath:"+result[0]);
-        String dbpath = bizPath + File.separator + fileName;
-        if (dbpath.contains("\\")) {
-            dbpath = dbpath.replace("\\", "/");
-        }
-        result[1] = dbpath;
-        return result;
+        return getFilePath(uploadpath,bizPath ,System.currentTimeMillis() + type);
     }
+
 
     /**
      * 获取单词文件夹path
@@ -64,31 +96,46 @@ public class UpLoadUtil {
         String dbpath = WORD_DIR;
 
         String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        if(!isWord) {
+        if(!isWord) {//文章
             SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
             dbpath = dbpath + File.separator + USER + File.separator + nowday + File.separator + sysUser.getUsername();
+            name = System.currentTimeMillis() + name.substring(name.indexOf("."));
         }else{
             dbpath = dbpath + File.separator + WORD_PRON + File.separator + nowday ;
         }
 
-        uploadpath = uploadpath + File.separator + dbpath;
-        File file = new File(uploadpath);
+        return getFilePath(uploadpath,dbpath ,name);
+    }
+
+    /**
+     * 获取单词文件夹path
+     * @param uploadpath
+     * @param type
+     * @return
+     */
+    public static String[] getGymFilePath(String uploadpath, String type){
+        log.info("========upload path:"+uploadpath);
+        String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String dbpath = GYM + File.separator + nowday ;
+        return getFilePath(uploadpath,dbpath ,System.currentTimeMillis() + type);
+    }
+
+    private static String[] getFilePath(String uploadpath,String relativePath ,String fileName){
+        File file = new File(uploadpath + File.separator + relativePath);
         if (!file.exists()) {
             file.mkdirs();// 创建文件根目录
         }
 
-        String fileName = name;
         String[] result = new String[2];
         result[0] = file.getPath() + File.separator + fileName;
         log.info("========realPath:"+result[0]);
-        dbpath = dbpath + File.separator + fileName;
+        String dbpath = relativePath + File.separator + fileName;
         if (dbpath.contains("\\")) {
             dbpath = dbpath.replace("\\", "/");
         }
         result[1] = dbpath;
         return result;
     }
-
 
     public static void saveFile(InputStream in,String path){
         File file = new File(path);
@@ -123,6 +170,7 @@ public class UpLoadUtil {
         matcher.appendTail(sbr);
         return sbr.toString();
     }
+
 
     /**
      * 获取text包含的图片url

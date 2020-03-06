@@ -82,50 +82,50 @@ public class MybatisInterceptor implements Interceptor {
 				}
 			}
 		}
-		if (SqlCommandType.UPDATE == sqlCommandType) {
-			Field[] fields = null;
-			if (parameter instanceof ParamMap) {
-				ParamMap<?> p = (ParamMap<?>) parameter;
-				parameter = p.get("param1");
-				fields = parameter.getClass().getDeclaredFields();
-			} else {
-				fields = parameter.getClass().getDeclaredFields();
-			}
 
-			for (Field field : fields) {
-				log.debug("------field.name------" + field.getName());
-				try {
-					if ("updateBy".equals(field.getName())) {
-						field.setAccessible(true);
-						Object local_updateBy = field.get(parameter);
-						field.setAccessible(false);
-						String updateBy = "jeecg-boot";
-						// 获取登录用户信息
-						SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-						if (sysUser != null) {
-							// 登录账号
-							updateBy = sysUser.getUsername();
-						}
-						if (!oConvertUtils.isEmpty(updateBy)) {
-							field.setAccessible(true);
-							field.set(parameter, updateBy);
-							field.setAccessible(false);
-						}
+		Field[] fields = null;
+		if (parameter instanceof ParamMap) {
+			ParamMap<?> p = (ParamMap<?>) parameter;
+			parameter = p.get("param1");
+			fields = parameter.getClass().getDeclaredFields();
+		} else {
+			fields = parameter.getClass().getDeclaredFields();
+		}
 
+		for (Field field : fields) {
+			log.debug("------field.name------" + field.getName());
+			try {
+				if ("updateBy".equals(field.getName())) {
+					field.setAccessible(true);
+					Object local_updateBy = field.get(parameter);
+					field.setAccessible(false);
+					String updateBy = "jeecg-boot";
+					// 获取登录用户信息
+					SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+					if (sysUser != null) {
+						// 登录账号
+						updateBy = sysUser.getUsername();
 					}
-					if ("updateTime".equals(field.getName())) {
+					if (!oConvertUtils.isEmpty(updateBy)) {
 						field.setAccessible(true);
-						Object local_updateDate = field.get(parameter);
+						field.set(parameter, updateBy);
 						field.setAccessible(false);
-						field.setAccessible(true);
-						field.set(parameter, new Date());
-						field.setAccessible(false);
-
 					}
-				} catch (Exception e) {
+
 				}
+				if ("updateTime".equals(field.getName())) {
+					field.setAccessible(true);
+					Object local_updateDate = field.get(parameter);
+					field.setAccessible(false);
+					field.setAccessible(true);
+					field.set(parameter, new Date());
+					field.setAccessible(false);
+
+				}
+			} catch (Exception e) {
 			}
 		}
+
 		return invocation.proceed();
 	}
 

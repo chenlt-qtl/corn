@@ -16,6 +16,9 @@
           <li><router-link :to="{ name: 'blank-word-articleList' }" @click.native="active(3)">
             <span>英语</span>
           </router-link><span :class="{'active':show(3)}"> </span></li>
+          <li><router-link :to="{ name: 'blank-gym' }" @click.native="active(4)">
+            <span>健身</span>
+          </router-link><span :class="{'active':show(4)}"> </span></li>
           <li>
             <a-dropdown>
               <span class="drop-title">
@@ -41,7 +44,6 @@
                 </a-menu-item>
               </a-menu>
             </a-dropdown>
-
           </li>
         </ul>
       </div>
