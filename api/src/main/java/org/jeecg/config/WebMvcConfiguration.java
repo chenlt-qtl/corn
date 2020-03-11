@@ -21,8 +21,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
 	@Value("${jeecg.path.upload}")
 	private String upLoadPath;
-	@Value("${jeecg.path.webapp}")
-	private String webAppPath;
 	@Value("${spring.resource.static-locations}")
 	private String staticLocations;
 
@@ -48,7 +46,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/**")
-		.addResourceLocations("file:" + upLoadPath + "//", "file:" + webAppPath + "//")
+		.addResourceLocations("file:" + upLoadPath + "//")
 		.addResourceLocations(staticLocations.split(","));
 	}
 

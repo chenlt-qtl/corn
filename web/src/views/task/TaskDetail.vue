@@ -17,7 +17,7 @@
         <el-input v-else v-model="temp.title" :autosize="{ minRows: 4, maxRows: 10}" type="textarea" @blur="editTitle=false;updateData();" style="padding-bottom: 30px"/>
 
         <el-form-item label="描述 :">
-          <j-editor ref="jEditorDetail" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="updateData"></j-editor>
+          <j-editor ref="jEditorDetail" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="blurComment"></j-editor>
         </el-form-item>
         <el-form-item label="Jira编号 :" prop="jiraNo">
           <el-input v-if="edit" v-model="temp.jiraNo" />
@@ -161,6 +161,11 @@
           this.$refs['dataForm'].clearValidate()
           this.$refs.taskStatus.getStatusOption();
         })
+      },
+      blurComment(){
+        if(!this.edit){
+          this.updateData();
+        }
       },
       updateData(){
         this.temp.comment = this.$refs.jEditorDetail.getText();
