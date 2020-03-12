@@ -121,6 +121,7 @@ public class GymClassController {
 			gymClass.setLastingTime(VideoUtil.getDuration(UpLoadUtil.getRealPath(uploadpath,gymClass.getUrl())));
 			gymClassService.save(gymClass);
 			result.success("添加成功！");
+			result.setResult(gymClass);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
@@ -147,6 +148,7 @@ public class GymClassController {
 			//TODO 返回false说明什么？
 			if(ok) {
 				result.success("修改成功!");
+				result.setResult(gymClass);
 			}
 		}
 		

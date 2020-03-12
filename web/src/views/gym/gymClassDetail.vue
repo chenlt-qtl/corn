@@ -165,7 +165,7 @@
             httpAction(httpurl,this.temp,method).then((res)=>{
               if(res.success){
                 that.$message.success(res.message);
-                that.$emit('ok',this.temp);
+                that.$emit('ok',res.result);
               }else{
                 that.$message.warning(res.message);
               }

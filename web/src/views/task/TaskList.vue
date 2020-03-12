@@ -239,6 +239,7 @@
         }
 
         this.tableData.unshift(data);
+        this.$refs.taskTable.setCurrentRow(data);
         let message = "";
 
         if (exist) {

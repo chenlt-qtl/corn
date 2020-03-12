@@ -147,7 +147,11 @@
         this.updateTask(typeObj);
       },
       setStatus(data){
-        this.temp.status = data[0];
+        if(this.edit){
+          this.temp.status = data[0];
+        }else {
+          this.changeStatus(data);
+        }
       },
       initFormData(data,dialogStatus) {
         this.editTitle = false;
@@ -155,7 +159,7 @@
         if(dialogStatus == 'create'){
           this.resetTemp();
         }else {
-          this.temp = data;
+          this.temp = Object.assign({},data);
         }
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
@@ -175,9 +179,9 @@
           }
         })
       },
-      updateTask(data){
-        httpAction(this.url.edit, data, 'put').then(() => {
-          this.$emit('ok',data);
+      updateTask(){
+        httpAction(this.url.edit, this.temp, 'put').then(() => {
+          this.$emit('ok',this.temp);
         })
       },
       createData() {
