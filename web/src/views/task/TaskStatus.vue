@@ -40,13 +40,8 @@
       }
 
     },
-    computed:{
-      nextStatusOptions:function() {
-        return this.getStatusOption();
-      },
-    },
     created:function() {
-      this.getStatusOption();
+      this.setStatusOption();
     },
     methods: {
       getStatus(status){
@@ -55,7 +50,8 @@
       setStatus(data){
         this.$emit("changeStatus",data);
       },
-      getStatusOption(){
+      setStatusOption(){
+        console.log(this.data.title);
         const status = this.data.status;
         const type = this.data.type;
         let hasCancel = false;//是否有取消
@@ -115,7 +111,7 @@
         }else{
           this.showDrop = false;
         }
-        return options;
+        this.nextStatusOptions = options;
       },
     },
     data() {
@@ -123,7 +119,13 @@
         showDrop:false,
         statusOptions:taskCommon.statusOptions,
         statusKeyVal:taskCommon.statusKeyVal,
+        nextStatusOptions:[],
       }
     },
+    watch:{
+      data:function() {
+        this.setStatusOption();
+      }
+    }
   }
 </script>

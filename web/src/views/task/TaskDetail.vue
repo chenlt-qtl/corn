@@ -159,11 +159,15 @@
         if(dialogStatus == 'create'){
           this.resetTemp();
         }else {
-          this.temp = Object.assign({},data);
+          if(this.edit) {
+            this.temp = Object.assign({}, data);
+          }else {
+            this.temp = data;
+          }
         }
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
-          this.$refs.taskStatus.getStatusOption();
+          this.$refs.taskStatus.setStatusOption();
         })
       },
       blurComment(){
