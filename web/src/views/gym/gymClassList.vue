@@ -22,6 +22,8 @@
             ref="classTable"
             v-loading="loading"
             :data="tableData"
+            highlight-current-row
+            @current-change="displayClass"
             stripe>
 
             <el-table-column
@@ -49,6 +51,7 @@
 
     </div>
     <gym-class-detail ref="gymDetail" @ok="reloadData"></gym-class-detail>
+    <gym-class-display ref="classDisplay"></gym-class-display>
   </div>
 </template>
 
@@ -60,6 +63,7 @@
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import GymClassDetail from './gymClassDetail';
+  import GymClassDisplay from './gymClassDisplay';
 
   Vue.component(Table.name, Table);
   Vue.component(TableColumn.name, TableColumn);
@@ -91,11 +95,15 @@
   export default {
     components: {
       GymClassDetail,
+      GymClassDisplay,
     },
     created(){
       this.getClassData()
     },
     methods: {
+      displayClass(data){
+        this.$refs.classDisplay.show(data);
+      },
       getLastingTime(time){
         if(time){
           let result = "";

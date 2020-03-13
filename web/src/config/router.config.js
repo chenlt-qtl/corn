@@ -467,6 +467,18 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/empty',
+    component: BlankLayout,
+    redirect: '/empty',
+    children: [
+      {
+        path: 'play',
+        name: 'Play',
+        component: () => import('@/views/gym/gymClassPlay')
+      }
+    ]
+  },
+  {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   },

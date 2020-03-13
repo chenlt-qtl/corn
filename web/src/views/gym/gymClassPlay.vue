@@ -1,7 +1,10 @@
 <template>
   <div>
-    <video v-if="vedioUrl" :src="vedioUrl" class="avatar"/>
-    <span v-else>加载中</span>
+    <div v-show="temp.url" class="play-div">
+      <el-progress :stroke-width="7" :percentage="percentage" :show-text=false status="success"></el-progress>
+      <video id="player" :src="temp.url" class="avatar" autoplay="autoplay" />
+    </div>
+    <span v-show="!temp.url">加载中</span>
   </div>
 </template>
 
@@ -9,7 +12,10 @@
   import Vue from 'vue';
   import { httpAction } from '@/api/manage'
   import 'element-ui/lib/theme-chalk/index.css';
+  import { Progress } from 'element-ui';
+  import 'element-ui/lib/theme-chalk/index.css';
 
+  Vue.component(Progress.name, Progress);
 
   export default {
     name: "GymClassPlay",
@@ -22,21 +28,35 @@
         }
       }
     },
-    mounted(){
-      console.log(this.$route.query.classId);
-      httpAction(this.url.get+"?id="+this.$route.query.classId, {}, 'get').then((res) => {
-        if (res.success) {
-          this.temp = res.result;
-          this.vedioUrl = this.temp.url;
+    computed:{
+      percentage:function() {
+        let result = 0;
+        let player = document.getElementById('player');
+        if(player){
+          console.log(player.currentTime);
         }
-      })
+        return result;
+      }
+    },
+    created(){
+      this.temp = Object.assign({},this.$route.params);
+      this.temp.url = "http://localhost:8089/jeecg-boot/gym/20200311/1583919395803.mp4";
     },
     methods: {
-
+      getPercentage:function() {
+        let result = 0;
+        let player = document.getElementById('player');
+        if(player){
+          console.log(player.currentTime);
+        }
+        return result;
+      }
     }
   }
 </script>
 
 <style scoped>
-
+  .play-div,.play-div video{
+    width: 160px;
+  }
 </style>
