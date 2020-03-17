@@ -27,12 +27,14 @@ public class GymInfo implements Serializable {
 	/**classId*/
 	@Excel(name = "classId", width = 15)
 	private String classId;
+	private String className;
 	/**calorie*/
 	@Excel(name = "calorie", width = 15)
 	private Integer calorie;
 	/**totalTime*/
 	@Excel(name = "totalTime", width = 15)
 	private Integer totalTime;
+	private String comment;
 	/**createTime*/
 	@Excel(name = "createTime", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")

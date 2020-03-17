@@ -475,7 +475,12 @@ export const constantRouterMap = [
         path: 'play',
         name: 'Play',
         component: () => import('@/views/gym/gymClassPlay')
-      }
+      },
+      {
+        path: 'gymInfo',
+        name: 'GymInfo',
+        component: () => import('@/views/gym/gymInfo')
+      },
     ]
   },
   {

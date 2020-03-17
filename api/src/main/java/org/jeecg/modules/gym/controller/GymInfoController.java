@@ -8,6 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
@@ -19,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jeecg.modules.system.entity.SysUser;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -57,10 +61,19 @@ public class GymInfoController {
 	@GetMapping(value = "/list")
 	public Result<IPage<GymInfo>> queryPageList(GymInfo gymInfo,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,String searchText,
 									  HttpServletRequest req) {
 		Result<IPage<GymInfo>> result = new Result<IPage<GymInfo>>();
 		QueryWrapper<GymInfo> queryWrapper = QueryGenerator.initQueryWrapper(gymInfo, req.getParameterMap());
+		SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		if (sysUser != null) {
+			// 登录账号
+			queryWrapper.eq("create_by",sysUser.getUsername());
+		}
+		if(StringUtils.isNotBlank(searchText)){
+			queryWrapper.like("class_name",searchText);
+		}
+		queryWrapper.orderByDesc("update_time");
 		Page<GymInfo> page = new Page<GymInfo>(pageNo, pageSize);
 		IPage<GymInfo> pageList = gymInfoService.page(page, queryWrapper);
 		result.setSuccess(true);

@@ -18,9 +18,9 @@
         <h3>持续时间: <span>{{lastingTime}}</span></h3>
       </el-col>
       <el-col :span="12">
-          <h3>消耗卡路里:
-          <span v-if="temp.calorie">{{temp.calorie}}</span>
-          <span>无数据</span>
+          <h3>消耗:
+          <span v-if="temp.calorie">{{temp.calorie}} 千卡</span>
+          <span v-else>无数据</span>
           </h3>
       </el-col>
     </el-row>

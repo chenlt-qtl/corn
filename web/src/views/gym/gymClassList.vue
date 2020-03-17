@@ -8,6 +8,9 @@
         placeholder="输入关键字搜索"
         style="width:300px"
         @blur="currentPage=1"/>
+      <div style="float: right">
+        <el-button type="text" @click="$router.push({path:'/blank/gymInfoList'})">锻炼记录</el-button>
+      </div>
     </div>
 
 
@@ -132,7 +135,8 @@
         }
       },
       getClassData(){
-        setTimeout(() => {
+          let that = this;
+          that.loading = true;
           httpAction(this.url.list+"?name="+this.searchText+"&pageNo="+this.currentPage, {}, 'get').then((res) => {
             if (res.success) {
               let tableData = this.tableData;
@@ -141,9 +145,9 @@
               });
               this.total = res.result.total;
               this.tableData = tableData;
+              that.loading = false;
             }
           })
-        }, 1000);
       },
       openDetailForm(data){
         this.$refs.gymDetail.open(data);

@@ -12,6 +12,10 @@
         <el-input v-model="temp.name" />
       </el-form-item>
 
+      <el-form-item label="卡路里 :" prop="calorie">
+        <el-input v-model="temp.calorie" />
+      </el-form-item>
+
       <el-form-item label="视频 :" prop="url">
         <el-upload
           class="avatar-uploader"
