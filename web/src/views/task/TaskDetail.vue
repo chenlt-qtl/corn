@@ -133,7 +133,6 @@
           jiraNo: '',
           jiraDesc: '',
           comment: '',
-          planStartDate: new Date(),
           dataChange:'',
           status:0,
           type:this.type,

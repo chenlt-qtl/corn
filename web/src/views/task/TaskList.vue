@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="margin: 20px 150px;padding: 20px;background-color: #fff">
+    <div style="margin: 20px 100px;padding: 20px;background-color: #fff">
       <el-select v-model="type" style="margin-right: 10px;width: 110px;" class="filter-item" placeholder="类型" @change="changeType" clearable>
         <span slot="prefix" :style="{color:prefixColor,fontSize:'22px'}">■</span>
         <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
@@ -22,58 +22,36 @@
     </div>
 
 
-    <div style="margin: 20px 150px;padding: 20px;background-color: #fff">
+    <div class="task-main" style="margin: 20px 100px;background-color: #fff">
       <el-row>
-        <el-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
-          <el-table
-            ref="taskTable"
-            :key="tableKey"
-            v-loading="loading"
-            :data="tableData"
-            highlight-current-row
-            @current-change="selectRow"
-            stripe>
+        <el-col :xs="24" :sm="24" :md="5" :lg="5" :xl="5" style="background: #fafafa">
+          <task-menu @selectMenu="selectMenu"></task-menu>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="7" :lg="7" :xl="7">
+          <span style="display:inline-block;padding: 20px;font-weight: bold;font-size: 20px;">{{title}}</span>
+          <ul class="task-list">
+            <li :class="{'select-row':item.id==selectId}" v-for="item in tableData" :key="item.id" @click="selectRow(item)">
+              <div class="table-row"><el-checkbox style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
+            </li>
+          </ul>
+          <span style="font-weight: bold;display: inline-block;padding: 10px;">
+            <i class="el-icon-caret-bottom"></i>  已完成
+          </span>
+          <ul class="task-list task-finish">
+            <li :class="{'select-row':item.id==selectId}" v-for="item in finishData" :key="item.id" @click="selectRow(item)">
+              <div class="table-row"><el-checkbox :checked="true" style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
+            </li>
+          </ul>
+          <el-button type="text" style="color:#606266;padding-left: 20px;" @click="loadMore"><i class="el-icon-search"></i>  查看更多</el-button>
 
-            <el-table-column
-              prop="title"
-              label="标题">
-              <template slot-scope="{row}">
-                  <div :style="getRowStyle(row)" v-html="row.title">{{ row.title }}</div>
-              </template>
-            </el-table-column>
-
-            <el-table-column
-              align="right">
-              <template slot="header">
-                <el-input
-                  v-model="searchText"
-                  prefix-icon="el-icon-search"
-                  size="mini"
-                  placeholder="输入关键字搜索"/>
-              </template>
-              <template slot-scope="{row}">
-                <task-status :data="row" :typeOptions="typeOptions" ref="taskStatus" @changeStatus="$refs.taskDetail.changeStatus"></task-status>
-                <i class="el-icon-edit link-type" @click="openDetailForm(row,'update')"></i>
-                <i class="el-icon-delete link-type" style="color:#F56C6C;margin-left: 5px" @click="deleteTask(row)"></i>
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <el-pagination
-            small
-            layout="prev, pager, next"
-            :total="total"
-            :current-page="currentPage"
-            @current-change="getTaskData">
-          </el-pagination>
         </el-col>
 
         <el-col
           :xs="24"
           :sm="24"
-          :md="18"
-          :lg="18"
-          :xl="18"
+          :md="12"
+          :lg="12"
+          :xl="12"
           style="border-left: 1px solid #C0C4CC">
           <task-detail ref="taskDetail" :typeOptions="typeOptions" @ok="reloadData" @editTask="editTask"></task-detail>
         </el-col>
@@ -91,9 +69,7 @@
 
 <script>
   import Vue from 'vue';
-  import { Table,TableColumn,Loading,Button,MessageBox,Dialog, Form,
-    FormItem,DatePicker,Select,Input,Option,Rate,Notification,Checkbox,
-    Tag,InputNumber,Switch , Row, Col, Pagination } from 'element-ui';
+  import ElementUI from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
@@ -101,34 +77,13 @@
   import TaskTypeList from "./TaskTypeList";
   import TaskDetail from "./TaskDetail";
   import taskCommon from "./taskCommon";
+  import TaskMenu from "./TaskMenu";
 
-  Vue.component(Table.name, Table);
-  Vue.component(TableColumn.name, TableColumn);
-  Vue.component(Button.name, Button);
-  Vue.component(MessageBox.name, MessageBox);
-  Vue.component(Dialog.name, Dialog);
-  Vue.component(Form.name, Form);
-  Vue.component(FormItem.name, FormItem);
-  Vue.component(DatePicker.name, DatePicker);
-  Vue.component(Select.name, Select);
-  Vue.component(Input.name, Input);
-  Vue.component(Option.name, Option);
-  Vue.component(Rate.name, Rate);
-  Vue.component(Notification.name, Notification);
-  Vue.component(Checkbox.name, Checkbox);
-  Vue.component(Tag.name, Tag);
-  Vue.component(InputNumber.name, InputNumber);
-  Vue.component(Switch.name, Switch);
-  Vue.component(Row.name, Row);
-  Vue.component(Col.name, Col);
-  Vue.component(Pagination.name, Pagination);
-  Vue.use(Loading.directive);
-  Vue.prototype.$prompt = MessageBox.prompt;
-
-
+  Vue.use(ElementUI);
 
   export default {
     components: {
+      TaskMenu,
       JEditor,
       TaskTypeList,
       TaskDetail,
@@ -141,6 +96,10 @@
       });
     },
     methods: {
+      selectMenu(data){
+        Object.assign(this, data);
+        this.getTaskData(1);
+      },
       getNotFinish(){
         if(this.notFinish){
           let statusStr = this.statusOptions[0].code+","+this.statusOptions[1].code+","+this.statusOptions[2].code;
@@ -169,17 +128,24 @@
           this.currentPage = currentPage;
         }
         this.loading = true;
-        httpAction(this.url.list+"?type="+this.type+"&statusStr="+this.statusStr+"&sprint="+this.sprint+"&pageNo="+this.currentPage, {}, 'get').then((res) => {
+        httpAction(this.url.list+"?type="+this.type+"&statusStr="+this.statusStr+"&pageNo="+this.currentPage+"&timeRange="+this.timeRange, {}, 'get').then((res) => {
           if (res.success) {
-            let tableData = [];
+            let tableData = this.currentPage == 1?[]:this.tableData;
+            let finishData = this.currentPage == 1?[]:this.finishData;
             res.result.records.forEach((task)=>{
               task.edit = false;
-              tableData.push(task);
+              if(task.status == 99){
+                finishData.push(task);
+              }else {
+                tableData.push(task);
+              }
+
             });
             this.total = res.result.total;
             this.tableData = tableData;
+            this.finishData = finishData;
             if(this.tableData.length>0){
-              this.$refs.taskTable.setCurrentRow(this.tableData[0]);
+              this.selectId = this.tableData[0].id;
             }
           }
           this.loading = false;
@@ -208,15 +174,16 @@
       },
       selectRow(row) {
         this.$refs.taskDetail.initFormData(row);
+        this.selectId = row.id;
       },
       deleteTask(row){
-        MessageBox.confirm('此操作将永久删除该任务, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该任务, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           httpAction(this.url.delete+ "?id="+row.id, {}, 'delete').then(() => {
-            Notification.success({
+            this.$notify.success({
               title: 'Success',
               message: 'Delete Successfully',
               duration: 2000
@@ -239,7 +206,7 @@
         }
 
         this.tableData.unshift(data);
-        this.$refs.taskTable.setCurrentRow(data);
+        this.selectId = data.id;
         let message = "";
 
         if (exist) {
@@ -247,13 +214,28 @@
         }else {
           message = "Created Successfully";
         }
-        Notification.success({
+        this.$notify.success({
           title: 'Success',
           message: message,
           duration: 2000
         })
         this.dialogFormVisible=false;
       },
+      loadMore:function() {
+        console.log((this.tableData.length + this.finishData),this.total);
+        if((this.tableData.length + this.finishData.length)>=this.total){
+          console.log(123);
+          this.$message({
+            showClose: true,
+            message: '没有更多数据了哦',
+            type: 'warning',
+            offset:100,
+          })
+        }else {
+          this.currentPage+=1;
+          this.getTaskData();
+        }
+      }
     },
     data() {
       return {
@@ -261,6 +243,7 @@
         prefixColor: '#fff',
         type:3,
         statusStr:'',
+        timeRange:"",
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
         colors: ['#909399', '#E6A23C', '#F56C6C'],
         tableKey:0,
@@ -279,6 +262,9 @@
         total:0,
         currentPage:1,
         notFinish:false,
+        selectId:'',
+        title:'',
+        finishData:[],
       }
     }
   }
@@ -302,5 +288,35 @@
     color: #2eabff;
   }
 
+  .task-list{
+    list-style: none;
+    padding-inline-start:0px;
+  }
 
+  .task-finish{
+    color: #C0C4CC;
+  }
+
+  .task-list li{
+    padding: 0px 15px;
+  }
+
+  .task-list li:hover{
+    background: #EBEEF5;
+  }
+
+  .el-checkbox__inner{
+    border-radius: 4px;
+  }
+  .select-row{
+    background: #F2F6FC;
+  }
+  .table-row{
+    padding: 10px 0px;
+    border-bottom: 1px solid #DCDFE6;
+  }
+  .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+    background-color: #C0C4CC;
+    border-color: #C0C4CC;
+  }
 </style>

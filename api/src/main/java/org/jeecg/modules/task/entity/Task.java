@@ -99,4 +99,6 @@ public class Task implements Serializable {
 	/**updateBy*/
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
+
+	private java.lang.String tag;
 }
