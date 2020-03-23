@@ -1,8 +1,8 @@
 package org.jeecg.modules.task.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -60,11 +60,24 @@ public class TaskController {
 	public Result<IPage<Task>> queryPageList(Task task,@RequestParam(name="statusStr") String statusStr,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+											 @RequestParam(name="timeRange") String timeRange,
 									  HttpServletRequest req) {
 		Result<IPage<Task>> result = new Result<IPage<Task>>();
 		QueryWrapper<Task> queryWrapper = QueryGenerator.initQueryWrapper(task, req.getParameterMap());
 		if(StringUtils.isNotBlank(statusStr)){
 			queryWrapper.in("status",statusStr.split(","));
+		}
+		if(StringUtils.isNotBlank(timeRange)){
+			if("nodate".equals(timeRange)){
+				queryWrapper.isNull("plan_start_date");
+			}else {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTimeInMillis((calendar.getTimeInMillis() / (1000 * 60 * 60 * 24)) * 1000 * 60 * 60 * 24 - (1000 * 60 * 60 * 8));
+				if ("week".equals(timeRange)) {
+					calendar.add(Calendar.DATE, -calendar.get(Calendar.DAY_OF_WEEK) + 2);
+				}
+				queryWrapper.ge("plan_start_date", calendar.getTime());
+			}
 		}
 		queryWrapper.orderByDesc("update_time");
 
