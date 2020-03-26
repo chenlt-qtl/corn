@@ -182,9 +182,13 @@
           }
         })
       },
-      updateTask(){
-        httpAction(this.url.edit, this.temp, 'put').then(() => {
-          this.$emit('ok',this.temp);
+      updateTask(data){
+        httpAction(this.url.edit, data, 'put').then((res) => {
+          if(res.success) {
+            this.$emit('ok', data);
+          }else {
+            this.$alert(res.message);
+          }
         })
       },
       createData() {

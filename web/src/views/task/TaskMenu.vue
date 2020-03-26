@@ -5,15 +5,20 @@
       <div style="float: right;"><el-button type="text" style="padding-top:5px;padding-right: 10px;"><i class="el-icon-refresh"></i></el-button></div>
     </div>
     <div>
-      <el-menu
-        class="el-menu-vertical-demo"
-        style="background: #fafafa;width: 100%;"
-        @select="selectTime">
-        <el-menu-item v-for="(item,index) in timeRangeData" :index="index.toString()" :key="item.key">
+      <draggable tag="el-menu" class="el-menu-vertical-demo" style="background: #fafafa;width: 100%;" :options="{group:'timeRange',disabled:true}">
+        <el-menu-item v-for="(item,index) in timeRangeData1" :index="index.toString()" :key="item.key" :itemid="item.key" @click="selectTime(item.key,item.title)" >
           <i :class="item.icon"></i>
-          <span>{{item.title}}</span>
+          <span :value="item.key">{{item.title}}</span>
+        </el-menu-item>
+      </draggable>
+
+      <el-menu class="el-menu-vertical-demo" style="background: #fafafa;width: 100%;">
+        <el-menu-item v-for="(item,index) in timeRangeData2" :index="index.toString()" :key="item.key" @click="selectTime(item.key,item.title)" >
+          <i :class="item.icon"></i>
+          <span :value="item.key">{{item.title}}</span>
         </el-menu-item>
       </el-menu>
+
       <el-divider></el-divider>
       <el-menu
         class="el-menu-vertical-demo"
@@ -46,6 +51,7 @@
   import ElementUI from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
+  import draggable from 'vuedraggable'
 
   Vue.use(ElementUI);
 
@@ -53,6 +59,9 @@
     name:'TaskMenu',
     mounted:function(){
       this.getTaskTypeData();
+    },
+    components:{
+      draggable,
     },
     methods: {
       getTaskTypeData(){
@@ -68,15 +77,14 @@
           this.loading = false;
         })
       },
-      selectTime(index){
-        let data = this.timeRangeData[index];
-        this.selectMenu({"timeRange":data.key,"type":"",title:data.title});
+      selectTime(key,title){//左侧菜单栏的时间选择
+        this.selectMenu({"timeRange":key,"type":"",title:title});
       },
-      selectType(index){
+      selectType(index){//左侧菜单栏的类型选择
         let data = this.typeData[index];
         this.selectMenu({"timeRange":"","type":data.id,title:data.name});
       },
-      selectMenu(data){
+      selectMenu(data){//菜单栏查询事件
         this.$emit("selectMenu",data);
       },
     },
@@ -84,11 +92,14 @@
       return {
         searchKey:'',
         typeData:[],
-        timeRangeData:[{key:"today",title:"今天",icon:'el-icon-menu'},
-                        {key:"week",title:"本周",icon:'el-icon-s-grid'},
-                        {key:"3",title:"日历",icon:'el-icon-date'},
-                        {key:"nodate",title:"收集箱",icon:'el-icon-receiving'},
-          ],
+        timeRangeData1:[
+          {key:"today",title:"今天",icon:'el-icon-menu'},
+          {key:"week",title:"本周",icon:'el-icon-s-grid'},
+        ],
+        timeRangeData2:[
+          {key:"3",title:"日历",icon:'el-icon-date'},
+          {key:"nodate",title:"收集箱",icon:'el-icon-receiving'},
+        ],
         url: {
           list: "/taskType/list",
         }

@@ -30,17 +30,19 @@
         <el-col :xs="24" :sm="24" :md="7" :lg="7" :xl="7">
           <span style="display:inline-block;padding: 20px;font-weight: bold;font-size: 20px;">{{title}}</span>
           <div v-if="total>0">
-            <ul class="task-list">
-              <li :class="{'select-row':item.id==selectId}" v-for="item in tableData" :key="item.id" @click="selectRow(item)">
-                <div class="table-row"><el-checkbox style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
-              </li>
-            </ul>
+
+            <draggable class="task-list" tag="ul" :options="{group:'timeRange'}" @end="changeDate" :sort="false">
+                <li :class="{'select-row':item.id==selectRow.id}" v-for="item in tableData" :key="item.id" @click="handleSelectRow(item)" :itemid="item.id">
+                  <div class="table-row"><el-checkbox style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
+                </li>
+            </draggable>
+
             <div v-if="finishData.length>0">
               <span style="font-weight: bold;display: inline-block;padding: 10px;">
                 <i class="el-icon-caret-bottom"></i>  已完成
               </span>
               <ul class="task-list task-finish">
-                <li :class="{'select-row':item.id==selectId}" v-for="item in finishData" :key="item.id" @click="selectRow(item)">
+                <li :class="{'select-row':item.id==selectRow.id}" v-for="item in finishData" :key="item.id" @click="handleSelectRow(item)">
                   <div class="table-row"><el-checkbox :checked="true" style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
                 </li>
               </ul>
@@ -84,6 +86,7 @@
   import TaskDetail from "./TaskDetail";
   import taskCommon from "./taskCommon";
   import TaskMenu from "./TaskMenu";
+  import draggable from 'vuedraggable';
 
   Vue.use(ElementUI);
 
@@ -94,6 +97,15 @@
       TaskTypeList,
       TaskDetail,
       TaskStatus,
+      draggable,
+    },
+    computed:{
+      dragOptions() {
+        return {
+          animation: 0,
+          group: "description",
+        };
+      },
     },
     created(){
       const that = this;
@@ -102,6 +114,32 @@
       });
     },
     methods: {
+      changeDate(e){//修改计划日期
+        const taskId = e.item.getAttribute("itemid");
+
+        let task = {};
+        this.tableData.forEach(item=>{
+          if(item.id == taskId){
+            task = item;
+          }
+        });
+        let timeRange = "";
+        if(e.originalEvent.target.children.length){//el-menu-item标签
+          timeRange = e.originalEvent.target.getAttribute("itemid");
+        }else{//子标签
+          timeRange = e.originalEvent.target.parentNode.getAttribute("itemid");
+        }
+
+        if(timeRange == 'today'|| timeRange == 'week') {
+          const date = new Date();
+          if (timeRange == 'week') {//本周任务
+            const day = date.getDay();
+            date.setTime(date.getTime() - (day?day-1:6) * 24 * 60 * 60 * 1000);
+          }
+          task['planStartDate'] = date;
+          this.$refs.taskDetail.updateTask(task);
+        }
+      },
       selectMenu(data){
         Object.assign(this, data);
         this.getTaskData(1);
@@ -150,9 +188,7 @@
             this.total = res.result.total;
             this.tableData = tableData;
             this.finishData = finishData;
-            if(this.tableData.length>0){
-              this.selectId = this.tableData[0].id;
-            }
+            this.selectRow = this.tableData[0]||{};
           }
           this.loading = false;
         })
@@ -178,9 +214,9 @@
           this.$refs.taskDialog.initFormData(data,type);
         })
       },
-      selectRow(row) {
-        this.$refs.taskDetail.initFormData(row);
-        this.selectId = row.id;
+      handleSelectRow(row) {
+        //this.$refs.taskDetail.initFormData(row);
+        this.selectRow = row;
       },
       deleteTask(row){
         this.$confirm('此操作将永久删除该任务, 是否继续?', '提示', {
@@ -201,34 +237,17 @@
 
       },
       reloadData(data) {
-        let exist = false;
-        for (const v of this.tableData) {
-          if (v.id === data.id) {
-            exist = true;
-            const index = this.tableData.indexOf(v)
-            this.tableData.splice(index, 1);
-            break;
-          }
-        }
+        this.getTaskData();
+        this.selectRow = data;
 
-        this.tableData.unshift(data);
-        this.selectId = data.id;
-        let message = "";
-
-        if (exist) {
-          message = "Update Successfully";
-        }else {
-          message = "Created Successfully";
-        }
         this.$notify.success({
           title: 'Success',
-          message: message,
+          message: 'Success',
           duration: 2000
         })
         this.dialogFormVisible=false;
       },
       loadMore:function() {
-        console.log((this.tableData.length + this.finishData),this.total);
         if((this.tableData.length + this.finishData.length)>=this.total){
           console.log(123);
           this.$message({
@@ -241,7 +260,7 @@
           this.currentPage+=1;
           this.getTaskData();
         }
-      }
+      },
     },
     data() {
       return {
@@ -268,10 +287,16 @@
         total:0,
         currentPage:1,
         notFinish:false,
-        selectId:'',
+        selectRow:'',
         title:'',
         finishData:[],
       }
+    },
+    watch:{
+      selectRow() {
+        this.$refs.taskDetail.initFormData(this.selectRow);
+        console.log(this.selectRow);
+      },
     }
   }
 </script>
