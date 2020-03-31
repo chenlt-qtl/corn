@@ -19,7 +19,7 @@ const statusData = [{
   disabled : true,
   children: [{
     id : 10,
-    label: '开发中',
+    label: '进行中',
   }, {
     id: 11,
     label: '单元测试',

@@ -51,7 +51,6 @@
         this.$emit("changeStatus",data);
       },
       setStatusOption(){
-        console.log(this.data.title);
         const status = this.data.status;
         const type = this.data.type;
         let hasCancel = false;//是否有取消

@@ -33,7 +33,7 @@
 
             <draggable class="task-list" tag="ul" :options="{group:'timeRange'}" @end="changeDate" :sort="false">
                 <li :class="{'select-row':item.id==selectRow.id}" v-for="item in tableData" :key="item.id" @click="handleSelectRow(item)" :itemid="item.id">
-                  <div class="table-row"><el-checkbox style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
+                  <div class="table-row"><el-checkbox @change="finishTask(item)" style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
                 </li>
             </draggable>
 
@@ -43,7 +43,7 @@
               </span>
               <ul class="task-list task-finish">
                 <li :class="{'select-row':item.id==selectRow.id}" v-for="item in finishData" :key="item.id" @click="handleSelectRow(item)">
-                  <div class="table-row"><el-checkbox :checked="true" style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
+                  <div class="table-row"><el-checkbox :checked="true" @change="finishTask(item)" style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
                 </li>
               </ul>
             </div>
@@ -114,6 +114,14 @@
       });
     },
     methods: {
+      finishTask(task){
+        if(task.status != 99){
+          task.status = 99;
+        }else {
+          task.status = 0;
+        }
+        this.$refs.taskDetail.updateTask(task);
+      },
       changeDate(e){//修改计划日期
         const taskId = e.item.getAttribute("itemid");
 
@@ -295,7 +303,6 @@
     watch:{
       selectRow() {
         this.$refs.taskDetail.initFormData(this.selectRow);
-        console.log(this.selectRow);
       },
     }
   }
