@@ -1,85 +1,65 @@
 <template>
-    <div style="padding: 20px 50px;">
-      <el-form
-               ref="dataForm"
-               :rules="edit?rules:null"
-               :model="temp"
-               label-position="right"
-               label-width="80px">
+    <div>
+      <div v-if="edit">
+        <div ref='editDiv' style="height:350px;overflow-y: scroll;padding: 10px;">
+          <el-form
+                  ref="dataForm"
+                  :rules="edit?rules:null"
+                  :model="temp"
+                  label-position="right"
+                  label-width="80px">
 
-        <el-form-item v-if="edit" label="标题 :" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <div v-else-if="!editTitle" style="padding-bottom: 30px;">
-          <span  @click="editTitle=true"><h2>{{temp.title}}</h2></span>
-          <i style="float: right;vertical-align: top;" class="el-icon-edit link-type" @click="$emit('editTask',temp)"></i>
-        </div>
-        <el-input v-else v-model="temp.title" :autosize="{ minRows: 4, maxRows: 10}" type="textarea" @blur="editTitle=false;updateData();" style="padding-bottom: 30px"/>
-
-        <el-form-item label="描述 :">
-          <j-editor ref="jEditorDetail" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="blurComment"></j-editor>
-        </el-form-item>
-        <el-form-item label="Jira编号 :" prop="jiraNo">
-          <el-input v-if="edit" v-model="temp.jiraNo" />
-          <span v-else>{{temp.jiraNo}}</span>
-        </el-form-item>
-        <el-form-item label="Jira标题 :" prop="jiraDesc">
-          <el-input v-if="edit" v-model="temp.jiraDesc" />
-          <span v-else>{{temp.jiraDesc}}</span>
-        </el-form-item>
-        <el-form-item label="迭代 :" prop="sprint">
-          <el-input-number v-if="edit" v-model="temp.sprint" />
-          <span v-else>{{temp.sprint}}</span>
-        </el-form-item>
-        <el-form-item label="类型 :" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select" :disabled="!edit">
-            <span slot="prefix" :style="{color:getColor(),fontSize:'22px'}">■</span>
-            <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
-              <span :style="{borderLeftWidth: '4px',borderLeftStyle:'solid',borderLeftColor:item.color}"></span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态 :">
-          <task-status ref="taskStatus" :typeOptions="typeOptions" :data="temp" @changeStatus="setStatus"></task-status>
-        </el-form-item>
-        <el-form-item label="总结 :">
-          <el-switch
-            v-model="temp.lesson"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            active-value=1
-            inactive-value=0
-            :disabled="!edit"
-          >
-          </el-switch>
-        </el-form-item>
-        <el-form-item label="优先级 :">
-          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" :disabled="!edit"/>
-        </el-form-item>
-        <el-form-item label="计划开始 :">
-          <el-date-picker :disabled="!edit" v-model="temp.planStartDate" type="date" value-format="yyyy-MM-dd" :picker-options="pickerOptions"/>
-        </el-form-item>
-        <el-form-item label="实际开始 :">
-          <el-date-picker :disabled="!edit" v-model="temp.realStartDate" type="date" value-format="yyyy-MM-dd" :picker-options="pickerOptions"/>
-        </el-form-item>
-        <el-form-item label="所需工时 :">
-          <el-select v-model="temp.workTime" class="filter-item" placeholder="Please select" :disabled="!edit">
-            <el-option v-for="item in workTimeOptions" :key="item.id" :label="item.value" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="数据修改 :">
-          <el-input v-if="edit" v-model="temp.dataChange" :autosize="{ minRows: 4, maxRows: 10}" type="textarea" placeholder="Please input" />
-          <span v-else>{{temp.dataChange}}</span>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" v-if="edit" class="dialog-footer">
+            <el-form-item label="标题 :" prop="title">
+              <el-input v-model="temp.title" />
+            </el-form-item>
+            <el-form-item label="类型 :" prop="type">
+              <el-select v-model="temp.type" class="filter-item" placeholder="Please select" :disabled="!edit">
+                <span slot="prefix" :style="{color:getColor(),fontSize:'22px'}">■</span>
+                <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
+                  <span :style="{borderLeftWidth: '4px',borderLeftStyle:'solid',borderLeftColor:item.color}"></span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span>
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="描述 :">
+              <j-editor ref="commentEditor" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500"></j-editor>
+            </el-form-item>
+            <el-form-item label="状态 :">
+              <task-status ref="taskStatus" :typeOptions="typeOptions" :data="temp" @changeStatus="setStatus"></task-status>
+            </el-form-item>
+            <el-form-item label="优先级 :">
+              <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" :disabled="!edit"/>
+            </el-form-item>
+            <el-form-item label="计划开始 :">
+              <el-date-picker :disabled="!edit" v-model="temp.planStartDate" type="date" value-format="yyyy-MM-dd" :picker-options="pickerOptions"/>
+            </el-form-item>
+            <el-form-item label="数据修改 :">
+              <el-input v-if="edit" v-model="temp.dataChange" :autosize="{ minRows: 4, maxRows: 10}" type="textarea" placeholder="Please input" />
+              <span v-else>{{temp.dataChange}}</span>
+            </el-form-item>
+          </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer" style="padding-top: 10px;">
         <el-button @click="$emit('cancel')">
           取消
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           确定
         </el-button>
+      </div>
+      </div>
+      <div v-else style="padding: 20px;">
+        <div v-if="!editTitle" style="padding-bottom: 30px;">
+          <span  @click="oldTitle=temp.title;editTitle=true"><h2>{{temp.title}}</h2></span>
+          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;display:inline-block;" :disabled="!edit"/>
+          <i style="float: right;vertical-align: top;" class="el-icon-edit link-type" @click="$emit('editTask',temp)"></i>
+        </div>
+        <div v-else  style="padding-bottom: 30px">
+          <el-input v-model="temp.title" :autosize="{ minRows: 2, maxRows: 10}" type="textarea" @blur="editTitle=false;updateData();"/>
+          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" :disabled="!edit"/>
+        </div>
+        <div><j-editor ref="commentEditor1" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="updateData"></j-editor></div>
+        <div class="plan-date"><i class="el-icon-date"></i><span>{{temp.planStartDate?temp.planStartDate:'无'}}</span></div>
       </div>
     </div>
 </template>
@@ -130,14 +110,10 @@
       resetTemp() {
         this.temp = {
           id: undefined,
-          jiraNo: '',
-          jiraDesc: '',
           comment: '',
           dataChange:'',
           status:0,
           type:this.type,
-          workTime:0.5,
-          lesson:0,
         }
       },
       changeStatus(data){
@@ -153,13 +129,16 @@
         }
       },
       initFormData(data,dialogStatus) {
+        document.documentElement.scrollTop = 0;
         this.editTitle = false;
         this.dialogStatus = dialogStatus;
         if(dialogStatus == 'create'){
           this.resetTemp();
+          this.$refs.commentEditor.setText('');
         }else {
           if(this.edit) {
             this.temp = Object.assign({}, data);
+            this.$refs.editDiv.scrollTop = 0;
           }else {
             this.temp = data;
           }
@@ -169,18 +148,28 @@
           this.$refs.taskStatus.setStatusOption();
         })
       },
-      blurComment(){
-        if(!this.edit){
-          this.updateData();
-        }
-      },
       updateData(){
-        this.temp.comment = this.$refs.jEditorDetail.getText();
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            this.updateTask(this.temp);
+        if(this.edit){
+          this.temp.comment = this.$refs.commentEditor.getText();
+          this.$refs['dataForm'].validate((valid) => {
+            if (valid) {
+              this.updateTask(this.temp);
+            }
+          })
+        }else{//修改某些属性
+          if(this.temp.id) {
+            this.temp.comment = this.$refs.commentEditor1.getText();
+            if (this.temp.title) {
+              this.updateTask(this.temp);
+            } else {
+              this.$message({
+                message: '标题不能为空',
+                type: 'warning'
+              });
+              this.temp.title = this.oldTitle;
+            }
           }
-        })
+        }
       },
       updateTask(data){
         httpAction(this.url.edit, data, 'put').then((res) => {
@@ -194,7 +183,7 @@
       createData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            this.temp.comment = this.$refs.jEditorDetail.getText();
+            this.temp.comment = this.$refs.commentEditor.getText();
             httpAction(this.url.add, this.temp, 'post').then(() => {
               this.$emit('ok',this.temp);
             })
@@ -220,6 +209,7 @@
       return {
         prefixColor:this.typeColor,
         editTitle:false,
+        oldTitle:'',
         sprint:'',
         type:3,
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
@@ -271,4 +261,11 @@
   }
 </script>
 <style>
+  .plan-date{
+    padding: 20px 0;
+  }
+  .plan-date i{
+    padding-right: 10px;
+    font-size: 18px;
+  }
 </style>
