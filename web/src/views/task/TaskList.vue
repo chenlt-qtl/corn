@@ -109,6 +109,20 @@
         };
       },
     },
+    mounted:function(){
+      let that = this;
+      document.body.ondrop = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        let dropTimeRange = "";
+        if(event.target.children.length){//el-menu-item标签
+          dropTimeRange = event.target.getAttribute("itemid");
+        }else{//子标签
+          dropTimeRange = event.target.parentNode.getAttribute("itemid");
+        }
+        that.dropTimeRange = dropTimeRange;
+      }
+    },
     created(){
       const that = this;
       this.getTypeData(function() {
@@ -133,16 +147,10 @@
             task = item;
           }
         });
-        let timeRange = "";
-        if(e.originalEvent.target.children.length){//el-menu-item标签
-          timeRange = e.originalEvent.target.getAttribute("itemid");
-        }else{//子标签
-          timeRange = e.originalEvent.target.parentNode.getAttribute("itemid");
-        }
 
-        if(timeRange == 'today'|| timeRange == 'week') {
+        if(this.dropTimeRange == 'today'|| this.dropTimeRange == 'week') {
           const date = new Date();
-          if (timeRange == 'week') {//本周任务
+          if (this.dropTimeRange == 'week') {//本周任务
             const day = date.getDay();
             date.setTime(date.getTime() - (day?day-1:6) * 24 * 60 * 60 * 1000);
           }
@@ -300,6 +308,7 @@
         selectRow:'',
         title:'',
         finishData:[],
+        dropTimeRange:'',
       }
     },
     watch:{

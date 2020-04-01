@@ -139,14 +139,14 @@
           if(this.edit) {
             this.temp = Object.assign({}, data);
             this.$refs.editDiv.scrollTop = 0;
+            this.$nextTick(() => {
+              this.$refs['dataForm'].clearValidate()
+              this.$refs.taskStatus.setStatusOption();
+            })
           }else {
             this.temp = data;
           }
         }
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-          this.$refs.taskStatus.setStatusOption();
-        })
       },
       updateData(){
         if(this.edit){
