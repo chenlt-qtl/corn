@@ -29,13 +29,18 @@
         </el-col>
         <el-col :xs="24" :sm="24" :md="7" :lg="7" :xl="7">
           <span style="display:inline-block;padding: 20px;font-weight: bold;font-size: 20px;">{{title}}</span>
-          <div v-if="total>0">
+
+          <div v-if="tableData.length>0">
 
             <draggable class="task-list" tag="ul" :options="{group:'timeRange'}" @end="changeDate" :sort="false">
                 <li :class="{'select-row':item.id==selectRow.id}" v-for="item in tableData" :key="item.id" @click="handleSelectRow(item)" :itemid="item.id">
                   <div class="table-row"><el-checkbox @change="finishTask(item)" style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
                 </li>
             </draggable>
+          </div>
+          <div v-else style="padding: 50px">
+            <i class="el-icon-cold-drink" style="padding-right: 20px;font-size: 20px;font-weight: bold;"></i>没有任务,放松一下。
+          </div>
 
             <div v-if="finishData.length>0">
               <span style="font-weight: bold;display: inline-block;padding: 10px;">
@@ -48,10 +53,7 @@
               </ul>
             </div>
             <el-button type="text" style="color:#606266;padding-left: 20px;" @click="loadMore"><i class="el-icon-search"></i>  查看更多</el-button>
-          </div>
-          <div v-else style="padding: 50px">
-            <i class="el-icon-cold-drink" style="padding-right: 20px;font-size: 20px;font-weight: bold;"></i>没有任务,放松一下。
-          </div>
+
         </el-col>
 
         <el-col
