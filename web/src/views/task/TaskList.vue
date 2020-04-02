@@ -27,7 +27,7 @@
         <el-col :xs="24" :sm="24" :md="5" :lg="5" :xl="5" style="background: #fafafa">
           <task-menu @selectMenu="selectMenu"></task-menu>
         </el-col>
-        <el-col :xs="24" :sm="24" :md="7" :lg="7" :xl="7">
+        <el-col :xs="24" :sm="24" :md="7" :lg="7" :xl="7" v-loading="loading">
           <span style="display:inline-block;padding: 20px;font-weight: bold;font-size: 20px;">{{title}}</span>
 
           <div v-if="tableData.length>0">
@@ -62,7 +62,8 @@
           :md="12"
           :lg="12"
           :xl="12"
-          style="border-left: 1px solid #C0C4CC">
+          style="border-left: 1px solid #C0C4CC"
+          v-loading="loading">
           <task-detail ref="taskDetail" :typeOptions="typeOptions" @ok="reloadData" @editTask="editTask"></task-detail>
         </el-col>
 
@@ -190,6 +191,7 @@
           this.currentPage = currentPage;
         }
         this.loading = true;
+        let that = this;
         httpAction(this.url.list+"?type="+this.type+"&statusStr="+this.statusStr+"&pageNo="+this.currentPage+"&timeRange="+this.timeRange, {}, 'get').then((res) => {
           if (res.success) {
             let tableData = this.currentPage == 1?[]:this.tableData;
@@ -208,7 +210,7 @@
             this.finishData = finishData;
             this.selectRow = this.tableData[0]||{};
           }
-          this.loading = false;
+          that.loading = false;
         })
       },
       getTypeData(callback){//获取类型数据
