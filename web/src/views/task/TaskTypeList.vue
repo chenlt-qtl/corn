@@ -46,18 +46,6 @@
               </el-option>
             </el-select><span :style="getColorStyle(temp.color,28)" style="margin-left: 10px;">■</span>
           </el-form-item>
-          <el-form-item label="状态集">
-            <el-tree
-              ref="typeTree"
-              check-strictly
-              :data="treeData"
-              show-checkbox
-              default-expand-all
-              check-on-click-node
-              node-key="id"
-              style="border : 1px solid #DCDFE6;height: 200px;overflow-y: auto">
-            </el-tree>
-          </el-form-item>
           <el-form-item style="margin-bottom:0px;">
             <el-button type="primary" @click="saveType">保存</el-button>
           </el-form-item>
@@ -116,7 +104,6 @@
         this.create = true;
       },
       saveType(){
-        this.temp.statusStr = this.$refs.typeTree.getCheckedKeys().join(",");
         if(this.create){
           httpAction(this.url.add, this.temp, 'post').then((data) => {
             this.updateTemp(data.result);
@@ -189,7 +176,6 @@
         if(this.temp.statusStr){
           keys = this.temp.statusStr.split(",");
         }
-        this.$refs.typeTree.setCheckedKeys(keys);
       },
       delType(row){
         MessageBox.confirm('是否确认删除?', '提示', {

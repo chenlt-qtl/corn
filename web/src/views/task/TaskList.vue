@@ -84,7 +84,6 @@
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
-  import TaskStatus from "./TaskStatus";
   import TaskTypeList from "./TaskTypeList";
   import TaskDetail from "./TaskDetail";
   import taskCommon from "./taskCommon";
@@ -99,7 +98,6 @@
       JEditor,
       TaskTypeList,
       TaskDetail,
-      TaskStatus,
       draggable,
     },
     computed:{

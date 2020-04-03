@@ -1,5 +1,7 @@
 <template>
     <div>
+
+      <!--编辑-->
       <div v-if="edit">
         <div ref='editDiv' style="height:350px;overflow-y: scroll;padding: 10px;">
           <el-form
@@ -24,9 +26,6 @@
             <el-form-item label="描述 :">
               <j-editor ref="commentEditor" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500"></j-editor>
             </el-form-item>
-            <el-form-item label="状态 :">
-              <task-status ref="taskStatus" :typeOptions="typeOptions" :data="temp" @changeStatus="setStatus"></task-status>
-            </el-form-item>
             <el-form-item label="优先级 :">
               <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" :disabled="!edit"/>
             </el-form-item>
@@ -48,19 +47,31 @@
         </el-button>
       </div>
       </div>
+
+      <!--显示-->
       <div v-else style="padding: 20px;">
-        <div v-if="!editTitle" style="padding-bottom: 30px;">
-          <span  @click="oldTitle=temp.title;editTitle=true"><h2>{{temp.title}}</h2></span>
-          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;display:inline-block;" :disabled="!edit"/>
-          <i style="float: right;vertical-align: top;" class="el-icon-edit link-type" @click="$emit('editTask',temp)"></i>
+
+        <div style="position: relative;padding-bottom: 10px;">
+          <pre class="pre">{{temp.title}}</pre>
+          <textarea class="title" v-model="temp.title" @blur="updateData();"></textarea>
         </div>
-        <div v-else  style="padding-bottom: 30px">
-          <el-input v-model="temp.title" :autosize="{ minRows: 2, maxRows: 10}" type="textarea" @blur="editTitle=false;updateData();"/>
-          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" :disabled="!edit"/>
+        <div class="view-toolbar">
+          <div class="little-tool">
+            <i :class="{enable:temp.status==5,'el-icon-time':temp.status==5,'el-icon-video-play':temp.status==1,'task-ing':temp.status==1}" @click="$emit('editTask',temp)" title="开始任务">{{statusStr}}</i>
+            <i class="el-icon-circle-check enable" style="color: #67C23A; " @click="$emit('editTask',temp)" title="完成任务"></i>
+            <i class="el-icon-delete enable" style="color: #F56C6C" @click="$emit('editTask',temp)" title="删除任务"></i>
+          </div>
+          <el-divider direction="vertical"></el-divider>
+          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="display:inline-block;padding-right: 80px" @change="updateData();"/>
+          <div class="plan-date">
+            <i class="el-icon-date"></i><span>{{temp.planStartDate?temp.planStartDate:'无'}}</span>
+            <el-divider direction="vertical"></el-divider>
+            <i class="el-icon-edit link-type" @click="$emit('editTask',temp)"></i>
+          </div>
         </div>
         <div><j-editor ref="commentEditor1" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="updateData"></j-editor></div>
-        <div class="plan-date"><i class="el-icon-date"></i><span>{{temp.planStartDate?temp.planStartDate:'无'}}</span></div>
       </div>
+
     </div>
 </template>
 
@@ -72,7 +83,6 @@
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
-  import TaskStatus from "./TaskStatus";
   import taskCommon from "./taskCommon";
 
   Vue.component(Button.name, Button);
@@ -98,7 +108,11 @@
     name:'TaskDetail',
     components: {
       JEditor,
-      TaskStatus,
+    },
+    computed:{
+      statusStr:()=>{
+        console.log(taskCommon);
+      },
     },
     methods: {
       getColor(){
@@ -112,7 +126,7 @@
           id: undefined,
           comment: '',
           dataChange:'',
-          status:0,
+          status:5,
           type:this.type,
         }
       },
@@ -130,7 +144,6 @@
       },
       initFormData(data,dialogStatus) {
         document.documentElement.scrollTop = 0;
-        this.editTitle = false;
         this.dialogStatus = dialogStatus;
         if(dialogStatus == 'create'){
           this.resetTemp();
@@ -141,7 +154,6 @@
             this.$refs.editDiv.scrollTop = 0;
             this.$nextTick(() => {
               this.$refs['dataForm'].clearValidate()
-              this.$refs.taskStatus.setStatusOption();
             })
           }else {
             this.temp = data;
@@ -208,7 +220,6 @@
     data() {
       return {
         prefixColor:this.typeColor,
-        editTitle:false,
         oldTitle:'',
         sprint:'',
         type:3,
@@ -225,7 +236,6 @@
           type: [{ required: true, message: '请输入类型', trigger: 'change' }],
           title: [{ required: true, message: '请输入标题', trigger: 'change' }]
         },
-        statusTxt:'未开始',
         pickerOptions: {
           shortcuts: [{
             text: '今天',
@@ -260,12 +270,64 @@
     }
   }
 </script>
-<style>
+<style scoped>
   .plan-date{
-    padding: 20px 0;
+    display: inline-block;
+    font-size: 14px;
+    float: right;
   }
   .plan-date i{
     padding-right: 10px;
+  }
+  .view-toolbar{
+    padding: 5px;
+    margin-bottom: 10px;
+    background-color: #fafafa;
+    border-radius: 5px;
+    border: 1px solid #EBEEF5;
+  }
+
+  .title{
+    width: 90%;
+    height: 100%;
+    border: none;
+    resize: none;
+    position:absolute;
+    top:0;
+    left:0;
+    background: transparent;
+    outline:0;
+    overflow:hidden;
+    font-weight: bold;
     font-size: 18px;
   }
+  .pre{
+    width: 90%;
+    display: block;
+    font-weight: bold;
+    font-size: 18px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    visibility: hidden;
+  }
+  .little-tool{
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #EBEEF5;
+    width: 135px;
+    padding: 0 5px;
+    display: inline-block;
+  }
+  .little-tool i{
+    margin: 0 5px;
+  }
+
+  .little-tool .enable:hover{
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .task-ing{
+    color: #67C23A;
+  }
+
 </style>
