@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a08562e3-4f01-45ef-ac19-d0f109dc26d6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../web/src/views/gym/gymClassDisplay.vue" afterDir="false" />
+    <list default="true" id="a08562e3-4f01-45ef-ac19-d0f109dc26d6" name="Default Changelist" comment="增加开始锻炼模块">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/config/MybatisPlusConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/config/MybatisPlusConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/config/ShiroConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/config/ShiroConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web/src/config/router.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/config/router.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web/src/views/gym/gymClassList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/views/gym/gymClassList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web/src/views/gym/gymClassPlay.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/views/gym/gymClassPlay.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/taskType/entity/TaskType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/taskType/entity/TaskType.java" afterDir="false" />
     </list>
     <list id="3ea3041f-abf2-4f77-961c-b7e0bac57bb9" name="other" comment="other">
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
@@ -187,51 +183,60 @@
     <session id="-945678142">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="6" />
+          <entry key="project.closed" value="13" />
+          <entry key="project.open.time.113" value="1" />
           <entry key="project.open.time.18" value="1" />
           <entry key="project.open.time.31" value="1" />
           <entry key="project.open.time.36" value="1" />
           <entry key="project.open.time.39" value="1" />
           <entry key="project.open.time.4" value="2" />
+          <entry key="project.open.time.41" value="1" />
+          <entry key="project.open.time.43" value="1" />
+          <entry key="project.open.time.44" value="1" />
+          <entry key="project.open.time.5" value="1" />
+          <entry key="project.open.time.56" value="1" />
+          <entry key="project.open.time.6" value="2" />
+          <entry key="project.open.time.61" value="1" />
           <entry key="project.open.time.64" value="1" />
           <entry key="project.open.time.65" value="1" />
           <entry key="project.open.time.7" value="1" />
-          <entry key="project.opened" value="9" />
+          <entry key="project.opened" value="18" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="class" value="24" />
-          <entry key="java" value="42" />
+          <entry key="class" value="31" />
+          <entry key="java" value="56" />
           <entry key="properties" value="3" />
           <entry key="vue" value="3" />
-          <entry key="xml" value="1" />
+          <entry key="xml" value="4" />
           <entry key="yml" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="CLASS" value="24" />
-          <entry key="JAVA" value="42" />
+          <entry key="CLASS" value="31" />
+          <entry key="JAVA" value="56" />
           <entry key="PLAIN_TEXT" value="3" />
           <entry key="Properties" value="3" />
-          <entry key="XML" value="1" />
+          <entry key="XML" value="4" />
           <entry key="YAML" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="1602" />
-          <entry key="txt" value="44" />
-          <entry key="xml" value="2" />
+          <entry key="java" value="2196" />
+          <entry key="txt" value="50" />
+          <entry key="xml" value="193" />
           <entry key="yml" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="1602" />
-          <entry key="PLAIN_TEXT" value="44" />
-          <entry key="XML" value="2" />
+          <entry key="JAVA" value="2196" />
+          <entry key="PLAIN_TEXT" value="50" />
+          <entry key="SQL" value="5" />
+          <entry key="XML" value="188" />
           <entry key="YAML" value="1" />
         </counts>
       </usages-collector>
@@ -240,91 +245,91 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/ShiroConfig.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/mapper/xml/NoteMapper.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="9" column="39" selection-start-line="9" selection-start-column="39" selection-end-line="9" selection-end-column="39" />
+            <state relative-caret-position="506">
+              <caret line="23" column="74" selection-start-line="23" selection-start-column="39" selection-end-line="23" selection-end-column="74" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/shiro/authc/MyRealm.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/controller/GymInfoController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="38" column="13" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
+            <state relative-caret-position="858">
+              <caret line="73" column="53" selection-start-line="73" selection-start-column="53" selection-end-line="73" selection-end-column="53" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/entity/GymInfo.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="506">
+              <caret line="31" column="26" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="26" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/shiro/authc/aop/JwtFilter.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="45" selection-start-line="45" selection-end-line="45" />
+            <state relative-caret-position="87">
+              <caret line="68" column="27" selection-start-line="68" selection-start-column="27" selection-end-line="68" selection-end-column="27" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="jar://G:/maven/org/apache/shiro/shiro-web/1.4.0-RC2/shiro-web-1.4.0-RC2.jar!/org/apache/shiro/web/filter/PathMatchingFilter.class">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="814">
-              <caret line="54" selection-start-line="54" selection-end-line="54" />
+            <state relative-caret-position="342">
+              <caret line="107" column="5" lean-forward="true" selection-start-line="107" selection-start-column="5" selection-end-line="107" selection-end-column="5" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="jar://G:/maven/org/apache/shiro/shiro-web/1.4.0-RC2/shiro-web-1.4.0-RC2.jar!/org/apache/shiro/web/servlet/AdviceFilter.class">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/taskType/entity/TaskType.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="814">
-              <caret line="46" column="13" selection-start-line="46" selection-start-column="13" selection-end-line="46" selection-end-column="13" />
+            <state relative-caret-position="506">
+              <caret line="31" column="35" lean-forward="true" selection-start-line="31" selection-start-column="35" selection-end-line="31" selection-end-column="35" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/shiro/authc/aop/ResourceCheckFilter.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/mybatis/MybatisInterceptor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="18" column="13" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+            <state relative-caret-position="946">
+              <caret line="61" column="29" selection-start-line="57" selection-start-column="28" selection-end-line="61" selection-end-column="29" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/AutoPoiConfig.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/service/IGymInfoService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="13" column="13" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+            <state relative-caret-position="264">
+              <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/InterceptorRegister.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/service/impl/GymInfoServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="418">
-              <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
+            <state relative-caret-position="264">
+              <caret line="17" selection-start-line="17" selection-end-line="17" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/MybatisPlusConfig.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
-              <caret line="5" column="59" selection-start-line="5" selection-start-column="59" selection-end-line="5" selection-end-column="59" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/RedisConfig.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="37" column="13" selection-start-line="37" selection-start-column="13" selection-end-line="37" selection-end-column="13" />
+            <state relative-caret-position="374">
+              <caret line="38" column="34" selection-start-line="37" selection-start-column="4" selection-end-line="38" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -340,8 +345,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>@Slf4j</find>
-      <find>60</find>
       <find>60层</find>
       <find>setParents</find>
       <find>22564577</find>
@@ -370,6 +373,8 @@
       <find>webAppPath</find>
       <find>addResourceHandlers</find>
       <find>LoginController</find>
+      <find>selectPage</find>
+      <find>未找到对应实体</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -387,8 +392,6 @@
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/common/system/entity/CommonEntity.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/common/system/service/CommonService.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/impl/TaskServiceImpl.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/config/mybatis/MybatisInterceptor.java" />
         <option value="$PROJECT_DIR$/src/test/java/org/jeecg/UpLoadUtilTest.java" />
         <option value="$PROJECT_DIR$/src/main/resources/application-dev.yml" />
@@ -401,6 +404,15 @@
         <option value="$PROJECT_DIR$/src/main/resources/application.yml" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/config/WebMvcConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/controller/GymClassController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/entity/GymInfo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/service/impl/GymInfoServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/service/IGymInfoService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/mapper/xml/GymInfoMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/mapper/GymInfoMapper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/controller/GymInfoController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/taskType/entity/TaskType.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java" />
       </list>
     </option>
   </component>
@@ -447,9 +459,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="AndroidView" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -490,84 +499,6 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-              <item name="vo" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-              <item name="constant" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-              <item name="exception" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-              <item name="jsonschema" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="common" type="462c0819:PsiDirectoryNode" />
-              <item name="system" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-              <item name="mybatis" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -578,7 +509,7 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
-              <item name="shiro" type="462c0819:PsiDirectoryNode" />
+              <item name="task" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
@@ -588,8 +519,8 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
-              <item name="shiro" type="462c0819:PsiDirectoryNode" />
-              <item name="authc" type="462c0819:PsiDirectoryNode" />
+              <item name="task" type="462c0819:PsiDirectoryNode" />
+              <item name="entity" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
@@ -599,9 +530,7 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
-              <item name="shiro" type="462c0819:PsiDirectoryNode" />
-              <item name="authc" type="462c0819:PsiDirectoryNode" />
-              <item name="aop" type="462c0819:PsiDirectoryNode" />
+              <item name="taskType" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
@@ -611,123 +540,16 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
-              <item name="shiro" type="462c0819:PsiDirectoryNode" />
-              <item name="authc" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.baomidou:mybatis-plus-extension:3.1.0" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.baomidou:mybatis-plus-extension:3.1.0" type="70bed36:NamedLibraryElementNode" />
-              <item name="mybatis-plus-extension-3.1.0.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.baomidou:mybatis-plus-extension:3.1.0" type="70bed36:NamedLibraryElementNode" />
-              <item name="mybatis-plus-extension-3.1.0.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="extension" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.baomidou:mybatis-plus-extension:3.1.0" type="70bed36:NamedLibraryElementNode" />
-              <item name="mybatis-plus-extension-3.1.0.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="extension" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: com.baomidou:mybatis-plus-extension:3.1.0" type="70bed36:NamedLibraryElementNode" />
-              <item name="mybatis-plus-extension-3.1.0.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="extension" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="impl" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.apache.shiro:shiro-web:1.4.0-RC2" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.apache.shiro:shiro-web:1.4.0-RC2" type="70bed36:NamedLibraryElementNode" />
-              <item name="shiro-web-1.4.0-RC2.jar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.apache.shiro:shiro-web:1.4.0-RC2" type="70bed36:NamedLibraryElementNode" />
-              <item name="shiro-web-1.4.0-RC2.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="web" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="Maven: org.apache.shiro:shiro-web:1.4.0-RC2" type="70bed36:NamedLibraryElementNode" />
-              <item name="shiro-web-1.4.0-RC2.jar" type="462c0819:PsiDirectoryNode" />
-              <item name="web" type="462c0819:PsiDirectoryNode" />
-              <item name="filter" type="462c0819:PsiDirectoryNode" />
+              <item name="taskType" type="462c0819:PsiDirectoryNode" />
+              <item name="entity" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -738,7 +560,7 @@
     <property name="TODO_SCOPE" value="All Places" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1583476630567" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1584692449665" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../jeecg" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -1029,7 +851,16 @@
       <workItem from="1583807769736" duration="2458000" />
       <workItem from="1583889123935" duration="3882000" />
       <workItem from="1583977368456" duration="3135000" />
-      <workItem from="1584065261749" duration="1767000" />
+      <workItem from="1584065261749" duration="1930000" />
+      <workItem from="1584083390246" duration="634000" />
+      <workItem from="1584323365022" duration="10388000" />
+      <workItem from="1584606190347" duration="5692000" />
+      <workItem from="1584942973093" duration="2992000" />
+      <workItem from="1585101602844" duration="3750000" />
+      <workItem from="1585125389008" duration="3637000" />
+      <workItem from="1585532292999" duration="225000" />
+      <workItem from="1585533386354" duration="1213000" />
+      <workItem from="1585618476687" duration="3893000" />
     </task>
     <task id="LOCAL-00001" summary="增加英语模块">
       <created>1567157273102</created>
@@ -1290,7 +1121,14 @@
       <option name="project" value="LOCAL" />
       <updated>1583474634211</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="增加开始锻炼模块">
+      <created>1584083279859</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1584083279859</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1317,7 +1155,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="47947000" />
+    <option name="totallyTimeSpent" value="80309000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1330,7 +1168,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1035" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.2457356" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -1343,12 +1180,12 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32963374" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.49389568" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.34184238" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32963374" />
       <window_info anchor="bottom" id="Spring" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32852387" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5021322" side_tool="true" weight="0.32963374" />
       <window_info anchor="bottom" id="Messages" order="10" sideWeight="0.4978678" weight="0.32963374" />
       <window_info anchor="bottom" id="Java Enterprise" order="11" />
@@ -1377,12 +1214,12 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32963374" />
-      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.49389568" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.6514983" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32963374" />
       <window_info anchor="bottom" id="Spring" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32852387" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5021322" side_tool="true" weight="0.32963374" />
       <window_info anchor="bottom" id="Messages" order="10" sideWeight="0.4978678" weight="0.32963374" />
       <window_info anchor="bottom" id="Java Enterprise" order="11" />
@@ -1436,7 +1273,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="改配置" />
     <MESSAGE value="同上一个" />
     <MESSAGE value="增加日志" />
     <MESSAGE value="更新配置文件" />
@@ -1461,7 +1297,8 @@
     <MESSAGE value="TaskType" />
     <MESSAGE value="必填验证" />
     <MESSAGE value="增加gym模块" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加gym模块" />
+    <MESSAGE value="增加开始锻炼模块" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加开始锻炼模块" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1505,84 +1342,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/controller/NoteDeleteController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1474">
-          <caret line="97" column="63" selection-start-line="97" selection-start-column="56" selection-end-line="97" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://G:/maven/org/projectlombok/lombok/1.16.22/lombok-1.16.22.jar!/lombok/Data.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="12" column="27" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/system/entity/CommonEntity.java" />
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-core/3.1.0/mybatis-plus-core-3.1.0.jar!/com/baomidou/mybatisplus/core/mapper/BaseMapper.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="16" column="8" selection-start-line="16" selection-start-column="8" selection-end-line="16" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/jeecg/jeecg_database.properties">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/additional/update/impl/UpdateChainWrapper.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/additional/update/impl/LambdaUpdateChainWrapper.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-198">
-          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/additional/update/ChainUpdate.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/additional/AbstractChainWrapper.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="20" column="22" selection-start-line="20" selection-start-column="22" selection-end-line="20" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/additional/ChainWrapper.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/impl/TaskServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="16" column="48" selection-start-line="16" selection-start-column="37" selection-end-line="16" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/system/service/CommonService.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/vue/GymClassList.vue">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/vue/modules/GymClassModal.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
@@ -1597,13 +1356,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
           <caret line="10" column="26" selection-start-line="10" selection-start-column="26" selection-end-line="10" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
-          <caret line="63" selection-start-line="63" selection-end-line="63" />
         </state>
       </provider>
     </entry>
@@ -1640,13 +1392,6 @@
         <state relative-caret-position="-330" />
       </provider>
     </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/impl/ServiceImpl.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="34" column="72" selection-start-line="34" selection-start-column="64" selection-end-line="34" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/util/VideoUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="524">
@@ -1672,13 +1417,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="290">
           <caret line="41" column="16" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/IService.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="24" column="16" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -1727,13 +1465,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/entity/GymClass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="58" column="37" selection-start-line="58" selection-start-column="30" selection-end-line="58" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/system/controller/LoginController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-702">
@@ -1752,27 +1483,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2442">
           <caret line="111" column="29" selection-start-line="111" selection-start-column="29" selection-end-line="111" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/mybatis/MybatisInterceptor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1452">
-          <caret line="84" selection-start-line="84" selection-end-line="84" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/ShiroConfig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="9" column="39" selection-start-line="9" selection-start-column="39" selection-end-line="9" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/shiro/authc/MyRealm.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="38" column="13" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -1829,6 +1539,149 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="134">
           <caret line="45" selection-start-line="45" selection-end-line="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/shiro/authc/MyRealm.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="38" column="13" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/ShiroConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="12" column="51" lean-forward="true" selection-start-line="12" selection-start-column="51" selection-end-line="12" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/entity/GymClass.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="57" column="40" lean-forward="true" selection-start-line="57" selection-start-column="40" selection-end-line="57" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/impl/ServiceImpl.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="386">
+          <caret line="276" column="36" selection-start-line="276" selection-start-column="31" selection-end-line="276" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-core/3.1.0/mybatis-plus-core-3.1.0.jar!/com/baomidou/mybatisplus/core/mapper/BaseMapper.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="652">
+          <caret line="46" column="77" lean-forward="true" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/IService.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="101" column="58" lean-forward="true" selection-start-line="101" selection-start-column="4" selection-end-line="101" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/INoteService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/mapper/xml/GymInfoMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44">
+          <caret line="2" column="57" selection-start-line="2" selection-start-column="57" selection-end-line="2" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/mapper/GymInfoMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/mapper/xml/NoteDeleteMapper.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-core/3.1.0/mybatis-plus-core-3.1.0.jar!/com/baomidou/mybatisplus/core/conditions/interfaces/Compare.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="521">
+          <caret line="44" column="21" selection-start-line="44" selection-start-column="21" selection-end-line="44" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/mapper/xml/NoteMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="23" column="74" selection-start-line="23" selection-start-column="39" selection-end-line="23" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/controller/GymInfoController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="858">
+          <caret line="73" column="53" selection-start-line="73" selection-start-column="53" selection-end-line="73" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/entity/GymInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="31" column="26" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/mybatis/MybatisInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="946">
+          <caret line="61" column="29" selection-start-line="57" selection-start-column="28" selection-end-line="61" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/service/IGymInfoService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/service/impl/GymInfoServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="38" column="34" selection-start-line="37" selection-start-column="4" selection-end-line="38" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="107" column="5" lean-forward="true" selection-start-line="107" selection-start-column="5" selection-end-line="107" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/taskType/entity/TaskType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="31" column="35" lean-forward="true" selection-start-line="31" selection-start-column="35" selection-end-line="31" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="87">
+          <caret line="68" column="27" selection-start-line="68" selection-start-column="27" selection-end-line="68" selection-end-column="27" />
         </state>
       </provider>
     </entry>

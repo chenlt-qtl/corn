@@ -30,9 +30,6 @@ public class TaskType implements Serializable {
 	/**color*/
 	@Excel(name = "color", width = 15)
 	private java.lang.String color;
-	/**statusStr*/
-	@Excel(name = "statusStr", width = 15)
-	private java.lang.String statusStr;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.Integer status;

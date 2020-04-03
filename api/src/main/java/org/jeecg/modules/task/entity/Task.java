@@ -33,12 +33,6 @@ public class Task implements Serializable {
 	@Excel(name = "title", width = 15)
 	private java.lang.String title;
 
-	/**jiraNo*/
-	@Excel(name = "jiraNo", width = 15)
-	private java.lang.String jiraNo;
-	/**jiraDesc*/
-	@Excel(name = "jiraDesc", width = 15)
-	private java.lang.String jiraDesc;
 	/**comment*/
 	@Excel(name = "comment", width = 15)
 	private java.lang.String comment;
@@ -58,10 +52,6 @@ public class Task implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd")
 	private java.util.Date realStartDate;
 
-	/**dataChange*/
-	@Excel(name = "dataChange", width = 15)
-	private java.lang.String dataChange;
-
 	/**importance*/
 	@Excel(name = "importance", width = 15)
 	private Integer importance;
@@ -77,11 +67,6 @@ public class Task implements Serializable {
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private Integer status;
-
-
-	/**sprint*/
-	@Excel(name = "sprint", width = 15)
-	private Integer sprint;
 
 	/**createTime*/
 	@Excel(name = "createTime", width = 20, format = "yyyy-MM-dd HH:mm:ss")
