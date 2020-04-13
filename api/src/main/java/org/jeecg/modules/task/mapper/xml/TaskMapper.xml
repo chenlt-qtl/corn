@@ -2,4 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.task.mapper.TaskMapper">
 
+    <select id="listAllChildren" resultType="org.jeecg.modules.task.entity.Task">
+        SELECT *
+        FROM  task
+        WHERE create_by = #{createBy,jdbcType=VARCHAR}
+        <if test="pIdsArr != null and pIdsArr.length>0">
+            and
+             <foreach collection='pIdsArr' item ='item' open = '(' separator='or' close=')'>
+                 p_ids like concat(#{item},'%')
+             </foreach>
+        </if>
+        <if test="title != null">
+            <![CDATA[ and (title like CONCAT('%','${title}','%' )]]>
+        </if>
+        order by update_time
+    </select>
+
 </mapper>

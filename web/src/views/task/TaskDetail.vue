@@ -51,15 +51,25 @@
       <!--显示-->
       <div v-else style="padding: 20px;">
 
-        <div style="position: relative;padding-bottom: 10px;">
-          <pre class="pre">{{temp.title}}</pre>
-          <textarea class="title" v-model="temp.title" @blur="updateData();"></textarea>
+        <div style="width: 100%;">
+          <el-checkbox v-model="detailCheck" @change="$emit('finishTask',temp)" style="padding: 5px;float: left;"></el-checkbox>
+          <div style="vertical-align: top;overflow:auto;">
+            <div style="position: relative;padding-bottom: 10px;">
+              <pre class="pre">{{temp.title}}</pre>
+              <textarea class="title" v-model="temp.title" @blur="updateData()"></textarea>
+            </div>
+          </div>
         </div>
         <div class="view-toolbar">
           <div class="little-tool">
-            <i :class="{enable:temp.status==5,'el-icon-time':temp.status==5,'el-icon-video-play':temp.status==1,'task-ing':temp.status==1}" @click="$emit('editTask',temp)" title="开始任务">{{statusStr}}</i>
-            <i class="el-icon-circle-check enable" style="color: #67C23A; " @click="$emit('editTask',temp)" title="完成任务"></i>
-            <i class="el-icon-delete enable" style="color: #F56C6C" @click="$emit('editTask',temp)" title="删除任务"></i>
+            <i v-if="temp.status==5" class="fa fa-toggle-off enable" style="color:#909399 " @click="temp.status=1;updateData();">
+              <span style="margin: 0 5px">{{statusStr()}}</span>
+            </i>
+            <i v-if="temp.status==1" class="fa fa-toggle-on enable" style="color:#67C23A " @click="temp.status=5;updateData();">
+              <span style="margin: 0 5px">{{statusStr()}}</span>
+            </i>
+            <i class="fa fa-clone enable" @click="$emit('addTask',{pid:temp.id})" title="添加子任务"></i>
+            <i class="el-icon-delete enable" style="color: #F56C6C" @click="temp.status=0;updateData();" title="删除任务"></i>
           </div>
           <el-divider direction="vertical"></el-divider>
           <el-rate v-model="temp.importance" :colors="colors" :max="5" style="display:inline-block;padding-right: 80px" @change="updateData();"/>
@@ -84,6 +94,7 @@
   import { httpAction} from '@/api/manage';
   import JEditor from "@/components/jeecg/JEditor";
   import taskCommon from "./taskCommon";
+  import "font-awesome/css/font-awesome.min.css";
 
   Vue.component(Button.name, Button);
   Vue.component(MessageBox.name, MessageBox);
@@ -110,25 +121,34 @@
       JEditor,
     },
     computed:{
-      statusStr:()=>{
-        console.log(taskCommon);
-      },
+
     },
     methods: {
+      isFinish:function(){
+        if(this.temp.status==9){
+          return true;
+        }else {
+          return false;
+        }
+      },
+      statusStr:function() {
+        const statusData = taskCommon.statusData[this.temp.status];
+        return statusData?statusData.title:"";
+      },
       getColor(){
         return taskCommon.getColorByType(this.temp.type,this.typeOptions);
       },
       getTextByType(){
         return taskCommon.getTextByType(this.temp.type,this.typeOptions);
       },
-      resetTemp() {
-        this.temp = {
+      resetTemp(data) {
+        this.temp = Object.assign(data||{},{
           id: undefined,
           comment: '',
           dataChange:'',
           status:5,
           type:this.type,
-        }
+        });
       },
       changeStatus(data){
         let typeObj = data[1];
@@ -146,7 +166,7 @@
         document.documentElement.scrollTop = 0;
         this.dialogStatus = dialogStatus;
         if(dialogStatus == 'create'){
-          this.resetTemp();
+          this.resetTemp(data);
           this.$refs.commentEditor.setText('');
         }else {
           if(this.edit) {
@@ -159,6 +179,7 @@
             this.temp = data;
           }
         }
+        this.detailCheck = this.isFinish();
       },
       updateData(){
         if(this.edit){
@@ -196,6 +217,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.temp.comment = this.$refs.commentEditor.getText();
+            console.log(this.temp);
             httpAction(this.url.add, this.temp, 'post').then(() => {
               this.$emit('ok',this.temp);
             })
@@ -230,7 +252,7 @@
           edit:"/task/edit",
         },
         loading:true,
-        temp: {},
+        temp: {status:0},
         dialogStatus:'',
         rules: {
           type: [{ required: true, message: '请输入类型', trigger: 'change' }],
@@ -266,6 +288,7 @@
           }]
         },
         workTimeOptions:[{id:0.5,value:"半天"},{id:1,value:"一天"},{id:1.5,value:"一天半"},{id:2,value:"两天"},{id:3,value:'三天'}],
+        detailCheck:false,
       }
     }
   }
@@ -273,11 +296,12 @@
 <style scoped>
   .plan-date{
     display: inline-block;
-    font-size: 14px;
+    font-size: 12px;
     float: right;
   }
   .plan-date i{
     padding-right: 10px;
+    font-size: 14px;
   }
   .view-toolbar{
     padding: 5px;
@@ -313,8 +337,7 @@
   .little-tool{
     background-color: #fff;
     border-radius: 10px;
-    border: 1px solid #EBEEF5;
-    width: 135px;
+    border: 1px solid #e0f1e9;
     padding: 0 5px;
     display: inline-block;
   }

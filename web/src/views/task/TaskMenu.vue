@@ -5,7 +5,7 @@
       <div style="float: right;"><el-button type="text" style="padding-top:5px;padding-right: 10px;"><i class="el-icon-refresh"></i></el-button></div>
     </div>
     <div>
-      <draggable tag="el-menu" class="el-menu-vertical-demo" style="background: #fafafa;width: 100%;" :options="{group:'timeRange',disabled:true}">
+      <draggable tag="el-menu" class="el-menu-vertical-demo" style="background: #fafafa;width: 100%;" :options="{group:groupName,disabled:true}">
         <el-menu-item v-for="(item,index) in timeRangeData1" :index="index.toString()" :key="item.key" :itemid="item.key" @click="selectTime(item.key,item.title)" >
           <i :class="item.icon"></i>
           <span :value="item.key">{{item.title}}</span>
@@ -62,6 +62,12 @@
     },
     components:{
       draggable,
+    },
+    props:{
+      groupName:{
+        type:[String,Array],
+        default:''
+      }
     },
     methods: {
       getTaskTypeData(){

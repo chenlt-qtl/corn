@@ -1,11 +1,22 @@
 package org.jeecg.modules.task.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.task.entity.Task;
 import org.jeecg.modules.task.mapper.TaskMapper;
 import org.jeecg.modules.task.service.ITaskService;
+import org.jeecg.modules.task.vo.TaskVo;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Description: 任务
@@ -16,4 +27,88 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements ITaskService {
 
+    @Resource
+    private TaskMapper taskMapper;
+
+    //删除任务和子任务
+    public void delTask(Task task){
+
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        List<Task> tasks = taskMapper.listAllChildren(sysUser.getUsername(),new String[]{task.getPIds()+"/"+task.getId()},null);//所有子任务
+        tasks.add(task);
+        for(Task t:tasks){
+            t.setStatus(DEL_STATUS);
+            this.updateById(t);
+        }
+
+    }
+
+    @Override
+    public boolean updateTask(Task task) {
+        setParents(task);
+        return updateById(task);
+    }
+
+    @Override
+    public boolean saveTask(Task task) {
+        setParents(task);
+        return save(task);
+    }
+
+    @Override
+    public IPage<TaskVo> pageWithChild(IPage<Task> page, Wrapper<Task> queryWrapper) {
+        IPage<Task> pageList = page(page,queryWrapper);
+
+        List<String> taskIds = new ArrayList();
+        List<TaskVo> records = new ArrayList<>();
+        List<TaskVo> childrenVo = new ArrayList<>();
+        for(Task task:pageList.getRecords()){
+            records.add(new TaskVo(task));
+            taskIds.add(task.getPIds()+"/"+task.getId());
+        }
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        List<Task> children = taskMapper.listAllChildren(sysUser.getUsername(), taskIds.toArray(new String[]{}), null);//查出所有子节点
+        for(Task child:children){
+            childrenVo.add(new TaskVo(child));
+        }
+        for(TaskVo child:childrenVo){
+            boolean found = false;//是否找到父节点
+
+            for(TaskVo parent:records){
+                if(parent.getId().equals(child.getPId())){
+                    parent.getChildren().add(child);
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                for(TaskVo parent:childrenVo){
+                    if(parent.getId().equals(child.getPId())){
+                        parent.getChildren().add(child);
+                        break;
+                    }
+                }
+            }
+        }
+
+        IPage<TaskVo> result = new Page<>();
+        result.setRecords(records);
+        result.setTotal(pageList.getTotal());
+        return result;
+    }
+
+
+    /**
+     * 设置parents
+     * @param task
+     */
+    public void setParents(Task task){
+        if(StringUtils.isBlank(task.getPId())||"0".equals(task.getPId())){
+            task.setPId("0");
+            task.setPIds("0");
+        }else {
+            Task parent = getById(task.getPId());
+            task.setPIds(parent.getPIds() + "/" + task.getPId());
+        }
+    }
 }

@@ -11,10 +11,6 @@
       <el-select v-model="statusStr" style="margin-right: 10px;width: 160px;" class="filter-item" placeholder="状态" @change="getTaskData(1)" clearable multiple collapse-tags>
         <el-option v-for="item in statusOptions" :key="item.code" :label="item.text" :value="item.code" />
       </el-select>
-      <el-input v-model="sprint" placeholder="迭代" @change="getTaskData(1)" style="width: 100px" clearable/>
-      <el-checkbox v-model="notFinish" class="filter-item" style="margin-left:15px;" @change="getNotFinish">
-        未完成
-      </el-checkbox>
       <div style="float: right;margin-right: 10px;display: inline-block">
         <el-button type="primary" icon="el-icon-plus" @click="openDetailForm(null,'create')">增加</el-button>
         <span style="margin: 0 10px;color: #e8e8e8;">|</span><a-icon type="setting" class="link-type" @click="handleSetting()"></a-icon>
@@ -25,34 +21,34 @@
     <div class="task-main" style="margin: 20px 100px;background-color: #fff">
       <el-row>
         <el-col :xs="24" :sm="24" :md="5" :lg="5" :xl="5" style="background: #fafafa">
-          <task-menu @selectMenu="selectMenu"></task-menu>
+          <task-menu @selectMenu="selectMenu" :groupName="groupName"></task-menu>
         </el-col>
         <el-col :xs="24" :sm="24" :md="7" :lg="7" :xl="7" v-loading="loading">
           <span style="display:inline-block;padding: 20px;font-weight: bold;font-size: 20px;">{{title}}</span>
 
           <div v-if="tableData.length>0">
+            <task-li
+              :groupName="groupName[0]"
+              :draggable="true"
+              :arrayData="tableData"
+              :selectId="selectRow.id"
+              @selectRow="item=>handleSelectRow(item)"
+              @finishTask="item=>finishTask(item)"
+              @changeDate="itemId=>changeDate(itemId)"/>
+            <el-pagination
+              @size-change="val=>{this.pageSize = val;}"
+              @current-change="val=>{getTaskData(val);}"
+              :current-page.sync="currentPage"
+              :page-sizes="[10, 50, 100]"
+              :page-size="pageSize"
+              layout=" prev, pager, next, sizes"
+              :total="total">
+            </el-pagination>
 
-            <draggable class="task-list" tag="ul" :options="{group:'timeRange'}" @end="changeDate" :sort="false">
-                <li :class="{'select-row':item.id==selectRow.id}" v-for="item in tableData" :key="item.id" @click="handleSelectRow(item)" :itemid="item.id">
-                  <div class="table-row"><el-checkbox @change="finishTask(item)" style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
-                </li>
-            </draggable>
           </div>
           <div v-else style="padding: 50px">
             <i class="el-icon-cold-drink" style="padding-right: 20px;font-size: 20px;font-weight: bold;"></i>没有任务,放松一下。
           </div>
-
-            <div v-if="finishData.length>0">
-              <span style="font-weight: bold;display: inline-block;padding: 10px;">
-                <i class="el-icon-caret-bottom"></i>  已完成
-              </span>
-              <ul class="task-list task-finish">
-                <li :class="{'select-row':item.id==selectRow.id}" v-for="item in finishData" :key="item.id" @click="handleSelectRow(item)">
-                  <div class="table-row"><el-checkbox :checked="true" @change="finishTask(item)" style="margin-right: 10px;"></el-checkbox><span style="line-height: 10px;">{{item.title}}</span></div>
-                </li>
-              </ul>
-            </div>
-            <el-button type="text" style="color:#606266;padding-left: 20px;" @click="loadMore"><i class="el-icon-search"></i>  查看更多</el-button>
 
         </el-col>
 
@@ -64,7 +60,7 @@
           :xl="12"
           style="border-left: 1px solid #C0C4CC"
           v-loading="loading">
-          <task-detail ref="taskDetail" :typeOptions="typeOptions" @ok="reloadData" @editTask="editTask"></task-detail>
+          <task-detail ref="taskDetail" :typeOptions="typeOptions" @ok="reloadData" @editTask="editTask" @addTask="data=>{openDetailForm(data,'create')}" @finishTask="finishTask"></task-detail>
         </el-col>
 
       </el-row>
@@ -88,6 +84,7 @@
   import TaskDetail from "./TaskDetail";
   import taskCommon from "./taskCommon";
   import TaskMenu from "./TaskMenu";
+  import TaskLi from "./TaskLi";
   import draggable from 'vuedraggable';
 
   Vue.use(ElementUI);
@@ -98,6 +95,7 @@
       JEditor,
       TaskTypeList,
       TaskDetail,
+      TaskLi,
       draggable,
     },
     computed:{
@@ -130,18 +128,16 @@
     },
     methods: {
       finishTask(task){
-        if(task.status != 99){
-          task.status = 99;
+        if(task.status != 9){
+          task.status = 9;
         }else {
-          task.status = 0;
+          task.status = 5;
         }
         this.$refs.taskDetail.updateTask(task);
       },
-      changeDate(e){//修改计划日期
-        const taskId = e.item.getAttribute("itemid");
-
+      changeDate(taskId){//修改计划日期
         let task = {};
-        this.tableData.forEach(item=>{
+        this.startData.concat(this.notStartData).forEach(item=>{
           if(item.id == taskId){
             task = item;
           }
@@ -160,16 +156,6 @@
       selectMenu(data){
         Object.assign(this, data);
         this.getTaskData(1);
-      },
-      getNotFinish(){
-        if(this.notFinish){
-          let statusStr = this.statusOptions[0].code+","+this.statusOptions[1].code+","+this.statusOptions[2].code;
-          this.statusStr = statusStr;
-          this.getTaskData(1);
-        }else {
-          this.statusStr = "";
-          this.getTaskData(1);
-        }
       },
       getStatus(status){
         return taskCommon.getStatus(status);
@@ -190,23 +176,16 @@
         }
         this.loading = true;
         let that = this;
-        httpAction(this.url.list+"?type="+this.type+"&statusStr="+this.statusStr+"&pageNo="+this.currentPage+"&timeRange="+this.timeRange, {}, 'get').then((res) => {
+        httpAction(this.url.list+`?type=${this.type}&pageNo=${this.currentPage}&pageSize=${this.pageSize}&timeRange=${this.timeRange}&statusArr=1&statusArr=5`, {}, 'get').then((res) => {
           if (res.success) {
-            let tableData = this.currentPage == 1?[]:this.tableData;
-            let finishData = this.currentPage == 1?[]:this.finishData;
+            let tableData = [];
             res.result.records.forEach((task)=>{
               task.edit = false;
-              if(task.status == 99){
-                finishData.push(task);
-              }else {
-                tableData.push(task);
-              }
-
+              tableData.push(task);
             });
             this.total = res.result.total;
             this.tableData = tableData;
-            this.finishData = finishData;
-            this.selectRow = this.tableData[0]||{};
+            this.selectRow = res.result.records[0]||{};
           }
           that.loading = false;
         })
@@ -227,6 +206,7 @@
         this.openDetailForm(data,"update");
       },
       openDetailForm(data,type) {
+        console.log(data);
         this.dialogFormVisible = true;
         this.$nextTick(() => {
           this.$refs.taskDialog.initFormData(data,type);
@@ -236,38 +216,22 @@
         //this.$refs.taskDetail.initFormData(row);
         this.selectRow = row;
       },
-      deleteTask(row){
-        this.$confirm('此操作将永久删除该任务, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          httpAction(this.url.delete+ "?id="+row.id, {}, 'delete').then(() => {
-            this.$notify.success({
-              title: 'Success',
-              message: 'Delete Successfully',
-              duration: 2000
-            });
-            const index = this.tableData.indexOf(row);
-            this.tableData.splice(index, 1);
-          });
-        }).catch(() => {});
-
-      },
       reloadData(data) {
         this.getTaskData();
         this.selectRow = data;
 
-        this.$notify.success({
-          title: 'Success',
-          message: 'Success',
-          duration: 2000
-        })
+        if(data.status === 0){
+          this.$message.error({
+            message: '删除成功',
+            duration: 2000
+          })
+        }
+
+        console.log('操作成功')
         this.dialogFormVisible=false;
       },
       loadMore:function() {
-        if((this.tableData.length + this.finishData.length)>=this.total){
-          console.log(123);
+        if(this.tableData.length>=this.total){
           this.$message({
             showClose: true,
             message: '没有更多数据了哦',
@@ -297,53 +261,37 @@
           edit:"/task/edit",
           delete:'/task/delete',
         },
-        tableData: [],
         loading:true,
         typeOptions: [],
         statusOptions: taskCommon.statusOptions,
         dialogFormVisible: false,
         total:0,
         currentPage:1,
-        notFinish:false,
+        pageSize:10,
         selectRow:'',
         title:'',
-        finishData:[],
+        tableData:[],
         dropTimeRange:'',
+        groupName:['jxz','wks']
       }
     },
     watch:{
       selectRow() {
         this.$refs.taskDetail.initFormData(this.selectRow);
       },
+      pageSize(){
+        this.getTaskData(1);
+      }
     }
   }
 </script>
 <style>
-  .el-table .dev-row {
-    background: #FFF9C4;
-  }
 
-  .el-table .test-row {
-    background: #E1F5FE;
-  }
-
-  .el-table .finish-row {
-    background: #DCEDC8;
-  }
   .link-type{
     cursor: pointer;
   }
   .link-type:hover{
     color: #2eabff;
-  }
-
-  .task-list{
-    list-style: none;
-    padding-inline-start:0px;
-  }
-
-  .task-finish{
-    color: #C0C4CC;
   }
 
   .task-list li{
@@ -357,13 +305,7 @@
   .el-checkbox__inner{
     border-radius: 4px;
   }
-  .select-row{
-    background: #F2F6FC;
-  }
-  .table-row{
-    padding: 10px 0px;
-    border-bottom: 1px solid #DCDFE6;
-  }
+
   .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
     background-color: #C0C4CC;
     border-color: #C0C4CC;
