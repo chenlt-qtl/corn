@@ -137,7 +137,7 @@
       },
       changeDate(taskId){//修改计划日期
         let task = {};
-        this.startData.concat(this.notStartData).forEach(item=>{
+        this.tableData.forEach(item=>{
           if(item.id == taskId){
             task = item;
           }
@@ -155,7 +155,7 @@
       },
       selectMenu(data){
         Object.assign(this, data);
-        this.getTaskData(1);
+        this.getTaskData(1,data.status);
       },
       getStatus(status){
         return taskCommon.getStatus(status);
@@ -170,13 +170,19 @@
       getRowStyle(row){
         return "min-height:60px;border-left: 4px solid "+taskCommon.getColorByType(row.type,this.typeOptions);
       },
-      getTaskData(currentPage){//获取任务数据
+      getTaskData(currentPage,status){//获取任务数据
         if(currentPage){
           this.currentPage = currentPage;
         }
         this.loading = true;
         let that = this;
-        httpAction(this.url.list+`?type=${this.type}&pageNo=${this.currentPage}&pageSize=${this.pageSize}&timeRange=${this.timeRange}&statusArr=1&statusArr=5`, {}, 'get').then((res) => {
+        let url = this.url.list+`?type=${this.type}&pageNo=${this.currentPage}&pageSize=${this.pageSize}&timeRange=${this.timeRange}`;
+        if(status){
+          url += `&status=`+status;
+        }else {
+          url += `&statusArr=1&statusArr=5`;
+        }
+        httpAction(url, {}, 'get').then((res) => {
           if (res.success) {
             let tableData = [];
             res.result.records.forEach((task)=>{

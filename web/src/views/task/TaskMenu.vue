@@ -33,11 +33,11 @@
       <el-menu
         class="el-menu-vertical-demo"
         style="background: #fafafa;width: 100%;">
-        <el-menu-item index="2">
+        <el-menu-item index="2" @click="selectStatus(9,'已完成')" >
           <i class="el-icon-finished"></i>
           <span slot="title">已完成</span>
         </el-menu-item>
-        <el-menu-item index="3">
+        <el-menu-item index="3" @click="selectStatus(0,'回收站')">
           <i class="el-icon-delete"></i>
           <span slot="title">回收站</span>
         </el-menu-item>
@@ -93,6 +93,9 @@
       selectMenu(data){//菜单栏查询事件
         this.$emit("selectMenu",data);
       },
+      selectStatus(status, title){
+        this.selectMenu({"status":String(status),title:title});
+      }
     },
     data() {
       return {

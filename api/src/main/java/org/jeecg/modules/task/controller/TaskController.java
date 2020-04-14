@@ -57,14 +57,14 @@ public class TaskController {
 											   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 											   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 											   @RequestParam(name="timeRange") String timeRange,
-											   @RequestParam(name="statusArr") Integer[] status,
+											   @RequestParam(name="statusArr",required = false) Integer[] statusArr,
 											   HttpServletRequest req) {
 		Result<IPage<TaskVo>> result = new Result<IPage<TaskVo>>();
 		QueryWrapper<Task> queryWrapper = QueryGenerator.initQueryWrapper(task, req.getParameterMap());
 		queryWrapper.eq("p_id","0");
 
-		if(status != null && status.length>0){
-			queryWrapper.in("status", status);
+		if(statusArr != null && statusArr.length>0){
+			queryWrapper.in("status", statusArr);
 		}
 
 		if(StringUtils.isNotBlank(timeRange)){
