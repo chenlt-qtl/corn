@@ -44,7 +44,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
     }
 
     @Override
-    public boolean updateTask(Task task) {
+    public boolean updateTask(Task task,Task oldTask) {
+        if(StringUtils.isNotBlank(task.getPIds()) && !"0".equals(task.getPIds())){//有父节点又要改plan start date的 祖宗节点的plan start date也一起改掉
+            if(task.getPlanStartDate() != null && oldTask.getPlanStartDate() != null
+                    && task.getPlanStartDate().getTime() != oldTask.getPlanStartDate().getTime()){
+                String topParentId = task.getPIds().substring(2,34);
+                Task topParent = getById(topParentId);
+                topParent.setPlanStartDate(task.getPlanStartDate());
+                updateById(topParent);
+            }
+
+        }
         setParents(task);
         return updateById(task);
     }

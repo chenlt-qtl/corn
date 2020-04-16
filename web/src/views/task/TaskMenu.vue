@@ -1,7 +1,7 @@
 <template>
   <div style="padding-top: 20px;margin-left: 20px;padding-bottom: 20px; border-right: solid 1px #e6e6e6;">
     <div style="margin-bottom: 10px">
-      <el-input v-model="searchKey" size="mini" suffix-icon="el-icon-search" style="width: 100px;margin-right: 10px;"/>
+      <el-input v-model="searchKey" @input="searchTask" size="mini" suffix-icon="el-icon-search" style="width: 100px;margin-right: 10px;"/>
       <div style="float: right;"><el-button type="text" style="padding-top:5px;padding-right: 10px;"><i class="el-icon-refresh"></i></el-button></div>
     </div>
     <div>
@@ -53,13 +53,11 @@
   import { httpAction} from '@/api/manage';
   import draggable from 'vuedraggable'
 
+
   Vue.use(ElementUI);
 
   export default {
     name:'TaskMenu',
-    mounted:function(){
-      this.getTaskTypeData();
-    },
     components:{
       draggable,
     },
@@ -69,10 +67,14 @@
         default:''
       }
     },
+    mounted:function(){
+      this.getTaskTypeData();//获取task type数据
+      this.selectTime(this.timeRangeData1[0].key,this.timeRangeData1[0].title);//选中今天
+    },
     methods: {
       getTaskTypeData(){
         this.loading = true;
-        httpAction(this.url.list+"?name="+this.searchKey, {}, 'get').then((res) => {
+        httpAction(this.url.list, {}, 'get').then((res) => {
           if (res.success) {
             let typeData = [];
             res.result.records.forEach((task)=>{
@@ -84,21 +86,29 @@
         })
       },
       selectTime(key,title){//左侧菜单栏的时间选择
-        this.selectMenu({"timeRange":key,"type":"",title:title});
+        this.searchParam = {"timeRange":key,"type":"",text:title,statusArr:this.statusArr};
       },
       selectType(index){//左侧菜单栏的类型选择
         let data = this.typeData[index];
-        this.selectMenu({"timeRange":"","type":data.id,title:data.name});
-      },
-      selectMenu(data){//菜单栏查询事件
-        this.$emit("selectMenu",data);
+        this.searchParam = {"timeRange":"","type":data.id,text:data.name,statusArr:this.statusArr};
       },
       selectStatus(status, title){
-        this.selectMenu({"status":String(status),title:title});
+        this.searchParam ={"status":String(status),text:title};
+      },
+      searchTask(){
+        this.searchParam = Object.assign({},this.searchParam,{searchKey:this.searchKey});
       }
     },
     data() {
       return {
+        searchParam:{
+          text:"",
+          status:null,
+          timeRange:"",
+          type:"",
+          searchKey:"",
+        },
+        statusArr:[1,5],
         searchKey:'',
         typeData:[],
         timeRangeData1:[
@@ -112,6 +122,11 @@
         url: {
           list: "/taskType/list",
         }
+      }
+    },
+    watch:{
+      searchParam:function() {
+        this.$emit("selectMenu",this.searchParam);
       }
     }
   }

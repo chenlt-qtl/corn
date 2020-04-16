@@ -19,7 +19,7 @@ public interface ITaskService extends IService<Task> {
 
     public void delTask(Task task);
 
-    boolean updateTask(Task task);
+    boolean updateTask(Task task,Task oldTask);
 
     boolean saveTask(Task task);
 

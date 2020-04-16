@@ -56,8 +56,9 @@ public class TaskController {
 	public Result<IPage<TaskVo>> queryPageList(Task task,
 											   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 											   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-											   @RequestParam(name="timeRange") String timeRange,
+											   @RequestParam(name="timeRange",required = false) String timeRange,
 											   @RequestParam(name="statusArr",required = false) Integer[] statusArr,
+											   @RequestParam(name="searchKey",required = false) String searchKey,
 											   HttpServletRequest req) {
 		Result<IPage<TaskVo>> result = new Result<IPage<TaskVo>>();
 		QueryWrapper<Task> queryWrapper = QueryGenerator.initQueryWrapper(task, req.getParameterMap());
@@ -65,6 +66,10 @@ public class TaskController {
 
 		if(statusArr != null && statusArr.length>0){
 			queryWrapper.in("status", statusArr);
+		}
+
+		if(StringUtils.isNotBlank(searchKey)){
+			queryWrapper.like("title",searchKey);
 		}
 
 		if(StringUtils.isNotBlank(timeRange)){
@@ -119,7 +124,7 @@ public class TaskController {
 		if(taskEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
-			boolean ok = taskService.updateTask(task);
+			boolean ok = taskService.updateTask(task,taskEntity);
 			//TODO 返回false说明什么？
 			if(ok) {
 				result.success("修改成功!");

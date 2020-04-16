@@ -14,7 +14,7 @@
             <el-form-item label="标题 :" prop="title">
               <el-input v-model="temp.title" />
             </el-form-item>
-            <el-form-item label="类型 :" prop="type">
+            <el-form-item label="类型 :" prop="type" v-if="!temp.pid||temp.pid=='0'">
               <el-select v-model="temp.type" class="filter-item" placeholder="Please select" :disabled="!edit">
                 <span slot="prefix" :style="{color:getColor(),fontSize:'22px'}">■</span>
                 <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
@@ -68,7 +68,7 @@
             <i v-if="temp.status==1" class="fa fa-toggle-on enable" style="color:#67C23A " @click="temp.status=5;updateData();">
               <span style="margin: 0 5px">{{statusStr()}}</span>
             </i>
-            <i class="fa fa-clone enable" @click="$emit('addTask',{pid:temp.id})" title="添加子任务"></i>
+            <i class="fa fa-clone enable" @click="$emit('addTask',{pid:temp.id,type:temp.type})" title="添加子任务"></i>
             <i class="el-icon-delete enable" style="color: #F56C6C" @click="temp.status=0;updateData();" title="删除任务"></i>
           </div>
           <el-divider direction="vertical"></el-divider>

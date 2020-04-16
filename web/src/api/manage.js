@@ -1,4 +1,5 @@
 import { axios } from '@/utils/request'
+import qs from 'qs';
 
 const api = {
   user: '/api/user',
@@ -42,7 +43,10 @@ export function getAction(url,parameter) {
   return axios({
     url: url,
     method: 'get',
-    params: parameter
+    params: parameter,
+    paramsSerializer: params => {
+      return qs.stringify(params, { indices: false })
+    }
   })
 }
 
