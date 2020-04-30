@@ -111,7 +111,7 @@
   .task-item-arrow{
       float: right;
       padding-left: 10px;
-      font-size: 6px;
+      font-size: 10px;
       font-weight: bold;
   }
 

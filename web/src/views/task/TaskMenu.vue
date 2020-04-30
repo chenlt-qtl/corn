@@ -65,26 +65,16 @@
       groupName:{
         type:[String,Array],
         default:''
+      },
+      typeData:{
+        type:Array,
+        default:()=>[]
       }
     },
     mounted:function(){
-      this.getTaskTypeData();//获取task type数据
       this.selectTime(this.timeRangeData1[0].key,this.timeRangeData1[0].title);//选中今天
     },
     methods: {
-      getTaskTypeData(){
-        this.loading = true;
-        httpAction(this.url.list, {}, 'get').then((res) => {
-          if (res.success) {
-            let typeData = [];
-            res.result.records.forEach((task)=>{
-              typeData.push(task);
-            });
-            this.typeData = typeData;
-          }
-          this.loading = false;
-        })
-      },
       selectTime(key,title){//左侧菜单栏的时间选择
         this.searchParam = {"timeRange":key,"type":"",text:title,statusArr:this.statusArr};
       },
@@ -110,7 +100,6 @@
         },
         statusArr:[1,5],
         searchKey:'',
-        typeData:[],
         timeRangeData1:[
           {key:"today",title:"今天",icon:'el-icon-menu'},
           {key:"week",title:"本周",icon:'el-icon-s-grid'},

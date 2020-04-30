@@ -50,36 +50,44 @@
 
       <!--显示-->
       <div v-else style="padding: 20px;">
-
-        <div style="width: 100%;">
-          <el-checkbox v-model="detailCheck" @change="$emit('finishTask',temp)" style="padding: 5px;float: left;"></el-checkbox>
-          <div style="vertical-align: top;overflow:auto;">
-            <div style="position: relative;padding-bottom: 10px;">
-              <pre class="pre">{{temp.title}}</pre>
-              <textarea class="title" v-model="temp.title" @blur="updateData()"></textarea>
+        <div v-if="this.temp.id == undefined" style="margin: 300px auto;text-align: center;">
+          <i class="el-icon-box" style="margin-right:20px;font-size: 20px;font-weight: bold;"></i>没有数据
+        </div>
+        <div v-else>
+          <div style="width: 100%;">
+            <el-checkbox v-model="detailCheck" @change="$emit('finishTask',temp)" style="padding: 5px;float: left;"></el-checkbox>
+            <div style="vertical-align: top;overflow:auto;">
+              <div style="position: relative;padding-bottom: 10px;">
+                <pre class="pre">{{temp.title}}</pre>
+                <textarea class="title" v-model="temp.title" @blur="updateData()"></textarea>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="view-toolbar">
-          <div class="little-tool">
-            <i v-if="temp.status==5" class="fa fa-toggle-off enable" style="color:#909399 " @click="temp.status=1;updateData();">
-              <span style="margin: 0 5px">{{statusStr()}}</span>
-            </i>
-            <i v-if="temp.status==1" class="fa fa-toggle-on enable" style="color:#67C23A " @click="temp.status=5;updateData();">
-              <span style="margin: 0 5px">{{statusStr()}}</span>
-            </i>
-            <i class="fa fa-clone enable" @click="$emit('addTask',{pid:temp.id,type:temp.type})" title="添加子任务"></i>
-            <i class="el-icon-delete enable" style="color: #F56C6C" @click="temp.status=0;updateData();" title="删除任务"></i>
-          </div>
-          <el-divider direction="vertical"></el-divider>
-          <el-rate v-model="temp.importance" :colors="colors" :max="5" style="display:inline-block;padding-right: 80px" @change="updateData();"/>
-          <div class="plan-date">
-            <i class="el-icon-date"></i><span>{{temp.planStartDate?temp.planStartDate:'无'}}</span>
+          <div class="view-toolbar">
+            <div class="little-tool">
+              <i v-if="temp.status==5" class="fa fa-toggle-off enable" style="color:#909399 " @click="temp.status=1;updateData();">
+                <span style="margin: 0 5px">{{statusStr()}}</span>
+              </i>
+              <i v-if="temp.status==1" class="fa fa-toggle-on enable" style="color:#67C23A " @click="temp.status=5;updateData();">
+                <span style="margin: 0 5px">{{statusStr()}}</span>
+              </i>
+              <i class="fa fa-clone enable" @click="$emit('addTask',{pid:temp.id,type:temp.type})" title="添加子任务"></i>
+              <i class="el-icon-delete enable" style="color: #F56C6C" @click="temp.status=0;updateData();" title="删除任务"></i>
+            </div>
             <el-divider direction="vertical"></el-divider>
-            <i class="el-icon-edit link-type" @click="$emit('editTask',temp)"></i>
+            <el-rate v-model="temp.importance" :colors="colors" :max="5" style="display:inline-block;padding-right: 80px" @change="updateData();"/>
+            <div class="plan-date">
+              <i class="el-icon-date"></i><span>{{temp.planStartDate?temp.planStartDate:'无'}}</span>
+              <el-divider direction="vertical"></el-divider>
+              <i class="el-icon-edit link-type" @click="$emit('editTask',temp)"></i>
+            </div>
+          </div>
+          <div>
+            <c-editor v-model="temp.comment" @blur="updateData"></c-editor>
+            <j-editor ref="commentEditor1" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="updateData"></j-editor>
+
           </div>
         </div>
-        <div><j-editor ref="commentEditor1" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="updateData"></j-editor></div>
       </div>
 
     </div>
@@ -95,6 +103,7 @@
   import JEditor from "@/components/jeecg/JEditor";
   import taskCommon from "./taskCommon";
   import "font-awesome/css/font-awesome.min.css";
+  import CEditor from "@/components/CEditor";
 
   Vue.component(Button.name, Button);
   Vue.component(MessageBox.name, MessageBox);
@@ -114,16 +123,20 @@
   Vue.use(Loading.directive);
   Vue.prototype.$prompt = MessageBox.prompt;
 
-
   export default {
     name:'TaskDetail',
     components: {
       JEditor,
+      CEditor
     },
     computed:{
 
     },
     methods: {
+      editAble:function() {
+        console.log('editAble',this.dialogStatus == 'create' || this.temp.id != undefined);
+        return this.dialogStatus == 'create' || this.temp.id != undefined;
+      },
       isFinish:function(){
         if(this.temp.status==9){
           return true;
@@ -147,7 +160,6 @@
           comment: '',
           dataChange:'',
           status:5,
-          type:this.type,
         });
       },
       changeStatus(data){
@@ -167,7 +179,6 @@
         this.dialogStatus = dialogStatus;
         if(dialogStatus == 'create'){
           this.resetTemp(data);
-          this.$refs.commentEditor.setText('');
         }else {
           if(this.edit) {
             this.temp = Object.assign({}, data);
@@ -183,7 +194,6 @@
       },
       updateData(){
         if(this.edit){
-          this.temp.comment = this.$refs.commentEditor.getText();
           this.$refs['dataForm'].validate((valid) => {
             if (valid) {
               this.updateTask(this.temp);
@@ -191,7 +201,6 @@
           })
         }else{//修改某些属性
           if(this.temp.id) {
-            this.temp.comment = this.$refs.commentEditor1.getText();
             if (this.temp.title) {
               this.updateTask(this.temp);
             } else {
@@ -216,7 +225,6 @@
       createData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            this.temp.comment = this.$refs.commentEditor.getText();
             console.log(this.temp);
             httpAction(this.url.add, this.temp, 'post').then(() => {
               this.$emit('ok',this.temp);
@@ -244,7 +252,6 @@
         prefixColor:this.typeColor,
         oldTitle:'',
         sprint:'',
-        type:3,
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
         colors: ['#909399', '#E6A23C', '#F56C6C'],
         url:{
@@ -252,10 +259,9 @@
           edit:"/task/edit",
         },
         loading:true,
-        temp: {status:0},
+        temp: {},
         dialogStatus:'',
         rules: {
-          type: [{ required: true, message: '请输入类型', trigger: 'change' }],
           title: [{ required: true, message: '请输入标题', trigger: 'change' }]
         },
         pickerOptions: {
@@ -289,6 +295,22 @@
         },
         workTimeOptions:[{id:0.5,value:"半天"},{id:1,value:"一天"},{id:1.5,value:"一天半"},{id:2,value:"两天"},{id:3,value:'三天'}],
         detailCheck:false,
+        menus:[
+          'head',  // 标题
+          'bold',  // 粗体
+          'fontSize',  // 字号
+          'fontName',  // 字体
+          'underline',  // 下划线
+          'strikeThrough',  // 删除线
+          'foreColor',  // 文字颜色
+          'backColor',  // 背景颜色
+          'list',  // 列表
+          'justify',  // 对齐方式
+          'emoticon',  // 表情
+          'image',  // 插入图片
+          'table',  // 表格
+          'undo',  // 撤销
+        ]
       }
     }
   }

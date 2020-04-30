@@ -2,7 +2,7 @@
   <div>
     <div style="margin: 20px 100px;height:60px;background-color: #fff;position: relative">
       <div style="position: absolute;top:10px;right:10px;">
-        <el-button type="primary" icon="el-icon-plus" @click="openDetailForm(null,'create')">增加</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="openDetailForm({type:searchParam.type},'create')">增加</el-button>
         <span style="margin: 0 10px;color: #e8e8e8;">|</span><a-icon type="setting" class="link-type" @click="handleSetting()"></a-icon>
       </div>
     </div>
@@ -11,10 +11,10 @@
     <div class="task-main" style="margin: 20px 100px;background-color: #fff">
       <el-row>
         <el-col :xs="24" :sm="24" :md="5" :lg="5" :xl="5" style="background: #fafafa">
-          <task-menu @selectMenu="selectMenu" :groupName="groupName"></task-menu>
+          <task-menu @selectMenu="selectMenu" :groupName="groupName" :typeData="typeOptions"></task-menu>
         </el-col>
         <el-col :xs="24" :sm="24" :md="7" :lg="7" :xl="7" v-loading="loading" style="padding: 10px 0">
-          <span style="display:inline-block;padding: 10px;font-weight: bold;font-size: 20px;">{{searchParam.text}}</span>
+          <span style="display:inline-block;padding: 20px;font-weight: bold;font-size: 22px;">{{searchParam.text}}</span>
 
           <div v-if="tableData.length>0">
 
@@ -112,6 +112,7 @@
         that.changeDate(itemId);
       });
 
+      this.getTypeData();//加载type数据
     },
     methods: {
       finishTask(task){
@@ -179,10 +180,7 @@
         this.loading = true;
         let that = this;
 
-        console.log(this.searchParam);
-
         getAction(this.url.list, this.searchParam).then((res) => {
-          console.log('111')
           if (res.success) {
             let tableData = [];
             res.result.records.forEach((task)=>{
@@ -191,8 +189,8 @@
             });
             this.total = res.result.total;
             this.tableData = tableData;
-            if(!this.selectRow) {
-              this.selectRow = res.result.records[0] || {};
+            if(!this.selectRow && res.result.records.length>0) {
+              this.selectRow = res.result.records[0];
             }
           }
           that.loading = false;
@@ -207,14 +205,15 @@
             });
             this.typeOptions = typeOptions;
           }
-          callback();
+          if(callback){
+            callback();
+          }
         })
       },
       editTask(data){
         this.openDetailForm(data,"update");
       },
       openDetailForm(data,type) {
-        console.log(data);
         this.dialogFormVisible = true;
         this.$nextTick(() => {
           this.$refs.taskDialog.initFormData(data,type);
@@ -224,7 +223,6 @@
         this.selectRow = row;
       },
       reloadData(data) {
-        console.log(555)
         this.getTaskData();
 
         if(data.status === 0){
@@ -243,7 +241,6 @@
         searchParam : {},
         sprint:'',
         prefixColor: '#fff',
-        type:3,
         statusStr:'',
         timeRange:"",
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
