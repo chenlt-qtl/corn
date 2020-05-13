@@ -2,22 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a08562e3-4f01-45ef-ac19-d0f109dc26d6" name="Default Changelist" comment="task状态变更1">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/vo/TaskVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../web/src/views/task/TaskLi.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../web/src/components/CEditor/FEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../web/src/components/CEditor/MavonEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../web/src/components/CEditor/WEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../web/src/components/QEditor/QEditor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../web/src/components/QEditor/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../web/src/components/Vue2Editor/Vue2Editor.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../web/src/components/Vue2Editor/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/common/util/Base64Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/common/util/Base64Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/common/util/UpLoadUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/common/util/UpLoadUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/entity/Note.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/entity/Note.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/TaskMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/TaskMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/xml/TaskMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/xml/TaskMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/ITaskService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/ITaskService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/impl/TaskServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/impl/TaskServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application-95.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/vo/TaskVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/vo/TaskVo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../web/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web/src/components/CEditor/CEditor.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/components/CEditor/CEditor.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web/src/components/CEditor/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/components/CEditor/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../web/src/components/jeecg/JEditor.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/components/jeecg/JEditor.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../web/src/views/task/TaskDetail.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/views/task/TaskDetail.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../web/src/views/task/TaskList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/views/task/TaskList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web/src/views/task/TaskMenu.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/views/task/TaskMenu.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../web/src/views/task/taskCommon.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../web/src/views/task/taskCommon.vue" afterDir="false" />
     </list>
     <list id="3ea3041f-abf2-4f77-961c-b7e0bac57bb9" name="other" comment="other">
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
@@ -196,52 +202,58 @@
     <session id="-945678142">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="18" />
+          <entry key="project.closed" value="25" />
           <entry key="project.open.time.113" value="1" />
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.18" value="1" />
+          <entry key="project.open.time.19" value="1" />
+          <entry key="project.open.time.22" value="1" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.31" value="1" />
+          <entry key="project.open.time.33" value="1" />
           <entry key="project.open.time.36" value="1" />
           <entry key="project.open.time.39" value="1" />
-          <entry key="project.open.time.4" value="2" />
+          <entry key="project.open.time.4" value="3" />
           <entry key="project.open.time.41" value="1" />
           <entry key="project.open.time.43" value="1" />
           <entry key="project.open.time.44" value="1" />
-          <entry key="project.open.time.5" value="1" />
-          <entry key="project.open.time.53" value="2" />
+          <entry key="project.open.time.5" value="2" />
+          <entry key="project.open.time.53" value="3" />
           <entry key="project.open.time.56" value="1" />
+          <entry key="project.open.time.57" value="1" />
           <entry key="project.open.time.6" value="3" />
           <entry key="project.open.time.61" value="1" />
           <entry key="project.open.time.64" value="1" />
           <entry key="project.open.time.65" value="1" />
-          <entry key="project.open.time.7" value="1" />
-          <entry key="project.opened" value="23" />
+          <entry key="project.open.time.7" value="2" />
+          <entry key="project.open.time.8" value="1" />
+          <entry key="project.opened" value="32" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="class" value="45" />
-          <entry key="java" value="101" />
+          <entry key="class" value="49" />
+          <entry key="java" value="117" />
+          <entry key="pom" value="2" />
           <entry key="properties" value="5" />
           <entry key="vue" value="3" />
-          <entry key="xml" value="12" />
+          <entry key="xml" value="14" />
           <entry key="yml" value="14" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="CLASS" value="45" />
-          <entry key="JAVA" value="101" />
+          <entry key="CLASS" value="49" />
+          <entry key="JAVA" value="117" />
           <entry key="PLAIN_TEXT" value="3" />
           <entry key="Properties" value="5" />
-          <entry key="XML" value="12" />
+          <entry key="XML" value="16" />
           <entry key="YAML" value="14" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="3654" />
+          <entry key="java" value="4359" />
           <entry key="txt" value="63" />
           <entry key="xml" value="428" />
           <entry key="yml" value="31" />
@@ -249,7 +261,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="3654" />
+          <entry key="JAVA" value="4359" />
           <entry key="PLAIN_TEXT" value="63" />
           <entry key="SQL" value="17" />
           <entry key="XML" value="411" />
@@ -260,11 +272,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
-              <caret line="68" lean-forward="true" selection-start-line="68" selection-end-line="68" />
+            <state relative-caret-position="636">
+              <caret line="185" column="72" lean-forward="true" selection-start-line="185" selection-start-column="12" selection-end-line="185" selection-end-column="72" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -273,17 +285,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/ITaskService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-528" />
+            <state relative-caret-position="440">
+              <caret line="25" column="18" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="18" />
+            </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="jar://G:/maven/com/baomidou/mybatis-plus-core/3.1.0/mybatis-plus-core-3.1.0.jar!/com/baomidou/mybatisplus/core/conditions/query/QueryWrapper.class">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/util/UpLoadUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+            <state relative-caret-position="419">
+              <caret line="211" column="37" selection-start-line="211" selection-start-column="25" selection-end-line="211" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -291,61 +305,48 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/impl/TaskServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="458">
-              <caret line="73" column="37" lean-forward="true" selection-start-line="73" selection-start-column="37" selection-end-line="73" selection-end-column="37" />
+            <state relative-caret-position="480">
+              <caret line="90" column="15" selection-start-line="90" selection-start-column="12" selection-end-line="90" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/vo/TaskVo.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="308">
+              <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#448#449#0" expanded="true" />
+                <element signature="e#514#515#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/target/classes/logback-spring.xml">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/TaskMapper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="22" column="88" selection-start-line="22" selection-start-column="81" selection-end-line="22" selection-end-column="88" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/Swagger2Config.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="220">
-              <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
+              <caret line="93" selection-start-line="93" selection-end-line="93" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/RedisConfig.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/controller/NoteController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="37" column="13" selection-start-line="37" selection-start-column="13" selection-end-line="37" selection-end-column="13" />
+            <state relative-caret-position="606">
+              <caret line="243" column="66" lean-forward="true" selection-start-line="243" selection-start-column="12" selection-end-line="243" selection-end-column="66" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/application-dev.yml">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/util/Base64Utils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
-              <caret line="5" column="37" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="37" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/target/classes/application-dev.yml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="17" column="28" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
+            <state relative-caret-position="66">
+              <caret line="20" selection-start-line="20" selection-end-line="20" />
             </state>
           </provider>
         </entry>
@@ -361,12 +362,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>/upload</find>
-      <find>servlet</find>
-      <find>updatetime</find>
-      <find>updateById</find>
-      <find>setUpdateTime</find>
-      <find>update_by</find>
       <find>page_filter_fields</find>
       <find>setCommonForTable</find>
       <find>updateby</find>
@@ -391,6 +386,12 @@
       <find>UpLoadUtil</find>
       <find>root</find>
       <find>queryWrapper.in</find>
+      <find>base64</find>
+      <find>updateTask</find>
+      <find>parseUrlText</find>
+      <find>saveTask</find>
+      <find>parseImgText</find>
+      <find>IMG_PRE</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -414,7 +415,6 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/common/util/VideoUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/entity/GymClass.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/common/util/UpLoadUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/config/WebMvcConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/controller/GymClassController.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/entity/GymInfo.java" />
@@ -424,17 +424,21 @@
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/mapper/GymInfoMapper.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/controller/GymInfoController.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/taskType/entity/TaskType.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/ITaskService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/vo/TaskVo.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/impl/TaskServiceImpl.java" />
         <option value="$PROJECT_DIR$/target/classes/jeecg/jeecg_database.properties" />
         <option value="$PROJECT_DIR$/target/classes/application.yml" />
         <option value="$PROJECT_DIR$/src/main/resources/application.yml" />
         <option value="$PROJECT_DIR$/src/main/resources/application-dev.yml" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/TaskMapper.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/xml/TaskMapper.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/ITaskService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/common/util/Base64Utils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/entity/Note.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/impl/TaskServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/common/util/UpLoadUtil.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/vo/TaskVo.java" />
       </list>
     </option>
   </component>
@@ -481,9 +485,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
-      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -524,15 +527,6 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -565,7 +559,7 @@
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
               <item name="task" type="462c0819:PsiDirectoryNode" />
-              <item name="mapper" type="462c0819:PsiDirectoryNode" />
+              <item name="entity" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
@@ -576,62 +570,25 @@
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
               <item name="task" type="462c0819:PsiDirectoryNode" />
-              <item name="mapper" type="462c0819:PsiDirectoryNode" />
-              <item name="xml" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
               <item name="api" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="target" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="target" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="target" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="target" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="target" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="org" type="462c0819:PsiDirectoryNode" />
-              <item name="jeecg" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="corn-api" type="b2602c69:ProjectViewProjectNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="target" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="modules" type="462c0819:PsiDirectoryNode" />
+              <item name="task" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+              <item name="impl" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -642,14 +599,14 @@
     <property name="TODO_SCOPE" value="All Places" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1586486087031" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1589360035269" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../jeecg" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -947,7 +904,16 @@
       <workItem from="1586482221781" duration="2523000" />
       <workItem from="1586509003691" duration="3473000" />
       <workItem from="1586743133610" duration="4522000" />
-      <workItem from="1586748515362" duration="3224000" />
+      <workItem from="1586748515362" duration="5568000" />
+      <workItem from="1586846877018" duration="13484000" />
+      <workItem from="1587454262532" duration="6322000" />
+      <workItem from="1588144777439" duration="3670000" />
+      <workItem from="1588733127233" duration="1213000" />
+      <workItem from="1588902009350" duration="15663000" />
+      <workItem from="1589161303180" duration="780000" />
+      <workItem from="1589166604891" duration="1493000" />
+      <workItem from="1589177348299" duration="311000" />
+      <workItem from="1589187616543" duration="8474000" />
     </task>
     <task id="LOCAL-00001" summary="增加英语模块">
       <created>1567157273102</created>
@@ -1249,7 +1215,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="112095000" />
+    <option name="totallyTimeSpent" value="165849000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1264,7 +1230,7 @@
     <frame x="-8" y="-8" width="1936" height="1035" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2457356" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.36300638" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -1275,7 +1241,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32963374" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.34517202" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.44839066" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32963374" />
@@ -1298,7 +1264,7 @@
       <window_info anchor="right" id="Bean Validation" order="9" />
     </layout>
     <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2457356" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.36300638" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -1309,7 +1275,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32963374" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.37957823" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.44839066" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32963374" />
@@ -1395,11 +1361,38 @@
     <MESSAGE value="task状态变更1" />
     <option name="LAST_COMMIT_MESSAGE" value="task状态变更1" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java</url>
+          <line>92</line>
+          <properties />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/corn_api$dev.ic" NAME="dev Coverage Results" MODIFIED="1582859483802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>task.getPIds().substring(2,33)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>task.getPIds()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>task.getPIds().substring(1,32)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>taskIds.toArray(new String[]{})</expression-string>
         <language-id>JAVA</language-id>
@@ -1430,45 +1423,9 @@
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>request.getParameterNames()</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>request.getParameterMap()</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>req.getParameterMap()</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/taskType/entity/TaskType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="31" column="35" selection-start-line="31" selection-start-column="35" selection-end-line="31" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/service/IGymInfoService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/gym/service/impl/GymInfoServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/mapper/xml/NoteMapper.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="276">
@@ -1480,34 +1437,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
           <caret line="22" column="26" selection-start-line="22" selection-start-column="26" selection-end-line="22" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/entity/Note.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="131" column="29" selection-start-line="131" selection-start-column="29" selection-end-line="131" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="518">
-          <caret line="130" column="10" selection-start-line="125" selection-start-column="4" selection-end-line="137" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/impl/ServiceImpl.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="584">
-          <caret line="247" column="13" selection-start-line="247" selection-start-column="13" selection-end-line="247" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/controller/NoteController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="548">
-          <caret line="191" column="29" lean-forward="true" selection-start-line="191" selection-start-column="25" selection-end-line="191" selection-end-column="37" />
         </state>
       </provider>
     </entry>
@@ -1616,37 +1545,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1826">
-          <caret line="94" column="1" selection-start-line="94" selection-start-column="1" selection-end-line="94" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/vo/TaskVo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/util/UpLoadUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="20" column="23" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/system/controller/CommonController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="45" column="63" selection-start-line="45" selection-start-column="63" selection-end-line="45" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/aspect/PermissionDataAspect.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="286">
@@ -1719,29 +1617,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/ITaskService.java">
+    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-core/3.1.0/mybatis-plus-core-3.1.0.jar!/com/baomidou/mybatisplus/core/conditions/query/QueryWrapper.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="25" column="31" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="31" />
+        <state relative-caret-position="132">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/target/classes/logback-spring.xml">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/TaskMapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" column="88" selection-start-line="22" selection-start-column="81" selection-end-line="22" selection-end-column="88" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/Swagger2Config.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/RedisConfig.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -1764,34 +1648,127 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/config/Swagger2Config.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/mapper/TaskMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="22" column="88" selection-start-line="22" selection-start-column="81" selection-end-line="22" selection-end-column="88" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/entity/Note.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-extension/3.1.0/mybatis-plus-extension-3.1.0.jar!/com/baomidou/mybatisplus/extension/service/impl/ServiceImpl.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="247" column="13" selection-start-line="247" selection-start-column="13" selection-end-line="247" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/system/controller/CommonController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="484">
+          <caret line="46" selection-start-line="46" selection-end-line="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/util/Base64Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://G:/maven/org/projectlombok/lombok/1.16.22/lombok-1.16.22.jar!/lombok/Data.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="14" column="18" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/common/util/UpLoadUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="419">
+          <caret line="211" column="37" selection-start-line="211" selection-start-column="25" selection-end-line="211" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/controller/NoteController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="606">
+          <caret line="243" column="66" lean-forward="true" selection-start-line="243" selection-start-column="12" selection-end-line="243" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/ITaskService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="25" column="18" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://G:/maven/org/projectlombok/lombok/1.16.22/lombok-1.16.22.pom">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="105" column="28" selection-start-line="105" selection-start-column="28" selection-end-line="105" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/service/impl/TaskServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="458">
-          <caret line="73" column="37" lean-forward="true" selection-start-line="73" selection-start-column="37" selection-end-line="73" selection-end-column="37" />
+        <state relative-caret-position="480">
+          <caret line="90" column="15" selection-start-line="90" selection-start-column="12" selection-end-line="90" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/entity/Task.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="666">
+          <caret line="91" selection-start-line="91" selection-end-line="91" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="jar://G:/maven/com/baomidou/mybatis-plus-core/3.1.0/mybatis-plus-core-3.1.0.jar!/com/baomidou/mybatisplus/core/conditions/query/QueryWrapper.class">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/note/service/impl/NoteServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+        <state relative-caret-position="220">
+          <caret line="93" selection-start-line="93" selection-end-line="93" />
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-528" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/controller/TaskController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="68" lean-forward="true" selection-start-line="68" selection-end-line="68" />
+        <state relative-caret-position="636">
+          <caret line="185" column="72" lean-forward="true" selection-start-line="185" selection-start-column="12" selection-end-line="185" selection-end-column="72" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/jeecg/modules/task/vo/TaskVo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+          <folding>
+            <element signature="e#448#449#0" expanded="true" />
+            <element signature="e#514#515#0" expanded="true" />
           </folding>
         </state>
       </provider>

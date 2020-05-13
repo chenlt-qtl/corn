@@ -151,7 +151,7 @@
       value(newValue) {
         newValue = newValue||"";
         this.myValue = newValue;
-        tinymce.activeEditor.setContent(newValue);
+        this.$emit('input', newValue);
       },
     }
   }

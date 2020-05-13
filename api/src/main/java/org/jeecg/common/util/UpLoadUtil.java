@@ -3,6 +3,7 @@ package org.jeecg.common.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -205,7 +206,7 @@ public class UpLoadUtil {
     }
 
     /**
-     * 处理图片路径
+     * 将数据库里的图片数据转成可以显示的地址
      * @return
      */
     public static String parseImgText(String text) {
@@ -228,7 +229,7 @@ public class UpLoadUtil {
     }
 
     /**
-     * 处理MP3路径
+     * 获取文件的url前缀
      * @return
      */
     public static String getPreUrl() {
@@ -238,11 +239,99 @@ public class UpLoadUtil {
 
     }
 
-    public static void main(String args[]){
-        Pattern imgPattern = Pattern.compile("(?<=<img src=\""+IMG_PRE+")([/|0-9a-z]+?)\\.(jpeg|png|gif|jpg|bmp)");
+
+    private static final Pattern BASE64_PATTERN = Pattern.compile("data\\:image/(jpeg|png|gif|jpg|bmp);base64\\,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?");
+
+
+    /**
+     * 将base64图片存到硬盘并将结果替换到原text中，删除旧的图片
+     * 处理图片路径
+     * @param uploadPath
+     */
+    public static String parseText(String uploadPath,String text,String oldText){
+        //---------------处理旧的数据----------------
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        log.info("============ContextPath:"+request.getContextPath());
+        text = parseOldImg(text,request.getContextPath());
+
+        //---------------处理base64------------------
+        Matcher matcher = BASE64_PATTERN.matcher(text);
+        StringBuffer sbr = new StringBuffer();
+        while (matcher.find()) {
+            String data = matcher.group(0);//数据
+            String type = matcher.group(1);//type
+            if(data.startsWith("data:image")&&data.contains(",")){
+                String imgData = data.split(",")[1];
+                if(StringUtils.isNotBlank(imgData)){
+                    String pathArr[] = UpLoadUtil.getUserFilePath(uploadPath,"."+type);
+                    try {
+                        if(Base64Utils.GenerateImage(imgData,pathArr[0])) {
+                            matcher.appendReplacement(sbr, UpLoadUtil.IMG_PRE+pathArr[1]);
+                        }
+                    } catch (IOException e) {
+                        throw new JeecgBootException("保存图片出错");
+                    }
+                }
+            }
+        }
+
+        matcher.appendTail(sbr);
+
+        String newText = sbr.toString();
+
+        if(StringUtils.isNotBlank(oldText)){
+            String[] imgs = UpLoadUtil.getImgUrls(oldText, request.getContextPath());
+            for(String imgUrl:imgs){
+                if(newText.indexOf(imgUrl)==-1){//图片被删除了
+                    UpLoadUtil.delImg(uploadPath,imgUrl);
+                }
+            }
+        }
+        return newText;
+    }
+
+
+    public static void main(String[] args){
+        Matcher matcher = BASE64_PATTERN.matcher("<p style=\"text-align: justify; line-height: 100%; margin-top: 0pt; margin-bottom: 0pt;\"><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAAAuCAYAAACcYs/JAAAAdklEQVRoge3ZoQ3EMBBFQdeQYtPa1eJqNuSFHo3BPOlza7TMazQzM+vrB5wSiAJRa+89tl3EG4gCUSAKRIEoEAWiQNS6fvfYDQIECBAgQIAAAQIECBAgQIAAAQIEiDMGAgQIEH8hvv5YOSUQBaJAFIgCUSAKRD2TA12pbP/UpwAAAABJRU5ErkJggg==\" alt=\"\" /></p>\n" +
+                "<!--polaris office 260 -->");
+        StringBuffer sbr = new StringBuffer();
+        while (matcher.find()) {
+            System.out.println(matcher.group(0));
+            System.out.println(matcher.group(1));
+            matcher.appendReplacement(sbr, "www.test.com/1.jpg");
+        }
+
+        matcher.appendTail(sbr);
+        System.out.println(sbr);
+        System.out.println("=======================");
+
+        Pattern imgPattern = Pattern.compile("(?<=<img src=\")([/|:|0-9a-z]+?)"+"/jeecg-boot/");
+        matcher = imgPattern.matcher("<p><img src=\"http://localhost:8089/jeecg-boot/user/20191024/damu/1571887153443.jpg\" alt=\"\" width=\"656\" height=\"369\" /></p>\n");
+        sbr = new StringBuffer();
+        while (matcher.find()) {
+            System.out.println("group0"+matcher.group(0));
+            matcher.appendReplacement(sbr, "baseUrl/");
+        }
+
+        matcher.appendTail(sbr);
+        System.out.println(sbr);
+
+        System.out.println("=======================");
+        sbr = new StringBuffer();
+        String preUrl = "http://localhost:8080/jeecg-boot/";
+        imgPattern = Pattern.compile("(?<=<img src=\")"+UpLoadUtil.IMG_PRE);
+        matcher = imgPattern.matcher("<p><img src=\"baseUrl/user/20191024/damu/1571887545610.jpg\" alt=\"\" width=\"650\" height=\"366\" /><img src=\"baseUrl/user/20191024/damu/1571891981499.png\" alt=\"\" /></p>");
+        while (matcher.find()) {
+            matcher.appendReplacement(sbr, preUrl);
+        }
+
+        matcher.appendTail(sbr);
+        System.out.println(sbr);
+
+        /*Pattern imgPattern = Pattern.compile("(?<=<img src=\""+IMG_PRE+")([/|0-9a-z]+?)\\.(jpeg|png|gif|jpg|bmp)");
         Matcher matcher = imgPattern.matcher("<p><img src=\"baseUrl/user/20191024/damu/1571887545610jpg.jpg\" alt=\"\" width=\"650\" height=\"366\" /><img src=\"baseUrl/user/20191024/damu/1571891981499.png\" alt=\"\" />123</p>");
         while (matcher.find()) {
             System.out.println(matcher.group(0));
-        }
+        }*/
     }
 }

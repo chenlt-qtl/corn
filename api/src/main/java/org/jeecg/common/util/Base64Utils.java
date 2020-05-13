@@ -1,16 +1,12 @@
 package org.jeecg.common.util;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+import java.io.*;
+
 public class Base64Utils {
+
     /**
      * 图片转化成base64字符串
      * @param imgPath

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.task.entity.Task;
 import org.jeecg.modules.task.service.ITaskService;
@@ -182,6 +183,7 @@ public class TaskController {
 		if(task==null) {
 			result.error500("未找到对应实体");
 		}else {
+			task.setComment(UpLoadUtil.parseImgText(task.getComment()));
 			result.setResult(task);
 			result.setSuccess(true);
 		}

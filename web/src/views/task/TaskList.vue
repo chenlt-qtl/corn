@@ -156,8 +156,6 @@
       },
       selectMenu(data){
         this.searchParam = data||{};
-        this.searchParam.pageNo = this.currentPage;
-        this.searchParam.pageSize = this.pageSize;
         this.getTaskData(1);
       },
       getStatus(status){
@@ -177,6 +175,8 @@
         if(currentPage){
           this.currentPage = currentPage;
         }
+        this.searchParam.pageNo = this.currentPage;
+        this.searchParam.pageSize = this.pageSize;
         this.loading = true;
         let that = this;
 
@@ -230,9 +230,12 @@
             message: '删除成功',
             duration: 2000
           })
+        }else{
+          this.$message.success({
+            message: '操作成功',
+            duration: 2000
+          })
         }
-
-        console.log('操作成功')
         this.dialogFormVisible=false;
       },
     },

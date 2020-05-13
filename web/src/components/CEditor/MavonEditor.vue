@@ -1,24 +1,17 @@
 <template>
-  <ckeditor :editor="editor" v-model="editorData" :config="editorConfig"></ckeditor>
+  <mavon-editor ref="editor" v-model="editorData" @save="$emit('blur')" @blur="$emit('blur')"></mavon-editor>
 </template>
 
 <script>
-  import Vue from 'vue';
-  import CKEditor from '@ckeditor/ckeditor5-vue';
-  import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-
-
-  Vue.use( CKEditor );
+  import {mavonEditor} from "mavon-editor";
+  import "mavon-editor/dist/css/index.css";
 
   export default {
-    name:"CEditor",
-    components:{CKEditor},
+    name:"MavonEditor",
+    components:{mavonEditor},
     data() {
       return {
-        editorData:this.value,
-        editor: ClassicEditor,
-        editorConfig: {
-        }
+        editorData:this.value
       };
     },
     props:{
@@ -36,6 +29,7 @@
       }
     },
     methods:{
+
     }
 
   }

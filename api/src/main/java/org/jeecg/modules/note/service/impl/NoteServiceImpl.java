@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.common.util.tree.TreeUtil;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.entity.NoteDelete;
@@ -89,7 +90,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     public boolean updateNote(Note note,String oldNote){
         try {
-            note.preSave(uploadpath,oldNote);
+            note.setText(UpLoadUtil.parseText(uploadpath,note.getText(),oldNote));
             return updateById(note);
         }catch (DataIntegrityViolationException e){
             throw new JeecgBootException("笔记本目录最多只能60层!"+note.getParentIds());
@@ -98,7 +99,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     public boolean saveNote(Note note){
         try {
-            note.preSave(uploadpath,"");
+            note.setText(UpLoadUtil.parseText(uploadpath,note.getText(),""));
             return save(note);
         }catch (DataIntegrityViolationException e){
             throw new JeecgBootException("笔记本目录最多只能60层!"+note.getParentIds());

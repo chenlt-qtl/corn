@@ -1,6 +1,7 @@
 package org.jeecg.modules.task.vo;
 
 import lombok.Data;
+import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.task.entity.Task;
 import org.springframework.beans.BeanUtils;
 
@@ -15,4 +16,9 @@ public class TaskVo extends Task {
     }
 
     private List<TaskVo> children = new ArrayList<>();
+
+    public String getComment() {
+        return UpLoadUtil.parseImgText(super.getComment());
+    }
+
 }

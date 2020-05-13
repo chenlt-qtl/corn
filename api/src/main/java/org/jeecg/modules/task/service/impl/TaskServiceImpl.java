@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.jeecg.modules.note.entity.Note;
+import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.task.entity.Task;
 import org.jeecg.modules.task.mapper.TaskMapper;
 import org.jeecg.modules.task.service.ITaskService;
 import org.jeecg.modules.task.vo.TaskVo;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,6 +27,9 @@ import java.util.List;
  */
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements ITaskService {
+
+    @Value(value = "${jeecg.path.upload}")
+    private String uploadpath;
 
     @Resource
     private TaskMapper taskMapper;
@@ -56,12 +60,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements IT
 
         }
         setParents(task);
+        task.setComment(UpLoadUtil.parseText(uploadpath,task.getComment(),oldTask.getComment()));
         return updateById(task);
     }
 
     @Override
     public boolean saveTask(Task task) {
         setParents(task);
+        task.setComment(UpLoadUtil.parseText(uploadpath,task.getComment(),""));
         return save(task);
     }
 

@@ -83,9 +83,7 @@
             </div>
           </div>
           <div>
-            <c-editor v-model="temp.comment" @blur="updateData"></c-editor>
-            <j-editor ref="commentEditor1" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500" @blur="updateData"></j-editor>
-
+            <w-editor v-model="temp.comment" @blur="updateWangData"></w-editor>
           </div>
         </div>
       </div>
@@ -103,7 +101,7 @@
   import JEditor from "@/components/jeecg/JEditor";
   import taskCommon from "./taskCommon";
   import "font-awesome/css/font-awesome.min.css";
-  import CEditor from "@/components/CEditor";
+  import WEditor from "@/components/CEditor";
 
   Vue.component(Button.name, Button);
   Vue.component(MessageBox.name, MessageBox);
@@ -127,7 +125,7 @@
     name:'TaskDetail',
     components: {
       JEditor,
-      CEditor
+      WEditor,
     },
     computed:{
 
@@ -192,6 +190,10 @@
         }
         this.detailCheck = this.isFinish();
       },
+      updateWangData(text){//wangEditor更新事件
+        this.temp.comment = text;
+        this.updateData();
+      },
       updateData(){
         if(this.edit){
           this.$refs['dataForm'].validate((valid) => {
@@ -225,7 +227,6 @@
       createData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            console.log(this.temp);
             httpAction(this.url.add, this.temp, 'post').then(() => {
               this.$emit('ok',this.temp);
             })
@@ -251,7 +252,6 @@
       return {
         prefixColor:this.typeColor,
         oldTitle:'',
-        sprint:'',
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
         colors: ['#909399', '#E6A23C', '#F56C6C'],
         url:{
@@ -295,22 +295,6 @@
         },
         workTimeOptions:[{id:0.5,value:"半天"},{id:1,value:"一天"},{id:1.5,value:"一天半"},{id:2,value:"两天"},{id:3,value:'三天'}],
         detailCheck:false,
-        menus:[
-          'head',  // 标题
-          'bold',  // 粗体
-          'fontSize',  // 字号
-          'fontName',  // 字体
-          'underline',  // 下划线
-          'strikeThrough',  // 删除线
-          'foreColor',  // 文字颜色
-          'backColor',  // 背景颜色
-          'list',  // 列表
-          'justify',  // 对齐方式
-          'emoticon',  // 表情
-          'image',  // 插入图片
-          'table',  // 表格
-          'undo',  // 撤销
-        ]
       }
     }
   }
