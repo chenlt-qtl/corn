@@ -2,7 +2,7 @@
   <div style="padding-top: 20px;margin-left: 20px;padding-bottom: 20px; border-right: solid 1px #e6e6e6;">
     <div style="margin-bottom: 10px">
       <el-input v-model="searchKey" @input="searchTask" size="mini" suffix-icon="el-icon-search" style="width: 100px;margin-right: 10px;"/>
-      <div style="float: right;"><el-button type="text" style="padding-top:5px;padding-right: 10px;"><i class="el-icon-refresh"></i></el-button></div>
+      <div style="float: right;"><slot></slot><el-button type="text" style="padding-top:5px;padding-right: 10px;"><i class="el-icon-refresh"></i></el-button></div>
     </div>
     <div>
       <draggable tag="el-menu" class="el-menu-vertical-demo" style="background: #fafafa;width: 100%;" :options="{group:groupName,disabled:true}">
@@ -13,9 +13,22 @@
       </draggable>
 
       <el-menu class="el-menu-vertical-demo" style="background: #fafafa;width: 100%;">
-        <el-menu-item v-for="(item,index) in timeRangeData2" :index="index.toString()" :key="item.key" @click="selectTime(item.key,item.title)" >
-          <i :class="item.icon"></i>
-          <span :value="item.key">{{item.title}}</span>
+        <el-menu-item index="1" @click="selectStatus(1,'进行中')" >
+          <i class="el-icon-mouse"></i>
+          <span slot="title">进行中</span>
+        </el-menu-item>
+        <!-- <el-menu-item index="1">
+          <i class="el-icon-date"></i>
+          <span slot="title">日历</span>
+        </el-menu-item> -->
+        <el-divider></el-divider>
+        <el-menu-item index="3" @click="selectStatus(9,'已完成')" >
+          <i class="el-icon-finished"></i>
+          <span slot="title">已完成</span>
+        </el-menu-item>
+        <el-menu-item index="4" @click="selectStatus(0,'回收站')">
+          <i class="el-icon-delete"></i>
+          <span slot="title">回收站</span>
         </el-menu-item>
       </el-menu>
 
@@ -27,19 +40,6 @@
         <el-menu-item v-for="(item, index) in typeData" :key="index" :index="index.toString()">
           <span class="color-block" :style="{color:item.color}" style="margin-right: 10px;line-height: 36px">●</span>
           <span slot="title">{{item.name}}</span>
-        </el-menu-item>
-      </el-menu>
-      <el-divider></el-divider>
-      <el-menu
-        class="el-menu-vertical-demo"
-        style="background: #fafafa;width: 100%;">
-        <el-menu-item index="2" @click="selectStatus(9,'已完成')" >
-          <i class="el-icon-finished"></i>
-          <span slot="title">已完成</span>
-        </el-menu-item>
-        <el-menu-item index="3" @click="selectStatus(0,'回收站')">
-          <i class="el-icon-delete"></i>
-          <span slot="title">回收站</span>
         </el-menu-item>
       </el-menu>
     </div>
@@ -103,10 +103,6 @@
         timeRangeData1:[
           {key:"today",title:"今天",icon:'el-icon-menu'},
           {key:"week",title:"本周",icon:'el-icon-s-grid'},
-        ],
-        timeRangeData2:[
-          {key:"3",title:"日历",icon:'el-icon-date'},
-          {key:"nodate",title:"收集箱",icon:'el-icon-receiving'},
         ],
         url: {
           list: "/taskType/list",

@@ -28,7 +28,6 @@
       this.editor = new E(this.$refs.editorElem);
       this.editor.customConfig.uploadImgShowBase64 = true;
       this.editor.customConfig.onchange = () => {
-        console.log('change')
         that.isChange = true;
       };
 
@@ -61,6 +60,21 @@
         'undo', // 撤销
         'redo' // 重复
       ];
+      this.editor.customConfig.colors = [
+        '#000000',
+        '#eeece0',
+        '#1c487f',
+        '#4d80bf',
+        '#c24f4a',
+        '#8baa4a',
+        '#7b5ba1',
+        '#46acc8',
+        '#f9963b',
+        '#ffffff',
+        '#F1C40F',
+        '#FBF661',
+      ];
+      this.editor.customConfig.zIndex = 100;
       this.editor.create(); // 创建富文本实例
       this.editor.txt.html(this.value);
     },
@@ -69,11 +83,16 @@
         this.editor.txt.html(this.value);
         this.isChange = false;
       },
+    },
+    methods:{
+      getValue:function(){
+        return this.editor.txt.html();
+      }
     }
   }
 </script>
 
-<style>
+<style lang=less>
   .wangeditor{
     font-size: 12px;
   }
@@ -81,15 +100,13 @@
     height: 100%;
     width: 100%;
 
-  .tabs {
-    padding: 20px 0;
-  }
+    .tabs {
+      padding: 20px 0;
+    }
 
   }
 
   .editor {
-    width: 100%;
-    height: 300px;
     margin-bottom: 40px;
   }
 

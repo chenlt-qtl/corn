@@ -24,7 +24,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="描述 :">
-              <j-editor ref="commentEditor" :toolbar=toolbar v-model="temp.comment" :min_height=150 :max_height="500"></j-editor>
+              <w-editor ref="commentWin" v-model="temp.comment"></w-editor>
             </el-form-item>
             <el-form-item label="优先级 :">
               <el-rate v-model="temp.importance" :colors="colors" :max="5" style="margin-top:8px;" :disabled="!edit"/>
@@ -42,7 +42,7 @@
         <el-button @click="$emit('cancel')">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="updateData">
           确定
         </el-button>
       </div>
@@ -83,7 +83,16 @@
             </div>
           </div>
           <div>
-            <w-editor v-model="temp.comment" @blur="updateWangData"></w-editor>
+            <div v-show="editComment">
+              <w-editor ref="comment" v-model="temp.comment" style="padding-bottom: 5px;"></w-editor>
+              <el-button size="small" type="primary" @click="updateWangData">保存</el-button>
+              <el-button size="small" type="text" @click="editComment=false">取消</el-button>
+            </div>
+            <div class="comment_div" @click="editComment=true" v-show="!editComment&&temp.comment.length>11" v-html="temp.comment">
+            </div>
+            <div class="comment_div" style="color: #C0C4CC;" @click="editComment=true" v-show="!editComment&&temp.comment.length<=11" >
+              添加描述...
+            </div>
           </div>
         </div>
       </div>
@@ -132,7 +141,6 @@
     },
     methods: {
       editAble:function() {
-        console.log('editAble',this.dialogStatus == 'create' || this.temp.id != undefined);
         return this.dialogStatus == 'create' || this.temp.id != undefined;
       },
       isFinish:function(){
@@ -173,6 +181,7 @@
         }
       },
       initFormData(data,dialogStatus) {
+        this.editComment = false;
         document.documentElement.scrollTop = 0;
         this.dialogStatus = dialogStatus;
         if(dialogStatus == 'create'){
@@ -191,14 +200,20 @@
         this.detailCheck = this.isFinish();
       },
       updateWangData(text){//wangEditor更新事件
-        this.temp.comment = text;
+        this.temp.comment = this.$refs.comment.getValue();
         this.updateData();
+        this.editComment = false;
       },
       updateData(){
         if(this.edit){
           this.$refs['dataForm'].validate((valid) => {
             if (valid) {
-              this.updateTask(this.temp);
+              this.temp.comment = this.$refs.commentWin.getValue();
+              if(this.dialogStatus=='create'){
+                this.createData();
+              }else{
+                this.updateTask(this.temp);
+              }
             }
           })
         }else{//修改某些属性
@@ -250,6 +265,7 @@
     },
     data() {
       return {
+        editComment:false,
         prefixColor:this.typeColor,
         oldTitle:'',
         toolbar: 'bold italic underline strikethrough | forecolor backcolor',
@@ -300,6 +316,10 @@
   }
 </script>
 <style scoped>
+  .comment_div{
+    padding: 60px 10px 10px 10px;
+    overflow: auto;
+  }
   .plan-date{
     display: inline-block;
     font-size: 12px;

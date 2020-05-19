@@ -1,32 +1,34 @@
 <template>
-    <draggable
-      class="task-item"
-      v-show="show"
-      @end="changeDate"
-      :sort="false"
-      :options="{group:groupName}">
-      <div
-                 class="task-item-label"
-                 v-if="task.id"
-                 :class="{'select-row':task.id==selectId}"
-                 :style='{paddingLeft: paddingLeft+"px"}'
-                 @click="handleSelectRow">
-        <el-checkbox :checked="task.status==9" @change="finishTask()" style="margin-right: 10px;"></el-checkbox>
-        {{task.title}}
-        <span v-if="task.children.length>0" class="task-item-arrow"><i :class="{'el-icon-arrow-up':arrowUp,'el-icon-arrow-down':!arrowUp}"></i></span>
-        <span class="task-item-ing" v-if="task.status==1">进行中</span>
+  <draggable
+    class="task-item"
+    v-show="show"
+    @end="changeDate"
+    :sort="false"
+    :options="{group:groupName}">
+    <div
+                class="task-item-label"
+                v-if="task.id"
+                :class="{'select-row':task.id==selectId}"
+                :style='{paddingLeft: paddingLeft+"px"}'
+                @click="handleSelectRow">
+      <el-checkbox :checked="task.status==9" @change="finishTask()" style="margin-right: 10px;"></el-checkbox>
+      {{task.title}}
+      <span v-if="task.children.length>0" class="task-item-arrow"><i :class="{'el-icon-arrow-up':arrowUp,'el-icon-arrow-down':!arrowUp}"></i></span>
+      <div class="task-tags">
+        <el-tag type="success" v-if="task.status==1" size="small" effect="dark">进行中</el-tag>
       </div>
-      <template v-for="item in list">
-        <task-item
-           :show="arrowUp"
-           :key="item.id"
-           :selectId="selectId"
-           :list="item.children"
-           :itemid="item.id"
-           :paddingLeft="paddingLeft+10"
-           :task="item"/>
-      </template>
-    </draggable>
+    </div>
+    <template v-for="item in list">
+      <task-item
+          :show="arrowUp"
+          :key="item.id"
+          :selectId="selectId"
+          :list="item.children"
+          :itemid="item.id"
+          :paddingLeft="paddingLeft+10"
+          :task="item"/>
+    </template>
+  </draggable>
 </template>
 <script>
   import Bus from "./Bus";
@@ -100,13 +102,11 @@
         background: #EBEEF5;
       }
   }
-  .task-item-ing{
-      font-size: 8px;
-      float: right;
-      color: #67C23A;
-      border: 1px solid #67C23A;
-      border-radius: 6px;
-      padding: 3px 4px;
+  .task-tags{
+    float: right;
+    .el-tag{
+      margin-left: 5px;
+    }
   }
   .task-item-arrow{
       float: right;
