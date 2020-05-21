@@ -317,7 +317,7 @@
 </script>
 <style scoped>
   .comment_div{
-    padding: 60px 10px 10px 10px;
+    padding: 30px 10px 10px 10px;
     overflow: auto;
   }
   .plan-date{
