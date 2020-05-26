@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="任务明细" :visible.sync="visible">
+  <el-dialog title="课程明细" :visible.sync="visible">
     <el-form
       ref="dataForm"
       :rules="rules"

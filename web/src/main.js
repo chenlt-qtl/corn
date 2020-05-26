@@ -61,3 +61,8 @@ new Vue({
   },
   render: h => h(App)
 }).$mount('#app')
+
+// 全局设置
+window._CONFIG = {};
+window._CONFIG['domianURL'] = process.env.VUE_APP_BASE_URL+'/jeecg-boot';
+window._CONFIG['imgDomainURL'] = process.env.VUE_APP_BASE_URL+'/jeecg-boot/sys/common/view';

@@ -84,7 +84,7 @@
           </div>
           <div>
             <div v-show="editComment">
-              <w-editor ref="comment" v-model="temp.comment" style="padding-bottom: 5px;"></w-editor>
+              <q-editor ref="comment" v-model="temp.comment" style="padding-bottom: 5px;"></q-editor>
               <el-button size="small" type="primary" @click="updateWangData">保存</el-button>
               <el-button size="small" type="text" @click="editComment=false">取消</el-button>
             </div>
@@ -111,6 +111,8 @@
   import taskCommon from "./taskCommon";
   import "font-awesome/css/font-awesome.min.css";
   import WEditor from "@/components/CEditor";
+  import QEditor from "@/components/QEditor";
+
 
   Vue.component(Button.name, Button);
   Vue.component(MessageBox.name, MessageBox);
@@ -135,6 +137,7 @@
     components: {
       JEditor,
       WEditor,
+      QEditor,
     },
     computed:{
 
