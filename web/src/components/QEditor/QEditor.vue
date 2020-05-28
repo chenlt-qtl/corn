@@ -73,6 +73,9 @@
           this.isChange = false;
         }
       },
+      getValue:function(){
+        return this.editorData;
+      }
     }
 
   }
