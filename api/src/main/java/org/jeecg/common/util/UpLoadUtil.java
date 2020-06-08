@@ -249,6 +249,9 @@ public class UpLoadUtil {
      * @param uploadPath
      */
     public static String parseText(String uploadPath,String text,String oldText){
+        if(StringUtils.isBlank(text)){
+            return "";
+        }
         //---------------处理旧的数据----------------
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         log.info("============ContextPath:"+request.getContextPath());

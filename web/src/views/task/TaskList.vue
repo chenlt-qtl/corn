@@ -13,7 +13,7 @@
         <el-col :xs="24" :sm="24" :md="7" :lg="7" :xl="7" v-loading="loading" style="padding: 10px 0">
           <span
             style="display:inline-block;padding: 20px;font-weight: bold;font-size: 22px;">{{searchParam.text}}</span>
-
+            <el-input v-model="newTitle" size="mini" @keyup.enter.native=quickAdd :placeholder="newPlaceholder" style="padding:0 15px 15px 15px;"/>
           <div v-if="tableData.length>0">
 
             <div style="margin-bottom: 10px;">
@@ -74,6 +74,18 @@
       TaskDetail,
       TaskItem,
       draggable,
+    },
+    computed:{
+      newPlaceholder:function(){
+        let text = "添加任务至";
+        if(this.searchParam.type){
+          text += ` [${this.searchParam.text}] `;
+        }else{
+          text += ` [普通任务] `;
+        }
+        text += ", 回车即可保存"
+        return text;
+      }
     },
     mounted: function () {
       let that = this;
@@ -235,6 +247,23 @@
         }
         this.dialogFormVisible = false;
       },
+      quickAdd(){
+        if(this.newTitle){
+          const task = {
+            title: this.newTitle,
+            type:this.searchParam.type||0,
+            status:5,
+          }
+          this.$refs.taskDetail.addTask(task,()=>{
+            this.newTitle = '';
+            this.$message.success({
+              message: '添加成功',
+              duration: 2000
+            })
+            this.getTaskData();
+          });
+        }
+      }
     },
     data() {
       return {
@@ -265,6 +294,7 @@
         dropTimeRange: '',
         groupName: 'jxz',
         showLineType:true,
+        newTitle:''
       }
     },
     watch: {

@@ -110,9 +110,7 @@
   import JEditor from "@/components/jeecg/JEditor";
   import taskCommon from "./taskCommon";
   import "font-awesome/css/font-awesome.min.css";
-  import WEditor from "@/components/CEditor";
   import QEditor from "@/components/QEditor";
-
 
   Vue.component(Button.name, Button);
   Vue.component(MessageBox.name, MessageBox);
@@ -136,7 +134,6 @@
     name:'TaskDetail',
     components: {
       JEditor,
-      WEditor,
       QEditor,
     },
     computed:{
@@ -245,12 +242,17 @@
       createData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            httpAction(this.url.add, this.temp, 'post').then(() => {
-              this.$emit('ok',this.temp);
-            })
+            this.addTask(this.temp,function(data){
+              this.$emit('ok',data);
+            });
           }
         })
       },
+      addTask(data,callback){
+        httpAction(this.url.add, data, 'post').then(() => {
+              callback && callback();
+        })
+      }
     },
     props:{
       typeOptions:{

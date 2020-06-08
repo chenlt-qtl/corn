@@ -389,6 +389,23 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/empty',
+    component: BlankLayout,
+    redirect: '/empty',
+    children: [
+      {
+        path: 'play',
+        name: 'Play',
+        component: () => import('@/views/gym/gymClassPlay')
+      },
+      {
+        path: 'gymInfo',
+        name: 'GymInfo',
+        component: () => import('@/views/gym/gymInfo')
+      },
+    ]
+  },
+  {
     path: '*', redirect: '/404', hidden: true
   }
 ]
@@ -454,35 +471,19 @@ export const constantRouterMap = [
   //   ]
   // },
 
-  {
-    path: '/test',
-    component: BlankLayout,
-    redirect: '/test/home',
-    children: [
-      {
-        path: 'home',
-        name: 'TestHome',
-        component: () => import('@/views/Home')
-      }
-    ]
-  },
-  {
-    path: '/empty',
-    component: BlankLayout,
-    redirect: '/empty',
-    children: [
-      {
-        path: 'play',
-        name: 'Play',
-        component: () => import('@/views/gym/gymClassPlay')
-      },
-      {
-        path: 'gymInfo',
-        name: 'GymInfo',
-        component: () => import('@/views/gym/gymInfo')
-      },
-    ]
-  },
+  // {
+  //   path: '/test',
+  //   component: BlankLayout,
+  //   redirect: '/test/home',
+  //   children: [
+  //     {
+  //       path: 'home',
+  //       name: 'TestHome',
+  //       component: () => import('@/views/Home')
+  //     }
+  //   ]
+  // },
+  
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
