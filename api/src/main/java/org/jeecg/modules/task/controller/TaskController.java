@@ -129,6 +129,7 @@ public class TaskController {
 			//TODO 返回false说明什么？
 			if(ok) {
 				result.success("修改成功!");
+				result.setResult(task);
 			}
 		}
 		
