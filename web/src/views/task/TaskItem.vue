@@ -36,7 +36,7 @@
 <script>
   import Bus from "./Bus";
   import draggable from 'vuedraggable';
-  import taskCommon from "./taskCommon";
+  import { getColorByType } from './TaskService';
 
   export default {
     name:'TaskItem',
@@ -99,7 +99,7 @@
         Bus.$emit('changeDate', this.task.id);
       },
       getTypeColor:function(type){
-        const color = taskCommon.getColorByType(type, this.typeData);
+        const color = getColorByType(type, this.typeData);
         return {backgroundColor:color};
       }
     }

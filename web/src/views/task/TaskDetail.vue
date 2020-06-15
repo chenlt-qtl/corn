@@ -102,10 +102,9 @@
   } from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction } from '@/api/manage';
-  import taskCommon from "./taskCommon";
   import "font-awesome/css/font-awesome.min.css";
   import TaskEditor from '@/views/task/TaskEditor';
-  import { updateTask,addTask } from './TaskService';
+  import { updateTask,addTask,statusData,getColorByType } from './TaskService';
 
 
   Vue.component(Button.name, Button);
@@ -146,14 +145,15 @@
         }
       },
       statusStr: function () {
-        const statusData = taskCommon.statusData[this.temp.status];
-        return statusData ? statusData.title : "";
+        
+        const data = statusData[this.temp.status];
+        return data ? data.title : "";
       },
       getColor() {
-        return taskCommon.getColorByType(this.temp.type, this.typeOptions);
+        return getColorByType(this.temp.type, this.typeOptions);
       },
       getTextByType() {
-        return taskCommon.getTextByType(this.temp.type, this.typeOptions);
+        return getTextByType(this.temp.type, this.typeOptions);
       },
       resetTemp(data) {
         this.temp = Object.assign(data || {}, {

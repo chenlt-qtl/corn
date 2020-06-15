@@ -61,7 +61,6 @@
     FormItem,Select,Input,Option,Notification ,Container ,Aside ,Main ,Tree} from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
   import { httpAction} from '@/api/manage';
-  import statusData from "./taskCommon";
 
   Vue.component(Table.name, Table);
   Vue.component(TableColumn.name, TableColumn);

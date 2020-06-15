@@ -58,11 +58,11 @@
   import JEditor from "@/components/jeecg/JEditor";
   import TaskTypeList from "./TaskTypeList";
   import TaskDetail from "./TaskDetail";
-  import taskCommon from "./taskCommon";
   import TaskMenu from "./TaskMenu";
   import draggable from 'vuedraggable';
   import TaskItem from "./TaskItem";
   import Bus from "./Bus";
+  import { addTask,getTaskData,getTypeData,getColorByType,statusOptions } from './TaskService';
 
   Vue.use(ElementUI);
 
@@ -159,18 +159,15 @@
         this.searchParam = data || {};
         this.getTaskData(1);
       },
-      getStatus(status) {
-        return taskCommon.getStatus(status);
-      },
       handleSetting() {
         this.$refs.taskTypeList.show();
       },
       changeType(value) {
-        this.prefixColor = taskCommon.getColorByType(value, this.typeOptions);
+        this.prefixColor = getColorByType(value, this.typeOptions);
         this.getTaskData(1);
       },
       getRowStyle(row) {
-        return "min-height:60px;border-left: 4px solid " + taskCommon.getColorByType(row.type, this.typeOptions);
+        return "min-height:60px;border-left: 4px solid " + getColorByType(row.type, this.typeOptions);
       },
       getTaskData(currentPage) {//获取任务数据
         if (currentPage) {
@@ -179,44 +176,16 @@
         this.searchParam.pageNo = this.currentPage;
         this.searchParam.pageSize = this.pageSize;
         this.loading = true;
-        let that = this;
         this.showLineType=this.searchParam.type?false:true;
-
-        getAction(this.url.list, this.searchParam).then((res) => {
-          if (res.success) {
-            let tableData = [];
-            let selectId = "";
-            if (this.selectRow) {
-              selectId = this.selectRow.id;
-            }
-            res.result.records.forEach((task) => {
-              task.edit = false;
-              tableData.push(task);
-              if (selectId && task.id == selectId) {
-                this.selectRow = task;
-              }
-            });
-            this.total = res.result.total;
-            this.tableData = tableData;
-            if (!selectId && res.result.records.length > 0) {
-              this.selectRow = res.result.records[0];
-            }
-          }
-          that.loading = false;
-        })
+        
+        getTaskData(this.searchParam,this.selectId,(result)=>{
+          this.loading = false;
+          Object.assign(this,result);
+        });
       },
-      getTypeData(callback) {//获取类型数据
-        getAction("/taskType/list", {}).then((res) => {
-          if (res.success) {
-            let typeOptions = [];
-            res.result.records.forEach((type) => {
-              typeOptions.push(type);
-            });
-            this.typeOptions = typeOptions;
-          }
-          if (callback) {
-            callback();
-          }
+      getTypeData() {//获取类型数据
+        getTypeData((typeOptions)=>{
+          this.typeOptions = typeOptions;
         })
       },
       editTask(data) {
@@ -254,7 +223,7 @@
             type:this.searchParam.type||0,
             status:5,
           }
-          this.$refs.taskDetail.addTask(task,()=>{
+          addTask(task,()=>{
             this.newTitle = '';
             this.$message.success({
               message: '添加成功',
@@ -272,19 +241,11 @@
         prefixColor: '#fff',
         statusStr: '',
         timeRange: "",
-        toolbar: 'bold italic underline strikethrough | forecolor backcolor',
-        colors: ['#909399', '#E6A23C', '#F56C6C'],
         tableKey: 0,
         searchText: '',
-        url: {
-          list: "/task/list",
-          add: "/task/add",
-          edit: "/task/edit",
-          delete: '/task/delete',
-        },
         loading: true,
         typeOptions: [],
-        statusOptions: taskCommon.statusOptions,
+        statusOptions: statusOptions,
         dialogFormVisible: false,
         total: 0,
         currentPage: 1,
