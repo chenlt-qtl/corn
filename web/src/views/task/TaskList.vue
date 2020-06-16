@@ -177,7 +177,7 @@
         this.searchParam.pageSize = this.pageSize;
         this.loading = true;
         this.showLineType=this.searchParam.type?false:true;
-        
+
         getTaskData(this.searchParam,this.selectId,(result)=>{
           this.loading = false;
           Object.assign(this,result);

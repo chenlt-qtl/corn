@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="editComment">
-            <c-editor ref="editor" v-model="comment" :showButton="showButton" @updateData="updateData"></c-editor>
+            <c-editor ref="editor" v-model="comment" :showButton="showButton" @updateData="updateData" @cancelEdit="editComment=false"></c-editor>
         </div>
         <div v-else>
             <div class="comment_div" @click="editComment=true" v-show="value.length>7" v-html="value">
@@ -14,10 +14,7 @@
 </template>
 
 <script>
-    import Vue from 'vue';
-    import { httpAction } from '@/api/manage';
     import CEditor from "@/components/CEditor";
-    import { Loading } from 'element-ui';
     import 'element-ui/lib/theme-chalk/index.css';
 
     export default {
@@ -51,7 +48,7 @@
         data() {
             return {
                 comment: this.value,
-                editComment: false,
+                editComment: !this.showButton,
             }
         },
         watch: {

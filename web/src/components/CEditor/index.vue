@@ -3,7 +3,7 @@
         <div style="margin-bottom: 5px;height: 40px;">
             <div v-show="showButton" style="float: left;">
                 <el-button size="small" type="primary" @click="updateData">保存</el-button>
-                <el-button size="small" type="text" @click="">取消</el-button>
+                <el-button size="small" type="text" @click="$emit('cancelEdit')">取消</el-button>
             </div>
             <div style="overflow: auto;text-align: right;">
                 <el-radio-group v-model="editorType">

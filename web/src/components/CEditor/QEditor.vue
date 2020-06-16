@@ -6,7 +6,6 @@
 </template>
 
 <script>
-  import Vue from 'vue';
   import 'quill/dist/quill.snow.css'
   import { quillEditor } from 'vue-quill-editor'
 
@@ -75,6 +74,7 @@
 
   .ql-toolbar.ql-snow {
     padding: 4px;
+    line-height: 20px;
   }
 
   .ql-toolbar.ql-snow .ql-formats{

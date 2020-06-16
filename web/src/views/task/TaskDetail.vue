@@ -101,7 +101,6 @@
     InputNumber, Switch, OptionGroup
   } from 'element-ui';
   import 'element-ui/lib/theme-chalk/index.css';
-  import { httpAction } from '@/api/manage';
   import "font-awesome/css/font-awesome.min.css";
   import TaskEditor from '@/views/task/TaskEditor';
   import { updateTask,addTask,statusData,getColorByType } from './TaskService';
@@ -145,7 +144,7 @@
         }
       },
       statusStr: function () {
-        
+
         const data = statusData[this.temp.status];
         return data ? data.title : "";
       },
@@ -194,7 +193,7 @@
         this.detailCheck = this.isFinish();
       },
       updateDataComment(value,callback) {
-        
+
         this.temp.comment = value;
         updateTask(this.temp,res=>this.resultHandler(res,callback));
       },
