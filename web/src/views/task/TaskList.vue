@@ -62,7 +62,7 @@
   import draggable from 'vuedraggable';
   import TaskItem from "./TaskItem";
   import Bus from "./Bus";
-  import { addTask,getTaskData,getTypeData,getColorByType,statusOptions } from './TaskService';
+  import { addTask,updateTask,getTaskData,getTypeData,getColorByType,statusOptions } from './TaskService';
 
   Vue.use(ElementUI);
 
@@ -122,7 +122,7 @@
         } else {
           task.status = 5;
         }
-        this.$refs.taskDetail.updateTask(task);
+        updateTask(task,()=>this.getTaskData());
       },
       changeDate(taskId) {//修改计划日期
         let task = this.findTask(this.tableData, taskId);
@@ -138,7 +138,7 @@
             date.setTime(date.getTime() - (day ? day - 1 : 6) * 24 * 60 * 60 * 1000);
           }
           task['planStartDate'] = date;
-          this.$refs.taskDetail.updateTask(task);
+          updateTask(task,()=>this.getTaskData());
         }
       },
       findTask(tasks, taskId) {

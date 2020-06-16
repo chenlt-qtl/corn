@@ -63,8 +63,6 @@
         },
         watch: {
             value: function () {
-                console.log(this.value);
-
                 this.comment = this.value;
             }
         }

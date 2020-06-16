@@ -216,7 +216,6 @@
         temp: {},
         dialogStatus:'',
         dialogFormVisible:false,
-        treeData: statusData.statusData
       }
     }
   }
