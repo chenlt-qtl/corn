@@ -42,14 +42,15 @@
             <a-form>
               <a-form-item>
                 <a-input
+                  ref="nameInput"
                   v-decorator="['name']"
-                  @blur="submitCurrForm"
+                  @blur="()=>{submitCurrForm()}"
                   v-model="name"
                 />
               </a-form-item>
               <a-form-item>
                 <div style="margin-top: 5px;">
-                  <j-editor ref="jEditor" @blur="submitCurrForm" :max_height="max_height"></j-editor>
+                  <c-editor ref="editor" v-model="text" @update="submitCurrForm"></c-editor>
                 </div>
               </a-form-item>
             </a-form>
@@ -73,13 +74,13 @@
   import NoteTree from './components/NoteTree'
   import NoteSearch from './NoteSearch'
   import { httpAction} from '@/api/manage'
-  import JEditor from "@/components/jeecg/JEditor";
   import { queryNoteById} from '@/api/api'
+  import CEditor from "@/components/CEditor";
 
   export default {
     name: "NoteList",
     components: {
-      JEditor,
+      CEditor,
       NoteSearch,
       SelectTab,
       MainTab,
@@ -98,6 +99,7 @@
         form: this.$form.createForm(this),
         max_height: 600,
         noteData:[],//保存所有note信息
+        text:"",
         url: {
           edit: '/note/edit',
           add: "/note/add",
@@ -139,31 +141,25 @@
         this.$refs.noteTree.selectNote();
         this.loadForm({});
       },
-      loadNote(id,focus) {
+      loadNote(id,isNew) {
         if (id) {
           this.spinning = true;
           if (!this.noteData[id]) {
             queryNoteById({ 'id': id }).then((res) => {
-              console.log(res);
               if (res.success) {
                 this.noteData[id] = res.result;
                 let note = this.noteData[id];
                 this.loadForm(note);
                 this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
-                if (focus) {
-                  this.$refs.jEditor.setFocus();
-                }
+                isNew&&this.$refs.nameInput.focus();
               }
               this.spinning = false;
             })
           }else{
             let note = this.noteData[id];
-            console.log(note);
             this.loadForm(note);
             this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
-            if (focus) {
-              this.$refs.jEditor.setFocus();
-            }
+            isNew&&this.$refs.nameInput.focus();
             this.spinning = false;
           }
 
@@ -176,10 +172,7 @@
         this.$refs.noteSelectList.show();
       },
       loadForm(data){
-        this.name = data.name;
-        if(this.$refs.jEditor) {
-          this.$refs.jEditor.setText(data.text);
-        }
+        Object.assign(this,data);
       },
       searchByName(notes,result,name){
         for(let i in notes) {
@@ -197,7 +190,7 @@
         this.loadNote(activeKey,false);
         this.$refs.noteTree.selectNote(activeKey);
       },
-      submitCurrForm() {
+      submitCurrForm(text) {
         let that = this;
         let id = this.$refs.noteTree.getSelected();
         if(!id){
@@ -209,7 +202,7 @@
           return;
         }
         if (that.topId) {
-          node['text'] = this.$refs.jEditor.getText();
+          node['text'] = text||this.text;
           node['name'] = this.name;
           let url = that.url.add;
           let method = 'post';
@@ -281,5 +274,8 @@
   }
   .ant-tabs-nav .ant-tabs-tab:hover{
     color: #12b776;
+  }
+  .ant-form-item{
+    margin-bottom: 0px;
   }
 </style>

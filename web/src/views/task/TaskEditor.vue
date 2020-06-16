@@ -1,11 +1,7 @@
 <template>
     <div>
-        <div v-if="editComment||!showButton">
-            <q-editor ref="editor" v-model="comment" style="padding-bottom: 5px;"></q-editor>
-            <div v-show="showButton">
-                <el-button size="small" type="primary" @click="updateData">保存</el-button>
-                <el-button size="small" type="text" @click="editComment=false">取消</el-button>
-            </div>
+        <div v-if="editComment">
+            <c-editor ref="editor" v-model="comment" :showButton="showButton" @updateData="updateData"></c-editor>
         </div>
         <div v-else>
             <div class="comment_div" @click="editComment=true" v-show="value.length>7" v-html="value">
@@ -20,28 +16,26 @@
 <script>
     import Vue from 'vue';
     import { httpAction } from '@/api/manage';
-    import JEditor from "@/components/jeecg/JEditor";
-    import QEditor from "@/components/QEditor";
+    import CEditor from "@/components/CEditor";
     import { Loading } from 'element-ui';
     import 'element-ui/lib/theme-chalk/index.css';
 
     export default {
         name: 'TaskEditor',
         components: {
-            JEditor,
-            QEditor,
+            CEditor,
         },
         computed: {
 
         },
         methods: {
             updateData: function () {
-                this.$emit('update', this.comment, () => {
+                this.$emit('update', this.getValue(), () => {
                     this.editComment = false
                 });
             },
             getValue() {
-                return this.comment;
+                return this.$refs["editor"].getValue();
             }
         },
         props: {
@@ -58,7 +52,6 @@
             return {
                 comment: this.value,
                 editComment: false,
-                toolbar: 'bold italic underline strikethrough | forecolor backcolor',
             }
         },
         watch: {

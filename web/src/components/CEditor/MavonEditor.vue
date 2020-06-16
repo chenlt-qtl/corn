@@ -21,15 +21,17 @@
       }
     },
     watch:{
-      editorData:function() {
-        this.$emit("input",this.editorData);
-      },
       value:function() {
         this.editorData = this.value;
+      },
+      editorData:function(){
+        //this.$emit("input",this.editorData);
       }
     },
     methods:{
-
+      getValue:function(){
+        return this.editorData;
+      }
     }
 
   }

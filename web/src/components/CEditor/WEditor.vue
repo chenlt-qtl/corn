@@ -11,81 +11,80 @@
 
   export default {
     name: 'WEditor',
+    mounted() {
+      this.init();
+    },
     data() {
       return {
         editor: null,
-        isChange:false,
+        menus: [
+          // 菜单配置
+          'head', // 标题
+          'bold', // 粗体
+          'fontSize', // 字号
+          'fontName', // 字体
+          'italic', // 斜体
+          'underline', // 下划线
+          'strikeThrough', // 删除线
+          'foreColor', // 文字颜色
+          'backColor', // 背景颜色
+          'link', // 插入链接
+          'list', // 列表
+          'justify', // 对齐方式
+          'quote', // 引用
+          'emoticon', // 表情
+          'image', // 插入图片
+          'table', // 表格
+          'code', // 插入代码
+          'undo', // 撤销
+          'redo' // 重复
+        ],
+        colors: [
+          '#000000',
+          '#eeece0',
+          '#1c487f',
+          '#4d80bf',
+          '#c24f4a',
+          '#8baa4a',
+          '#7b5ba1',
+          '#46acc8',
+          '#f9963b',
+          '#ffffff',
+          '#F1C40F',
+          '#FBF661',
+        ]
       };
     },
     props: {
-      value:{
-        type:String,
-        default:''
+      value: {
+        type: String,
+        default: ''
       }
-    }, // 接收父组件的方法
-    mounted() {
-      const that = this;
-      this.editor = new E(this.$refs.editorElem);
-      this.editor.customConfig.uploadImgShowBase64 = true;
-      this.editor.customConfig.onchange = () => {
-        that.isChange = true;
-      };
-
-      this.editor.customConfig.onblur = function () {
-        if(that.isChange) {
-          that.$emit("blur",that.editor.txt.html());
-          that.isChange = false;
-        }
-      }
-
-      this.editor.customConfig.menus = [
-        // 菜单配置
-        'head', // 标题
-        'bold', // 粗体
-        'fontSize', // 字号
-        'fontName', // 字体
-        'italic', // 斜体
-        'underline', // 下划线
-        'strikeThrough', // 删除线
-        'foreColor', // 文字颜色
-        'backColor', // 背景颜色
-        'link', // 插入链接
-        'list', // 列表
-        'justify', // 对齐方式
-        'quote', // 引用
-        'emoticon', // 表情
-        'image', // 插入图片
-        'table', // 表格
-        'code', // 插入代码
-        'undo', // 撤销
-        'redo' // 重复
-      ];
-      this.editor.customConfig.colors = [
-        '#000000',
-        '#eeece0',
-        '#1c487f',
-        '#4d80bf',
-        '#c24f4a',
-        '#8baa4a',
-        '#7b5ba1',
-        '#46acc8',
-        '#f9963b',
-        '#ffffff',
-        '#F1C40F',
-        '#FBF661',
-      ];
-      this.editor.customConfig.zIndex = 100;
-      this.editor.create(); // 创建富文本实例
-      this.editor.txt.html(this.value);
     },
-    watch:{
-      value:function() {
-        this.editor.txt.html(this.value);
-        this.isChange = false;
+    watch: {
+      value: function () {
+        this.editor && this.editor.txt.html(this.value);
       },
     },
-    methods:{
-      getValue:function(){
+    methods: {
+      init: function () {
+        if (this.editor) {
+          return;
+        }
+
+        const that = this;
+        this.editor = new E(this.$refs.editorElem);
+        this.editor.customConfig.uploadImgShowBase64 = true;
+        this.editor.customConfig.onchange = () => {
+          //that.$emit("input",this.editor.txt.html());
+        };
+        this.editor.customConfig.menus = this.menus;
+        this.editor.customConfig.colors = this.colors;
+        this.editor.customConfig.zIndex = 100;
+        this.editor.create(); // 创建富文本实例
+        this.editor.txt.html(this.value);
+      },
+      getValue: function () {
         return this.editor.txt.html();
       }
     }
@@ -93,9 +92,10 @@
 </script>
 
 <style lang=less>
-  .wangeditor{
+  .wangeditor {
     font-size: 12px;
   }
+
   .subcontainer {
     height: 100%;
     width: 100%;
@@ -125,7 +125,7 @@
     background: dodgerblue;
   }
 
-  .w-e-toolbar{
-    flex-wrap:wrap;
+  .w-e-toolbar {
+    flex-wrap: wrap;
   }
 </style>

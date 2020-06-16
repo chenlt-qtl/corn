@@ -134,7 +134,7 @@
       onBlur(e) {
         this.$emit('blur', e, tinymce)
       },
-      getText(){
+      getValue(){
         return tinymce.activeEditor.getContent();
       },
       setText(value){

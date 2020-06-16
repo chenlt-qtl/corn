@@ -1,6 +1,6 @@
 <template>
   <div style="min-height: 300px">
-    <quill-editor ref="quill" v-model="editorData" :options="editorOption" @blur="handlerBlur($event)">
+    <quill-editor ref="quill" v-model="editorData" :options="editorOption">
     </quill-editor>
   </div>
 </template>
@@ -13,22 +13,6 @@
   export default {
     components:{
       quillEditor
-    },
-    mounted:function(){
-      const that = this;
-      this.$refs.quill.quill.on('text-change', function(delta, oldDelta, source) {
-        if(source == "user"){
-          that.isChange = true;
-        }else {
-          that.isChange = false;
-        }
-      })
-
-      this.$refs.quill.quill.on('selection-change', function(range, oldRange, source) {
-          if (!range) {
-            console.log('selection change',range, oldRange, source);
-          }
-        })
     },
     data() {
       return {
@@ -48,7 +32,6 @@
           },
           quillUpdateImg:true,
         },
-        isChange:false,
       };
     },
     props:{
@@ -58,21 +41,14 @@
       }
     },
     watch:{
-      editorData:function() {
-        this.$emit("input",this.editorData);
-      },
       value:function() {
         this.editorData = this.value;
+      },
+      editorData:function(){
+        //this.$emit("input",this.editorData);
       }
     },
     methods:{
-      handlerBlur:function(e) {
-        console.log('blur');
-        if(this.isChange){
-          //this.$emit('blur');
-          this.isChange = false;
-        }
-      },
       getValue:function(){
         return this.editorData;
       }
