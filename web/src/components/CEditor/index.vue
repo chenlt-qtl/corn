@@ -7,16 +7,16 @@
             </div>
             <div style="overflow: auto;text-align: right;">
                 <el-radio-group v-model="editorType">
-                    <el-radio v-for="(item,index) in editorTypeEnum" :label="index" :value="item" :key="index">{{item}}
+                    <el-radio v-for="(value,key) in editorTypeEnum" :label="value" :key="value">{{key}}
                     </el-radio>
                 </el-radio-group>
             </div>
         </div>
         <div style="min-height: 300px">
-            <q-editor ref="editor0" v-show="editorType===0" v-model="editorData"></q-editor>
-            <mavon-editor ref="editor1" v-show="editorType===1" v-model="editorData"></mavon-editor>
-            <w-editor ref="editor2" v-show="editorType===2" v-model="editorData"></w-editor>
-            <j-editor ref="editor3" v-show="editorType===3" v-model="editorData"></j-editor>
+            <!-- <q-editor ref="editor0" v-show="editorType===0" v-model="editorData"></q-editor> -->
+            <mavon-editor :ref="'editor'+editorTypeEnum['Mavon']" v-show="editorType===editorTypeEnum['Mavon']" v-model="editorData"></mavon-editor>
+            <w-editor :ref="'editor'+editorTypeEnum['Wang']" v-show="editorType===editorTypeEnum['Wang']" v-model="editorData"></w-editor>
+            <j-editor :ref="'editor'+editorTypeEnum['TinyMCE']" v-show="editorType===editorTypeEnum['TinyMCE']" v-model="editorData"></j-editor>
         </div>
     </div>
 </template>
@@ -44,9 +44,9 @@
         },
         data() {
             return {
-                editorType: 2,
-                editorTypeEnum: ["Quill", "Mavon", "Wang","TinyMCE"],
-                editorData: this.value
+                editorType: 1,
+                editorTypeEnum: {Mavon:0, Wang:1,TinyMCE:2},
+                editorData: this.value,
             };
         },
         props: {
