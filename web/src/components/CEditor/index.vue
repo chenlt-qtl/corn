@@ -14,16 +14,18 @@
         </div>
         <div style="min-height: 300px">
             <!-- <q-editor ref="editor0" v-show="editorType===0" v-model="editorData"></q-editor> -->
-            <mavon-editor :ref="'editor'+editorTypeEnum['Mavon']" v-show="editorType===editorTypeEnum['Mavon']" v-model="editorData"></mavon-editor>
+            <mavon-editor :ref="'editor'+editorTypeEnum['Mavon']" v-show="editorType===editorTypeEnum['Mavon']"
+                v-model="editorData"></mavon-editor>
             <!-- <w-editor :ref="'editor'+editorTypeEnum['Wang']" v-show="editorType===editorTypeEnum['Wang']" v-model="editorData"></w-editor> -->
-            <j-editor :ref="'editor'+editorTypeEnum['TinyMCE']" v-show="editorType===editorTypeEnum['TinyMCE']" v-model="editorData"></j-editor>
+            <j-editor :ref="'editor'+editorTypeEnum['TinyMCE']" v-show="editorType===editorTypeEnum['TinyMCE']"
+                v-model="editorData"></j-editor>
         </div>
     </div>
 </template>
 
 <script>
     import Vue from 'vue';
-    import { Radio,RadioGroup,Button } from 'element-ui';
+    import { Radio, RadioGroup, Button } from 'element-ui';
     import 'element-ui/lib/theme-chalk/index.css';
     import QEditor from '@/components/CEditor/QEditor'
     import MavonEditor from '@/components/CEditor/MavonEditor'
@@ -45,8 +47,8 @@
         data() {
             return {
                 editorType: 2,
-                editorTypeEnum: {Mavon:0,TinyMCE:2},
-                editorData: this.value,
+                editorTypeEnum: { Mavon: 0, TinyMCE: 2 },
+                editorData: this.value || "",
             };
         },
         props: {
@@ -63,7 +65,7 @@
             value: function () {
                 this.editorData = this.value;
             },
-            editorType:function(newValue,oldValue){
+            editorType: function (newValue, oldValue) {
                 const value = this.$refs[`editor${oldValue}`].getValue();
                 this.editorData = value;
             }

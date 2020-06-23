@@ -23,9 +23,6 @@
     watch:{
       value:function() {
         this.editorData = this.value;
-      },
-      editorData:function(){
-        //this.$emit("input",this.editorData);
       }
     },
     methods:{

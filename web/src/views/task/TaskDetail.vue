@@ -85,7 +85,7 @@
           </div>
         </div>
         <div>
-          <task-editor ref="editor" :value="temp.comment" @update="updateDataComment"></task-editor>
+          <task-editor ref="editor" :value="comment" @update="updateDataComment"></task-editor>
         </div>
       </div>
     </div>
@@ -132,7 +132,7 @@
     computed: {
 
     },
-    beforeDestroy(){
+    beforeDestroy() {
       this.saveTask();
     },
     methods: {
@@ -180,11 +180,16 @@
       saveTask() {
         if (this.$refs.editor) {
           const comment = this.$refs.editor.getValue();
-          console.log("comment:",comment);
-          console.log("this.temp.comment:",this.temp.comment);
-          if (comment.trim() != this.temp.comment.trim()) {
-            this.temp.comment = comment;
-            updateTask(this.temp);
+          
+          if (comment.trim() != this.comment.trim()) {
+            this.comment = comment;
+            updateTask(Object.assign(this.temp, { comment: comment }), res => {
+              if (res.success) {
+                this.$emit('ok', res.result, -1);
+              } else {
+                this.$alert(res.message);
+              }
+            });
           }
         }
       },
@@ -205,6 +210,9 @@
             this.temp = data;
           }
         }
+        this.$nextTick(() => {
+          this.comment = data.comment;
+        });
         this.detailCheck = this.isFinish();
       },
       updateDataComment(value, callback) {
@@ -270,6 +278,7 @@
         colors: ['#909399', '#E6A23C', '#F56C6C'],
         loading: true,
         temp: {},
+        comment: "",
         dialogStatus: '',
         rules: {
           title: [{ required: true, message: '请输入标题', trigger: 'change' }]

@@ -169,7 +169,7 @@
       getRowStyle(row) {
         return "min-height:60px;border-left: 4px solid " + getColorByType(row.type, this.typeOptions);
       },
-      getTaskData(currentPage) {//获取任务数据
+      getTaskData(currentPage,selectId) {//获取任务数据
         if (currentPage) {
           this.currentPage = currentPage;
         }
@@ -178,7 +178,7 @@
         this.loading = true;
         this.showLineType=this.searchParam.type?false:true;
 
-        getTaskData(this.searchParam,this.selectId,(result)=>{
+        getTaskData(this.searchParam,selectId||this.selectId,(result)=>{
           this.loading = false;
           Object.assign(this,result);
         });
@@ -200,8 +200,8 @@
       handleSelectRow(row) {
         this.selectRow = row;
       },
-      reloadData(data) {
-        this.getTaskData();
+      reloadData(data,selectId) {
+        this.getTaskData(null,selectId);
 
         if (data.status === 0) {
           this.$message.error({
