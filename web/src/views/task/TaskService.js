@@ -28,6 +28,7 @@ export function getColorByType(type, option) {
 }
 
 export function updateTask(task, callback) {
+    console.log("开始保存");
     httpAction(url.edit, task, 'put').then((res) => {
         callback && callback(res);
     })

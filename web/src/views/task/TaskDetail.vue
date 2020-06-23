@@ -103,7 +103,7 @@
   import 'element-ui/lib/theme-chalk/index.css';
   import "font-awesome/css/font-awesome.min.css";
   import TaskEditor from '@/views/task/TaskEditor';
-  import { updateTask,addTask,statusData,getColorByType } from './TaskService';
+  import { updateTask, addTask, statusData, getColorByType } from './TaskService';
 
 
   Vue.component(Button.name, Button);
@@ -131,6 +131,9 @@
     },
     computed: {
 
+    },
+    beforeDestroy(){
+      this.saveTask();
     },
     methods: {
       editAble: function () {
@@ -174,9 +177,21 @@
           this.changeStatus(data);
         }
       },
+      saveTask() {
+        if (this.$refs.editor) {
+          const comment = this.$refs.editor.getValue();
+          console.log("comment:",comment);
+          console.log("this.temp.comment:",this.temp.comment);
+          if (comment.trim() != this.temp.comment.trim()) {
+            this.temp.comment = comment;
+            updateTask(this.temp);
+          }
+        }
+      },
       initFormData(data, dialogStatus) {
         document.documentElement.scrollTop = 0;
         this.dialogStatus = dialogStatus;
+        this.saveTask();
         if (dialogStatus == 'create') {
           this.resetTemp(data);
         } else {
@@ -192,18 +207,18 @@
         }
         this.detailCheck = this.isFinish();
       },
-      updateDataComment(value,callback) {
+      updateDataComment(value, callback) {
 
         this.temp.comment = value;
-        updateTask(this.temp,res=>this.resultHandler(res,callback));
+        updateTask(this.temp, res => this.resultHandler(res, callback));
       },
-      resultHandler(res,callback){
+      resultHandler(res, callback) {
         if (res.success) {
-            this.$emit('ok', res.result);
-            callback&&callback();
-          } else {
-            this.$alert(res.message);
-          }
+          this.$emit('ok', res.result);
+          callback && callback();
+        } else {
+          this.$alert(res.message);
+        }
       },
       updateData() {
         if (this.edit) {
@@ -211,18 +226,18 @@
             if (valid) {
               this.temp.comment = this.$refs.winEditor.getValue();
               if (this.dialogStatus == 'create') {
-                addTask(this.temp,(data)=>{
+                addTask(this.temp, (data) => {
                   this.$emit('ok', data);
                 });
               } else {
-                updateTask(this.temp,this.resultHandler);
+                updateTask(this.temp, this.resultHandler);
               }
             }
           })
         } else {//修改某些属性
           if (this.temp.id) {
             if (this.temp.title) {
-              updateTask(this.temp,this.resultHandler);
+              updateTask(this.temp, this.resultHandler);
             } else {
               this.$message({
                 message: '标题不能为空',

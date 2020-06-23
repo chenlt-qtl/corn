@@ -15,7 +15,7 @@
         <div style="min-height: 300px">
             <!-- <q-editor ref="editor0" v-show="editorType===0" v-model="editorData"></q-editor> -->
             <mavon-editor :ref="'editor'+editorTypeEnum['Mavon']" v-show="editorType===editorTypeEnum['Mavon']" v-model="editorData"></mavon-editor>
-            <w-editor :ref="'editor'+editorTypeEnum['Wang']" v-show="editorType===editorTypeEnum['Wang']" v-model="editorData"></w-editor>
+            <!-- <w-editor :ref="'editor'+editorTypeEnum['Wang']" v-show="editorType===editorTypeEnum['Wang']" v-model="editorData"></w-editor> -->
             <j-editor :ref="'editor'+editorTypeEnum['TinyMCE']" v-show="editorType===editorTypeEnum['TinyMCE']" v-model="editorData"></j-editor>
         </div>
     </div>
@@ -40,12 +40,12 @@
             QEditor,
             MavonEditor,
             WEditor,
-            JEditor
+            JEditor,
         },
         data() {
             return {
-                editorType: 1,
-                editorTypeEnum: {Mavon:0, Wang:1,TinyMCE:2},
+                editorType: 2,
+                editorTypeEnum: {Mavon:0,TinyMCE:2},
                 editorData: this.value,
             };
         },

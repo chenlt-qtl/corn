@@ -111,6 +111,9 @@
     created() {//初始数据加载
       this.max_height = Number(`${document.documentElement.clientHeight}`)-72;
     },
+    beforeDestroy(){
+      this.saveNote();
+    },
     methods: {
       addNote(note){
         this.noteData[note.id] = note;
@@ -138,10 +141,18 @@
       },
       //关闭所有tab
       closeAll() {
+        this.saveNote();
         this.$refs.noteTree.selectNote();
         this.loadForm({});
       },
+      saveNote(){
+        const nowText = this.$refs.editor.getValue();
+        if(this.text != nowText){//如果有变化,切换内容之前先保存
+          this.submitCurrForm(nowText);
+        }
+      },
       loadNote(id,isNew) {
+        this.saveNote();
         if (id) {
           this.spinning = true;
           if (!this.noteData[id]) {

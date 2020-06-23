@@ -1,7 +1,8 @@
 <template>
     <div>
         <div v-if="editComment">
-            <c-editor ref="editor" v-model="comment" :showButton="showButton" @update="updateData" @cancelEdit="editComment=false"></c-editor>
+            <c-editor ref="editor" v-model="comment" :showButton="showButton" @update="updateData"
+                @cancelEdit="editComment=false"></c-editor>
         </div>
         <div v-else>
             <div class="comment_div" @click="editComment=true" v-show="value.length>7" v-html="value">
@@ -32,7 +33,11 @@
                 });
             },
             getValue() {
-                return this.$refs["editor"].getValue();
+                if (this.$refs["editor"]) {
+                    return this.$refs["editor"].getValue();
+                } else {
+                    return this.value;
+                }
             }
         },
         props: {
