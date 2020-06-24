@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    @font-face {
+        font-family: odstemplik;  
+        src: url('./odstemplikbold.ttf');  
+    }
+    @font-face {
+        font-family: cotillion;  
+        src: url('./Cotillion Regular.ttf');  
+    }
+    textarea{
+        font-size: 40px;
+        margin: 0 10px;
+    }
+    select{
+        display: block;
+        margin: 10px;
+        font-size: 14px;
+        width: 150px;
+        height: 30px;
+    }
+    .odstemplik{
+        font-family: odstemplik;
+    }
+    .cotillion{
+        font-family: cotillion;
+    }
+</style>
+<body>
+    <Select onchange="changeHandler(this.value)" >
+      <Option value="odstemplik">Odstemplik</Option>
+      <Option value="cotillion">Cotillion</Option>
+    </Select>
+    <textarea class="odstemplik" rows="5" cols="70"></textarea>
+</body>
+<script>
+    function changeHandler(value){
+        document.querySelector("textarea").className = value;
+    }
+</script>
+</html>
