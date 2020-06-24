@@ -6,11 +6,7 @@
       <a-row>
         <a-col :span="12">
           <a-form layout="inline">
-            <a-input-search
-              v-model="searchText"
-              placeholder="input search text"
-              style="width: 300px"
-            />
+            <a-input-search v-model="searchText" placeholder="input search text" style="width: 300px" />
             <a-button style="margin-left: 5px" @click="openSearch" type="default">高级查询</a-button>
           </a-form>
         </a-col>
@@ -23,14 +19,8 @@
           <div style="padding-left:16px;height: 100%; margin-top: 5px;overflow:hidden;">
             <!-- 树-->
             <a-col :md="10" :sm="24" style="padding-left: 1px;">
-              <note-tree
-                ref="noteTree"
-                :topId="topId"
-                @loadNote='loadNote'
-                @spinning="setSpinning"
-                @removeNode="onRemoveNode"
-                @addNote="addNote"
-                :searchText="searchText"></note-tree>
+              <note-tree ref="noteTree" :topId="topId" @loadNote='loadNote' @spinning="setSpinning"
+                @removeNode="onRemoveNode" @addNote="addNote" :searchText="searchText"></note-tree>
             </a-col>
           </div>
         </a-card>
@@ -41,12 +31,7 @@
             <main-tab ref="mainTab" :topId="topId" @onChangeTab="onChangeTab" @closeAll="closeAll"></main-tab>
             <a-form>
               <a-form-item>
-                <a-input
-                  ref="nameInput"
-                  v-decorator="['name']"
-                  @blur="()=>{submitCurrForm()}"
-                  v-model="name"
-                />
+                <a-input ref="nameInput" v-decorator="['name']" @blur="()=>{submitCurrForm()}" v-model="name" />
               </a-form-item>
               <a-form-item>
                 <div style="margin-top: 5px;">
@@ -73,8 +58,8 @@
   import MainTab from './components/MainTab'
   import NoteTree from './components/NoteTree'
   import NoteSearch from './NoteSearch'
-  import { httpAction} from '@/api/manage'
-  import { queryNoteById} from '@/api/api'
+  import { httpAction } from '@/api/manage'
+  import { queryNoteById } from '@/api/api'
   import CEditor from "@/components/CEditor";
 
   export default {
@@ -90,53 +75,53 @@
         render: (h, ctx) => ctx.props.vnodes
       }
     },
-    data () {
+    data() {
       return {
-        searchText:'',
-        name:'',
-        spinning:false,
-        topId:'',
+        searchText: '',
+        name: '',
+        spinning: false,
+        topId: '',
         form: this.$form.createForm(this),
         max_height: 600,
-        noteData:[],//保存所有note信息
-        text:"",
+        noteData: [],//保存所有note信息
+        text: "",
         url: {
           edit: '/note/edit',
           add: "/note/add",
           get: "/note/queryById",
-          upload: window._CONFIG['domianURL']+"/sys/common/upload",
-       },
-    }
-  },
-    created() {//初始数据加载
-      this.max_height = Number(`${document.documentElement.clientHeight}`)-72;
+          upload: window._CONFIG['domianURL'] + "/sys/common/upload",
+        },
+      }
     },
-    beforeDestroy(){
+    created() {//初始数据加载
+      this.max_height = Number(`${document.documentElement.clientHeight}`) - 72;
+    },
+    beforeDestroy() {
       this.saveNote();
     },
     methods: {
-      addNote(note){
+      addNote(note) {
         this.noteData[note.id] = note;
-        this.loadNote(note.id,true);
+        this.loadNote(note.id, true);
       },
-      onRemoveNode(key){
+      onRemoveNode(key) {
         this.$refs.mainTab.remove(key);
       },
-      setSpinning(spinning){
+      setSpinning(spinning) {
         this.spinning = spinning;
       },
-      changeTop(id){
+      changeTop(id) {
         this.topId = id;
       },
-      openNote(note){
+      openNote(note) {
         let parentIds = note.parentIds;
         let topId = parentIds.split("/")[1];//属于哪个笔记本
-        if(topId!=this.topId){//当前目录
+        if (topId != this.topId) {//当前目录
           this.topId = topId;
         }
-        this.loadNote(note.id,false);
+        this.loadNote(note.id, false);
       },
-      openSearch(){
+      openSearch() {
         this.$refs.noteSearch.show(this.topId);
       },
       //关闭所有tab
@@ -145,13 +130,13 @@
         this.$refs.noteTree.selectNote();
         this.loadForm({});
       },
-      saveNote(){
-        const nowText = this.$refs.editor.getValue();
-        if(this.text != nowText){//如果有变化,切换内容之前先保存
+      saveNote() {
+        const nowText = (this.$refs.editor&&this.$refs.editor.getValue())||"";
+        if (this.text != nowText) {//如果有变化,切换内容之前先保存
           this.submitCurrForm(nowText);
         }
       },
-      loadNote(id,isNew) {
+      loadNote(id, isNew) {
         this.saveNote();
         if (id) {
           this.spinning = true;
@@ -162,19 +147,19 @@
                 let note = this.noteData[id];
                 this.loadForm(note);
                 this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
-                isNew&&this.$refs.nameInput.focus();
+                isNew && this.$refs.nameInput.focus();
               }
               this.spinning = false;
             })
-          }else{
+          } else {
             let note = this.noteData[id];
             this.loadForm(note);
             this.$refs.mainTab.activeTab({ id: note.id, name: note.name });
-            isNew&&this.$refs.nameInput.focus();
+            isNew && this.$refs.nameInput.focus();
             this.spinning = false;
           }
 
-        }else {
+        } else {
           this.loadForm({});
           return {};
         }
@@ -182,38 +167,41 @@
       addSelect() {
         this.$refs.noteSelectList.show();
       },
-      loadForm(data){
-        Object.assign(this,data);
+      loadForm(data) {
+        this.$nextTick(() => {
+          Object.assign(this, data);
+        });
       },
-      searchByName(notes,result,name){
-        for(let i in notes) {
+      searchByName(notes, result, name) {
+        for (let i in notes) {
           let node = notes[i];
           let title = node['title'];
-          if (name && title.indexOf(name)>-1) {
+          if (name && title.indexOf(name) > -1) {
             result.push(node);
           }
-          if(node.children){
-              this.searchByName(node.children,result,name);
+          if (node.children) {
+            this.searchByName(node.children, result, name);
           }
         }
       },
-      onChangeTab(activeKey){
-        this.loadNote(activeKey,false);
+      onChangeTab(activeKey) {
+        this.loadNote(activeKey, false);
         this.$refs.noteTree.selectNote(activeKey);
       },
       submitCurrForm(text) {
+        this.text = text||"";
         let that = this;
         let id = this.$refs.noteTree.getSelected();
-        if(!id){
+        if (!id) {
           return;
         }
         let node = this.noteData[id];
-        if(!that.name){
+        if (!that.name) {
           that.name = node['name'];
           return;
         }
         if (that.topId) {
-          node['text'] = text||this.text;
+          node['text'] = this.text;
           node['name'] = this.name;
           let url = that.url.add;
           let method = 'post';
@@ -221,7 +209,7 @@
             url = that.url.edit;
             method = 'put';
           }
-          console.log("开始保存",url,method);
+          console.log("开始保存", url, method);
           httpAction(url, node, method).then((res) => {
             if (res.success) {
               node = res.result;
@@ -237,56 +225,71 @@
   }
 </script>
 <style>
-  .ant-btn-primary{
+  .ant-btn-primary {
     background-color: #12b776;
     border-color: #12b776;
   }
-  ::selection{
+
+  ::selection {
     background-color: #12b776;
     background: #12b776;
     border-color: #12b776;
   }
-  .ant-btn-primary:hover, .ant-btn-primary:focus{
+
+  .ant-btn-primary:hover,
+  .ant-btn-primary:focus {
     background-color: #16dd8f;
     border-color: #12b776;
   }
-  .ant-btn:hover, .ant-btn:focus {
-    color:#12b776;
+
+  .ant-btn:hover,
+  .ant-btn:focus {
+    color: #12b776;
     border-color: #12b776;
   }
-  .ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled){
+
+  .ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled) {
     border-color: #12b776;
   }
-  .note-row{
+
+  .note-row {
     border-radius: 4px;
   }
-  .note-tree{
+
+  .note-tree {
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
     padding: 4px;
     background-color: #fff;
     min-height: 558px;
   }
-  .note-content{
+
+  .note-content {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
     padding: 4px;
     background-color: #fff;
   }
-  .ant-tree.ant-tree-directory > li.ant-tree-treenode-selected > span.ant-tree-node-content-wrapper:before, .ant-tree.ant-tree-directory .ant-tree-child-tree > li.ant-tree-treenode-selected > span.ant-tree-node-content-wrapper:before{
+
+  .ant-tree.ant-tree-directory>li.ant-tree-treenode-selected>span.ant-tree-node-content-wrapper:before,
+  .ant-tree.ant-tree-directory .ant-tree-child-tree>li.ant-tree-treenode-selected>span.ant-tree-node-content-wrapper:before {
     background: #12b776;
   }
-  .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active{
+
+  .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active {
     color: #12b776;
   }
-  .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active{
-    border-color: #12b776!important;
+
+  .ant-tabs.ant-tabs-card>.ant-tabs-bar .ant-tabs-tab-active {
+    border-color: #12b776 !important;
   }
-  .ant-tabs-nav .ant-tabs-tab:hover{
+
+  .ant-tabs-nav .ant-tabs-tab:hover {
     color: #12b776;
   }
-  .ant-form-item{
+
+  .ant-form-item {
     margin-bottom: 0px;
   }
 </style>
