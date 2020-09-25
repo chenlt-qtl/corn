@@ -1,11 +1,14 @@
 package org.jeecg.config;
 
+import com.baomidou.mybatisplus.extension.api.ApiController;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -47,7 +50,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/**")
 		.addResourceLocations("file:" + upLoadPath + "//")
-		.addResourceLocations(staticLocations.split(","));
+		.addResourceLocations(staticLocations.split(","))
+		.addResourceLocations("classpath:/static/");
 	}
 
 	/**
@@ -56,5 +60,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/").setViewName("index.html");
+	}
+	@Override
+	public void configurePathMatch(PathMatchConfigurer configurer) {
+		configurer.addPathPrefix("/api",c -> c.isAnnotationPresent(RestController.class));
 	}
 }

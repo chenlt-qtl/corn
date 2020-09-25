@@ -42,7 +42,7 @@ public class ShiroConfig {
 		// 拦截器
 		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		// 配置不会被拦截的链接 顺序判断
-		filterChainDefinitionMap.put("/sys/login", "anon"); //登录接口排除
+		filterChainDefinitionMap.put("/api/sys/login", "anon"); //登录接口排除
 		filterChainDefinitionMap.put("/auth/2step-code", "anon");//登录验证码
 		filterChainDefinitionMap.put("/test/jeecgDemo/**", "anon"); //测试接口
 		filterChainDefinitionMap.put("/test/jeecgOrderMain/**", "anon"); //测试接口
@@ -63,6 +63,9 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/**/*.mp3", "anon");
 		filterChainDefinitionMap.put("/**/*.mp4", "anon");
 		filterChainDefinitionMap.put("/**/*.flv", "anon");
+		filterChainDefinitionMap.put("/**/*.woff", "anon");
+		filterChainDefinitionMap.put("/**/*.woff2", "anon");
+		filterChainDefinitionMap.put("/**/*.ttf", "anon");
 		filterChainDefinitionMap.put("/druid/**", "anon");
 		filterChainDefinitionMap.put("/swagger-ui.html", "anon");
 		filterChainDefinitionMap.put("/swagger**/**", "anon");

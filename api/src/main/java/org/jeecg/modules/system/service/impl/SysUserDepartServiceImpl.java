@@ -29,8 +29,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 public class SysUserDepartServiceImpl extends ServiceImpl<SysUserDepartMapper, SysUserDepart> implements ISysUserDepartService {
 	
 	@Autowired
-	private ISysUserDepartService userDepartService;
-	@Autowired
 	private ISysDepartService sysDepartService;
 	@Autowired
 	private ISysUserService sysUserService;
@@ -48,9 +46,9 @@ public class SysUserDepartServiceImpl extends ServiceImpl<SysUserDepartMapper, S
 				for(String depId : departIdList) {
 					query.eq(SysUserDepart::getDepId, depId);
 					query.eq(SysUserDepart::getUserId, userId);
-					List<SysUserDepart> uDepList = userDepartService.list(query);
+					List<SysUserDepart> uDepList = list(query);
 					if(uDepList == null || uDepList.size() == 0) {
-						userDepartService.save(new SysUserDepart("",userId,depId));
+						save(new SysUserDepart("",userId,depId));
 					}
 				}
 			}
@@ -72,7 +70,7 @@ public class SysUserDepartServiceImpl extends ServiceImpl<SysUserDepartMapper, S
 			queryUDep.eq(SysUserDepart::getUserId, userId);
 			List<String> depIdList = new ArrayList<>();
 			List<DepartIdModel> depIdModelList = new ArrayList<>();
-			List<SysUserDepart> userDepList = userDepartService.list(queryUDep);
+			List<SysUserDepart> userDepList = this.list(queryUDep);
 			if(userDepList != null && userDepList.size() > 0) {
 			for(SysUserDepart userDepart : userDepList) {
 					depIdList.add(userDepart.getDepId());
@@ -103,16 +101,16 @@ public class SysUserDepartServiceImpl extends ServiceImpl<SysUserDepartMapper, S
 		List<String> depIdList = sysUserDepartsVO.getDepartIdList();
 		if(depIdList != null && depIdList.size() > 0) {
 			queryDep.eq(SysUserDepart::getUserId, sysUserDepartsVO.getUserId());	
-			boolean ok = userDepartService.remove(queryDep);
+			boolean ok = this.remove(queryDep);
 			if(ok) {
 				for(String str : depIdList) {
-					userDepartService.save(new SysUserDepart("", sysUserDepartsVO.getUserId(), str));
+					this.save(new SysUserDepart("", sysUserDepartsVO.getUserId(), str));
 				}
 			return ok;
 			}
 		}
 		queryDep.eq(SysUserDepart::getUserId, sysUserDepartsVO.getUserId());
-		boolean ok = userDepartService.remove(queryDep);
+		boolean ok = remove(queryDep);
 		return ok;
 	}
 

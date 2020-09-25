@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -36,12 +37,11 @@ import javax.annotation.PostConstruct;
 @Slf4j
 public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> implements ISysDictService {
 
-    @Autowired
+    @Resource
     private SysDictMapper sysDictMapper;
-    @Autowired
+	@Resource
     private SysDictItemMapper sysDictItemMapper;
-    @Autowired
-    private ISysDictService sysDictService;
+
     @Autowired
     private ISysDictItemService sysDictItemService;
 
@@ -108,7 +108,7 @@ public class SysDictServiceImpl extends ServiceImpl<SysDictMapper, SysDict> impl
     @Override
     public boolean deleteByDictId(SysDict sysDict) {
         sysDict.setDelFlag(2);
-        sysDictService.updateById(sysDict);
+        this.updateById(sysDict);
         // 删除关联表中的数据
         String deleteId = sysDict.getId();
         LambdaQueryWrapper<SysDictItem> dictItemQuery = new LambdaQueryWrapper<SysDictItem>();

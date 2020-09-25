@@ -33,7 +33,7 @@ public class TestWebController {
         this.userService = userService;
     }
  
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     @ApiOperation(value="用户登录", notes="用户登录")
     public ResponseBean login(@RequestParam("username") String username,
                               @RequestParam("password") String password) {

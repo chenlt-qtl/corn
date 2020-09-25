@@ -84,7 +84,6 @@ public class LoginController {
 	
 	/**
 	 * 退出登录
-	 * @param username
 	 * @return
 	 */
 	@RequestMapping(value = "/logout")
