@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 8088
   servlet:
     compression:
       enabled: true
@@ -115,3 +115,5 @@ logging:
   root:
     appender: RollingFile
     path: /root/app/api/logs/
+corn:
+  urlPrefix: /corn
