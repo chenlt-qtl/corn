@@ -14,14 +14,17 @@ import java.io.IOException;
 public class IndexController {
 	private static Logger logger = LoggerFactory.getLogger(IndexController.class);
 
-	@RequestMapping("/api/**")
-	public void api(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		System.out.println(request.getRequestURI());
-		response.sendRedirect(request.getRequestURI().replaceFirst("/api",""));
+	public String index() {
+		return "index";
 	}
 
-	@GetMapping(value="/**")
-	public String index(){
-		return "index";
+	@GetMapping(value = "/")
+	public String rootIndex() {
+		return index();
+	}
+
+	@GetMapping()
+	public String rootIndex2() {
+		return index();
 	}
 }

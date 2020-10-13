@@ -22,14 +22,14 @@
 
 # /coverage
 # .idea
-# yarn.lock
-# package-lock.json
+yarn.lock
+package-lock.json
 # *bak
 # .vscode
 
 # # visual studio code
 # .history
-# *.log
+*.log
 
 # functions/mock
 # .temp/**

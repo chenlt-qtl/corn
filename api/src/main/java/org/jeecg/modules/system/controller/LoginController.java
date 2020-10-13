@@ -63,7 +63,7 @@ public class LoginController {
 			String userpassword = PasswordUtil.encrypt(username, password, sysUser.getSalt());
 			String syspassword = sysUser.getPassword();
 			if(!syspassword.equals(userpassword)) {
-				result.error500("用户名或密码错误");
+				result.error500("用户名或密码错误123");
 				return result;
 			}
 			//生成token

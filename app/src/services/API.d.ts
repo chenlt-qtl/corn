@@ -15,8 +15,8 @@ declare namespace API {
   }
 
   export interface LoginStateType {
-    status?: 'ok' | 'error';
-    type?: string;
+    success?: boolean;
+    msg?: string;
   }
 
   export interface NoticeIconData {

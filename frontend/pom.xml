@@ -110,6 +110,13 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
+		<!--代理-->
+		<dependency>
+			<groupId>org.mitre.dsmiley.httpproxy</groupId>
+			<artifactId>smiley-http-proxy-servlet</artifactId>
+			<version>1.10</version>
+		</dependency>
+
 		<!-- druid -->
        <dependency>
 		   <groupId>com.alibaba</groupId>
