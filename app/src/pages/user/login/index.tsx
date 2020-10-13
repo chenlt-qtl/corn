@@ -1,4 +1,3 @@
-import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 import { Alert, Checkbox, message } from 'antd';
 import React, { useState } from 'react';
 import { Link, SelectLang, history, useModel } from 'umi';
@@ -7,7 +6,7 @@ import { LoginParamsType, fakeAccountLogin } from '@/services/login';
 import LoginFrom from './components/Login';
 import styles from './style.less';
 
-const { Tab, Username, Password, Submit } = LoginFrom;
+const { Username, Password, Submit } = LoginFrom;
 
 const LoginMessage: React.FC<{
   content: string;
@@ -56,9 +55,8 @@ const Login: React.FC<{}> = () => {
     setSubmitting(true);
     try {
       // 登录
-      const res = await fakeAccountLogin({ ...values });
-
-      if (res.success) {
+      const msg = await fakeAccountLogin({ ...values });
+      if (msg.status === 'ok') {
         message.success('登陆成功！');
         replaceGoto();
         setTimeout(() => {
@@ -67,15 +65,14 @@ const Login: React.FC<{}> = () => {
         return;
       }
       // 如果失败去设置用户错误信息
-      setUserLoginState(res);
+      setUserLoginState(msg);
     } catch (error) {
       message.error('登陆失败，请重试！');
     }
     setSubmitting(false);
   };
 
-  const { success } = userLoginState;
-  console.log(userLoginState);
+  const { status } = userLoginState;
 
   return (
     <div className={styles.container}>
@@ -85,8 +82,8 @@ const Login: React.FC<{}> = () => {
       <div className={styles.content}>
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-            <Tab key="account" tab="账户密码登录">
-              {success === false && !submitting && (
+            <>
+              {status === 'error' && !submitting && (
                 <LoginMessage content="账户或密码错误（admin/ant.design）" />
               )}
 
@@ -110,7 +107,8 @@ const Login: React.FC<{}> = () => {
                   },
                 ]}
               />
-            </Tab>
+            </>
+
             <div>
               <Checkbox checked={autoLogin} onChange={(e) => setAutoLogin(e.target.checked)}>
                 自动登录
@@ -125,10 +123,6 @@ const Login: React.FC<{}> = () => {
             </div>
             <Submit loading={submitting}>登录</Submit>
             <div className={styles.other}>
-              其他登录方式
-              <AlipayCircleOutlined className={styles.icon} />
-              <TaobaoCircleOutlined className={styles.icon} />
-              <WeiboCircleOutlined className={styles.icon} />
               <Link className={styles.register} to="/user/register">
                 注册账户
               </Link>
