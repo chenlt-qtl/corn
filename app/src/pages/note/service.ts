@@ -1,16 +1,15 @@
 import { request } from 'umi';
-import { TableListParams, ArticleListParams,ArticleItem } from './data.d';
+import { TableListParams, NoteListParams,ArticleItem,NoteItem } from './data.d';
 
-export async function getList(params?: ArticleListParams) {
-  return request('/api/word/article/list', {
-    params,
+//树形数据结构
+export async function queryTreeList(params:NoteListParams) {
+  return request('/api/note/queryTreeList', {
+    params
   });
 }
 
-export async function queryRule(params?: TableListParams) {
-  return request('/api/rule', {
-    params,
-  });
+export async function queryNote(id:string) {
+  return request('/api/note/queryById?id='+id);
 }
 
 export async function removeRule(params: { key: number[] }) {

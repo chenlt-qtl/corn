@@ -1,16 +1,17 @@
 export interface NoteItem {
   id: string;
   title:string;
+  text?: string;
+  parentId:string;
+  parentIds:string;
   status?: number;
   updateTime?: Date;
   createTime?: Date;
   createBy?: string;
 }
 
-export interface ArticleListParams {
-  title?: string;
-  pageSize?: number;
-  currentPage?: number;
+export interface NoteListParams {
+  parentId: string;
 }
 
 export interface TableListPagination {

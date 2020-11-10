@@ -56,7 +56,7 @@ const Login: React.FC<{}> = () => {
     try {
       // 登录
       const msg = await accountLogin({ ...values });
-      if (msg.status === 'ok') {
+      if (msg.success) {
         message.success('登陆成功！');
         replaceGoto();
 
@@ -75,8 +75,6 @@ const Login: React.FC<{}> = () => {
     }
     setSubmitting(false);
   };
-
-  const { status } = userLoginState;
 
   return (
     <div className={styles.container}>

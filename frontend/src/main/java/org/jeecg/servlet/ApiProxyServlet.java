@@ -34,23 +34,23 @@ public class ApiProxyServlet extends ProxyServlet {
 		super.service(httpReq, httpRes);
 		logger.info("**************"+httpReq.getPathInfo());
 		byte[] content = httpRes.getContent();// 获取返回值
-		String result = null;
+//		String result = null;
 		// 判断是否有值
 		if (null != content)
 		{
-			result = new String(content, "UTF-8");
-			JSONObject jsonObject = JSONObject.parseObject(result);
-			logger.info(result);
-			if(jsonObject.containsKey("success") && jsonObject.getBoolean("success")) {
-				jsonObject.put("status", "ok");
-			}else{
-				jsonObject.put("status", "error");
-			}
-			jsonObject.remove("success");
+//			result = new String(content, "UTF-8");
+//			JSONObject jsonObject = JSONObject.parseObject(result);
+//			logger.info(result);
+//			if(jsonObject.containsKey("success") && jsonObject.getBoolean("success")) {
+//				jsonObject.put("status", "ok");
+//			}else{
+//				jsonObject.put("status", "error");
+//			}
+//			jsonObject.remove("success");
 
 			// 把返回值输出到客户端
 			ServletOutputStream out = servletResponse.getOutputStream();
-			out.write(JSONObject.toJSONString(jsonObject).getBytes());
+			out.write(content);
 			out.flush();
 		}
 	}

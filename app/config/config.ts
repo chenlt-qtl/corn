@@ -93,7 +93,7 @@ export default defineConfig({
     },
     {
       path: '/',
-      redirect: '/article',
+      redirect: '/note',
     },
     {
       component: './404',
