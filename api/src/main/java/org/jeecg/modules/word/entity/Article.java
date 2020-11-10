@@ -32,6 +32,9 @@ public class Article implements Serializable {
 
 	@Excel(name = "mp3", width = 15)
 	private java.lang.String mp3;
+
+	@Excel(name = "picture", width = 15)
+	private java.lang.String picture;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.String status;

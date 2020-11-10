@@ -33,8 +33,14 @@ public class Sentence implements Serializable {
 	@Excel(name = "content", width = 15)
 	private java.lang.String content;
 
-	@Excel(name = "idx", width = 15)
-	private int idx;
+	@Excel(name = "mp3", width = 15)
+	private java.lang.String mp3;
+
+	@Excel(name = "picture", width = 15)
+	private java.lang.String picture;
+
+	@Excel(name = "index", width = 15)
+	private int index;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.String status;

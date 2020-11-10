@@ -19,6 +19,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.shiro.authc.util.JwtUtil;
 import org.jeecg.modules.system.entity.SysRole;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.system.entity.SysUserDepart;
@@ -434,6 +435,20 @@ public class SysUserController {
         Map<String, String> map = userRoleService.queryUserRole();
         result.setResult(map);
         result.setSuccess(true);
+        return result;
+    }
+
+    @RequestMapping(value = "/currentUser", method = RequestMethod.GET)
+    public Result<SysUser> getCurrentUser(HttpServletRequest request) {
+        Result<SysUser> result = new Result<>();
+        String username = JwtUtil.getUserNameByToken(request);
+        if(username == null){
+            result.setSuccess(false);
+        }else{
+            SysUser user = sysUserService.getUserByName(username);
+            result.setResult(user);
+            result.setSuccess(true);
+        }
         return result;
     }
 

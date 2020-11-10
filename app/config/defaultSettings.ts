@@ -3,7 +3,7 @@ import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 export default {
   navTheme: 'light',
   // 拂晓蓝
-  primaryColor: '#1890ff',
+  primaryColor: '#2ecc71',
   layout: 'mix',
   contentWidth: 'Fluid',
   fixedHeader: false,
@@ -13,7 +13,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: 'Ant Design Pro',
+  title: 'Corn',
   pwa: false,
   iconfontUrl: '',
 } as LayoutSettings & {

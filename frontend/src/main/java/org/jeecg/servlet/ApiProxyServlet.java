@@ -32,6 +32,7 @@ public class ApiProxyServlet extends ProxyServlet {
 		ApiProxyServletRequestWrapper httpReq = new ApiProxyServletRequestWrapper(servletRequest);
 		ApiProxyServletResponseWrapper httpRes = new ApiProxyServletResponseWrapper(servletResponse);
 		super.service(httpReq, httpRes);
+		logger.info("**************"+httpReq.getPathInfo());
 		byte[] content = httpRes.getContent();// 获取返回值
 		String result = null;
 		// 判断是否有值
@@ -39,7 +40,8 @@ public class ApiProxyServlet extends ProxyServlet {
 		{
 			result = new String(content, "UTF-8");
 			JSONObject jsonObject = JSONObject.parseObject(result);
-			if(jsonObject.getBoolean("success")) {
+			logger.info(result);
+			if(jsonObject.containsKey("success") && jsonObject.getBoolean("success")) {
 				jsonObject.put("status", "ok");
 			}else{
 				jsonObject.put("status", "error");

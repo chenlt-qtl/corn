@@ -43,8 +43,8 @@ public class CommonController {
 	private String uploadpath;
 
 	@PostMapping(value = "/upload")
-	public Result<SysUser> upload(HttpServletRequest request) {
-		Result<SysUser> result = new Result<>();
+	public Result<String> upload(HttpServletRequest request) {
+		Result<String> result = new Result<>();
 		try {
 
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
@@ -56,6 +56,7 @@ public class CommonController {
 			FileCopyUtils.copy(mf.getBytes(), savefile);
 			result.setMessage(path[1]);
 			result.setSuccess(true);
+			result.setResult(UpLoadUtil.parseUrlText(path[1]));
 		} catch (IOException e) {
 			result.setSuccess(false);
 			result.setMessage(e.getMessage());

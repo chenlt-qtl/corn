@@ -76,8 +76,11 @@ public class ArticleController {
 		Result<IPage<Article>> result = new Result<IPage<Article>>();
 		QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("create_by",sysUser.getUsername()).
-				like("title",article.getTitle()).
 				orderByDesc("create_time");
+
+		if(article.getTitle() != null) {
+			queryWrapper.like("title",article.getTitle());
+		}
 		Page<Article> page = new Page<Article>(pageNo, pageSize);
 		IPage<Article> pageList = articleService.page(page, queryWrapper);
 		result.setSuccess(true);

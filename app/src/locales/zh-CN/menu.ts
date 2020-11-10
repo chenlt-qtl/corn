@@ -50,4 +50,6 @@ export default {
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
   'menu.corn':'主页',
+  'menu.articleList':'文章列表',
+  'menu.note':'笔记',
 };

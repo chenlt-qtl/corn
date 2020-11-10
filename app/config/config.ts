@@ -78,8 +78,22 @@ export default defineConfig({
       component: './corn/Index',
     },
     {
+      path: '/article',
+      name: 'articleList',
+      layout: false,
+      icon: 'smile',
+      component: './article',
+    },
+    {
+      path: '/note',
+      name: 'note',
+      layout: false,
+      icon: 'smile',
+      component: './note',
+    },
+    {
       path: '/',
-      redirect: '/welcome',
+      redirect: '/article',
     },
     {
       component: './404',

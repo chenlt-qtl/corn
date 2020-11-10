@@ -2,7 +2,7 @@ import { Alert, Checkbox, message } from 'antd';
 import React, { useState } from 'react';
 import { Link, SelectLang, history, useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
-import { LoginParamsType, fakeAccountLogin } from '@/services/login';
+import { LoginParamsType, accountLogin } from '@/services/login';
 import LoginFrom from './components/Login';
 import styles from './style.less';
 
@@ -55,10 +55,14 @@ const Login: React.FC<{}> = () => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await fakeAccountLogin({ ...values });
+      const msg = await accountLogin({ ...values });
       if (msg.status === 'ok') {
         message.success('登陆成功！');
         replaceGoto();
+
+        const token = msg.result!.token;
+        localStorage.setItem('jwToken',token)
+
         setTimeout(() => {
           refresh();
         }, 0);

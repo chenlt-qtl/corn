@@ -6,6 +6,7 @@ import { history, RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { queryCurrent } from './services/user';
+import tokenInterceptor from '@/utils/Interceptor';
 
 import defaultSettings from '../config/defaultSettings';
 
@@ -88,5 +89,5 @@ const errorHandler = (error: { response: Response }) => {
 };
 
 export const request: RequestConfig = {
-  errorHandler,
+  errorHandler,credentials:'include',requestInterceptors:[tokenInterceptor]
 };

@@ -76,7 +76,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             }
             Sentence sentence = sentenceVo.getSentence();
             sentence.setArticleId(article.getId());
-            sentence.setIdx(++i);
+            sentence.setIndex(++i);
             sentenceService.save(sentence);
 
             if (sentenceVo.getWords() != null) {
