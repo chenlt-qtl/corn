@@ -8,8 +8,12 @@ export async function queryTreeList(params:NoteListParams) {
   });
 }
 
-export async function queryNote(id:string) {
+export async function queryNoteById(id:string) {
   return request('/api/note/queryById?id='+id);
+}
+
+export async function queryNote(parentId:string) {
+  return request('/api/note/listNote?parentId='+parentId);
 }
 
 export async function removeRule(params: { key: number[] }) {

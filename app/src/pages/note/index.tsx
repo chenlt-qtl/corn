@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Tree, Input, Card, Layout } from 'antd';
+import { Tree, Input, Card, Layout, Spin } from 'antd';
 import { NoteItem } from './data'
-import { queryTreeList,queryNote } from './service'
+import { queryTreeList, queryNoteById } from './service'
 import styles from './index.less'
 import { Editor } from '@tinymce/tinymce-react';
+import TopTabs from './TopTabs';
 
 const { Search } = Input;
 const { Sider, Content } = Layout;
@@ -38,6 +39,8 @@ const NoteList: React.FC<{}> = () => {
   const [treeData, setTreeData] = useState<object[]>([]);
   const [openedNotes, setOpenedNotes] = useState<object[]>([]);
   const [showNote, setShowNote] = useState<object>({});
+  const [noteLoading, setNoteLoading] = useState<boolean>(false);
+  const [treeLoading, setTreeLoading] = useState<boolean>(false);
 
 
   const onExpand = (expandedKeys: string[]) => {
@@ -45,17 +48,19 @@ const NoteList: React.FC<{}> = () => {
     setAutoExpandParent(false);
   };
 
-  const loadNote = ([selectId]:string[])=>{
-    const note = openedNotes.find(item=>{
+  const loadNote = ([selectId]: string[]) => {
+    const note = openedNotes.find(item => {
       return item.id === selectId;
     });
-    
-    if(note){
+
+    if (note) {
       setShowNote(note);
-    }else{
-      queryNote(selectId).then(({ result }) => {
+    } else {
+      setNoteLoading(true);
+      queryNoteById(selectId).then(({ result }) => {
         setShowNote(result);
-        setOpenedNotes([result,...openedNotes]);
+        setOpenedNotes([result, ...openedNotes]);
+        setNoteLoading(false);
       })
     }
   }
@@ -75,14 +80,16 @@ const NoteList: React.FC<{}> = () => {
     setSearchValue(value);
   };
 
-  useEffect(() => {
-    queryTreeList({ parentId: '0' }).then(({ result }) => {
+  const queryTreeData = (parentId: string) => {
+    setTreeLoading(true);
+    queryTreeList({ parentId }).then(({ result }) => {
       setNoteData(result);
       setTreeData(loop(result));
+      setTreeLoading(false);
     });
-  }, [])
+  };
 
-  const loop = function (data:object[]):object[] {
+  const loop = function (data: object[]): object[] {
     return data.map(item => {
       const index = item.title.indexOf(searchValue);
       const beforeStr = item.title.substr(0, index);
@@ -107,41 +114,54 @@ const NoteList: React.FC<{}> = () => {
       };
     });
   }
+
+  const onTabChange = (id: string) => {
+    queryTreeData(id);
+  }
+
   const render = function () {
     console.log(showNote);
-    
+
     return (
-      <Layout className={styles.layout}>
-        <Sider>
-          <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
-          <Tree
-            onExpand={onExpand}
-            expandedKeys={expandedKeys}
-            autoExpandParent={autoExpandParent}
-            treeData={treeData}
-            onSelect={loadNote}
-          />
-        </Sider>
-        <Content>
-          <Card>
-            <Input value={showNote.name}></Input>
-            {/* <div className={styles.text} dangerouslySetInnerHTML={{ __html: note }} /> */}
-            <div className={styles.text}>
-              <Editor
-                value={showNote.text}
-                init={{
-                  height: '100vh',
-                  plugins: 'table,code,lists,advlist',
-                  toolbar: 'code | bold italic h2 h3 blockquote forecolor backcolor | bullist numlist | link image',
-                  toolbar_sticky: true,
-                  menubar: false,
-                  branding: false,
-                }}
-              />
-            </div>
-          </Card>
-        </Content>
-      </Layout>
+      <>
+        <TopTabs onTabChange={onTabChange}>
+          <Layout className={styles.layout}>
+            <Sider>
+              <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
+              <Spin spinning={treeLoading}>
+                <Tree
+                  onExpand={onExpand}
+                  expandedKeys={expandedKeys}
+                  autoExpandParent={autoExpandParent}
+                  treeData={treeData}
+                  onSelect={loadNote}
+                />
+              </Spin>
+            </Sider>
+            <Content>
+              <Card>
+                <Spin spinning={noteLoading}>
+                  <Input value={showNote.name}></Input>
+                  {/* <div className={styles.text} dangerouslySetInnerHTML={{ __html: note }} /> */}
+                  <div className={styles.text}>
+                    <Editor
+                      value={showNote.text}
+                      init={{
+                        height: '100vh',
+                        plugins: 'table,code,lists,advlist',
+                        toolbar: 'code | bold italic h2 h3 blockquote forecolor backcolor | bullist numlist | link image',
+                        toolbar_sticky: true,
+                        menubar: false,
+                        branding: false,
+                      }}
+                    />
+                  </div>
+                </Spin>
+              </Card>
+            </Content>
+          </Layout>
+        </TopTabs>
+      </>
     );
   }
   return render();
