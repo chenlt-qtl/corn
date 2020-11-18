@@ -2,6 +2,7 @@ package org.jeecg.modules.note.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface INoteService extends IService<Note> {
 
     List<Note> searchNote(String createBy,String parentId,String text);
 
-    List<Note> getByIds(String[] ids);
+    List<NoteModel> getByIds(String[] ids);
 
     List<NoteTreeModel> queryTreeList(String createBy ,String parentId);
 
@@ -26,7 +27,9 @@ public interface INoteService extends IService<Note> {
 
     void delete(String userName, String id);
 
-    void setParents(Note note);
+    void setParentIds(Note note);
+
+    void setParentNames(NoteModel note);
 
     boolean updateNote(Note note,String oldText);
 

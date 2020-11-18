@@ -1,0 +1,76 @@
+package org.jeecg.modules.note.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.shiro.SecurityUtils;
+import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.note.entity.NoteOpenHistory;
+import org.jeecg.modules.note.entity.NoteOpenKeys;
+import org.jeecg.modules.note.mapper.NoteOpenHistoryMapper;
+import org.jeecg.modules.note.model.NoteModel;
+import org.jeecg.modules.note.service.INoteOpenHistoryService;
+import org.jeecg.modules.note.service.INoteService;
+import org.jeecg.modules.system.entity.SysUser;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @Description: 打开历史
+ * @author： jeecg-boot
+ * @date：   2020-11-13
+ * @version： V1.0
+ */
+@Service
+public class NoteOpenHistoryServiceImpl extends ServiceImpl<NoteOpenHistoryMapper, NoteOpenHistory> implements INoteOpenHistoryService {
+
+    @Resource
+    private INoteService noteService;
+    /**
+     * 增加history
+     * @param history
+     * @return
+     */
+    public NoteOpenHistory addHistory(NoteOpenHistory history){
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        history.setCreateBy(sysUser.getUsername());
+
+        //删除旧数据
+        NoteOpenHistory seachParam = new NoteOpenHistory();
+        seachParam.setCreateBy(sysUser.getUsername());
+        QueryWrapper<NoteOpenHistory> queryWrapper = QueryGenerator.initQueryWrapper(seachParam,null);
+        this.remove(queryWrapper);
+
+        this.save(history);
+        return history;
+    }
+
+    public List<NoteModel> queryNotes() {
+        List<NoteModel> notes = new ArrayList<>();
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+
+        NoteOpenHistory noteOpenHistory = new NoteOpenHistory();
+        noteOpenHistory.setCreateBy(sysUser.getUsername());
+        QueryWrapper<NoteOpenHistory> queryWrapper = QueryGenerator.initQueryWrapper(noteOpenHistory,null);
+
+        List<NoteOpenHistory> list = this.list(queryWrapper);
+
+        if(!list.isEmpty()) {
+            NoteOpenHistory history = list.get(0);
+            if(history.getOpenNoteIds() != null && history.getOpenNoteIds().length()>0){
+                String[] noteIds = history.getOpenNoteIds().split(",");
+                List<NoteModel> nodeList = noteService.getByIds(noteIds);
+                for(NoteModel note:nodeList){
+                    noteService.setParentNames(note);
+                    notes.add(note);
+                }
+            }
+        }
+        return notes;
+    }
+}

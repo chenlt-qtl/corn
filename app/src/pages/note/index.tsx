@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Tree, Input, Card, Layout, Spin } from 'antd';
 import { NoteItem } from './data'
-import { queryTreeList, queryNoteById } from './service'
 import styles from './index.less'
 import { Editor } from '@tinymce/tinymce-react';
 import TopTabs from './TopTabs';
+import OpenNotes from './OpenNotes';
+import { useModel } from 'umi';
 
 const { Search } = Input;
 const { Sider, Content } = Layout;
@@ -28,42 +29,28 @@ const getParentKey = (key, tree) => {
   return parentKey;
 };
 
-const note = ``;
-
 const NoteList: React.FC<{}> = () => {
 
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState<string>('');
-  const [noteData, setNoteData] = useState<object[]>([]);
-  const [treeData, setTreeData] = useState<object[]>([]);
-  const [openedNotes, setOpenedNotes] = useState<object[]>([]);
-  const [showNote, setShowNote] = useState<object>({});
-  const [noteLoading, setNoteLoading] = useState<boolean>(false);
-  const [treeLoading, setTreeLoading] = useState<boolean>(false);
 
+  
+  const { queryOpenedNotes, openedNotes, showOpenNotes, onTabChange, 
+    treeData, showNote, setShowNote, noteLoading, treeLoading, handleModifyNote, loadNote } = useModel('note');
+
+  useEffect(() => {
+    queryOpenedNotes();
+  }, []);
+
+  const handleNameChange = (e) => {
+    setShowNote({ ...showNote, name: e.target.value })
+  }
 
   const onExpand = (expandedKeys: string[]) => {
     setExpandedKeys(expandedKeys);
     setAutoExpandParent(false);
   };
-
-  const loadNote = ([selectId]: string[]) => {
-    const note = openedNotes.find(item => {
-      return item.id === selectId;
-    });
-
-    if (note) {
-      setShowNote(note);
-    } else {
-      setNoteLoading(true);
-      queryNoteById(selectId).then(({ result }) => {
-        setShowNote(result);
-        setOpenedNotes([result, ...openedNotes]);
-        setNoteLoading(false);
-      })
-    }
-  }
 
   const onChange = e => {
     const { value } = e.target;
@@ -80,53 +67,22 @@ const NoteList: React.FC<{}> = () => {
     setSearchValue(value);
   };
 
-  const queryTreeData = (parentId: string) => {
-    setTreeLoading(true);
-    queryTreeList({ parentId }).then(({ result }) => {
-      setNoteData(result);
-      setTreeData(loop(result));
-      setTreeLoading(false);
-    });
-  };
 
-  const loop = function (data: object[]): object[] {
-    return data.map(item => {
-      const index = item.title.indexOf(searchValue);
-      const beforeStr = item.title.substr(0, index);
-      const afterStr = item.title.substr(index + searchValue.length);
-      const title =
-        index > -1 ? (
-          <span>
-            {beforeStr}
-            <span className="site-tree-search-value">{searchValue}</span>
-            {afterStr}
-          </span>
-        ) : (
-            <span>{item.title}</span>
-          );
-      if (item.children) {
-        return { title, key: item.key, children: loop(item.children) };
-      }
+  const handleTextChange = (e) => {
+    console.log(e);
 
-      return {
-        title,
-        key: item.key,
-      };
-    });
-  }
-
-  const onTabChange = (id: string) => {
-    queryTreeData(id);
   }
 
   const render = function () {
-    console.log(showNote);
 
     return (
       <>
         <TopTabs onTabChange={onTabChange}>
           <Layout className={styles.layout}>
-            <Sider>
+            <Sider style={{ display: showOpenNotes ? "inline-block" : "none" }}>
+              <OpenNotes loadNote={loadNote} />
+            </Sider>
+            <Sider style={{ display: showOpenNotes ? "none" : "inline-block" }}>
               <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
               <Spin spinning={treeLoading}>
                 <Tree
@@ -141,11 +97,12 @@ const NoteList: React.FC<{}> = () => {
             <Content>
               <Card>
                 <Spin spinning={noteLoading}>
-                  <Input value={showNote.name}></Input>
+                  <Input value={showNote.name} onChange={handleNameChange} onBlur={handleModifyNote}></Input>
                   {/* <div className={styles.text} dangerouslySetInnerHTML={{ __html: note }} /> */}
                   <div className={styles.text}>
                     <Editor
                       value={showNote.text}
+                      onBlur={handleTextChange}
                       init={{
                         height: '100vh',
                         plugins: 'table,code,lists,advlist',

@@ -11,6 +11,7 @@ import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
 import org.jeecg.modules.note.service.INoteService;
 import org.jeecg.modules.system.entity.SysUser;
@@ -112,7 +113,7 @@ public class NoteController {
 	public Result<Note> add(@RequestBody Note note) {
 		Result<Note> result = new Result<Note>();
 		try {
-			noteService.setParents(note);
+			noteService.setParentIds(note);
 			noteService.saveNote(note);
 			result.setResult(note);
 			result.success("添加成功！");
@@ -162,7 +163,7 @@ public class NoteController {
 		if(noteEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
-			noteService.setParents(note);
+			noteService.setParentIds(note);
 			note.setUpdateBy(null);
 			note.setUpdateTime(null);
 			boolean ok = noteService.updateNote(note,noteEntity.getText());
@@ -235,14 +236,16 @@ public class NoteController {
 	 * @return
 	 */
 	@GetMapping(value = "/queryById")
-	public Result<Note> queryById(@RequestParam(name="id",required=true) String id) {
-		Result<Note> result = new Result<Note>();
+	public Result<NoteModel> queryById(@RequestParam(name="id",required=true) String id) {
+		Result<NoteModel> result = new Result<NoteModel>();
 		Note note = noteService.getById(id);
 		if(note==null) {
 			result.error500("未找到对应实体");
 		}else {
+			NoteModel noteModel = new NoteModel(note);
+			noteService.setParentNames(noteModel);//设置父节点名称
 			note.setText(UpLoadUtil.parseImgText(note.getText()));
-			result.setResult(note);
+			result.setResult(noteModel);
 			result.setSuccess(true);
 		}
 		return result;

@@ -11,6 +11,6 @@ public class NoteOpenKeyModel extends NoteOpenKeys {
 
     private static final long serialVersionUID = 1L;
 
-    private List<Note> openNotes;
+    private List<NoteModel> openNotes;
 
 }

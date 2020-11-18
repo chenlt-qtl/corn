@@ -1,13 +1,16 @@
 export interface NoteItem {
   id: string;
-  title:string;
+  name:string;
   text?: string;
+  tag?: string;
+  source?: string;
   parentId:string;
   parentIds:string;
   status?: number;
   updateTime?: Date;
   createTime?: Date;
   createBy?: string;
+  updateBy?: string;
 }
 
 export interface NoteListParams {

@@ -16,6 +16,17 @@ export async function queryNote(parentId:string) {
   return request('/api/note/listNote?parentId='+parentId);
 }
 
+
+export async function modifyNote(params: NoteItem) {
+  return request('/api/note/edit', {
+    method: 'PUT',
+    data: {
+      ...params,
+      method: 'put',
+    },
+  });
+}
+
 export async function removeRule(params: { key: number[] }) {
   return request('/api/rule', {
     method: 'POST',
@@ -36,12 +47,16 @@ export async function addArticle(params: ArticleItem) {
   });
 }
 
-export async function updateRule(params: TableListParams) {
-  return request('/api/rule', {
+export async function queryOpenHistory() {
+  return request('/api/note/openHistory/query');
+}
+
+export async function addOpenHistory(openNoteIds: String) {
+  return request('/api/note/openHistory/add', {
     method: 'POST',
     data: {
-      ...params,
-      method: 'update',
+      openNoteIds,
+      method: 'post',
     },
   });
 }

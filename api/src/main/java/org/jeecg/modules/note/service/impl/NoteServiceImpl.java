@@ -9,6 +9,7 @@ import org.jeecg.common.util.tree.TreeUtil;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.entity.NoteDelete;
 import org.jeecg.modules.note.mapper.NoteMapper;
+import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
 import org.jeecg.modules.note.service.INoteDeleteService;
 import org.jeecg.modules.note.service.INoteService;
@@ -53,7 +54,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public List<Note> getByIds(String[] ids) {
+    public List<NoteModel> getByIds(String[] ids) {
         return noteMapper.getByIds(ids);
     }
 
@@ -76,7 +77,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     @Transactional
     @Override
     public void updateParent(Note note,String oldParents) {
-        setParents(note);
+        setParentIds(note);
         note.setUpdateBy(null);
         note.setUpdateTime(null);
         updateNote(note,"");
@@ -125,10 +126,10 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     /**
-     * 设置parents
+     * 设置parentIds
      * @param note
      */
-    public void setParents(Note note){
+    public void setParentIds(Note note){
         if(StringUtils.isBlank(note.getParentId())||"0".equals(note.getParentId())){
             note.setParentId("0");
             note.setParentIds("0");
@@ -136,5 +137,23 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             Note parent = getById(note.getParentId());
             note.setParentIds(parent.getParentIds() + "/" + note.getParentId());
         }
+    }
+
+    /**
+     * 设置parents
+     * @param note
+     */
+    public void setParentNames(NoteModel note){
+        String parentIds = note.getParentIds();
+        String parents = "";
+        if(parentIds!=null){
+            String[] parentIdArr = parentIds.split("/");
+            List<NoteModel> parentNotes = this.getByIds(parentIdArr);
+            for(Note parentNote:parentNotes){
+                parents += parents.length()>0?"/":"";
+                parents += parentNote.getName();
+            }
+        }
+        note.setParents(parents);
     }
 }
