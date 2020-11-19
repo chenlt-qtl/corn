@@ -21,6 +21,8 @@ public interface INoteService extends IService<Note> {
 
     List<NoteModel> getByIds(String[] ids);
 
+    List<Note> getNameByIds(String[] ids);
+
     List<NoteTreeModel> queryTreeList(String createBy ,String parentId);
 
     void updateParent(Note note,String oldParents);

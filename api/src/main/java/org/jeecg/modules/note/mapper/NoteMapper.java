@@ -31,5 +31,7 @@ public interface NoteMapper extends BaseMapper<Note> {
      */
     public List<Note> listAllChildren(@Param("createBy") String createBy,@Param("parentId") String parentId,@Param("text") String text,@Param("detail") boolean detail);
 
+    public List<Note> getNameByIds(@Param("ids") String[] ids);
+
     public List<NoteModel> getByIds(@Param("ids") String[] ids);
 }

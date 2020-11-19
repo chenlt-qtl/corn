@@ -13,6 +13,7 @@ public class NoteTreeModel extends TreeModel<Note> {
         this.setParentIds(note.getParentIds());
         this.setKey(note.getId());
         this.setTitle(note.getName());
+        this.setName(note.getName());
         this.setParentId(note.getParentId());
     }
 

@@ -79,10 +79,10 @@ public class TreeUtil {
             TreeModel model = treeList.get(i);
             if (model.getChildren().size() == 0) {
                 model.setChildren(null);
-                model.setIsLeaf(true);
+                model.setLeaf(true);
             }else{
                 setEmptyChildrenAsNull(model.getChildren());
-                model.setIsLeaf(false);
+                model.setLeaf(false);
             }
         }
     }

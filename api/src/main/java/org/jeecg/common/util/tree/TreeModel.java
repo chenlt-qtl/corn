@@ -1,8 +1,11 @@
 package org.jeecg.common.util.tree;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public abstract class TreeModel<T>{
 
     static final long serialVersionUID = 1L;
@@ -10,6 +13,8 @@ public abstract class TreeModel<T>{
     private String key;
 
     private String title;
+
+    private String name;
 
     private String parentId;
 
@@ -25,34 +30,6 @@ public abstract class TreeModel<T>{
 
     private List<TreeModel> children = new ArrayList<>();
 
-    public boolean getIsLeaf() {
-        return isLeaf;
-    }
-
-    public void setIsLeaf(boolean isleaf) {
-         this.isLeaf = isleaf;
-    }
-
-    public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public List<TreeModel> getChildren() {
-        return children;
-    }
-
     public void setChildren(List<TreeModel> children) {
         if (children==null){
             this.isLeaf=true;
@@ -65,27 +42,4 @@ public abstract class TreeModel<T>{
         return serialVersionUID;
     }
 
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public boolean isLeaf() {
-        return isLeaf;
-    }
-
-    public void setLeaf(boolean leaf) {
-        isLeaf = leaf;
-    }
-
-    public T getModel() {
-        return model;
-    }
-
-    public void setModel(T model) {
-        this.model = model;
-    }
 }

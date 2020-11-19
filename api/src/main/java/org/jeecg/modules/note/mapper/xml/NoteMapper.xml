@@ -28,8 +28,16 @@
         </if>
         order by n.name
     </select>
+    <select id="getNameByIds" resultType="org.jeecg.modules.note.entity.Note">
+        SELECT n.id,n.name
+        FROM  note_info n
+        where id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            <![CDATA[ #{id} ]]>
+        </foreach>
+    </select>
     <select id="getByIds" resultType="org.jeecg.modules.note.model.NoteModel">
-        SELECT n.id,n.name,n.parent_ids
+        SELECT *
         FROM  note_info n
         where id in
         <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">

@@ -13,7 +13,6 @@ export default () => {
     const [treeData, setTreeData] = useState<object[]>([]);
     const [treeLoading, setTreeLoading] = useState<boolean>(false);
     const [showOpenNotes, setShowOpenNotes] = useState<boolean>(true);
-    const searchValue = '';
 
     const queryOpenedNotes = ()=>{//加载历史记录
         queryOpenHistory().then(({ result }) => {
@@ -22,6 +21,9 @@ export default () => {
     }
 
     const updateOpenedNotes= (newOpendNotes:object[])=>{
+        if(newOpendNotes.length>=20){
+            newOpendNotes = newOpendNotes.splice(-20);
+        }
         const openNoteIds = newOpendNotes.reduce((total:[],item)=>{
             total.push(item.id);
             return total;
@@ -82,7 +84,7 @@ export default () => {
 
     return {
         openedNotes, removeOpenNote, showNote, setShowNote, onTabChange,
-        loadNote, noteLoading, treeLoading, showOpenNotes, handleModifyNote,treeData,
-        queryOpenedNotes
+        loadNote, noteLoading, treeLoading, showOpenNotes, handleModifyNote,treeData,setTreeData,
+        queryOpenedNotes,noteData
     };
 };

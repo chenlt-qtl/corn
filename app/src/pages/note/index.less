@@ -1,64 +1,70 @@
 .layout {
+  aside,
+  main {
+    background: #fff;
+    border: 1px solid #f0f2f5;
+    border-radius: 5px;
+  }
 
-    aside,
-    main {
-        background   : #fff;
-        border       : 1px solid #f0f2f5;
-        border-radius: 5px;
+  main > div {
+    border: none;
+    position: relative;
+  }
+
+  .noteTree {
+    padding: 24px 16px;
+    margin-right: 2px;
+    .found {
+      background-color: #f1c40f;
+      color: #fff;
+      border: 1px solid #f1c40f;
+      border-radius: 3px;
+      font-weight: 500;
     }
-
-    main>div {
-        border  : none;
-        position: relative;
+  }
+  .openNotes {
+    .parents {
+      display: inline-block;
+      margin-left: 5px;
+      color: #95a5a6;
     }
-
-    aside:last-of-type {
-        padding     : 24px 16px;
-        margin-right: 2px;
-
-    }
-
-    aside:first-of-type{
-        >div {
-            padding   : 10px 0;
-            >div{
-                padding: 3px 0;
-                padding-left: 10px;
-                cursor: pointer;
-                display: flex;
-                >span:first-of-type{
-                    display: inline-block;
-                    margin-right: 3px;
-                    color: #95a5a6;
-                    visibility: hidden;
-                    line-height: 1.7;
-                }
-                >span:last-of-type{
-                    flex: 1;
-                }
-                &:hover{
-                    >span:first-of-type{
-                        visibility: visible;
-                    } 
-                }
-            }
-            .active {
-                background:#f1f2f6;
-                >span:first-of-type{
-                    visibility: visible;
-                }
-            }
+    > div {
+      padding: 10px 0;
+      > div:nth-of-type(odd) {
+        background-color: rgba(241, 242, 246, 0.4);
+      }
+      > div {
+        padding: 3px 0;
+        padding-left: 10px;
+        cursor: pointer;
+        display: flex;
+        > span:first-of-type {
+          display: inline-block;
+          margin-right: 3px;
+          color: #95a5a6;
+          visibility: hidden;
+          line-height: 1.7;
         }
+        > span:last-of-type {
+          flex: 1;
+        }
+        &:hover {
+          > span:first-of-type {
+            visibility: visible;
+          }
+        }
+      }
+      .active {
+        background: #f1f2f6;
+        > span:first-of-type {
+          visibility: visible;
+        }
+      }
     }
+  }
 
-    .text {
-        margin-top: 10px;
-        height    : 100vh;
-    }
-}
-
-.parents{
-    display: inline-block;
-    margin-left: 5px;
-    color: #95a5a6;
+  .text {
+    margin-top: 10px;
+    height: 100vh;
+  }
 }

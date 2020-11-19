@@ -59,6 +59,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
+    public List<Note> getNameByIds(String[] ids) {
+        return noteMapper.getNameByIds(ids);
+    }
+
+    @Override
     public List<NoteTreeModel> queryTreeList(String createBy,String parentId) {
         String rootId = parentId;
         List<Note> list = noteMapper.listAllChildren(createBy,parentId,null,false);
@@ -148,7 +153,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         String parents = "";
         if(parentIds!=null){
             String[] parentIdArr = parentIds.split("/");
-            List<NoteModel> parentNotes = this.getByIds(parentIdArr);
+            List<Note> parentNotes = this.getNameByIds(parentIdArr);
             for(Note parentNote:parentNotes){
                 parents += parents.length()>0?"/":"";
                 parents += parentNote.getName();
