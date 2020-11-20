@@ -1,11 +1,11 @@
 export interface NoteItem {
-  id: string;
-  name:string;
+  id?: string;
+  name?:string;
   text?: string;
   tag?: string;
   source?: string;
-  parentId:string;
-  parentIds:string;
+  parentId?:string;
+  parentIds?:string;
   status?: number;
   updateTime?: Date;
   createTime?: Date;

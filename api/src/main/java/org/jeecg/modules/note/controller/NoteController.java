@@ -161,7 +161,7 @@ public class NoteController {
 		Result<Note> result = new Result<Note>();
 		Note noteEntity = noteService.getById(note.getId());
 		if(noteEntity==null) {
-			result.error500("未找到对应实体");
+			result.error500("未找到对应笔记");
 		}else {
 			noteService.setParentIds(note);
 			note.setUpdateBy(null);

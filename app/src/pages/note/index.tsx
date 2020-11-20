@@ -1,24 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Tree, Input, Card, Layout, Spin } from 'antd';
 import styles from './index.less';
 import { Editor } from '@tinymce/tinymce-react';
 import TopTabs from './TopTabs';
+import NoteTree from './NoteTree';
 import OpenNotes from './OpenNotes';
 import { useModel } from 'umi';
 import { keys } from 'lodash';
 
-const { Search } = Input;
 const { Sider, Content } = Layout;
 
 const NoteList: React.FC<{}> = () => {
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-  const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
-  const [searchValue, setSearchValue] = useState<string>('');
 
-  const {
-    queryOpenedNotes, showOpenNotes, onTabChange, setTreeData, treeData, noteData,
-    showNote, setShowNote, noteLoading, treeLoading, handleModifyNote, loadNote,
-  } = useModel('note');
+  const nameInput = useRef();
+
+  const { queryOpenedNotes, showOpenNotes, onTabChange, setTreeData, treeData, noteData,
+    showNote, setShowNote, noteLoading, treeLoading, handleEditNote, loadNote, setSearchValue, parentId } =
+    useModel('note', ({ queryOpenedNotes, showOpenNotes, onTabChange, setTreeData, treeData, noteData,
+      showNote, setShowNote, noteLoading, treeLoading, handleEditNote, loadNote, setSearchValue, parentId }) =>
+      ({
+        queryOpenedNotes, showOpenNotes, onTabChange, setTreeData, treeData, noteData,
+        showNote, setShowNote, noteLoading, treeLoading, handleEditNote, loadNote, setSearchValue, parentId
+      }));
 
   useEffect(() => {
     queryOpenedNotes();
@@ -28,63 +31,26 @@ const NoteList: React.FC<{}> = () => {
     setShowNote({ ...showNote, name: e.target.value });
   };
 
-  const onExpand = (expandedKeys: string[]) => {
-    setExpandedKeys(expandedKeys);
-    setAutoExpandParent(false);
-  };
-
-  const onSearchChange = (e) => {
-    setSearchValue(e.target.value);
-  };
-
-  const onSearch = (value) => {
-    setAutoExpandParent(true);
-    const { keys, treeData } = getSearchResult(noteData, value);
-    setExpandedKeys(Array.from(new Set(keys)));
-    setTreeData(treeData);
-  };
-
   const handleTextChange = (e) => {
     console.log(e);
   };
 
-  //设置搜索结果
-  const getSearchResult = (data, searchValue) => {
-    const keys = [];
-    if (!searchValue || searchValue.trim() === '') {
-      return { treeData: data, keys };
+  const addRootNote = () => {
+    const newNote = { parentId, name: '新文档', text: ' ' };
+    nameInput.current.focus();
+    setShowNote(newNote);
+  };
+
+  const addNote = () => {
+    let newNote = {};
+    if (showNote) {
+
+      newNote = { parentId: showNote.id, name: '新文档', text: ' ' };
+    } else {
+      newNote = { parentId, name: '新文档', text: ' ' };
     }
-    const treeData = data.reduce((total, item) => {
-      let children = [];
-      if (item.children) {
-        const childrenData = getSearchResult(item.children, searchValue);
-        children = childrenData.treeData;
-        keys.push(...childrenData.keys);
-      }
-      const index = item.name.toLowerCase().indexOf(searchValue.trim().toLowerCase());
-      if (index > -1 || children.length > 0) {
-        let title;
-        keys.push(...item.parentIds.split('/'));
-        if (index > -1) {
-          const beforeStr = item.name.substr(0, index);
-          const afterStr = item.name.substr(index + searchValue.length);
-          title = (<span>
-            {beforeStr}
-            <span className={styles.found}>{searchValue}</span>
-            {afterStr}
-          </span>);
-        } else {
-          title = <span>{item.name}</span>;
-        }
-        if (children.length > 0) {
-          total.push({ ...item, title, children });
-        } else {
-          total.push({ ...item, title });
-        }
-      }
-      return total;
-    }, []);
-    return { treeData, keys };
+    nameInput.current.focus();
+    setShowNote(newNote);
   };
 
   const render = function () {
@@ -98,35 +64,20 @@ const NoteList: React.FC<{}> = () => {
         >
           <Layout className={styles.layout}>
             <Sider className={styles.openNotes} style={{ display: showOpenNotes ? 'inline-block' : 'none' }}>
-              <OpenNotes loadNote={loadNote} />
+              <OpenNotes />
             </Sider>
             <Sider className={styles.noteTree} style={{ display: showOpenNotes ? 'none' : 'inline-block' }}>
-              <Search
-                style={{ marginBottom: 8 }}
-                value={searchValue}
-                placeholder="Search"
-                onChange={onSearchChange}
-                onSearch={onSearch}
-              />
-              <Spin spinning={treeLoading}>
-                <Tree
-                  onExpand={onExpand}
-                  expandedKeys={expandedKeys}
-                  autoExpandParent={autoExpandParent}
-                  treeData={treeData}
-                  onSelect={loadNote}
-                />
-              </Spin>
+              <NoteTree addRootNote={addRootNote} addNote={addNote}></NoteTree>
             </Sider>
             <Content>
               <Card>
                 <Spin spinning={noteLoading}>
                   <Input
+                    ref={nameInput}
                     value={showNote.name}
                     onChange={handleNameChange}
-                    onBlur={handleModifyNote}
+                    onBlur={handleEditNote}
                   ></Input>
-                  {/* <div className={styles.text} dangerouslySetInnerHTML={{ __html: note }} /> */}
                   <div className={styles.text}>
                     <Editor
                       value={showNote.text}
