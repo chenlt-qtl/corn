@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tree, Input, Spin, Menu, Dropdown } from 'antd';
+import { Tree, Spin, Menu, Dropdown } from 'antd';
 import styles from './index.less'
 import { useModel } from 'umi';
 import { PlusOutlined } from '@ant-design/icons';
@@ -9,17 +9,15 @@ const NoteTree: React.FC<{}> = (props) => {
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
     const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
-    const { setTreeData, treeData, noteData, treeLoading, loadNote, searchValue, setSearchValue } =
-        useModel('note', ({ setTreeData, treeData, noteData, treeLoading, loadNote, searchValue, setSearchValue }) =>
-            ({ setTreeData, treeData, noteData, treeLoading, loadNote, searchValue, setSearchValue }));
+    const { setTreeData, treeData, noteData, treeLoading, loadNote, searchValue, setSearchValue, selectedKeys, setSelectedKeys } =
+        useModel('note', ({ setTreeData, treeData, noteData, treeLoading, loadNote, searchValue, setSearchValue, selectedKeys, setSelectedKeys }) =>
+            ({ setTreeData, treeData, noteData, treeLoading, loadNote, searchValue, setSearchValue, selectedKeys, setSelectedKeys }));
 
     const onSearchChange = (e) => {
         setSearchValue(e.target.value);
     };
 
-
-
-    const menu = (
+    const toolbarMenu = (
         <Menu>
             <Menu.Item>
                 <a onClick={props.addRootNote}>
@@ -46,6 +44,13 @@ const NoteTree: React.FC<{}> = (props) => {
     const onExpand = (expandedKeys: string[]) => {
         setExpandedKeys(expandedKeys);
         setAutoExpandParent(false);
+    };
+
+    const onSelect = (ids: string[]) => {
+        if (ids.length > 0) {
+            setSelectedKeys(ids);
+            loadNote(ids)
+        }
     };
 
     //设置搜索结果
@@ -95,7 +100,7 @@ const NoteTree: React.FC<{}> = (props) => {
                     onChange={onSearchChange}
                     onKeyUp={onSearch}
                 />
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={toolbarMenu}>
                     <div>
                         <PlusOutlined />
                     </div>
@@ -107,7 +112,8 @@ const NoteTree: React.FC<{}> = (props) => {
                     expandedKeys={expandedKeys}
                     autoExpandParent={autoExpandParent}
                     treeData={treeData}
-                    onSelect={loadNote}
+                    onSelect={onSelect}
+                    selectedKeys={selectedKeys}
                 />
             </Spin>
         </>

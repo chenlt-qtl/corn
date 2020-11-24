@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Tree, Input, Card, Layout, Spin } from 'antd';
+import { message, Input, Card, Layout, Spin } from 'antd';
 import styles from './index.less';
 import { Editor } from '@tinymce/tinymce-react';
 import TopTabs from './TopTabs';
@@ -13,14 +13,15 @@ const { Sider, Content } = Layout;
 const NoteList: React.FC<{}> = () => {
 
   const nameInput = useRef();
+  const editor = useRef();
 
   const { queryOpenedNotes, showOpenNotes, onTabChange, setTreeData, treeData, noteData,
-    showNote, setShowNote, noteLoading, treeLoading, handleEditNote, loadNote, setSearchValue, parentId } =
+    showNote, setShowNote, noteLoading, treeLoading, editNote, loadNote, setSearchValue, tabId } =
     useModel('note', ({ queryOpenedNotes, showOpenNotes, onTabChange, setTreeData, treeData, noteData,
-      showNote, setShowNote, noteLoading, treeLoading, handleEditNote, loadNote, setSearchValue, parentId }) =>
+      showNote, setShowNote, noteLoading, treeLoading, editNote, loadNote, setSearchValue, tabId }) =>
       ({
         queryOpenedNotes, showOpenNotes, onTabChange, setTreeData, treeData, noteData,
-        showNote, setShowNote, noteLoading, treeLoading, handleEditNote, loadNote, setSearchValue, parentId
+        showNote, setShowNote, noteLoading, treeLoading, editNote, loadNote, setSearchValue, tabId
       }));
 
   useEffect(() => {
@@ -32,22 +33,25 @@ const NoteList: React.FC<{}> = () => {
   };
 
   const handleTextChange = (e) => {
-    console.log(e);
+    const text = window.tinymce.activeEditor.getContent();
+    const newNote = {...showNote,text};
+    newNote.id===showNote.id&&setShowNote(newNote);
+    editNote(newNote);
   };
 
   const addRootNote = () => {
-    const newNote = { parentId, name: '新文档', text: ' ' };
+    const newNote = { parentId: tabId, name: '新文档', text: ' ' };
     nameInput.current.focus();
     setShowNote(newNote);
   };
 
   const addNote = () => {
     let newNote = {};
-    if (showNote) {
-
+    if (showNote && showNote.id) {
       newNote = { parentId: showNote.id, name: '新文档', text: ' ' };
     } else {
-      newNote = { parentId, name: '新文档', text: ' ' };
+      message.error('请先选择一个笔记本');
+      return;
     }
     nameInput.current.focus();
     setShowNote(newNote);
@@ -76,10 +80,11 @@ const NoteList: React.FC<{}> = () => {
                     ref={nameInput}
                     value={showNote.name}
                     onChange={handleNameChange}
-                    onBlur={handleEditNote}
+                    onBlur={editNote}
                   ></Input>
                   <div className={styles.text}>
                     <Editor
+                      ref={editor}
                       value={showNote.text}
                       onBlur={handleTextChange}
                       init={{

@@ -28,18 +28,22 @@ export default () => {
     const [treeLoading, setTreeLoading] = useState<boolean>(false);
     const [showOpenNotes, setShowOpenNotes] = useState<boolean>(true);
     const [searchValue, setSearchValue] = useState<string>('');
-    const [parentId, setParentId] = useState<string>('');
+    const [tabId, setTabId] = useState<string>('');
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
 
     const queryOpenedNotes = () => {//加载历史记录
-        queryOpenHistory().then(({ result }) => {
-            setOpenedNotes(result);
+        queryOpenHistory().then((res) => {
+            if (res) {
+                const { result } = res;
+                setOpenedNotes(result);
+            }
         });
     }
 
     const updateOpenedNotes = (newOpendNotes: object[]) => {
         if (newOpendNotes.length >= 20) {
-            newOpendNotes = newOpendNotes.splice(-20);
+            newOpendNotes = newOpendNotes.splice(0,20);
         }
         const openNoteIds = newOpendNotes.reduce((total: string[], item: NoteItem) => {
             total.push(item.id!);
@@ -52,7 +56,7 @@ export default () => {
 
     const queryTreeData = (parentId: string) => {
         setTreeLoading(true);
-        setParentId(parentId);
+        setTabId(parentId);
         queryTreeList({ parentId }).then(({ result }) => {
             setNoteData(result);
             setTreeData(result);
@@ -89,7 +93,7 @@ export default () => {
             queryNoteById(selectId).then((res) => {
                 if (res) {
                     const { result } = res;
-                    if(!result.text){
+                    if (!result.text) {
                         result.text = ' ';
                     }
                     setShowNote(result);
@@ -100,44 +104,46 @@ export default () => {
         }
     }
 
-    const handleEditNote = () => {
-        if (showNote.parentId) {
+    const editNote = (note) => {
+        if (note.parentId) {
             setNoteLoading(true);
-            if (showNote.id) {
-                modifyNote(showNote).then((res) => {
+            if (note.id) {
+                modifyNote(note).then((res) => {
                     const newNoteData = [...noteData];
                     const newTreeData = [...treeData];
 
-                    const noteNode = findNodeById(newNoteData, showNote.id);
+                    const noteNode = findNodeById(newNoteData, note.id);
                     if (noteNode) {
-                        noteNode.title = showNote.name;
-                        noteNode.name = showNote.name;
+                        noteNode.title = note.name;
+                        noteNode.name = note.name;
                         setNoteData(newNoteData)
                         setTreeData(newTreeData);
                     }
                     setNoteLoading(false);
+                    updateOpenedNotes(openedNotes.map(item => {return (item.id === note.id)?note:item;}));
                 })
             } else {
-                addNote(showNote).then((res) => {
+                addNote(note).then((res) => {
                     if (res) {
-                        const { result: note } = res;
-                        setShowNote(note);
+                        const { result: newNote } = res;
+                        updateOpenedNotes([...openedNotes,newNote]);
+                        !showNote.id&&setShowNote(newNote);
 
                         const treeNode = {
-                            key: note.id,
-                            parentIds: note.parentIds,
-                            title: note.name,
-                            name: note.name,
-                            parentId: note.parentId,
+                            key: newNote.id,
+                            parentIds: newNote.parentIds,
+                            title: newNote.name,
+                            name: newNote.name,
+                            parentId: newNote.parentId,
                         }
 
-                        if (showNote.parentId === parentId) {
+                        if (note.parentId === tabId) {
                             setNoteData([...noteData, treeNode]);
                             setTreeData([...treeData, treeNode]);
                         } else {
                             const newNoteData = [...noteData];
 
-                            const noteParent = findNodeById(newNoteData, showNote.parentId);
+                            const noteParent = findNodeById(newNoteData, note.parentId);
                             noteParent.children.push(treeNode);
 
                             setNoteData(newNoteData)
@@ -152,7 +158,7 @@ export default () => {
 
     return {
         openedNotes, removeOpenNote, showNote, setShowNote, onTabChange,
-        loadNote, noteLoading, treeLoading, showOpenNotes, handleEditNote, treeData, setTreeData,
-        queryOpenedNotes, noteData, searchValue, setSearchValue, parentId
+        loadNote, noteLoading, treeLoading, showOpenNotes, editNote, treeData, setTreeData,
+        queryOpenedNotes, noteData, searchValue, setSearchValue, tabId,selectedKeys, setSelectedKeys
     };
 };

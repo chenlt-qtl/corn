@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './topTabs.less'
 import { queryNote } from './service'
+import { useModel } from 'umi';
 
 const openNotesTab = { id: '', name: '最近打开', color: '#f1c40f' };
 const defaultColor = "#1abc9c";
@@ -12,16 +13,23 @@ const TopTabs: React.FC<{}> = (props) => {
 
     const [tabData, setTabData] = useState<object[]>([]);
 
+    const { setSelectedKeys } = useModel('note', ({ setSelectedKeys }) => ({ setSelectedKeys }));
+
+
     const onClick = (id: string, color: string = defaultColor) => {
         setActiveId(id);
         color && setActiveColor(color);
         props.onTabChange(id);
+        setSelectedKeys([]);
     }
 
     useEffect(() => {
-        queryNote('0').then(({ result }) => {
-            onClick(openNotesTab.id,openNotesTab.color);
-            setTabData([openNotesTab, ...result]);
+        queryNote('0').then((res) => {
+            if (res) {
+                const { result } = res;
+                onClick(openNotesTab.id, openNotesTab.color);
+                setTabData([openNotesTab, ...result]);
+            }
         });
     }, []);
 

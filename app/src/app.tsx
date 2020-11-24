@@ -18,10 +18,14 @@ export async function getInitialState(): Promise<{
   if (history.location.pathname !== '/user/login') {
     try {
       const currentUser = await queryCurrent();
-      return {
-        currentUser,
-        settings: defaultSettings,
-      };
+      if (!currentUser) {
+        history.push('/user/login');
+      } else {
+        return {
+          currentUser,
+          settings: defaultSettings,
+        };
+      }
     } catch (error) {
       history.push('/user/login');
     }

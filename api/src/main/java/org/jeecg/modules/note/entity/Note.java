@@ -71,4 +71,11 @@ public class Note implements Serializable {
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
 
+	public String getText() {
+		if(StringUtils.isBlank(this.text)){
+			return "<p>&nbsp;</p>";
+		}else {
+			return text;
+		}
+	}
 }
