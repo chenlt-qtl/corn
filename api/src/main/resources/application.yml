@@ -114,4 +114,4 @@ logging:
     root: WARN
   root:
     appender: RollingFile
-    path: /root/app/api/logs/
+    path: /root/server/api/logs/

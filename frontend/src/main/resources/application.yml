@@ -81,8 +81,8 @@ spring:
       datasource:
         master:
           url: jdbc:mysql://127.0.0.1:3306/corn?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=UTC
-          username: root
-          password: root
+          username: corn
+          password: corn2020!@#
           driver-class-name: com.mysql.cj.jdbc.Driver
           # 多数据源配置
           #multi-datasource1:
@@ -118,7 +118,7 @@ logging:
     root: WARN
   root:
     appender: RollingFile
-    path: /root/app/api/logs/
+    path: /root/server/frontend/logs/
 corn:
   apiPrefix: /api/*
   openapi: http://localhost:8089
