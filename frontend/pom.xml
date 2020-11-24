@@ -226,7 +226,7 @@
     </dependencies>
 
 	<build>
-		<finalName>jeecg-boot</finalName>
+		<finalName>frontend</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

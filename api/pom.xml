@@ -241,7 +241,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>jeecg-boot</finalName>
+		<finalName>api</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

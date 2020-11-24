@@ -22,6 +22,29 @@ body {
   text-rendering         : optimizeLegibility;
   -webkit-font-smoothing : antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f9f9f9;
+}
+
+// 修改滚动条样式
+*{
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width : 8px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.1);
+    background   : rgba(0, 0, 0, 0.15);
+    border-radius: 2.5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    background   : #fff;
+  }
 }
 
 ul,
@@ -56,3 +79,4 @@ ol {
     min-height: 100vh;
   }
 }
+

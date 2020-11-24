@@ -9,7 +9,7 @@
   position: relative;
 }
 .layout .noteTree {
-  padding: 24px 16px;
+  padding: 24px 1px 24px 16px;
   margin-right: 2px;
 }
 .layout .noteTree .found {
@@ -51,6 +51,10 @@
   border: 1px solid #f0f2f5;
   transition: all 0.2s;
   border-radius: 50%;
+}
+.layout .noteTree .tree {
+  height: 550px;
+  overflow-x: auto;
 }
 .layout .openNotes .parents {
   display: inline-block;

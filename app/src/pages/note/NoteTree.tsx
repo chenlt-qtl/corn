@@ -107,14 +107,16 @@ const NoteTree: React.FC<{}> = (props) => {
                 </Dropdown>
             </div>
             <Spin spinning={treeLoading}>
-                <Tree
-                    onExpand={onExpand}
-                    expandedKeys={expandedKeys}
-                    autoExpandParent={autoExpandParent}
-                    treeData={treeData}
-                    onSelect={onSelect}
-                    selectedKeys={selectedKeys}
-                />
+                <div className={styles.tree}>
+                    <Tree
+                        onExpand={onExpand}
+                        expandedKeys={expandedKeys}
+                        autoExpandParent={autoExpandParent}
+                        treeData={treeData}
+                        onSelect={onSelect}
+                        selectedKeys={selectedKeys}
+                    />
+                </div>
             </Spin>
         </>
     );
