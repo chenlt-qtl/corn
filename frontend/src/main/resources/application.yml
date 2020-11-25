@@ -117,6 +117,7 @@ logging:
   level:
     root: WARN
   root:
+    file-name: frontend
     appender: RollingFile
     path: /root/server/frontend/logs/
 corn:

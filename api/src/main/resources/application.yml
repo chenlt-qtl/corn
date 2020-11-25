@@ -113,5 +113,6 @@ logging:
   level:
     root: WARN
   root:
+    file-name: api
     appender: RollingFile
     path: /root/server/api/logs/
