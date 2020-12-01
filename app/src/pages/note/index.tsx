@@ -6,7 +6,6 @@ import TopTabs from './TopTabs';
 import NoteTree from './NoteTree';
 import OpenNotes from './OpenNotes';
 import { useModel } from 'umi';
-import { keys } from 'lodash';
 
 const { Sider, Content } = Layout;
 
@@ -59,7 +58,7 @@ const NoteList: React.FC<{}> = () => {
 
   const render = function () {
     return (
-      <>
+      <div className={styles.out}>
         <TopTabs
           onTabChange={(id) => {
             setSearchValue('');
@@ -67,14 +66,13 @@ const NoteList: React.FC<{}> = () => {
           }}
         >
           <Layout className={styles.layout}>
-            <Sider className={styles.openNotes} style={{ display: showOpenNotes ? 'inline-block' : 'none' }}>
+            <Sider className={styles.openNotes} width={300} style={{ display: showOpenNotes ? 'inline-block' : 'none' }}>
               <OpenNotes />
             </Sider>
-            <Sider className={styles.noteTree} style={{ display: showOpenNotes ? 'none' : 'inline-block' }}>
+            <Sider className={styles.noteTree} width={300} style={{ display: showOpenNotes ? 'none' : 'inline-block' }}>
               <NoteTree addRootNote={addRootNote} addNote={addNote}></NoteTree>
             </Sider>
-            <Content>
-              <Card>
+            <Content className={styles.content}>
                 <Spin spinning={noteLoading}>
                   <Input
                     ref={nameInput}
@@ -98,11 +96,10 @@ const NoteList: React.FC<{}> = () => {
                     />
                   </div>
                 </Spin>
-              </Card>
             </Content>
           </Layout>
         </TopTabs>
-      </>
+      </div>
     );
   };
   return render();

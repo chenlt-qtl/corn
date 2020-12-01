@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import styles from './topTabs.less'
 import { queryNote } from './service'
 import { useModel } from 'umi';
+import { Tabs } from 'antd';
+import { BookOutlined } from '@ant-design/icons';
+const { TabPane } = Tabs;
 
-const openNotesTab = { id: '', name: '最近打开', color: '#f1c40f' };
-const defaultColor = "#1abc9c";
+const openNotesTab = { id: '', name: '最近打开'};
 
 const TopTabs: React.FC<{}> = (props) => {
 
     const [activeId, setActiveId] = useState<string>("1");
-    const [activeColor, setActiveColor] = useState<string>(defaultColor);
 
     const [tabData, setTabData] = useState<object[]>([]);
 
     const { setSelectedKeys } = useModel('note', ({ setSelectedKeys }) => ({ setSelectedKeys }));
 
 
-    const onClick = (id: string, color: string = defaultColor) => {
+    const onClick = (id: string) => {
         setActiveId(id);
-        color && setActiveColor(color);
         props.onTabChange(id);
         setSelectedKeys([]);
     }
@@ -26,6 +25,7 @@ const TopTabs: React.FC<{}> = (props) => {
     useEffect(() => {
         queryNote('0').then((res) => {
             if (res) {
+                console.log(res);
                 const { result } = res;
                 onClick(openNotesTab.id, openNotesTab.color);
                 setTabData([openNotesTab, ...result]);
@@ -33,34 +33,23 @@ const TopTabs: React.FC<{}> = (props) => {
         });
     }, []);
 
-    const tabs = tabData.map(item => {
-        const classes = [styles.item];
-        const style = {}
-        if (activeId === item.id) {
-            classes.push(styles.active);
-            style.background = activeColor;
-            style.color = activeColor;
-        } else {
-            if (item.color) {
-                style.background = item.color;
-                style.color = item.color;
-            }
-        }
-
-        return (
-            <div key={item.id} className={classes.join(' ')} datatitle={item.name} onClick={(e) => { onClick(item.id, item.color) }}>
-                <div style={style}>{item.name}</div>
-            </div>
-        )
-    })
-
-
     return (
-        <div className={styles.tab}>
-            <div className={styles.label}>
-                {tabs}
-            </div>
-            <div className={styles.content} style={{ background: activeColor }}>
+        <div>
+            <Tabs defaultActiveKey={activeId} onChange={onClick}>
+                {tabData.map((item,index) => {
+                    return (
+                        <TabPane key={item.id}
+                            tab={
+                                <span>
+                                    {index>0?'':<BookOutlined />}
+                                    {item.name}
+                                </span>
+                            }>
+                        </TabPane>
+                    )
+                })}
+            </Tabs>
+            <div>
                 {props.children}
             </div>
 
