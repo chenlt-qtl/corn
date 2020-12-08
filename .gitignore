@@ -48,3 +48,4 @@ package-lock.json
 
 /app/config/**/dist
 /app/src/**/dist
+/app/mock/dist

@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 89
   servlet:
     compression:
       enabled: true
@@ -111,7 +111,7 @@ jeecg :
     upload: /root/file/upload
 logging:
   level:
-    root: WARN
+    root: INFO
   root:
     file-name: api
     appender: RollingFile
