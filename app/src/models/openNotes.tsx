@@ -1,0 +1,73 @@
+import { queryOpenHistory, addOpenHistory } from '@/pages/note/service'
+import { NoteItem } from '@/pages/note/data.d';
+import { Effect, Reducer } from 'umi';
+
+
+
+export interface OpenNoteState {
+    openedNotes:[NoteItem]|[];
+}
+
+export interface OpenNoteModelType {
+    namespace: 'openNotes';
+    state: OpenNoteState;
+    effects: {
+        queryOpenNote: Effect;
+        updateOpenNote: Effect;
+    };
+    reducers: {
+        refreshOpenedNotes: Reducer<OpenNoteState>;
+    };
+}
+
+const OpenNoteModel: OpenNoteModelType = {
+    namespace: 'openNotes',
+
+    state: {
+        openedNotes:[],
+    },
+
+    effects: {
+        *queryOpenNote({ payload }, { call, put }){
+            let result = yield call(queryOpenHistory);
+            if (result) {
+                if (result.success) {
+                    // 成功
+                    yield put({
+                        type: 'refreshOpenedNotes',
+                        payload: result.result
+                    });
+                }
+                return result;
+            }
+        },
+        *updateOpenNote({ payload }, { call, put }){
+            let openedNotes = payload;
+            if(openedNotes.length>20){
+                openedNotes = openedNotes.splice(0,20);
+            }
+            const openNoteIds = openedNotes.reduce((total: string[], item: NoteItem) => {
+                total.push(item.id!);
+                return total;
+            }, []);
+
+            yield put({
+                type: 'refreshOpenedNotes',
+                payload: openedNotes
+            });
+            let result = yield call(addOpenHistory,openNoteIds.join(','));
+            return result;
+        },
+    },
+    reducers: {
+        refreshOpenedNotes(state:OpenNoteState, { payload }){
+            return {
+                ...state,
+                openedNotes:payload,
+            }
+        },
+    },
+};
+
+
+export default OpenNoteModel;

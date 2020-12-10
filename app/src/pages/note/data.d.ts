@@ -1,3 +1,5 @@
+import { ReactElement } from "react";
+
 export interface NoteItem {
   id?: string;
   name?:string;
@@ -11,6 +13,15 @@ export interface NoteItem {
   createTime?: Date;
   createBy?: string;
   updateBy?: string;
+}
+
+export interface NoteNode {
+  key: string;
+  parentIds:string;
+  title: string|ReactElement;
+  name: string;
+  parentId:string;
+  children:NoteNode[];
 }
 
 export interface NoteListParams {

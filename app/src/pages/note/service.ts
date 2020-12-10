@@ -2,10 +2,8 @@ import { request } from 'umi';
 import { NoteListParams, ArticleItem, NoteItem } from './data.d';
 
 //树形数据结构
-export async function queryTreeList(params: NoteListParams) {
-  return request('/api/note/queryTreeList', {
-    params
-  });
+export async function queryTreeList(id:string) {
+  return request('/api/note/queryTreeList?parentId='+id);
 }
 
 export async function queryNoteById(id: string) {

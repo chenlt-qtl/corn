@@ -29,9 +29,9 @@
   margin-right: 2px;
 }
 .layout .noteTree .found {
-  background-color: #f1c40f;
+  background-color: rgba(241, 196, 15, 0.6);
   color: #fff;
-  border: 1px solid #f1c40f;
+  border: 1px solid rgba(241, 196, 15, 0.6);
   border-radius: 3px;
   font-weight: 500;
 }
@@ -55,7 +55,7 @@
 .layout .noteTree .toolbar > input {
   flex: 1;
   outline: none;
-  border: 1px solid #f0f2f5;
+  border: 1px solid #cdcdcd;
   transition: all 0.2s;
   border-radius: 16px;
   padding: 0 10px;
