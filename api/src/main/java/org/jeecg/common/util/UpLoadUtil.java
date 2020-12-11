@@ -161,7 +161,7 @@ public class UpLoadUtil {
 
     public static String parseOldImg(String text,String contextPath){
         StringBuffer sbr = new StringBuffer();
-        Pattern imgPattern = Pattern.compile("(?<=<img src=\")([/|:|0-9a-z]+?)"+contextPath+"/");
+        Pattern imgPattern = Pattern.compile("(?<=<img src=\")((http|https)://[/|:|0-9a-z]+?)"+contextPath+"/");
         Matcher matcher = imgPattern.matcher(text);
         while (matcher.find()) {
             log.info("============ContextPath:"+matcher.group(0));

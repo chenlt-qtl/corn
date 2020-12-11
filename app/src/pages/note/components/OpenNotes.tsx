@@ -25,6 +25,10 @@ const OpenNotes: React.FC<{}> = (props) => {
             type: 'openNotes/updateOpenNote',
             payload: openedNotes.filter(item => item.id != id)
         })
+        props.dispatch({
+            type: 'note/refreshShowNote',
+            payload: {text:' '}
+        });
     }
 
     const loading = props.loading.effects["openNotes/queryOpenNote"];

@@ -11,7 +11,7 @@ function findNodeById(tree: NoteNode[], id: string) {
         }
         if (item.children && item.children.length > 0) {
             const node = findNodeById(item.children, id);
-            if(node){
+            if (node) {
                 return node;
             }
         }
@@ -22,7 +22,7 @@ export interface NoteState {
     activeTabId: string;
     showNote: NoteItem;
     treeData: NoteNode[];
-    selectedKeys:string[];
+    selectedKeys: string[];
 }
 
 export interface NoteModelType {
@@ -50,7 +50,7 @@ const NoteModel: NoteModelType = {
         activeTabId: '',
         showNote: {},
         treeData: [],
-        selectedKeys:[],
+        selectedKeys: [],
     },
 
     effects: {
@@ -100,14 +100,21 @@ const NoteModel: NoteModelType = {
             let result = yield call(queryNote, payload);
             return result;
         },
-        *modifyNote({ payload }, { call, put }) {
+        *modifyNote({ payload }, { call, put, select }) {
             let result = yield call(modifyNote, payload);
             if (result) {
                 if (result.success) {
+                    const openedNotes = yield select(state => state.openNotes.openedNotes);
+                    const newNote = result.result;
                     // 成功
                     yield put({
                         type: 'refreshTreeNote',
-                        payload: result.result
+                        payload: newNote
+                    });
+                    //刷新已打开的数据
+                    yield put({
+                        type: 'openNotes/updateOpenNote',
+                        payload: openedNotes.map(item => item.id === newNote.id ? newNote : item)
                     });
                 }
                 return result;
@@ -165,9 +172,9 @@ const NoteModel: NoteModelType = {
                 }
                 if (payload.parentId === state.activeTabId) {
                     treeData.push(treeNode);
-                }else{
+                } else {
                     const parent = findNodeById(treeData, payload.parentId);
-                    if(parent){
+                    if (parent) {
                         parent.children.push(treeNode);
                     }
                 }

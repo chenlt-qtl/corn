@@ -157,8 +157,8 @@ public class NoteController {
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<Note> edit(@RequestBody Note note) {
-		Result<Note> result = new Result<Note>();
+	public Result<NoteModel> edit(@RequestBody Note note) {
+		Result<NoteModel> result = new Result<NoteModel>();
 		Note noteEntity = noteService.getById(note.getId());
 		if(noteEntity==null) {
 			result.error500("未找到对应笔记");
@@ -169,7 +169,9 @@ public class NoteController {
 			boolean ok = noteService.updateNote(note,noteEntity.getText());
 			note.setText(UpLoadUtil.parseImgText(note.getText()));
 			if(ok) {
-				result.setResult(note);
+				NoteModel model = new NoteModel(note);
+				noteService.setParentNames(model);
+				result.setResult(model);
 				result.success("修改成功!");
 			}
 		}
@@ -244,7 +246,7 @@ public class NoteController {
 		}else {
 			NoteModel noteModel = new NoteModel(note);
 			noteService.setParentNames(noteModel);//设置父节点名称
-			note.setText(UpLoadUtil.parseImgText(note.getText()));
+			noteModel.setText(UpLoadUtil.parseImgText(note.getText()));
 			result.setResult(noteModel);
 			result.setSuccess(true);
 		}
