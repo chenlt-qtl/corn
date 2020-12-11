@@ -235,6 +235,7 @@ public class UpLoadUtil {
     public static String getPreUrl() {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String preUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/";
+            log.info("******≧◔◡◔≦*******preUrl:"+preUrl);
             return preUrl;
 
     }
