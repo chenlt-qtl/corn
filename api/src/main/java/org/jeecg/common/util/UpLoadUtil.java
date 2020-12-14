@@ -160,8 +160,10 @@ public class UpLoadUtil {
     }
 
     public static String parseOldImg(String text,String contextPath){
+        log.info("=========≧◔◡◔≦=========contextPath:",contextPath);
+        log.info("=========≧◔◡◔≦=========text:",text);
         StringBuffer sbr = new StringBuffer();
-        Pattern imgPattern = Pattern.compile("(?<=<img src=\")((http|https)://[/|:|0-9a-z]+?)"+contextPath+"/");
+        Pattern imgPattern = Pattern.compile("(?<=<img src=\")((http|https)://[.|:|0-9a-z]+?/)"+(contextPath.length()>0?contextPath+"/":""));
         Matcher matcher = imgPattern.matcher(text);
         while (matcher.find()) {
             log.info("============ContextPath:"+matcher.group(0));
@@ -296,46 +298,41 @@ public class UpLoadUtil {
 
 
     public static void main(String[] args){
-        Matcher matcher = BASE64_PATTERN.matcher("<p style=\"text-align: justify; line-height: 100%; margin-top: 0pt; margin-bottom: 0pt;\"><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAAAuCAYAAACcYs/JAAAAdklEQVRoge3ZoQ3EMBBFQdeQYtPa1eJqNuSFHo3BPOlza7TMazQzM+vrB5wSiAJRa+89tl3EG4gCUSAKRIEoEAWiQNS6fvfYDQIECBAgQIAAAQIECBAgQIAAAQIEiDMGAgQIEH8hvv5YOSUQBaJAFIgCUSAKRD2TA12pbP/UpwAAAABJRU5ErkJggg==\" alt=\"\" /></p>\n" +
-                "<!--polaris office 260 -->");
-        StringBuffer sbr = new StringBuffer();
-        while (matcher.find()) {
-            System.out.println(matcher.group(0));
-            System.out.println(matcher.group(1));
-            matcher.appendReplacement(sbr, "www.test.com/1.jpg");
-        }
+//        Matcher matcher = BASE64_PATTERN.matcher("<p style=\"text-align: justify; line-height: 100%; margin-top: 0pt; margin-bottom: 0pt;\"><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEIAAAAuCAYAAACcYs/JAAAAdklEQVRoge3ZoQ3EMBBFQdeQYtPa1eJqNuSFHo3BPOlza7TMazQzM+vrB5wSiAJRa+89tl3EG4gCUSAKRIEoEAWiQNS6fvfYDQIECBAgQIAAAQIECBAgQIAAAQIEiDMGAgQIEH8hvv5YOSUQBaJAFIgCUSAKRD2TA12pbP/UpwAAAABJRU5ErkJggg==\" alt=\"\" /></p>\n" +
+//                "<!--polaris office 260 -->");
+//        StringBuffer sbr = new StringBuffer();
+//        while (matcher.find()) {
+//            System.out.println(matcher.group(0));
+//            System.out.println(matcher.group(1));
+//            matcher.appendReplacement(sbr, "www.test.com/1.jpg");
+//        }
+//
+//        matcher.appendTail(sbr);
+//        System.out.println(sbr);
+//        System.out.println("=======================");
+//
+//        Pattern imgPattern = Pattern.compile("(?<=<img src=\")([/|:|0-9a-z]+?)"+"/jeecg-boot/");
+//        matcher = imgPattern.matcher("<p><img src=\"http://localhost:8089/jeecg-boot/user/20191024/damu/1571887153443.jpg\" alt=\"\" width=\"656\" height=\"369\" /></p>\n");
+//        sbr = new StringBuffer();
+//        while (matcher.find()) {
+//            System.out.println("group0"+matcher.group(0));
+//            matcher.appendReplacement(sbr, "baseUrl/");
+//        }
+//
+//        matcher.appendTail(sbr);
+//        System.out.println(sbr);
+//
+//        System.out.println("=======================");
+//        sbr = new StringBuffer();
+//        String preUrl = "http://localhost:8080/jeecg-boot/";
+//        imgPattern = Pattern.compile("(?<=<img src=\")"+UpLoadUtil.IMG_PRE);
+//        matcher = imgPattern.matcher("<p><img src=\"baseUrl/user/20191024/damu/1571887545610.jpg\" alt=\"\" width=\"650\" height=\"366\" /><img src=\"baseUrl/user/20191024/damu/1571891981499.png\" alt=\"\" /></p>");
+//        while (matcher.find()) {
+//            matcher.appendReplacement(sbr, preUrl);
+//        }
+//
+//        matcher.appendTail(sbr);
+//        System.out.println(sbr);
 
-        matcher.appendTail(sbr);
-        System.out.println(sbr);
-        System.out.println("=======================");
-
-        Pattern imgPattern = Pattern.compile("(?<=<img src=\")([/|:|0-9a-z]+?)"+"/jeecg-boot/");
-        matcher = imgPattern.matcher("<p><img src=\"http://localhost:8089/jeecg-boot/user/20191024/damu/1571887153443.jpg\" alt=\"\" width=\"656\" height=\"369\" /></p>\n");
-        sbr = new StringBuffer();
-        while (matcher.find()) {
-            System.out.println("group0"+matcher.group(0));
-            matcher.appendReplacement(sbr, "baseUrl/");
-        }
-
-        matcher.appendTail(sbr);
-        System.out.println(sbr);
-
-        System.out.println("=======================");
-        sbr = new StringBuffer();
-        String preUrl = "http://localhost:8080/jeecg-boot/";
-        imgPattern = Pattern.compile("(?<=<img src=\")"+UpLoadUtil.IMG_PRE);
-        matcher = imgPattern.matcher("<p><img src=\"baseUrl/user/20191024/damu/1571887545610.jpg\" alt=\"\" width=\"650\" height=\"366\" /><img src=\"baseUrl/user/20191024/damu/1571891981499.png\" alt=\"\" /></p>");
-        while (matcher.find()) {
-            matcher.appendReplacement(sbr, preUrl);
-        }
-
-        matcher.appendTail(sbr);
-        System.out.println(sbr);
-
-        /*Pattern imgPattern = Pattern.compile("(?<=<img src=\""+IMG_PRE+")([/|0-9a-z]+?)\\.(jpeg|png|gif|jpg|bmp)");
-        Matcher matcher = imgPattern.matcher("<p><img src=\"baseUrl/user/20191024/damu/1571887545610jpg.jpg\" alt=\"\" width=\"650\" height=\"366\" /><img src=\"baseUrl/user/20191024/damu/1571891981499.png\" alt=\"\" />123</p>");
-        while (matcher.find()) {
-            System.out.println(matcher.group(0));
-        }*/
     }
 }
