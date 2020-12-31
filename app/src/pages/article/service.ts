@@ -1,5 +1,5 @@
 import { request } from 'umi';
-import { TableListParams, ArticleListParams,ArticleItem } from './data.d';
+import { TableListParams, ArticleListParams, ArticleItem } from './data.d';
 
 export async function getArticleList(params?: ArticleListParams) {
   return request('/api/word/article/list', {
@@ -7,23 +7,20 @@ export async function getArticleList(params?: ArticleListParams) {
   });
 }
 
-export async function queryRule(params?: TableListParams) {
-  return request('/api/rule', {
-    params,
-  });
+export async function getSentenceByArticle(params: string) {
+  return request('/api/word/sentence/listByArticle?articleId=' + params);
 }
 
-export async function removeRule(params: { key: number[] }) {
-  return request('/api/rule', {
-    method: 'POST',
-    data: {
-      ...params,
-      method: 'delete',
-    },
-  });
+export async function getArticle(params: string) {
+  return request('/api/word/article/queryById?id=' + params);
+}
+
+export async function removeArticle(params: string) {
+  return request('/api/word/article/delete?id=' + params, { method: 'DELETE' });
 }
 
 export async function addArticle(params: ArticleItem) {
+
   return request('/api/word/article/add', {
     method: 'POST',
     data: {
@@ -33,12 +30,27 @@ export async function addArticle(params: ArticleItem) {
   });
 }
 
-export async function updateRule(params: TableListParams) {
-  return request('/api/rule', {
+export async function saveSentence(params: ArticleItem) {
+
+  return request('/api/word/sentence/save', {
     method: 'POST',
     data: {
       ...params,
-      method: 'update',
+      method: 'post',
     },
   });
+}
+
+export async function updateArticle(params: ArticleItem) {
+  return request('/api/word/article/edit', {
+    method: 'PUT',
+    data: {
+      ...params,
+      method: 'put',
+    },
+  });
+}
+
+export async function getWordBySentence(params: string) {
+  return request('/api/word/word/queryBySentence?id=' + params);
 }

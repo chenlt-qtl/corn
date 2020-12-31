@@ -16,9 +16,6 @@ public class UpLoadUtilTest {
 
 	public void testGetGymFilePath() {
 
-		String[] result = UpLoadUtil.getGymFilePath("G://upFiles",".mp4");
-		System.out.println(result[0]);
-		System.out.println(result[1]);
 	}
 
 }

@@ -39,8 +39,8 @@ public class Sentence implements Serializable {
 	@Excel(name = "picture", width = 15)
 	private java.lang.String picture;
 
-	@Excel(name = "index", width = 15)
-	private int index;
+	@Excel(name = "idx", width = 15)
+	private int idx;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.String status;

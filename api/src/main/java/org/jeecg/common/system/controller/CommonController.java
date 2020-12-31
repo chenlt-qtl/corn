@@ -42,47 +42,26 @@ public class CommonController {
 	@Value(value = "${jeecg.path.upload}")
 	private String uploadpath;
 
-	@PostMapping(value = "/upload")
+	public static final String WORD_IMG = "word/img";
+    public static final String WORD_MP3 = "word/mp3";
+	public static final String WORD_PRON = "word/pron";
+	public static final String NOTE = "note";
+	public static final String GYM = "gym";
+
+
+	@PostMapping(value = "/upload/note")
 	public Result<String> upload(HttpServletRequest request) {
-		Result<String> result = new Result<>();
-		try {
-
-			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-			MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
-			String orgName = mf.getOriginalFilename();// 获取文件名
-
-			String[] path = UpLoadUtil.getUserFilePath(uploadpath,orgName.substring(orgName.indexOf(".")));
-			File savefile = new File(path[0]);
-			FileCopyUtils.copy(mf.getBytes(), savefile);
-			result.setMessage(path[1]);
-			result.setSuccess(true);
-			result.setResult(UpLoadUtil.parseUrlText(path[1]));
-		} catch (IOException e) {
-			result.setSuccess(false);
-			result.setMessage(e.getMessage());
-			e.printStackTrace();
-		}
-		return result;
+	    return upload(request,NOTE);
 	}
 
-	@PostMapping(value = "/uploadMp3")
-	public Result<SysUser> uploadMp3(HttpServletRequest request) {
-		Result<SysUser> result = new Result<>();
-		try {
+	@PostMapping(value = "/uploadImg/word")
+	public Result<String> uploadWordImg(HttpServletRequest request) {
+        return upload(request,WORD_IMG);
+	}
 
-			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-			MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
-
-			String[] path = UpLoadUtil.getWordFilePath(uploadpath,mf.getOriginalFilename(),false);
-			UpLoadUtil.saveFile(mf.getInputStream(),path[0]);
-			result.setMessage(path[1]);
-			result.setSuccess(true);
-		} catch (IOException e) {
-			result.setSuccess(false);
-			result.setMessage(e.getMessage());
-			e.printStackTrace();
-		}
-		return result;
+	@PostMapping(value = "/uploadMp3/word")
+	public Result<String> uploadMp3(HttpServletRequest request) {
+        return upload(request,WORD_MP3);
 	}
 
 	/**
@@ -135,6 +114,28 @@ public class CommonController {
 			}
 		}
 
+	}
+
+	private Result<String> upload(HttpServletRequest request,String dir) {
+		Result<String> result = new Result<>();
+		try {
+
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+			MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
+			String orgName = mf.getOriginalFilename();// 获取文件名
+
+			String[] path = UpLoadUtil.getFilePaths(uploadpath,dir,orgName.substring(orgName.indexOf(".")),null);
+			File savefile = new File(path[0]);
+			FileCopyUtils.copy(mf.getBytes(), savefile);
+			result.setMessage(path[1]);
+			result.setSuccess(true);
+			result.setResult(UpLoadUtil.parseUrlText(path[1]));
+		} catch (IOException e) {
+			result.setSuccess(false);
+			result.setMessage(e.getMessage());
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	/**

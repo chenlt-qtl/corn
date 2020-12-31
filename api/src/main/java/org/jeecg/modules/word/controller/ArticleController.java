@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.Article;
@@ -33,6 +34,7 @@ import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -58,7 +60,10 @@ public class ArticleController {
 
 	 @Autowired
 	 private IWordService wordService;
-	
+
+	 @Value(value = "${jeecg.path.upload}")
+	 private String uploadpath;
+
 	/**
 	  * 分页列表查询
 	 * @param article
@@ -83,6 +88,10 @@ public class ArticleController {
 		}
 		Page<Article> page = new Page<Article>(pageNo, pageSize);
 		IPage<Article> pageList = articleService.page(page, queryWrapper);
+		for(Article a:pageList.getRecords()){
+			a.setPicture(UpLoadUtil.parseBaseToUrl(a.getPicture(),""));
+			a.setMp3(UpLoadUtil.parseBaseToUrl(a.getMp3(),""));
+		}
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
@@ -97,6 +106,8 @@ public class ArticleController {
 	public Result<Article> add(@RequestBody Article article) {
 		Result<Article> result = new Result<Article>();
 		try {
+			article.setPicture(UpLoadUtil.parseUrlToBase(article.getPicture(),""));
+			article.setMp3(UpLoadUtil.parseUrlToBase(article.getMp3(),""));
 			articleService.save(article);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -141,6 +152,10 @@ public class ArticleController {
 		if(article==null) {
 			result.error500("未找到对应实体");
 		}else {
+			//删除图片mp3
+			UpLoadUtil.delImg(uploadpath,article.getMp3());
+			UpLoadUtil.delImg(uploadpath,article.getPicture());
+
 			boolean ok = articleService.removeById(id);
 			if(ok) {
 				result.success("删除成功!");
@@ -177,18 +192,20 @@ public class ArticleController {
 		Result<Map> result = new Result<Map>();
 		Map map = new HashMap();
 		Article article = articleService.getById(id);
-		map.put("article",article);
 
-		//获取句子
-		QueryWrapper<Sentence> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("article_id",id);
-		queryWrapper.orderByAsc("idx");
-		List<Sentence> sentencesList = sentenceService.list(queryWrapper);
-		map.put("sentences",sentencesList);
+//		//获取句子
+//		QueryWrapper<Sentence> queryWrapper = new QueryWrapper<>();
+//		queryWrapper.eq("article_id",id);
+//		queryWrapper.orderByAsc("idx");
+//		List<Sentence> sentencesList = sentenceService.list(queryWrapper);
+//		map.put("sentences",sentencesList);
 
 		if(article==null) {
 			result.error500("未找到对应实体");
 		}else {
+			article.setPicture(UpLoadUtil.parseBaseToUrl(article.getPicture(),""));
+			article.setMp3(UpLoadUtil.parseBaseToUrl(article.getMp3(),""));
+			map.put("article",article);
 			result.setResult(map);
 			result.setSuccess(true);
 		}

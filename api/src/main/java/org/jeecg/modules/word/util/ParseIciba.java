@@ -22,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.jeecg.common.system.controller.CommonController;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.word.entity.Acceptation;
 import org.jeecg.modules.word.entity.IcibaSentence;
@@ -87,7 +88,7 @@ public class ParseIciba {
 			logger.info("-----------"+pronElement.getText());
 			if(!pronIter.hasNext()) {//最后一个元素
 
-				String pathArr[] = UpLoadUtil.getWordFilePath(upload,word.getWordName()+".mp3",true);//获取保存路径
+				String pathArr[] = UpLoadUtil.getFilePaths(upload, CommonController.WORD_PRON,".mp3",word.getWordName());//获取保存路径
 				try {
 					InputStream in = new URL(pronElement.getTextTrim()).openConnection().getInputStream();//创建连接、输入流
 					UpLoadUtil.saveFile(in,pathArr[0]);

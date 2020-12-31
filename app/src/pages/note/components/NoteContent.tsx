@@ -88,13 +88,14 @@ const NoteContent = React.forwardRef((props, ref) => {
                     onBlur={handleEditNote}
                     init={{
                         height: '100vh',
-                        plugins: 'table,code,lists,advlist,image,imagetools,codesample,pagebreak',
+                        plugins: 'table,code,lists,advlist,image,imagetools,codesample,pagebreak,nonbreaking',
                         toolbar: `code | undo redo | bold italic strikethrough | 
                         fontsizeselect h2 h3 forecolor backcolor | 
                 bullist numlist | image | pagebreak blockquote codesample removeformat`,
                         toolbar_sticky: true,
                         menubar: false,
                         branding: false,
+                        nonbreaking_force_tab: true,
                     }}
                 />
             </div>

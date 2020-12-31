@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.system.controller.CommonController;
 import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -21,11 +22,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class UpLoadUtil {
 
-    public static final String IMG_PRE = "baseUrl/";
-    public static final String WORD_DIR = "word";
-    public static final String WORD_PRON = "pron";
-    public static final String USER = "user";
-    public static final String GYM = "gym";
+    public static final String DB_PATH_PRE = "baseUrl/";
 
     /**
      * 处理视频和图片
@@ -39,11 +36,11 @@ public class UpLoadUtil {
             int index = newUrl.indexOf(request.getContextPath() + "/" + type + "/");
             log.info("============index:" + index);
             if(index!=-1){
-                newUrl = UpLoadUtil.IMG_PRE + newUrl.substring(index+(request.getContextPath() + "/").length());
+                newUrl = UpLoadUtil.DB_PATH_PRE + newUrl.substring(index+(request.getContextPath() + "/").length());
             }
         }
         if(oldUrl!=null && !oldUrl.equals(newUrl)){//删除旧文件
-            oldUrl = oldUrl.substring(oldUrl.indexOf(UpLoadUtil.IMG_PRE)+UpLoadUtil.IMG_PRE.length());
+            oldUrl = oldUrl.substring(oldUrl.indexOf(UpLoadUtil.DB_PATH_PRE)+UpLoadUtil.DB_PATH_PRE.length());
             log.info("============delete old vedio:" + oldUrl);
             UpLoadUtil.delImg(uploadPath,oldUrl);
         }
@@ -57,7 +54,7 @@ public class UpLoadUtil {
      */
     public static String parseUrlText(String text) {
         if(StringUtils.isNotBlank(text)) {
-            String result = getPreUrl() + text.substring(text.indexOf(UpLoadUtil.IMG_PRE)+UpLoadUtil.IMG_PRE.length());
+            String result = getPreUrl() + text.substring(text.indexOf(UpLoadUtil.DB_PATH_PRE)+UpLoadUtil.DB_PATH_PRE.length());
             log.info("===========url:"+result);
             return result;
         }else {
@@ -67,58 +64,30 @@ public class UpLoadUtil {
     }
 
     public static String getRealPath(String uploadPath, String baseUrl){
-        baseUrl = baseUrl.substring(baseUrl.indexOf(UpLoadUtil.IMG_PRE)+UpLoadUtil.IMG_PRE.length());
+        baseUrl = baseUrl.substring(baseUrl.indexOf(UpLoadUtil.DB_PATH_PRE)+UpLoadUtil.DB_PATH_PRE.length());
         return uploadPath + File.separator + baseUrl;
     }
 
+
     /**
-     * 获取用户文件夹path
+     * 获取文件夹path
      * @param uploadpath
-     * @param type
      * @return
      */
-    public static String[] getUserFilePath(String uploadpath, String type){
-        log.info("========upload path:"+uploadpath);
+    public static String[] getFilePaths(String uploadpath, String dir,String fileType,String fileName){
+        log.info("******≧◔◡◔≦*******upload path:"+uploadpath);
         String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        String bizPath = USER + File.separator + nowday + File.separator + sysUser.getUsername();
-        return getFilePath(uploadpath,bizPath ,System.currentTimeMillis() + type);
-    }
-
-
-    /**
-     * 获取单词文件夹path
-     * @param uploadpath
-     * @param name
-     * @return
-     */
-    public static String[] getWordFilePath(String uploadpath,String name,boolean isWord){
-        log.info("========upload path:"+uploadpath);
-        String dbpath = WORD_DIR;
-
-        String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        if(!isWord) {//文章
-            SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-            dbpath = dbpath + File.separator + USER + File.separator + nowday + File.separator + sysUser.getUsername();
-            name = System.currentTimeMillis() + name.substring(name.indexOf("."));
-        }else{
-            dbpath = dbpath + File.separator + WORD_PRON + File.separator + nowday ;
+        String dbpath = dir ;//硬盘存放相对路径
+        if(!CommonController.WORD_PRON.equals(dir)){//单词发音文件不用区分用户日期
+            dbpath = dbpath + File.separator + sysUser.getUsername() + File.separator + nowday ;//硬盘存放相对路径
         }
-
-        return getFilePath(uploadpath,dbpath ,name);
-    }
-
-    /**
-     * 获取单词文件夹path
-     * @param uploadpath
-     * @param type
-     * @return
-     */
-    public static String[] getGymFilePath(String uploadpath, String type){
-        log.info("========upload path:"+uploadpath);
-        String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String dbpath = GYM + File.separator + nowday ;
-        return getFilePath(uploadpath,dbpath ,System.currentTimeMillis() + type);
+        log.info("******≧◔◡◔≦*******dbpath:"+dbpath);
+        if(StringUtils.isBlank(fileName)){
+            fileName = String.valueOf(System.currentTimeMillis());
+        }
+        return getFilePath(uploadpath,dbpath ,fileName + fileType);
     }
 
     private static String[] getFilePath(String uploadpath,String relativePath ,String fileName){
@@ -134,7 +103,7 @@ public class UpLoadUtil {
         if (dbpath.contains("\\")) {
             dbpath = dbpath.replace("\\", "/");
         }
-        result[1] = dbpath;
+        result[1] = DB_PATH_PRE + dbpath;
         return result;
     }
 
@@ -159,15 +128,42 @@ public class UpLoadUtil {
         }
     }
 
-    public static String parseOldImg(String text,String contextPath){
+    /**
+     * 把note内容中包含网址的图片等转成baseUrl, 来存入数据库
+     * @param text
+     * @return
+     */
+    public static String parseOldImg(String text){
+        return parseUrlToBase(text,"note");
+    }
+
+    /**
+     * 把text中包含网址的图片等转成baseUrl, 来存入数据库
+     * @param text
+     * @param type
+     * @return
+     */
+    public static String parseUrlToBase(String text,String type){
+        if(StringUtils.isBlank(text)){
+            return "";
+        }
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        log.info("============ContextPath:"+request.getContextPath());
+        String contextPath = request.getContextPath();
+
         log.info("=========≧◔◡◔≦=========contextPath:",contextPath);
         log.info("=========≧◔◡◔≦=========text:",text);
         StringBuffer sbr = new StringBuffer();
-        Pattern imgPattern = Pattern.compile("(?<=<img src=\")((http|https)://[.|:|0-9a-z]+?/)"+(contextPath.length()>0?contextPath+"/":""));
+        Pattern imgPattern;
+        if("note".equals(type)){
+            imgPattern = Pattern.compile("(?<=<img src=\")((http|https)://[.|:|0-9a-z]+?/)" + (contextPath.length() > 0 ? contextPath + "/" : ""));
+        }else{
+            imgPattern = Pattern.compile("((http|https)://[.|:|0-9a-z]+?/)" + (contextPath.length() > 0 ? contextPath + "/" : ""));
+        }
         Matcher matcher = imgPattern.matcher(text);
         while (matcher.find()) {
             log.info("============ContextPath:"+matcher.group(0));
-            matcher.appendReplacement(sbr, IMG_PRE);
+            matcher.appendReplacement(sbr, DB_PATH_PRE);
         }
 
         matcher.appendTail(sbr);
@@ -178,13 +174,12 @@ public class UpLoadUtil {
     /**
      * 获取text包含的图片url
      * @param text
-     * @param contextPath
      * @return
      */
-    public static String[] getImgUrls(String text,String contextPath){
+    public static String[] getImgUrls(String text){
         List<String> result = new ArrayList<>();
-        text = parseOldImg(text,contextPath);
-        Pattern imgPattern = Pattern.compile("(?<=<img src=\""+IMG_PRE+")([/|0-9a-z]+?)\\.(jpeg|png|gif|jpg|bmp)");
+        text = parseOldImg(text);
+        Pattern imgPattern = Pattern.compile("(?<=<img src=\""+DB_PATH_PRE+")([/|0-9a-z]+?)\\.(jpeg|png|gif|jpg|bmp)");
         Matcher matcher = imgPattern.matcher(text);
         while (matcher.find()) {
             result.add(matcher.group(0));
@@ -199,11 +194,21 @@ public class UpLoadUtil {
      * @param imgUrl
      */
     public static void delImg(String uploadpath,String imgUrl){
-        log.info("-----------------imgUrl:"+uploadpath + File.separator + imgUrl);
-        File file = new File(uploadpath + File.separator + imgUrl );
-        if(file.exists()){
-            log.info("-----------------file exists : true ");
-            file.delete();
+        if(StringUtils.isNotBlank(imgUrl)) {
+            StringBuffer sbr = new StringBuffer();
+            Pattern imgPattern = Pattern.compile(UpLoadUtil.DB_PATH_PRE);
+            Matcher matcher = imgPattern.matcher(imgUrl);
+            if (matcher.find()) {
+                matcher.appendReplacement(sbr, "");
+            }
+            matcher.appendTail(sbr);
+
+            log.info("******≧◔◡◔≦*******imgUrl:" + uploadpath + File.separator + sbr);
+            File file = new File(uploadpath + File.separator + sbr);
+            if (file.exists()) {
+                log.info("******≧◔◡◔≦*******file exists : true ");
+                file.delete();
+            }
         }
     }
 
@@ -212,11 +217,24 @@ public class UpLoadUtil {
      * @return
      */
     public static String parseImgText(String text) {
+        return parseBaseToUrl(text,"note");
+    }
+
+    /**
+     * 将数据库里的图片等数据转成可以显示的地址
+     * @return
+     */
+    public static String parseBaseToUrl(String text,String type) {
         if(StringUtils.isNotBlank(text)) {
             StringBuffer sbr = new StringBuffer();
             String preUrl = getPreUrl();
 
-            Pattern imgPattern = Pattern.compile("(?<=<img src=\")" + UpLoadUtil.IMG_PRE);
+            Pattern imgPattern;
+            if("note".equals(type)){
+                imgPattern = Pattern.compile("(?<=<img src=\")" + UpLoadUtil.DB_PATH_PRE);
+            }else{
+                imgPattern = Pattern.compile(UpLoadUtil.DB_PATH_PRE);
+            }
             Matcher matcher = imgPattern.matcher(text);
             while (matcher.find()) {
                 matcher.appendReplacement(sbr, preUrl);
@@ -225,7 +243,7 @@ public class UpLoadUtil {
             matcher.appendTail(sbr);
             return sbr.toString();
         }else {
-            return " ";
+            return "";
         }
 
     }
@@ -256,9 +274,7 @@ public class UpLoadUtil {
             return "";
         }
         //---------------处理旧的数据----------------
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        log.info("============ContextPath:"+request.getContextPath());
-        text = parseOldImg(text,request.getContextPath());
+        text = parseOldImg(text);
 
         //---------------处理base64------------------
         Matcher matcher = BASE64_PATTERN.matcher(text);
@@ -269,10 +285,10 @@ public class UpLoadUtil {
             if(data.startsWith("data:image")&&data.contains(",")){
                 String imgData = data.split(",")[1];
                 if(StringUtils.isNotBlank(imgData)){
-                    String pathArr[] = UpLoadUtil.getUserFilePath(uploadPath,"."+type);
+                    String pathArr[] = UpLoadUtil.getFilePaths(uploadPath, CommonController.NOTE,"."+type,null);
                     try {
                         if(Base64Utils.GenerateImage(imgData,pathArr[0])) {
-                            matcher.appendReplacement(sbr, UpLoadUtil.IMG_PRE+pathArr[1]);
+                            matcher.appendReplacement(sbr, pathArr[1]);
                         }
                     } catch (IOException e) {
                         throw new JeecgBootException("保存图片出错");
@@ -286,7 +302,7 @@ public class UpLoadUtil {
         String newText = sbr.toString();
 
         if(StringUtils.isNotBlank(oldText)){
-            String[] imgs = UpLoadUtil.getImgUrls(oldText, request.getContextPath());
+            String[] imgs = UpLoadUtil.getImgUrls(oldText);
             for(String imgUrl:imgs){
                 if(newText.indexOf(imgUrl)==-1){//图片被删除了
                     UpLoadUtil.delImg(uploadPath,imgUrl);
@@ -311,16 +327,8 @@ public class UpLoadUtil {
 //        System.out.println(sbr);
 //        System.out.println("=======================");
 //
-//        Pattern imgPattern = Pattern.compile("(?<=<img src=\")([/|:|0-9a-z]+?)"+"/jeecg-boot/");
-//        matcher = imgPattern.matcher("<p><img src=\"http://localhost:8089/jeecg-boot/user/20191024/damu/1571887153443.jpg\" alt=\"\" width=\"656\" height=\"369\" /></p>\n");
-//        sbr = new StringBuffer();
-//        while (matcher.find()) {
-//            System.out.println("group0"+matcher.group(0));
-//            matcher.appendReplacement(sbr, "baseUrl/");
-//        }
-//
-//        matcher.appendTail(sbr);
-//        System.out.println(sbr);
+        String result = parseUrlToBase("http://localhost:89/word/img/damu/20201221/1608520831011.jpg","");
+        System.out.println(result);
 //
 //        System.out.println("=======================");
 //        sbr = new StringBuffer();

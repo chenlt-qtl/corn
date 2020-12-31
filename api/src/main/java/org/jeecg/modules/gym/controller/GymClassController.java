@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.controller.CommonController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.common.util.VideoUtil;
@@ -66,7 +67,7 @@ public class GymClassController {
 			 MultipartFile mf = multipartRequest.getFile("file");// 获取上传文件对象
 			 String orgName = mf.getOriginalFilename();// 获取文件名
 
-			 String[] path = UpLoadUtil.getGymFilePath(uploadpath,orgName.substring(orgName.indexOf(".")));
+			 String[] path = UpLoadUtil.getFilePaths(uploadpath, CommonController.GYM,orgName.substring(orgName.indexOf(".")),null);
 			 File savefile = new File(path[0]);
 			 FileCopyUtils.copy(mf.getBytes(), savefile);
 			 result.setMessage(path[1]);
@@ -117,7 +118,7 @@ public class GymClassController {
 	public Result<GymClass> add(@RequestBody GymClass gymClass) {
 		Result<GymClass> result = new Result<GymClass>();
 		try {
-			gymClass.setUrl(UpLoadUtil.replace(uploadpath,null,gymClass.getUrl(),UpLoadUtil.GYM));
+			gymClass.setUrl(UpLoadUtil.replace(uploadpath,null,gymClass.getUrl(),CommonController.GYM));
 			gymClass.setLastingTime(VideoUtil.getDuration(UpLoadUtil.getRealPath(uploadpath,gymClass.getUrl())));
 			gymClassService.save(gymClass);
 			result.success("添加成功！");
@@ -142,7 +143,7 @@ public class GymClassController {
 		if(gymClassEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
-			gymClass.setUrl(UpLoadUtil.replace(uploadpath,gymClassEntity.getUrl(),gymClass.getUrl(),UpLoadUtil.GYM));
+			gymClass.setUrl(UpLoadUtil.replace(uploadpath,gymClassEntity.getUrl(),gymClass.getUrl(),CommonController.GYM));
 			gymClass.setLastingTime(VideoUtil.getDuration(UpLoadUtil.getRealPath(uploadpath,gymClass.getUrl())));
 			boolean ok = gymClassService.updateById(gymClass);
 			//TODO 返回false说明什么？
@@ -164,7 +165,7 @@ public class GymClassController {
 	public Result<GymClass> delete(@RequestParam(name="id",required=true) String id) {
 		Result<GymClass> result = new Result<GymClass>();
 		GymClass gymClass = gymClassService.getById(id);
-		UpLoadUtil.replace(uploadpath,gymClass.getUrl(),"",UpLoadUtil.GYM);
+		UpLoadUtil.replace(uploadpath,gymClass.getUrl(),"",CommonController.GYM);
 		if(gymClass==null) {
 			result.error500("未找到对应实体");
 		}else {

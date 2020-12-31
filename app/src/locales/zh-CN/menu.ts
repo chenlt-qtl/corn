@@ -51,5 +51,6 @@ export default {
   'menu.editor.koni': '拓扑编辑器',
   'menu.corn':'主页',
   'menu.articleList':'文章列表',
+  'menu.articleDetail':'文章明细',
   'menu.note':'笔记',
 };

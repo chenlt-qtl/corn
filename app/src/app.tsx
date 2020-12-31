@@ -53,6 +53,7 @@ export const layout = ({
 interface error {
   name: string,
   data: {
+    status: number,
     success: boolean,
     message: string,
     result: any,
@@ -71,6 +72,9 @@ const errorHandler = (error: error) => {
       message: `请求错误`,
       description: errorText,
     });
+    if (data.status === 500) {
+      history.push('/user/login');
+    }
   } else {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',

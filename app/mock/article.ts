@@ -17,9 +17,17 @@ function upload(req: Request, res: Response) {
   const result = { 'message': '/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png', 'result': 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png' };
   return res.json(result);
 }
+
+function queryById(req: Request, res: Response) {
+  const result = {"success":true,"message":"操作成功！","code":0,"result":{"sentences":[],"article":{"id":"745f3188826d4db8634b035c0ad904ba","title":"123","mp3":"http://localhost:89/word/mp3/damu/20201221/1608535412875.mp3","picture":"http://localhost:89/word/img/damu/20201221/1608535402917.png","status":null,"createTime":"2020-12-21 15:23:37","createBy":"damu","updateTime":"2020-12-21 15:23:37","updateBy":"damu"}},"timestamp":1608693204056};
+  return res.json(result);
+}
+
 export default {
   'GET /api/word/article/list': getList,
 
   'POST /api/sys/common/upload': upload,
   'POST /api/word/article/add': add,
+  'GET /api/word/article/queryById': queryById,
+  'PUT /api/word/article/edit': add,
 };

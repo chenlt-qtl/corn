@@ -1,11 +1,7 @@
 package org.jeecg.modules.word.service;
 
-import org.jeecg.modules.word.entity.Article;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.jeecg.modules.word.entity.Sentence;
-import org.jeecg.modules.word.model.ArticalVo;
-
-import java.util.List;
+import org.jeecg.modules.word.entity.Article;
 
 /**
  * @Description: article
@@ -15,5 +11,4 @@ import java.util.List;
  */
 public interface IArticleService extends IService<Article> {
 
-    Article saveOrUpdate(ArticalVo articleVo);
 }

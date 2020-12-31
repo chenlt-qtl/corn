@@ -3,26 +3,24 @@ package org.jeecg.modules.word.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.Acceptation;
 import org.jeecg.modules.word.entity.IcibaSentence;
+import org.jeecg.modules.word.entity.SentenceWordRel;
 import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.mapper.WordMapper;
-import org.jeecg.modules.word.service.IAcceptationService;
-import org.jeecg.modules.word.service.IIcibaSentenceService;
-import org.jeecg.modules.word.service.IWordService;
-import org.jeecg.modules.word.service.IWordUserService;
+import org.jeecg.modules.word.model.SentenceVo;
+import org.jeecg.modules.word.service.*;
 import org.jeecg.modules.word.util.ParseIciba;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -51,6 +49,9 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
 
     @Autowired
     private IIcibaSentenceService icibaSentenceService;
+
+    @Autowired
+    private ISentenceWordRelService sentenceWordRelService;
 
     @Value(value = "${jeecg.path.upload}")
     private String uploadpath;
@@ -116,6 +117,15 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
         return list;
     }
 
+    @Override
+    public List<Map> searchWordBySentence(String sentenceId) {
+        QueryWrapper<Map> wrapper = new QueryWrapper();
+        wrapper.eq("sentence_id", sentenceId);
+        List<Map> list = wordMapper.searchWordBySentence(wrapper);
+        handleMapUrl(list);
+        return list;
+    }
+
     private void handleMapUrl(List<Map> list){
         String preUrl = UpLoadUtil.getPreUrl();
         list.forEach((map)->{
@@ -128,5 +138,25 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
                 }
             }
         });
+    }
+
+    @Override
+    public void saveWord(SentenceVo sentenceVo) {
+        if (sentenceVo.getWords() != null&&!sentenceVo.getWords().isEmpty()) {
+            for (Word wordVo : sentenceVo.getWords()) {
+                Word word = null;
+                try {
+                    word = saveWord(wordVo.getWordName().toLowerCase());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if(word != null) {
+                    SentenceWordRel sentenceWordRel = new SentenceWordRel();
+                    sentenceWordRel.setSentenceId(sentenceVo.getId());
+                    sentenceWordRel.setWordId(word.getId());
+                    sentenceWordRelService.save(sentenceWordRel);
+                }
+            }
+        }
     }
 }

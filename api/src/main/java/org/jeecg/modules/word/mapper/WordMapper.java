@@ -22,4 +22,6 @@ public interface WordMapper extends BaseMapper<Word> {
 
     List<Map> seachWordByArticle(@Param(Constants.WRAPPER) Wrapper<Map> queryWrapper);
 
+    List<Map> searchWordBySentence(@Param(Constants.WRAPPER) Wrapper<Map> queryWrapper);
+
 }

@@ -12,7 +12,7 @@ export default defineConfig({
     hmr: true,
   },
   layout: {
-    name: 'Ant Design Pro',
+    name: 'Corn',
     locale: true,
     siderWidth: 208,
   },
@@ -78,22 +78,32 @@ export default defineConfig({
       component: './corn/Index',
     },
     {
-      path: '/article',
-      name: 'articleList',
-      layout: false,
-      icon: 'smile',
-      component: './article',
-    },
-    {
-      path: '/note',
-      name: 'note',
-      layout: false,
-      icon: 'smile',
-      component: './note',
+      path: '/',
+      redirect: '/note',
     },
     {
       path: '/',
-      redirect: '/note',
+      component: '@/layouts/GlobalHeader',
+      layout:false,
+      routes: [
+        {
+          path: '/article',
+          name: 'articleList',
+          component: './article',
+        },
+        {
+          path: '/note',
+          name: 'note',
+          component: './note',
+        },
+        {
+          path: '/article/:id',
+          name: 'articleDetail',
+          layout: false,
+          icon: 'smile',
+          component: './article/ArticleDetail',
+        },
+      ],
     },
     {
       component: './404',
