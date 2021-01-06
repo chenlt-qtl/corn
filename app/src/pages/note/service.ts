@@ -58,3 +58,17 @@ export async function addOpenHistory(openNoteIds: String) {
     },
   });
 }
+
+export async function queryFavorite() {
+  return request('/api/note/noteFavorite/queryNotes');
+}
+
+export async function editFavorite(noteIds: String) {
+  return request('/api/note/noteFavorite/edit', {
+    method: 'PUT',
+    data: {
+      noteIds,
+      method: 'put',
+    },
+  });
+}

@@ -54,8 +54,13 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public List<NoteModel> getByIds(String[] ids) {
-        return noteMapper.getByIds(ids);
+    public List<NoteModel> getModelByIds(String[] ids) {
+        List<NoteModel> list = noteMapper.getByIds(ids);
+        for(NoteModel noteModel:list){
+            setParentNames(noteModel);
+            noteModel.setText(UpLoadUtil.parseImgText(noteModel.getText()));
+        }
+        return list;
     }
 
     @Override

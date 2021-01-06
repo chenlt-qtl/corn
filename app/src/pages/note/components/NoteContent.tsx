@@ -2,12 +2,15 @@ import React, { useRef, useImperativeHandle, useState } from 'react';
 import styles from '../index.less'
 import { connect, NoteModelState, ConnectProps, NoteState } from 'umi';
 import { Input } from 'antd';
-import { LoadingOutlined,CheckCircleTwoTone } from '@ant-design/icons';
+import { LoadingOutlined, CheckCircleTwoTone, StarFilled, StarOutlined } from '@ant-design/icons';
 import { Editor } from '@tinymce/tinymce-react';
+import lodash from 'lodash';
+
 
 const NoteContent = React.forwardRef((props, ref) => {
 
     const { showNote } = props.note;
+    const { noteIds } = props.noteFavorite;
     const nameInput = useRef();
     const [textStatus, setTextStatus] = useState("");
 
@@ -31,7 +34,7 @@ const NoteContent = React.forwardRef((props, ref) => {
     };
     const handleTextStatusChange = (state) => {
         if (state) {
-            setTextStatus(<>正在保存 <LoadingOutlined/></>);
+            setTextStatus(<>正在保存 <LoadingOutlined /></>);
         } else {
             setTextStatus(<>保存成功 <CheckCircleTwoTone twoToneColor="#52c41a" /></>);
             setTimeout(() => {
@@ -41,7 +44,6 @@ const NoteContent = React.forwardRef((props, ref) => {
     }
 
     const editNote = (note) => {
-        const { treeData } = props.note;
         handleTextStatusChange(1);
         if (note.parentId) {
             if (note.id) {
@@ -69,17 +71,42 @@ const NoteContent = React.forwardRef((props, ref) => {
         }
     }
 
+    const isFavorate = () => {
+        if (noteIds.includes(showNote.id)) {
+            return true;
+        }
+        return false;
+    }
+
+    const setFavorate = (data:boolean) =>{
+        if(lodash.isEmpty(showNote)){
+            return;
+        }
+        let result:string[] = [];
+        if(data){//增加
+            result = Array.from(new Set([...noteIds,showNote.id]));
+        }else{//减少
+            result = noteIds.filter((item:string)=>item!=showNote.id);
+        }
+
+        console.log(result);
+        props.dispatch({
+            type: 'noteFavorite/edit',
+            payload: result
+        });
+    }
 
     return (
         <>
-            <div>
+            <div className={styles.title}>
                 <Input
                     ref={nameInput}
                     value={showNote.name}
                     onChange={handleNameChange}
                     onBlur={handleEditNote}
                 ></Input>
-
+                <div className={styles.star}>
+                    {isFavorate() ? <StarFilled onClick={()=>{setFavorate(false);}} className={styles.favorate}/> : <StarOutlined onClick={()=>{setFavorate(true);}} className={styles.notFavorate}/>}</div>
             </div>
             <div className={styles.text}>
                 <div className={styles.textStatus}>{textStatus}</div>
@@ -102,6 +129,6 @@ const NoteContent = React.forwardRef((props, ref) => {
         </>
     );
 });
-export default connect(({ note, openNotes, loading }: { note: NoteState, openNotes, loading }) => (
-    { note, openNotes, loading })
+export default connect(({ note, openNotes, noteFavorite, loading }: { note: NoteState, openNotes, noteFavorite, loading }) => (
+    { note, openNotes, noteFavorite, loading })
     , null, null, { forwardRef: true })(NoteContent);

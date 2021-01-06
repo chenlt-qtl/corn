@@ -84,7 +84,7 @@
   cursor: pointer;
   display: flex;
 }
-.layout .openNotes > div > div > span:first-of-type {
+.layout .openNotes > div > div .close {
   display: inline-block;
   margin-right: 3px;
   color: #95a5a6;
@@ -94,7 +94,7 @@
 .layout .openNotes > div > div > span:last-of-type {
   flex: 1;
 }
-.layout .openNotes > div > div:hover > span:first-of-type {
+.layout .openNotes > div > div:hover .close {
   visibility: visible;
 }
 .layout .openNotes > div .active {
@@ -117,4 +117,22 @@
 }
 .layout .content {
   padding: 0 16px;
+}
+.title {
+  display: flex;
+}
+.title .star {
+  width: 50px;
+  text-align: center;
+  line-height: 2rem;
+  cursor: pointer;
+}
+.favorate {
+  color: #e74c3c;
+}
+.notFavorate {
+  color: #bbb;
+}
+.notFavorate:hover {
+  color: #e74c3c;
 }

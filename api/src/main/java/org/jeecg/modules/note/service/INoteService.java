@@ -19,7 +19,7 @@ public interface INoteService extends IService<Note> {
 
     List<Note> searchNote(String createBy,String parentId,String text);
 
-    List<NoteModel> getByIds(String[] ids);
+    List<NoteModel> getModelByIds(String[] ids);
 
     List<Note> getNameByIds(String[] ids);
 

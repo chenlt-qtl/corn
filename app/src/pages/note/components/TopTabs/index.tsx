@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Skeleton } from 'antd';
-import { BookOutlined } from '@ant-design/icons';
-import { connect, NoteModelState } from 'umi';
+import { BookOutlined,StarFilled } from '@ant-design/icons';
+import { connect } from 'umi';
+import styles from './styles.less';
 
 const { TabPane } = Tabs;
 
-const openNotesTab = { id: '', name: '最近打开' };
+const openNotesTab = { id: 'open', name: '最近打开' };
+const favorateTab = { id: 'favorate', name: <>收藏夹  <StarFilled className={styles.favorate}/></> };
 
 const TopTabs: React.FC<{}> = (props) => {
 
@@ -22,7 +24,7 @@ const TopTabs: React.FC<{}> = (props) => {
         }).then((res) => {
             if (res) {
                 const { result } = res;
-                setTabData([openNotesTab, ...result]);
+                setTabData([openNotesTab,favorateTab, ...result]);
             }
         });
     }, []);

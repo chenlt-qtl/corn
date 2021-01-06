@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import styles from '../index.less'
-import { CloseOutlined } from '@ant-design/icons';
-import { connect, NoteModelState, ConnectProps, NoteState } from 'umi';
-import { Skeleton } from 'antd';
+import { connect, NoteState } from 'umi';
+import NoteList from './NoteList'
 
 
 const OpenNotes: React.FC<{}> = (props) => {
@@ -13,12 +11,6 @@ const OpenNotes: React.FC<{}> = (props) => {
         })
     }, []);
 
-    const handleClick = (id: string) => {
-        props.dispatch({
-            type: 'note/queryNote',
-            payload: id
-        })
-    }
     const removeOpenNote = (id: string) => {
         const { openedNotes } = props.openNotes;
         props.dispatch({
@@ -33,12 +25,7 @@ const OpenNotes: React.FC<{}> = (props) => {
 
     const loading = props.loading.effects["openNotes/queryOpenNote"];
     return (
-        <Skeleton active={true} loading={loading}>
-            {props.openNotes.openedNotes.map(item => <div key={item.id} className={item.id === props.note.showNote.id ? styles.active : ''}>
-                <CloseOutlined onClick={() => { removeOpenNote(item.id) }} />
-                <span onClick={() => { handleClick(item.id) }}>{item.name}<span className={styles.parents}>{item.parents}</span></span>
-            </div>)}
-        </Skeleton>
+        <NoteList loading={loading} remove={removeOpenNote} listData={props.openNotes.openedNotes} activeNoteId={props.note.showNote.id}></NoteList>
     );
 }
 export default connect(({ openNotes, note, loading }: { openNotes: OpenNoteState, note: NoteState, loading }) => (

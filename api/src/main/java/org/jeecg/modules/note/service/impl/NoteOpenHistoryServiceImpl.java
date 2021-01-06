@@ -61,14 +61,12 @@ public class NoteOpenHistoryServiceImpl extends ServiceImpl<NoteOpenHistoryMappe
             NoteOpenHistory history = list.get(0);
             if(history.getOpenNoteIds() != null && history.getOpenNoteIds().length()>0){
                 String[] noteIds = history.getOpenNoteIds().split(",");
-                List<NoteModel> nodeList = noteService.getByIds(noteIds);
+                List<NoteModel> nodeList = noteService.getModelByIds(noteIds);
                 for(String noteId:noteIds) {
                     Integer index = null;
                     for (int i=0;i<nodeList.size();i++) {
                         NoteModel note = nodeList.get(i);
                         if(note.getId().equals(noteId)) {
-                            noteService.setParentNames(note);
-                            note.setText(UpLoadUtil.parseImgText(note.getText()));
                             notes.add(note);
                             index = i;
                             break;

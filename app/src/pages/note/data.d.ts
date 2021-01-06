@@ -8,6 +8,7 @@ export interface NoteItem {
   source?: string;
   parentId?:string;
   parentIds?:string;
+  parents?:string;
   status?: number;
   updateTime?: Date;
   createTime?: Date;
@@ -28,23 +29,3 @@ export interface NoteListParams {
   parentId: string;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
-
-export interface TableListData {
-  list: TableListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
-export interface TableListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
-  pageSize?: number;
-  currentPage?: number;
-}

@@ -95,7 +95,7 @@
         cursor: pointer;
         display: flex;
 
-        >span:first-of-type {
+        .close {
           display: inline-block;
           margin-right: 3px;
           color: #95a5a6;
@@ -108,7 +108,7 @@
         }
 
         &:hover {
-          >span:first-of-type {
+          .close {
             visibility: visible;
           }
         }
@@ -140,5 +140,26 @@
   
   .content{
     padding: 0 16px;
+  }
+}
+
+.title{
+  display: flex;
+  .star{
+    width:50px;
+    text-align: center;
+    line-height: 2rem;
+    cursor: pointer;
+  }
+}
+
+.favorate{
+  color:#e74c3c;
+}
+
+.notFavorate{
+  color:#bbb;
+  &:hover{
+    color:#e74c3c;
   }
 }
