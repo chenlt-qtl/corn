@@ -96,7 +96,8 @@ const WordDetail: React.FC<WordDetailProps> = (props) => {
                                 </div>
                                 {word.sentences.map((item: SentenceItem, index: number) => (
                                     <div className={styles.sentence} key={item.id}>
-                                        {index + 1}.   <span>{item.content}{item.mp3 ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => play(item.mp3)}></i> : ''}</span>
+                                        <section className={styles.content}>{index + 1}.   <span>{item.content}{item.mp3 ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => play(item.mp3)}></i> : ''}</span></section>
+                                        <section className={styles.img}>{item.picture ? <img src={item.picture}></img>:''}</section>
                                     </div>
                                 ))}
                             </> : ''}

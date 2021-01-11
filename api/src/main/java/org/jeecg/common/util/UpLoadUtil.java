@@ -303,7 +303,9 @@ public class UpLoadUtil {
 //        System.out.println(sbr);
 //        System.out.println("=======================");
 //
-        String result = realToDb("http://localhost:89/word/img/damu/20201221/1608520831011.jpg");
+        UpLoadUtil.realPre = "/upload/";
+        String result = dbToReal("baseUrl/note/damu/20210111/1610355128657.png");
+//        result = realToDb("upload/note/damu/20210111/1610355128657.png");
         System.out.println(result);
 //
 //        System.out.println("=======================");

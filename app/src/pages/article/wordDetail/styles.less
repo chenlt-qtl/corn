@@ -1,3 +1,5 @@
+@imgWidth: 9.375rem;
+
 .word {
   padding: 10px;
 
@@ -41,17 +43,17 @@
   line-height: 30px;
 }
 
-.trumpet{
-    color: #e74c3c;
-    display: inline-block;
-    margin-left: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: .3s;
+.trumpet {
+  color: #e74c3c;
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: .3s;
 
-    &:hover {
-      transform: scale(1.2);
-    }
+  &:hover {
+    transform: scale(1.2);
+  }
 }
 
 .acceptation {
@@ -66,5 +68,30 @@
   .sentence {
     display: flex;
     padding: 5px 0px;
+    .content{
+      flex:1
+    }
+  }
+}
+
+.img {
+  width: @imgWidth;
+  height: @imgWidth;
+  padding: .3125rem;
+  background-color: #fff;
+  line-height: @imgWidth;
+  border: 1px solid #f0f2f5;
+  border-radius: .3125rem;
+  box-sizing: content-box;
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+  }
+
+  img {
+    max-width: @imgWidth;
+    max-height: @imgWidth;
   }
 }

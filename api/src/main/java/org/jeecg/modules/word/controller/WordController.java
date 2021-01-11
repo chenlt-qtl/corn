@@ -208,6 +208,7 @@ public class WordController {
             wordVo.setSentences(sentenceService.getSentencesByWord(wordId));
             for(Sentence sentence:wordVo.getSentences()){
                 sentence.setMp3(UpLoadUtil.dbToReal(sentence.getMp3()));
+                sentence.setPicture(UpLoadUtil.dbToReal(sentence.getPicture()));
             }
             wordVo.setWordUserRel(wordUserService.getRel(sysUser.getUsername(),wordId));
         } catch (Exception e) {
