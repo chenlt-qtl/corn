@@ -31,7 +31,6 @@ const ImgUpload: React.FC<ImgUploadProps> = (props) => {
       return;
     }
     if (info.file.status === 'done') {
-      console.log(info);
       onChange(info.file.response.result);
       setLoading(false);
     }

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { LoadingOutlined, PlusOutlined, PlayCircleOutlined, PauseCircleOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Upload, message } from 'antd';
 import 'font-awesome/css/font-awesome.min.css';
 
@@ -11,7 +11,6 @@ interface Mp3UploadProps {
 const Mp3Upload: React.FC<Mp3UploadProps> = (props) => {
 
   const { mp3, onChange } = props;
-  console.log(mp3);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [paused, setPaused] = useState<boolean>(true);

@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.util.UpLoadUtil;
-import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.FileCopyUtils;
@@ -129,7 +128,7 @@ public class CommonController {
 			FileCopyUtils.copy(mf.getBytes(), savefile);
 			result.setMessage(path[1]);
 			result.setSuccess(true);
-			result.setResult(UpLoadUtil.parseUrlText(path[1]));
+			result.setResult(UpLoadUtil.dbToReal(path[1]));
 		} catch (IOException e) {
 			result.setSuccess(false);
 			result.setMessage(e.getMessage());

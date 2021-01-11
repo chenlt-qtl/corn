@@ -14,4 +14,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface AcceptationMapper extends BaseMapper<Acceptation> {
 
+    public String getByWord(@Param("wordId") String wordId);
 }

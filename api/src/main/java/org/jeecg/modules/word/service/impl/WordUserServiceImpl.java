@@ -27,16 +27,25 @@ public class WordUserServiceImpl extends ServiceImpl<WordUserMapper, WordUser> i
 
     @Override
     public void saveRel(String userName, String wordId) {
-        QueryWrapper<WordUser> wrapper = new QueryWrapper();
-        wrapper.eq("user",userName);
-        wrapper.eq("word_id",wordId);
-        List<WordUser> list = wordUserMapper.selectList(wrapper);
 
-        if(list.isEmpty()){
+        if(getRel(userName,wordId)==null){
             WordUser wordUser = new WordUser();
             wordUser.setUser(userName);
             wordUser.setWordId(wordId);
             save(wordUser);
+        }
+    }
+
+    @Override
+    public WordUser getRel(String userName, String wordId) {
+        QueryWrapper<WordUser> wrapper = new QueryWrapper();
+        wrapper.eq("user",userName);
+        wrapper.eq("word_id",wordId);
+        List<WordUser> list = wordUserMapper.selectList(wrapper);
+        if(!list.isEmpty()){
+            return list.get(0);
+        }else {
+            return null;
         }
     }
 }

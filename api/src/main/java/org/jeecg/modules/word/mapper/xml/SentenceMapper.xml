@@ -2,4 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.word.mapper.SentenceMapper">
 
+
+    <select id="getByWord" resultType="org.jeecg.modules.word.entity.Sentence">
+       select b.* from word_sentence_word_rel a,word_sentence b where a.sentence_id=b.id and a.word_id= #{wordId}
+    </select>
+
 </mapper>

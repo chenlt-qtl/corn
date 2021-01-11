@@ -15,14 +15,14 @@ public class SentenceVo extends Sentence{
     public Sentence toSentence(){
         Sentence sentence = new Sentence();
         sentence.setContent(this.getContent().trim());
-        sentence.setPicture(UpLoadUtil.parseUrlToBase(this.getPicture(),""));
-        sentence.setMp3(UpLoadUtil.parseUrlToBase(this.getMp3(),""));
+        sentence.setPicture(UpLoadUtil.realToDb(this.getPicture()));
+        sentence.setMp3(UpLoadUtil.realToDb(this.getMp3()));
         return sentence;
     }
 
     public void transSentence(Sentence sentence){
         sentence.setContent(this.getContent().trim());
-        sentence.setPicture(UpLoadUtil.parseUrlToBase(this.getPicture(),""));
-        sentence.setMp3(UpLoadUtil.parseUrlToBase(this.getMp3(),""));
+        sentence.setPicture(UpLoadUtil.realToDb(this.getPicture()));
+        sentence.setMp3(UpLoadUtil.realToDb(this.getMp3()));
     }
 }

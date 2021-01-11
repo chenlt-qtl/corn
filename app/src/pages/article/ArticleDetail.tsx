@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getArticle } from './service';
-import { Card, Modal, Button, List } from 'antd';
+import { Modal, Button } from 'antd';
 import styles from './articleDetail.less';
-import { ArrowLeftOutlined, DeleteOutlined, EditOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import CreateForm from './components/CreateForm';
-import Sentence from "./sentence";
+import WordList from './components/wordList';
+import Sentence from './sentence';
 
 
 export interface ArticleDetailProps {
@@ -67,6 +68,8 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
             <ArrowLeftOutlined /><EditOutlined onClick={openEditModel} /><DeleteOutlined />
           </div>
         </header>
+
+        <div className={styles.moduleTitle}>详细信息</div>
         <div className={styles.info}>
           <div className={styles.left}>
             {article.mp3 ? <div className={styles.infoItem}>
@@ -91,6 +94,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
         </div>
 
         <Sentence articleId={id}></Sentence>
+        <WordList  articleId={id}></WordList>
 
       </main>
       <Modal title="查看图片" width={660} visible={isModalVisible}

@@ -32,13 +32,29 @@ export interface WordItem {
   mp3?: string;
   phAm?: string;
   exchange?: string;
+  acceptation?:string;
   parts?: string;
   phAnMp3?: string;
+  wordUserRel?:WordUserItem;
+  icibaSentences?:[IcibaSentenceItem]
+  sentences?:[SentenceItem]
   status?: number;
   updateTime?: Date;
   createTime?: Date;
   createBy?: string;
   updateBy?: string;
+}
+
+interface WordUserItem {
+  wordId:string;
+  user:string;
+  familiarity:number;
+}
+
+export interface IcibaSentenceItem {
+  id:string;
+  orig:string;
+  trans:string;
 }
 
 export interface ArticleListParams {
@@ -47,23 +63,4 @@ export interface ArticleListParams {
   currentPage?: number;
 }
 
-export interface TableListPagination {
-  total: number;
-  pageSize: number;
-  current: number;
-}
 
-export interface TableListData {
-  list: TableListItem[];
-  pagination: Partial<TableListPagination>;
-}
-
-export interface TableListParams {
-  sorter?: string;
-  status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
-  pageSize?: number;
-  currentPage?: number;
-}

@@ -103,6 +103,13 @@ export default defineConfig({
           icon: 'smile',
           component: './article/ArticleDetail',
         },
+        {
+          path: '/word/:wordName',
+          name: 'wordDetail',
+          layout: false,
+          icon: 'smile',
+          component: './article/WordDetail',
+        },
       ],
     },
     {

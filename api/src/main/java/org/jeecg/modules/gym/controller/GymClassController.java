@@ -1,9 +1,7 @@
 package org.jeecg.modules.gym.controller;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -26,10 +24,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import org.jeecg.modules.system.entity.SysUser;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +98,7 @@ public class GymClassController {
 		Page<GymClass> page = new Page<GymClass>(pageNo, pageSize);
 		IPage<GymClass> pageList = gymClassService.page(page, queryWrapper);
 		for(GymClass gym:pageList.getRecords()){
-			gym.setUrl(UpLoadUtil.parseUrlText(gym.getUrl()));
+			gym.setUrl(UpLoadUtil.dbToReal(gym.getUrl()));
 		}
 		result.setSuccess(true);
 		result.setResult(pageList);
@@ -119,7 +115,7 @@ public class GymClassController {
 		Result<GymClass> result = new Result<GymClass>();
 		try {
 			gymClass.setUrl(UpLoadUtil.replace(uploadpath,null,gymClass.getUrl(),CommonController.GYM));
-			gymClass.setLastingTime(VideoUtil.getDuration(UpLoadUtil.getRealPath(uploadpath,gymClass.getUrl())));
+			gymClass.setLastingTime(VideoUtil.getDuration(UpLoadUtil.dbToReal(gymClass.getUrl())));
 			gymClassService.save(gymClass);
 			result.success("添加成功！");
 			result.setResult(gymClass);
@@ -144,7 +140,7 @@ public class GymClassController {
 			result.error500("未找到对应实体");
 		}else {
 			gymClass.setUrl(UpLoadUtil.replace(uploadpath,gymClassEntity.getUrl(),gymClass.getUrl(),CommonController.GYM));
-			gymClass.setLastingTime(VideoUtil.getDuration(UpLoadUtil.getRealPath(uploadpath,gymClass.getUrl())));
+			gymClass.setLastingTime(VideoUtil.getDuration(UpLoadUtil.dbToReal(uploadpath,gymClass.getUrl())));
 			boolean ok = gymClassService.updateById(gymClass);
 			//TODO 返回false说明什么？
 			if(ok) {
@@ -191,7 +187,7 @@ public class GymClassController {
 		if(gymClass==null) {
 			result.error500("未找到对应实体");
 		}else {
-			gymClass.setUrl(UpLoadUtil.parseUrlText(gymClass.getUrl()));
+			gymClass.setUrl(UpLoadUtil.dbToReal(gymClass.getUrl()));
 			result.setResult(gymClass);
 			result.setSuccess(true);
 		}

@@ -85,8 +85,8 @@ public class SentenceController {
         queryWrapper.orderByAsc("idx");
         List<Sentence> list = sentenceService.list(queryWrapper);
         for(Sentence a:list){
-            a.setPicture(UpLoadUtil.parseBaseToUrl(a.getPicture(),""));
-            a.setMp3(UpLoadUtil.parseBaseToUrl(a.getMp3(),""));
+            a.setPicture(UpLoadUtil.dbToReal(a.getPicture()));
+            a.setMp3(UpLoadUtil.dbToReal(a.getMp3()));
         }
         result.setSuccess(true);
         result.setResult(list);

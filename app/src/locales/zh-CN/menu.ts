@@ -53,4 +53,5 @@ export default {
   'menu.articleList':'文章列表',
   'menu.articleDetail':'文章明细',
   'menu.note':'笔记',
+  'menu.wordDetail':'单词信息',
 };

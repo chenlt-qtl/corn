@@ -11,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IAcceptationService extends IService<Acceptation> {
 
+    String getByWord(String wordId);
 }

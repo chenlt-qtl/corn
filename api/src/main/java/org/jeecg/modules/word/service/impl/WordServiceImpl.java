@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * @Description: word
  * @author： jeecg-boot
- * @date：   2019-08-22
+ * @date： 2019-08-22
  * @version： V1.0
  */
 @Service
@@ -59,12 +59,14 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     @Override
     public Word saveWord(String wordName) throws Exception {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        List<Word> list = wordMapper.selectByMap(new HashMap(){{this.put("word_name",wordName);}});
+        List<Word> list = wordMapper.selectByMap(new HashMap() {{
+            this.put("word_name", wordName);
+        }});
         Word word;
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             word = list.get(0);//已存在数据库中
-        }else {//查API
-            Map detailMap = ParseIciba.getWordFromIciba(wordName,uploadpath);
+        } else {//查API
+            Map detailMap = ParseIciba.getWordFromIciba(wordName, uploadpath);
             word = (Word) detailMap.get("word");
             save(word);
             if (detailMap.containsKey("acceptations")) {//解释
@@ -83,13 +85,14 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
             }
         }
         //保存word用户关联信息
-        wordUserService.saveRel(sysUser.getUsername(),word.getId());
+        wordUserService.saveRel(sysUser.getUsername(), word.getId());
 
         return word;
     }
 
     /**
      * 分页查询word
+     *
      * @param wordName
      * @param pageNo
      * @param pageSize
@@ -126,23 +129,19 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
         return list;
     }
 
-    private void handleMapUrl(List<Map> list){
-        String preUrl = UpLoadUtil.getPreUrl();
-        list.forEach((map)->{
+    private void handleMapUrl(List<Map> list) {
+        list.forEach((map) -> {
             Object mp3 = map.get("mp3");
-            if(null != mp3){
-                String mp3Str = String.valueOf(mp3);
-                if(StringUtils.isNotBlank(mp3Str)){
-                    map.put("mp3", preUrl + mp3Str);
-                    map.put("key", preUrl + mp3Str);
-                }
+            if (null != mp3) {
+                map.put("mp3", UpLoadUtil.dbToReal(String.valueOf(mp3)));
+                //map.put("key", mp3Str);
             }
         });
     }
 
     @Override
     public void saveWord(SentenceVo sentenceVo) {
-        if (sentenceVo.getWords() != null&&!sentenceVo.getWords().isEmpty()) {
+        if (sentenceVo.getWords() != null && !sentenceVo.getWords().isEmpty()) {
             for (Word wordVo : sentenceVo.getWords()) {
                 Word word = null;
                 try {
@@ -150,7 +149,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if(word != null) {
+                if (word != null) {
                     SentenceWordRel sentenceWordRel = new SentenceWordRel();
                     sentenceWordRel.setSentenceId(sentenceVo.getId());
                     sentenceWordRel.setWordId(word.getId());

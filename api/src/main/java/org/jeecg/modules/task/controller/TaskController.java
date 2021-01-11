@@ -184,7 +184,7 @@ public class TaskController {
 		if(task==null) {
 			result.error500("未找到对应实体");
 		}else {
-			task.setComment(UpLoadUtil.parseImgText(task.getComment()));
+			task.setComment(UpLoadUtil.dbToReal(task.getComment(),"html"));
 			result.setResult(task);
 			result.setSuccess(true);
 		}

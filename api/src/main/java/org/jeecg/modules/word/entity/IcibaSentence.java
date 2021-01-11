@@ -1,6 +1,8 @@
 package org.jeecg.modules.word.entity;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -52,4 +54,20 @@ public class IcibaSentence implements Serializable {
 	/**updateBy*/
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
+
+	public String getOrig() {
+		try {
+			return URLDecoder.decode(orig, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			return "";
+		}
+	}
+
+	public String getTrans()  {
+		try {
+			return URLDecoder.decode(trans, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			return "";
+		}
+	}
 }

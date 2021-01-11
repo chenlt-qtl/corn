@@ -13,4 +13,6 @@ public interface IWordUserService extends IService<WordUser> {
 
     void saveRel(String userName,String wordId);
 
+    WordUser getRel(String userName,String wordId);
+
 }

@@ -1,10 +1,10 @@
 package org.jeecg.modules.word.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.word.entity.Sentence;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * @Description: word_sentence
@@ -14,4 +14,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface SentenceMapper extends BaseMapper<Sentence> {
 
+    List<Sentence> getByWord(@Param("wordId") String wordId);
 }

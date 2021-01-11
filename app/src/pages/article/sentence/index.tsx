@@ -27,7 +27,7 @@ const Sentence: React.FC<SentenceProps> = (props) => {
     const getSentence = () => {
         getSentenceByArticle(articleId).then(res => {
             if (res) {
-                if (res.success) {
+                if (res.success&&res.result) {
                     setSentences(res.result);
                 }
             }

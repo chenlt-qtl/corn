@@ -1,11 +1,12 @@
 package org.jeecg.modules.word.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.modules.word.entity.Acceptation;
 import org.jeecg.modules.word.mapper.AcceptationMapper;
 import org.jeecg.modules.word.service.IAcceptationService;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import javax.annotation.Resource;
 
 /**
  * @Description: acceptation
@@ -16,4 +17,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 @Service
 public class AcceptationServiceImpl extends ServiceImpl<AcceptationMapper, Acceptation> implements IAcceptationService {
 
+    @Resource
+    private AcceptationMapper acceptationMapper;
+    @Override
+    public String getByWord(String wordId) {
+        return acceptationMapper.getByWord(wordId);
+    }
 }

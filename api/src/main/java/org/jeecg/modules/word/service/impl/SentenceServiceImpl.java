@@ -13,7 +13,9 @@ import org.jeecg.modules.word.service.IWordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: word_sentence
@@ -29,6 +31,14 @@ public class SentenceServiceImpl extends ServiceImpl<SentenceMapper, Sentence> i
 
     @Autowired
     private ISentenceWordRelService sentenceWordRelService;
+
+    @Resource
+    private SentenceMapper sentenceMapper;
+
+    @Override
+    public List<Sentence> getSentencesByWord(String wordId) {
+        return sentenceMapper.getByWord(wordId);
+    }
 
     public void saveSentences(String articleId, List<SentenceVo> sentences){
 

@@ -167,7 +167,7 @@ public class NoteController {
 			note.setUpdateBy(null);
 			note.setUpdateTime(null);
 			boolean ok = noteService.updateNote(note,noteEntity.getText());
-			note.setText(UpLoadUtil.parseImgText(note.getText()));
+			note.setText(UpLoadUtil.dbToReal(note.getText(),"html"));
 			if(ok) {
 				NoteModel model = new NoteModel(note);
 				noteService.setParentNames(model);
@@ -246,7 +246,7 @@ public class NoteController {
 		}else {
 			NoteModel noteModel = new NoteModel(note);
 			noteService.setParentNames(noteModel);//设置父节点名称
-			noteModel.setText(UpLoadUtil.parseImgText(note.getText()));
+			noteModel.setText(UpLoadUtil.dbToReal(note.getText(),"html"));
 			result.setResult(noteModel);
 			result.setSuccess(true);
 		}

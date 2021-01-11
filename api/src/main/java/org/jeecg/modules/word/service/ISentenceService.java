@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.word.model.SentenceVo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: word_sentence
@@ -16,4 +17,5 @@ public interface ISentenceService extends IService<Sentence> {
 
     void saveSentences(String articleId, List<SentenceVo> sentences);
 
+    List<Sentence> getSentencesByWord(String wordId);
 }

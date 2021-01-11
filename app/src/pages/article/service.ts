@@ -54,3 +54,11 @@ export async function updateArticle(params: ArticleItem) {
 export async function getWordBySentence(params: string) {
   return request('/api/word/word/queryBySentence?id=' + params);
 }
+
+export async function getWordByArticle(params: string) {
+  return request('/api/word/word/queryByArticle?id=' + params);
+}
+
+export async function queryByWordName(params: string) {
+  return request('/api/word/word/queryByWordName?wordName=' + params);
+}
