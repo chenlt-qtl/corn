@@ -183,7 +183,7 @@ public class UpLoadUtil {
             }
             Matcher matcher = imgPattern.matcher(text);
             while (matcher.find()) {
-                matcher.appendReplacement(sbr, realPre);
+                matcher.appendReplacement(sbr, "/"+realPre);
             }
 
             matcher.appendTail(sbr);
@@ -303,7 +303,7 @@ public class UpLoadUtil {
 //        System.out.println(sbr);
 //        System.out.println("=======================");
 //
-        UpLoadUtil.realPre = "/upload/";
+        UpLoadUtil.realPre = "upload/";
         String result = dbToReal("baseUrl/note/damu/20210111/1610355128657.png");
 //        result = realToDb("upload/note/damu/20210111/1610355128657.png");
         System.out.println(result);
