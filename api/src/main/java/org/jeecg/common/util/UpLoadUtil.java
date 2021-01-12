@@ -30,10 +30,14 @@ public class UpLoadUtil {
 
     private static String realPre;
 
+    private static String realPrePattern;
+
+
 
     @Value(value = "${jeecg.path.pre}")
     public void setRealPre(String pre) {
         UpLoadUtil.realPre = pre;
+        UpLoadUtil.realPrePattern = "[\\/]?"+realPre;
     }
 
     /**
@@ -143,9 +147,9 @@ public class UpLoadUtil {
         StringBuffer sbr = new StringBuffer();
         Pattern imgPattern;
         if ("html".equals(type)) {
-            imgPattern = Pattern.compile("(?<=<img src=\")(" + realPre + ")");
+            imgPattern = Pattern.compile("(?<=<img src=\")(" + realPrePattern + ")");
         } else {
-            imgPattern = Pattern.compile("^(" + realPre + ")");
+            imgPattern = Pattern.compile("^(" + realPrePattern + ")");
         }
         Matcher matcher = imgPattern.matcher(text);
         while (matcher.find()) {
@@ -304,8 +308,9 @@ public class UpLoadUtil {
 //        System.out.println("=======================");
 //
         UpLoadUtil.realPre = "upload/";
-        String result = dbToReal("baseUrl/note/damu/20210111/1610355128657.png");
-//        result = realToDb("upload/note/damu/20210111/1610355128657.png");
+        UpLoadUtil.realPrePattern = "[\\/]?"+UpLoadUtil.realPre;
+//        String result = dbToReal("baseUrl/note/damu/20210111/1610355128657.png");
+        String result = realToDb("/upload/note/damu/20210111/1610355128657.png");
         System.out.println(result);
 //
 //        System.out.println("=======================");
