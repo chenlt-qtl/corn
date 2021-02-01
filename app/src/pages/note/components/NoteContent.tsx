@@ -1,8 +1,8 @@
 import React, { useRef, useImperativeHandle, useState } from 'react';
 import styles from '../index.less'
 import { connect, NoteModelState, ConnectProps, NoteState } from 'umi';
-import { Input } from 'antd';
-import { LoadingOutlined, CheckCircleTwoTone, StarFilled, StarOutlined } from '@ant-design/icons';
+import { Input, Popconfirm } from 'antd';
+import { LoadingOutlined, CheckCircleTwoTone, StarFilled, StarOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Editor } from '@tinymce/tinymce-react';
 import lodash from 'lodash';
 
@@ -32,6 +32,14 @@ const NoteContent = React.forwardRef((props, ref) => {
         const newNote = { ...showNote, text };
         editNote(newNote);
     };
+
+    const handleDelete = () => {
+        console.log('delete ', showNote.id);
+        props.dispatch({
+            type: 'note/deleteNote',
+            payload: showNote.id,
+        })
+    }
     const handleTextStatusChange = (state) => {
         if (state) {
             setTextStatus(<>正在保存 <LoadingOutlined /></>);
@@ -78,15 +86,15 @@ const NoteContent = React.forwardRef((props, ref) => {
         return false;
     }
 
-    const setFavorate = (data:boolean) =>{
-        if(lodash.isEmpty(showNote)){
+    const setFavorate = (data: boolean) => {
+        if (lodash.isEmpty(showNote)) {
             return;
         }
-        let result:string[] = [];
-        if(data){//增加
-            result = Array.from(new Set([...noteIds,showNote.id]));
-        }else{//减少
-            result = noteIds.filter((item:string)=>item!=showNote.id);
+        let result: string[] = [];
+        if (data) {//增加
+            result = Array.from(new Set([...noteIds, showNote.id]));
+        } else {//减少
+            result = noteIds.filter((item: string) => item != showNote.id);
         }
 
         console.log(result);
@@ -105,8 +113,18 @@ const NoteContent = React.forwardRef((props, ref) => {
                     onChange={handleNameChange}
                     onBlur={handleEditNote}
                 ></Input>
-                <div className={styles.star}>
-                    {isFavorate() ? <StarFilled onClick={()=>{setFavorate(false);}} className={styles.favorate}/> : <StarOutlined onClick={()=>{setFavorate(true);}} className={styles.notFavorate}/>}</div>
+                {showNote.id ?
+                    <div className={styles.star}>
+                        {isFavorate() ? <StarFilled onClick={() => { setFavorate(false); }} className={styles.favorate} /> : <StarOutlined onClick={() => { setFavorate(true); }} className={styles.notFavorate} />}
+                        <Popconfirm
+                            title="确定要删除此笔记?"
+                            onConfirm={handleDelete}
+                            okText="是"
+                            cancelText="否"
+                        >
+                            <DeleteOutlined />
+                        </Popconfirm>
+                    </div> : ''}
             </div>
             <div className={styles.text}>
                 <div className={styles.textStatus}>{textStatus}</div>

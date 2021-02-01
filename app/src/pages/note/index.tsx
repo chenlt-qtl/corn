@@ -34,7 +34,7 @@ const NoteList: React.FC<{}> = (props) => {
   }
 
   const render = function () {
-    const noteLoading = props.loading.effects["note/queryNote"];
+    const noteLoading = props.loading.effects["note/queryNote"]||props.loading.effects["note/deleteNote"];
     return (
       <div className={styles.out}>
         <Spin spinning={noteLoading ? true : false}>

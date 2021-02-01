@@ -72,3 +72,12 @@ export async function editFavorite(noteIds: String) {
     },
   });
 }
+
+export async function deleteNote(id: String) {
+  return request('/api/note/delete?id='+id, {
+    method: 'DELETE',
+    data: {
+      method: 'delete',
+    },
+  });
+}

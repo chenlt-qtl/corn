@@ -1,4 +1,4 @@
-import { queryTreeList, queryNoteById, modifyNote, addNote, queryNote } from '@/pages/note/service'
+import { queryTreeList, queryNoteById, modifyNote, addNote, queryNote, deleteNote } from '@/pages/note/service'
 import { NoteItem, NoteNode } from '@/pages/note/data.d';
 import { Effect, Reducer } from 'umi';
 
@@ -34,6 +34,7 @@ export interface NoteModelType {
         queryChildren: Effect;
         modifyNote: Effect;
         addNote: Effect;
+        deleteNote: Effect;
     };
     reducers: {
         refreshTreeData: Reducer<NoteState>;
@@ -137,6 +138,25 @@ const NoteModel: NoteModelType = {
                 }
                 return result;
             }
+        },
+        *deleteNote({ payload }, { call, put, select }) {
+            let result = yield call(deleteNote, payload);
+            if (result) {
+                if (result.success) {
+                    const activeTabId = yield select(state => state.note.activeTabId);
+                    console.log(activeTabId);
+                    // 成功
+                    yield put({
+                        type: 'queryTabTree',
+                        payload: activeTabId
+                    });
+                    yield put({
+                        type: 'refreshShowNote',
+                        payload: {}
+                    });
+                }
+            }
+            return result;
         },
     },
     reducers: {

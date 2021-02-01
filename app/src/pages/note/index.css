@@ -122,17 +122,23 @@
   display: flex;
 }
 .title .star {
-  width: 50px;
+  display: flex;
+}
+.title .star span {
   text-align: center;
   line-height: 2rem;
   cursor: pointer;
+  margin-left: 0.9375rem;
 }
-.favorate {
+.title .star span:hover {
   color: #e74c3c;
 }
-.notFavorate {
+.title .star .favorate {
+  color: #e74c3c;
+}
+.title .star .notFavorate {
   color: #bbb;
 }
-.notFavorate:hover {
-  color: #e74c3c;
+.empty {
+  margin: 70px auto;
 }
