@@ -62,3 +62,8 @@ export async function getWordByArticle(params: string) {
 export async function queryByWordName(params: string) {
   return request('/api/word/word/queryByWordName?wordName=' + params);
 }
+
+export async function querySentenceByWord(params: string) {
+  return request('/api/word/sentence/queryByWordName?wordName=' + params);
+}
+

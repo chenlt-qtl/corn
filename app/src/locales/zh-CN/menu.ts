@@ -54,4 +54,5 @@ export default {
   'menu.articleDetail':'文章明细',
   'menu.note':'笔记',
   'menu.wordDetail':'单词信息',
+  'menu.splicMp3':'语音分割',
 };

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { Form, Input, Modal, Steps, Button, Spin } from 'antd';
-import styles from './index.less';
-import { SentenceItem, ArticleItem, WordItem } from '../data';
-import { saveSentence, getWordBySentence } from '../service';
-import ImgUpload from '../components/ImgUpload'
-import Mp3Upload from '../components/Mp3Upload'
+import styles from './styles.less';
+import { SentenceItem, ArticleItem, WordItem } from '../../data';
+import { saveSentence, getWordBySentence } from '../../service';
+import ImgUpload from '../ImgUpload'
+import Mp3Upload from '../Mp3Upload'
 
 
 const { TextArea } = Input;
@@ -21,7 +21,7 @@ export interface SentenceProps {
 
 interface DisplaySentence {
     id?: string;
-    content: string;
+    content?: string;
     mp3?: string;
     picture?: string;
     allWords: { text: string, isWord: boolean }[]
@@ -75,7 +75,18 @@ const EditModal: React.FC<SentenceProps> = (props) => {
             setLoading(true);
             const article: ArticleItem = { id: articleId };
             article.sentences = sentences.map(sentence => {
-                return { ...sentence, words: sentence.allWords.filter(item => selectWords.includes(item.text.toLowerCase())).map(item => ({ wordName: item.text })) }
+                return {
+                    ...sentence,
+                    content: sentence.allWords.reduce((total: string, item) => {
+                        const text = item.text;
+                        total += text;
+                        if (!item.text.endsWith(" ")) {
+                            total += " ";
+                        }
+                        return total;
+                    }, " "),
+                    words: sentence.allWords.filter(item => selectWords.includes(item.text.toLowerCase())).map(item => ({ wordName: item.text }))
+                }
             })
             if (single && article.sentences[0]) {
                 mp3 && (article.sentences[0].mp3 = mp3);
@@ -124,7 +135,7 @@ const EditModal: React.FC<SentenceProps> = (props) => {
         let patt = /([a-z|'|-]+)/ig;
         let r = null;
         setSentences(sentenceStrs.reduce((sentences, item) => {
-            const sentence: DisplaySentence = { content: item, allWords: [] };
+            const sentence: DisplaySentence = { allWords: [] };
             let index = 1;
             while (r = patt.exec(item)) {
                 const word = r[0];

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getArticle } from './service';
+import { getArticle } from '../service';
 import { Modal, Button } from 'antd';
 import styles from './articleDetail.less';
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import CreateForm from './components/CreateForm';
-import WordList from './components/wordList';
-import Sentence from './sentence';
+import CreateForm from '../components/CreateForm';
+import WordList from '../components/wordList';
+import SentenceList from '../components/sentenceList';
 
 
 export interface ArticleDetailProps {
@@ -19,6 +19,9 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const createForm = useRef();
+
+  const player = useRef();
+  const source = useRef();
 
   useEffect(() => {
     getArticleDetail();
@@ -39,25 +42,14 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
     setEditModalVisible(true);
   }
 
-  const getActions = (item: ArticleItem): React.ReactNode[] => {
-    const actions = [
-      <EditOutlined />,];
-    if (item.mp3) {
-      actions.push(<PlayCircleOutlined />);
+  const play = (src: string) => {
+    console.log(src);
+    if (src) {
+      source.current.src = src;
+      player.current!.load();
+      player.current!.play();
     }
-    actions.push(
-      <Popconfirm
-        title="确认要删除这篇文章?"
-        onConfirm={() => { handleDel(item.id) }}
-        okText="是"
-        cancelText="否"
-      >
-        <DeleteOutlined />
-      </Popconfirm>
-    );
-    return actions;
   }
-
 
   return (
     <>
@@ -93,8 +85,8 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
             </a> : ''}
         </div>
 
-        <Sentence articleId={id}></Sentence>
-        <WordList  articleId={id}></WordList>
+        <SentenceList articleId={id} play={play} edit={true}></SentenceList>
+        <WordList articleId={id}></WordList>
 
       </main>
       <Modal title="查看图片" width={660} visible={isModalVisible}
@@ -112,6 +104,10 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
       }}
         modalVisible={editModalVisible}>
       </CreateForm>
+      <audio ref={player}>
+        <source ref={source} type="audio/mpeg" />
+                  您的浏览器不支持 audio 元素。
+            </audio>
     </>
   );
 };

@@ -37,7 +37,7 @@ public class UpLoadUtil {
     @Value(value = "${jeecg.path.pre}")
     public void setRealPre(String pre) {
         UpLoadUtil.realPre = pre;
-        UpLoadUtil.realPrePattern = "[\\/]?"+realPre;
+        UpLoadUtil.realPrePattern = "[\\\\/]?"+UpLoadUtil.realPre.replaceAll("^[\\\\/]","");
     }
 
     /**
@@ -187,7 +187,7 @@ public class UpLoadUtil {
             }
             Matcher matcher = imgPattern.matcher(text);
             while (matcher.find()) {
-                matcher.appendReplacement(sbr, "/"+realPre);
+                matcher.appendReplacement(sbr, realPre);
             }
 
             matcher.appendTail(sbr);
@@ -307,10 +307,16 @@ public class UpLoadUtil {
 //        System.out.println(sbr);
 //        System.out.println("=======================");
 //
-        UpLoadUtil.realPre = "upload/";
-        UpLoadUtil.realPrePattern = "[\\/]?"+UpLoadUtil.realPre;
-//        String result = dbToReal("baseUrl/note/damu/20210111/1610355128657.png");
-        String result = realToDb("/upload/note/damu/20210111/1610355128657.png");
+//        UpLoadUtil.realPre = "upload/";
+//        System.out.println(UpLoadUtil.realPre.replaceAll("^[\\\\/]",""));
+//        UpLoadUtil.realPre = "/upload/";
+//        System.out.println(UpLoadUtil.realPre.replaceAll("^[\\\\/]",""));
+//        UpLoadUtil.realPre = "\\upload/";
+//        System.out.println(UpLoadUtil.realPre.replaceAll("^[\\\\/]",""));
+        UpLoadUtil.realPre = "/upload/";
+        UpLoadUtil.realPrePattern = "[\\\\/]?"+UpLoadUtil.realPre.replaceAll("^[\\\\/]","");
+        String result = dbToReal("baseUrl/note/damu/20210111/1610355128657.png");
+//        String result = realToDb("<p><img src=\"upload/note/damu/20210112/1610432817412.png\" alt=\"\" /></p>","html");
         System.out.println(result);
 //
 //        System.out.println("=======================");

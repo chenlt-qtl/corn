@@ -1,0 +1,9 @@
+.content > div {
+  margin: 15px 0;
+}
+.content li {
+  margin: 5px;
+}
+.content :global .ant-radio-group {
+  margin-top: 10px;
+}

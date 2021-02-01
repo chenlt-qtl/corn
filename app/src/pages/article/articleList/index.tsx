@@ -2,9 +2,9 @@ import { EditOutlined, StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOut
 import { List, Card, Button, Input, Popconfirm } from 'antd';
 import { Link } from 'umi';
 import React, { useState, useEffect, useRef } from 'react';
-import { ArticleItem } from './data.d';
-import { getArticleList, removeArticle } from './service';
-import CreateForm from './components/CreateForm';
+import { ArticleItem } from '../data';
+import { getArticleList, removeArticle } from '../service';
+import CreateForm from '../components/CreateForm';
 
 const { Search } = Input;
 

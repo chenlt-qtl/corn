@@ -1,0 +1,11 @@
+.trumpet {
+  color: #e74c3c;
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.trumpet:hover {
+  transform: scale(1.2);
+}

@@ -87,14 +87,14 @@ export default defineConfig({
       layout:false,
       routes: [
         {
-          path: '/article',
-          name: 'articleList',
-          component: './article',
-        },
-        {
           path: '/note',
           name: 'note',
           component: './note',
+        },
+        {
+          path: '/article',
+          name: 'articleList',
+          component: './article/articleList',
         },
         {
           path: '/article/:id',
@@ -102,6 +102,13 @@ export default defineConfig({
           layout: false,
           icon: 'smile',
           component: './article/ArticleDetail',
+        },
+        {
+          path: '/splicMp3',
+          name: 'splicMp3',
+          layout: false,
+          icon: 'smile',
+          component: './article/splicMp3',
         },
         {
           path: '/word/:wordName',

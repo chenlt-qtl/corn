@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { getSentenceByArticle } from '../service';
+import { getSentenceByArticle } from '../../service';
 import { List, Popconfirm } from 'antd';
-import styles from '../articleDetail.less';
+import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
-import { SentenceItem } from '../data.d';
+import { SentenceItem } from '../../data.d';
 import EditModal from './EditModal';
 
 
-
-export interface SentenceProps {
+export interface SentenceListProps {
     articleId: string
+    play: (mp3: string) => void
+    edit: boolean
 }
 
 
-const Sentence: React.FC<SentenceProps> = (props) => {
-    const articleId = props.articleId;
+const SentenceList: React.FC<SentenceListProps> = (props) => {
+    const { articleId, play, edit=false } = props;
     const [sentences, setSentences] = useState<SentenceItem[]>([]);
     const [sentence, setSentence] = useState<SentenceItem>({});
     const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
@@ -27,7 +28,7 @@ const Sentence: React.FC<SentenceProps> = (props) => {
     const getSentence = () => {
         getSentenceByArticle(articleId).then(res => {
             if (res) {
-                if (res.success&&res.result) {
+                if (res.success && res.result) {
                     setSentences(res.result);
                 }
             }
@@ -66,36 +67,37 @@ const Sentence: React.FC<SentenceProps> = (props) => {
 
     return (
         <>
-            <div className={styles.module}>
+            {edit ? <div className={styles.module}>
                 <div className={styles.moduleTitle}>句子列表</div>
                 <div className={styles.toolbar}>
                     <PlusCircleOutlined title='增加句子' onClick={() => { openEditModel({}, true) }} />
                     <FileAddOutlined title='批量增加句子' onClick={() => { openEditModel({}, false) }} />
                 </div>
-            </div>
+            </div> : ''}
             <List
                 itemLayout="vertical"
                 size="large"
                 pagination={false}
                 dataSource={sentences}
                 renderItem={(item: SentenceItem) => (
-                    <List.Item
+                        <List.Item
                         key={item.id}
                         actions={getActions(item)}
                         extra={item.picture ? <img width={100} src={item.picture} /> : ''}
                     >
-                        <pre>{item.content}</pre>
+                        <pre>{item.content}
+                            {item.mp3 ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={()=>play(item.mp3)}></i> : ''}</pre>
                     </List.Item>
                 )}
             />
-            <EditModal articleId={articleId} sentence={sentence} single={single}
+            {edit ? <EditModal articleId={articleId} sentence={sentence} single={single}
                 onCancel={(reload) => {
                     reload && getSentence();
                     setEditModalVisible(false);
                 }}
-                modalVisible={editModalVisible}></EditModal>
+                modalVisible={editModalVisible}></EditModal> : ''}
         </>
     );
 };
 
-export default Sentence;
+export default SentenceList;

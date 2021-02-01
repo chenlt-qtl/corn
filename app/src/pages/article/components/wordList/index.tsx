@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Empty, Spin } from 'antd';
-import styles from '../../articleDetail.less';
+import styles from './styles.less';
 import { WordItem } from '../../data.d';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import WordPopover from '../wordPopover';

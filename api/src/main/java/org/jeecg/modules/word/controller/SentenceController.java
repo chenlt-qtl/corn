@@ -84,7 +84,7 @@ public class SentenceController {
         queryWrapper.eq("article_id", articleId);
         queryWrapper.orderByAsc("idx");
         List<Sentence> list = sentenceService.list(queryWrapper);
-        for(Sentence a:list){
+        for (Sentence a : list) {
             a.setPicture(UpLoadUtil.dbToReal(a.getPicture()));
             a.setMp3(UpLoadUtil.dbToReal(a.getMp3()));
         }
@@ -175,73 +175,22 @@ public class SentenceController {
         return result;
     }
 
-    /**
-     * 导出excel
-     *
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value = "/exportXls")
-    public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
-        // Step.1 组装查询条件
-        QueryWrapper<Sentence> queryWrapper = null;
-        try {
-            String paramsStr = request.getParameter("paramsStr");
-            if (oConvertUtils.isNotEmpty(paramsStr)) {
-                String deString = URLDecoder.decode(paramsStr, "UTF-8");
-                Sentence sentence = JSON.parseObject(deString, Sentence.class);
-                queryWrapper = QueryGenerator.initQueryWrapper(sentence, request.getParameterMap());
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        //Step.2 AutoPoi 导出Excel
-        ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
-        List<Sentence> pageList = sentenceService.list(queryWrapper);
-        //导出文件名称
-        mv.addObject(NormalExcelConstants.FILE_NAME, "word_sentence列表");
-        mv.addObject(NormalExcelConstants.CLASS, Sentence.class);
-        mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("word_sentence列表数据", "导出人:Jeecg", "导出信息"));
-        mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
-        return mv;
-    }
 
     /**
-     * 通过excel导入数据
+     * 通过id查询
      *
-     * @param request
-     * @param response
+     * @param wordName
      * @return
      */
-    @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-        for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-            MultipartFile file = entity.getValue();// 获取上传文件对象
-            ImportParams params = new ImportParams();
-            params.setTitleRows(2);
-            params.setHeadRows(1);
-            params.setNeedSave(true);
-            try {
-                List<Sentence> listSentences = ExcelImportUtil.importExcel(file.getInputStream(), Sentence.class, params);
-                for (Sentence sentenceExcel : listSentences) {
-                    sentenceService.save(sentenceExcel);
-                }
-                return Result.ok("文件导入成功！数据行数：" + listSentences.size());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return Result.error("文件导入失败！");
-            } finally {
-                try {
-                    file.getInputStream().close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return Result.ok("文件导入失败！");
+    @GetMapping(value = "/queryByWordName")
+    public Result<List<Sentence>> queryByWordName(@RequestParam(name = "wordName", required = true) String wordName) {
+        Result<List<Sentence>> result = new Result();
+        QueryWrapper<Sentence> queryWrapper = new QueryWrapper<Sentence>();
+        queryWrapper.like("content", " " + wordName + " ");
+        List<Sentence> sentences = sentenceService.list(queryWrapper);
+        result.setResult(sentences);
+        result.setSuccess(true);
+        return result;
     }
 
 

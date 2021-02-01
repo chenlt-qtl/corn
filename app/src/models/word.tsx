@@ -1,4 +1,4 @@
-import { getWordByArticle, queryByWordName } from '@/pages/article/service'
+import { getWordByArticle, queryByWordName, querySentenceByWord } from '@/pages/article/service'
 import { WordItem } from '@/pages/article/data.d';
 import { Effect, Reducer } from 'umi';
 
@@ -14,6 +14,7 @@ export interface WordModelType {
         getWordByArticle: Effect;
         getWordByWordName: Effect;
         getWordFromDb: Effect;
+        getSentenceByWord: Effect;
     };
     reducers: {
         refreshWordMap: Reducer<WordState>;
@@ -69,6 +70,17 @@ const WordModel: WordModelType = {
                 }
 
             }
+        },
+        *getSentenceByWord({ payload }, { call, put, select }) {
+            let result = yield call(querySentenceByWord, payload);
+            if (result) {
+                if (result.success && result.result) {
+                    // 成功
+                    return result.result;
+                }
+
+            }
+
         },
     },
     reducers: {

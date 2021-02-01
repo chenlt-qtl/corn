@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useImperativeHandle } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Upload, message } from 'antd';
 import 'font-awesome/css/font-awesome.min.css';
@@ -6,15 +6,22 @@ import 'font-awesome/css/font-awesome.min.css';
 interface Mp3UploadProps {
   mp3: string;
   onChange: (value: string) => void;
+  type?: string;
 }
 
-const Mp3Upload: React.FC<Mp3UploadProps> = (props) => {
+const Mp3Upload= React.forwardRef((props:Mp3UploadProps, ref) => {
 
-  const { mp3, onChange } = props;
+  const { mp3, type, onChange } = props;
 
   const [loading, setLoading] = useState<boolean>(false);
   const [paused, setPaused] = useState<boolean>(true);
   const player = useRef();
+
+  useImperativeHandle(ref, () => ({
+    getPlayTime: () => {
+      return player.current!.getStartDate();
+    }
+  }), []);
 
   function beforeMp3Upload(file: any) {
     const isMp3 = file.type === 'audio/mpeg';
@@ -67,7 +74,7 @@ const Mp3Upload: React.FC<Mp3UploadProps> = (props) => {
         className="avatar-uploader"
         showUploadList={false}
         headers={{ ['X-Access-Token']: localStorage.getItem('jwToken') || '' }}
-        action='/api/sys/common/uploadMp3/word'
+        action={'/api/sys/common/uploadMp3/' + (type ? type : 'word')}
         beforeUpload={beforeMp3Upload}
         onChange={handleMp3Change}
       >
@@ -80,6 +87,6 @@ const Mp3Upload: React.FC<Mp3UploadProps> = (props) => {
             </audio>
     </>
   )
-}
+});
 
 export default Mp3Upload;
