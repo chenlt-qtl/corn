@@ -1,0 +1,59 @@
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 1px solid #e7e7e7;
+  padding-bottom: 5px;
+}
+.toolbar .yellow {
+  background-color: #FFEB9C;
+  color: #9C6500;
+}
+.toolbar .warning {
+  background-color: #FFC7CE;
+  color: #9C0006;
+}
+.toolbar .green {
+  background-color: #C6EFCE;
+  color: #006100;
+}
+.main {
+  display: flex;
+}
+.content {
+  background-color: #fff;
+  flex: 1;
+  border-left: 1px solid #e7e7e7;
+  padding: 20px 50px;
+  border: 1px solid #e7e7e7;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px rgba(205, 205, 205, 0.1);
+  min-height: 70vh;
+}
+.content:focus {
+  border: 1px solid #55d987;
+  border-right-width: 1px !important;
+  outline: 0;
+  box-shadow: 0 0 0 2px rgb(46 204 5.65%);
+}
+.content .title {
+  display: flex;
+  border-bottom: 1px solid #e7e7e7;
+  padding: 7px;
+}
+.content .title > input {
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+}
+.content .title > input:focus {
+  box-shadow: none;
+}
+.content .title > span {
+  line-height: 36px;
+}
+.text {
+  padding-top: 50px;
+  height: 100%;
+  outline: none;
+}

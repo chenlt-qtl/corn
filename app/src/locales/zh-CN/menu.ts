@@ -55,4 +55,5 @@ export default {
   'menu.note':'笔记',
   'menu.wordDetail':'单词信息',
   'menu.splicMp3':'语音分割',
+  'menu.noteapp':'新笔记'
 };

@@ -10,7 +10,7 @@ export default function GlobalHeader({ children, location, route, history, match
         setActiveUrl(location.pathname);
     }, [location])
 
-    const menus = [{ url: '/note', text: '笔记' }, { url: '/article', text: '英语' }, { url: '/splicMp3', text: '切割' }];
+    const menus = [{ url: '/note', text: '笔记' },{ url: '/noteapp', text: '新笔记' }, { url: '/article', text: '英语' }, { url: '/splicMp3', text: '切割' }];
 
     return (
         <>

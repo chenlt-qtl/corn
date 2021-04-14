@@ -1,0 +1,126 @@
+@menuWidth: 180px;
+
+.menu {
+  height: 100vh;
+  width: auto;
+  background-color: #fff;
+  position: relative;
+  transition: 0.3s;
+  border-bottom: 1px solid #e7e7e7;
+
+  .fold {
+    position: absolute;
+    top: 10px;
+    right: -14px;
+  }
+
+  :global {
+    .ant-btn-icon-only>* {
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .ant-btn-icon-only.ant-btn-sm {
+      line-height: 10px;
+    }
+
+    .ant-divider-horizontal {
+      margin: 0;
+    }
+  }
+
+  .item {
+    transition: 0.3s;
+    display: flex;
+    flex-wrap: nowrap;
+    height: 100%;
+
+    >div {
+      border-left: 1px solid #e7e7e7;
+    }
+
+    ul {
+      width: @menuWidth;
+      display: block;
+      padding: 0;
+      margin: 0;
+
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      li {
+        >div {
+          padding: 10px 12px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+      }
+    }
+  }
+}
+
+.hidden {
+  width: 10px;
+
+  .item {
+    display: none;
+  }
+}
+
+.show {
+  width: auto;
+
+  .item {
+    display: flex;
+  }
+}
+
+.menuItem {
+  display: flex
+}
+
+.label {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  >span {
+    line-height: 22px;
+  }
+}
+
+.active {
+  background-color: rgba(205, 205, 205, 0.2);
+
+  .parents {
+    display: inline-block;
+  }
+
+  .addBtn {
+    display: inline-block;
+  }
+}
+
+.parents {
+  flex-shrink: 1;
+  height: 19px;
+  color: #55d987;
+  font-size: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-left: 5px;
+  line-height: 23px;
+  display: none;
+}
+
+.favorate {
+  color: #e74c3c;
+}
+
+.addBtn {
+  display: none;
+}

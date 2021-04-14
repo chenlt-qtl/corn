@@ -92,6 +92,11 @@ export default defineConfig({
           component: './note',
         },
         {
+          path: '/noteapp',
+          name: 'noteapp',
+          component: './note_app',
+        },
+        {
           path: '/article',
           name: 'articleList',
           component: './article/articleList',
