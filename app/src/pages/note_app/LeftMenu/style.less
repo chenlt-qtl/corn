@@ -1,17 +1,71 @@
 @menuWidth: 180px;
 
-.menu {
-  height: 100vh;
-  width: auto;
-  background-color: #fff;
+.content {
   position: relative;
   transition: 0.3s;
-  border-bottom: 1px solid #e7e7e7;
+
+  .menu {
+    height: 100%;
+  }
+
+  .menuContent {
+    width: @menuWidth;
+    height: 100%;
+    border-left: 1px solid #e7e7e7;
+    border-bottom: 1px solid #e7e7e7;
+    box-shadow: -5px 0px 5px -3px #e7e7e7;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+
+    ul {
+      display: block;
+      padding: 0;
+      margin: 0;
+      flex: 1;
+      overflow-y: hidden;
+
+      &:hover {
+        overflow-y: auto;
+      }
+
+      li {
+        >div {
+          padding: 10px 12px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+
+        &:hover {
+          background-color: #E9E9E9;
+        }
+      }
+    }
+  }
+
+  .title {
+    height: 42px;
+    box-shadow: 0 5px 5px -3px #e7e7e7;
+    padding: 10px 12px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .button {
+    padding: 0px 10px 5px 10px;
+    flex-shrink: 0;
+  }
+
+
 
   .fold {
     position: absolute;
     top: 10px;
     right: -14px;
+    z-index: 9999999;
   }
 
   :global {
@@ -63,7 +117,7 @@
 .hidden {
   width: 10px;
 
-  .item {
+  .menu {
     display: none;
   }
 }
@@ -71,7 +125,7 @@
 .show {
   width: auto;
 
-  .item {
+  .menu {
     display: flex;
   }
 }

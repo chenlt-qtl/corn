@@ -1,36 +1,78 @@
-.menu {
-  height: 100vh;
-  width: auto;
-  background-color: #fff;
+.content {
   position: relative;
   transition: 0.3s;
-  border-bottom: 1px solid #e7e7e7;
 }
-.menu .fold {
+.content .menu {
+  height: 100%;
+}
+.content .menuContent {
+  width: 180px;
+  height: 100%;
+  border-left: 1px solid #e7e7e7;
+  border-bottom: 1px solid #e7e7e7;
+  box-shadow: -5px 0px 5px -3px #e7e7e7;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+.content .menuContent ul {
+  display: block;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+  overflow-y: hidden;
+}
+.content .menuContent ul:hover {
+  overflow-y: auto;
+}
+.content .menuContent ul li > div {
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.content .menuContent ul li:hover {
+  background-color: #E9E9E9;
+}
+.content .title {
+  height: 42px;
+  box-shadow: 0 5px 5px -3px #e7e7e7;
+  padding: 10px 12px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.content .button {
+  padding: 0px 10px 5px 10px;
+  flex-shrink: 0;
+}
+.content .fold {
   position: absolute;
   top: 10px;
   right: -14px;
+  z-index: 9999999;
 }
-.menu :global .ant-btn-icon-only > * {
+.content :global .ant-btn-icon-only > * {
   font-size: 10px;
   font-weight: 500;
 }
-.menu :global .ant-btn-icon-only.ant-btn-sm {
+.content :global .ant-btn-icon-only.ant-btn-sm {
   line-height: 10px;
 }
-.menu :global .ant-divider-horizontal {
+.content :global .ant-divider-horizontal {
   margin: 0;
 }
-.menu .item {
+.content .item {
   transition: 0.3s;
   display: flex;
   flex-wrap: nowrap;
   height: 100%;
 }
-.menu .item > div {
+.content .item > div {
   border-left: 1px solid #e7e7e7;
 }
-.menu .item ul {
+.content .item ul {
   width: 180px;
   display: block;
   padding: 0;
@@ -39,7 +81,7 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
-.menu .item ul li > div {
+.content .item ul li > div {
   padding: 10px 12px;
   cursor: pointer;
   transition: 0.3s;
@@ -47,13 +89,13 @@
 .hidden {
   width: 10px;
 }
-.hidden .item {
+.hidden .menu {
   display: none;
 }
 .show {
   width: auto;
 }
-.show .item {
+.show .menu {
   display: flex;
 }
 .menuItem {

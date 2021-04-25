@@ -1,6 +1,6 @@
 .toolbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   border-bottom: 1px solid #e7e7e7;
   padding-bottom: 5px;
@@ -19,10 +19,16 @@
     background-color: #C6EFCE;
     color: #006100;
   }
+  >a{
+    display:inline-block;
+    padding: 5px;
+    text-align: center;
+  }
 }
 
 .main {
   display: flex;
+  height: calc(~"100vh - 98px");
 }
 
 .content {
@@ -33,7 +39,9 @@
   border: 1px solid #e7e7e7;
   border-radius: 4px;
   box-shadow: 0 0 0 2px rgba(205, 205, 205, 0.1);
-  min-height:  100vh - 30px;
+  box-shadow: -5px 0px 5px -3px #e7e7e7;
+  height: 100%;
+  overflow: auto;
 
 
   &:focus {

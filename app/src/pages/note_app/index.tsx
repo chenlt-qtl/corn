@@ -3,11 +3,10 @@ import { Modal, Input, Spin } from 'antd';
 import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { connect } from 'umi';
-import Menu from './Menu'
+import LeftMenu from './LeftMenu'
 
 const { TextArea } = Input;
 
-let note = {};
 let statusIcons = {
   '0': <CheckCircleTwoTone twoToneColor="#52c41a" />,
   '1': <ExclamationCircleTwoTone twoToneColor='#f1c40f' />, '2': <LoadingOutlined />
@@ -17,12 +16,12 @@ const NoteList: React.FC<{}> = (props) => {
 
   const content = useRef();
   const titleInput = useRef();
+  const menu = useRef();
   const [code, setCode] = useState < string > ('');
-  const [saveStatus, setSaveStatus] = useState < Number > (null);
+  const [saveStatus, setSaveStatus] = useState < Number > (null);//0:已保存 1:未保存 2:正在保存
   const [title, setTitle] = useState < string > ('');
   const [codeVisible, setCodeVisible] = useState < boolean > (false);
-
-
+  const [note, setNote] = useState < object > ({});
 
   const execCommand = (command: string, param1: string = '') => {
     document.execCommand(command, false, param1);
@@ -43,16 +42,18 @@ const NoteList: React.FC<{}> = (props) => {
   }
 
   const handleAddNote = (parentId: string) => {
-    console.log(111111);
+    console.log('handleAddNote');
     setSaveStatus(1)
-    note = {parentId};
+    setNote({ parentId });
     setTitle('新文档');
     content.current.innerHTML = '';
     titleInput.current.focus()
   }
+
   const handleShowNote = (id: string) => {
+    console.log('handleShowNote');
     if (!id || id == '') {
-      note = {};
+      setNote({});
       setTitle('');
       content.current.innerHTML = '';
     } else if (id != "open" && id != "favorate") {
@@ -61,9 +62,9 @@ const NoteList: React.FC<{}> = (props) => {
         payload: id,
       }).then((res) => {
         if (res) {
-          note = res;
-          setTitle(note.name);
-          content.current.innerHTML = note.text;
+          setNote(res);
+          setTitle(res.name);
+          content.current.innerHTML = res.text;
           setSaveStatus(0)
         }
       });
@@ -85,23 +86,32 @@ const NoteList: React.FC<{}> = (props) => {
       return;
     }
     setSaveStatus(2)
-    note = { ...note, name: title, text: content.current.innerHTML }
-    if (note.parentId) {
-      if (note.id) {
+    const noteToSave = { ...note, name: title, text: content.current.innerHTML }
+    if (noteToSave.parentId) {
+      if (noteToSave.id) {
         props.dispatch({
           type: 'note/modifyNote',
-          payload: note
+          payload: noteToSave
         }).then(() => {
+          if (note.name != title) {//标题修改了才刷新菜单
+            menu.current.refreshParentMenu(noteToSave);
+          }
           setSaveStatus(0)
+          if (saveStatus == 0) {
+            setNote({ ...noteToSave })
+          }
         })
       } else {
         props.dispatch({
           type: 'note/addNote',
-          payload: note
+          payload: noteToSave
         }).then((res) => {
           if (res) {
             const { result: newNote } = res;
-            note = { ...newNote }
+            if (saveStatus == 0) {
+              setNote({ ...newNote })
+              menu.current.refreshParentMenu(newNote);
+            }
             setSaveStatus(0)
           }
         })
@@ -149,8 +159,8 @@ const NoteList: React.FC<{}> = (props) => {
 
         </div>
         <div className={styles.main}>
-          <Menu onShowNote={handleShowNote} onAddNote={handleAddNote}></Menu>
-          <div className={styles.content}>
+          <LeftMenu ref={menu} onShowNote={handleShowNote} onAddNote={handleAddNote}></LeftMenu>
+          <div className={styles.content}>{note.parentIds}
             <div className={styles.title}><Input ref={titleInput} value={title} onBlur={saveNote} onInput={handleTitleChange}></Input>{statusIcons[saveStatus]}</div>
             <div className={styles.text} ref={content} onInput={handleChange} onBlur={saveNote} suppressContentEditableWarning="true" contentEditable>
             </div>

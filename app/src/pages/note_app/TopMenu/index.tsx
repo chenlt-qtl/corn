@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown, Menu, Modal, List } from 'antd';
-import { DownOutlined, UpOutlined, SettingOutlined } from '@ant-design/icons';
-import styles from './style.less';
+import { HistoryOutlined, StarFilled, BookTwoTone, SettingOutlined } from '@ant-design/icons';
+import styles from './styles.less';
 import { connect } from 'umi';
 
+
 const TopMenu: React.FC<{}> = (props) => {
-
-    const [showMenu, setShowMenu] = useState < boolean > (false);
-
-    const [activeMenuId, setActiveMenuId] = useState < string > ('');
 
     const [menuItem, setMenuItem] = useState < object[] > ([]);
 
@@ -23,73 +20,69 @@ const TopMenu: React.FC<{}> = (props) => {
             if (res) {
                 const { result } = res;
                 if (result.length > 0) {
-                    handleMenuSelect({ key: result[0].id })
+                    handleMenuSelect(result[0].id, result[0].name)
                 }
                 setMenuItem([...result]);
             }
         });
     }, []);
 
-    const handleMenuSelect = ({ key }) => {
-        setActiveMenuId(key)
-        props.onMenuSelect(key)
-        setShowMenu(false)
-    }
-
-    const handleManageTop = () => {
-        setIsModalVisible(true)
-        setShowMenu(false)
+    const handleMenuSelect = (id:string, name:string) => {
+        props.dispatch({
+            type: 'noteMenu/updateActiveTop',
+            payload: {id,name},
+        })
     }
 
     const handleCancel = () => {
         setIsModalVisible(false)
     }
 
-    const handleEdit = (id,name)=>{
+    const handleShowModal = () => {
+        setIsModalVisible(true)
+    }
+
+    const handleEdit = (id, name) => {
 
     }
 
+
     const render = function () {
-        const activeMenu = menuItem.filter(item => item.id == activeMenuId);
-        const activeName = activeMenu.length > 0 ? activeMenu[0].name : '';
-        const menu = (
-            <div style={{width:'300px'}}>
-                <div className={styles.menuToolbar}>
-                    <SettingOutlined onClick={(handleManageTop)} />
-                </div>
-                <Menu onClick={handleMenuSelect}>
-                    {menuItem.map(item => <Menu.Item key={item.id}
-                        className={item.id == activeMenuId ? styles.active : ''}>{item.name}</Menu.Item>)}
-                </Menu>
-            </div>);
         return (
-            <>
-                <Dropdown overlay={menu} visible={showMenu} arrow={false}
-                    onVisibleChange={(visible: boolean) => setShowMenu(visible)}
-                    overlayClassName={styles.menu}>
-                    <div className={styles.label}>
-                        <a onClick={e => e.preventDefault()}>
-                            {activeName}  {showMenu ? <DownOutlined /> : <UpOutlined />}
-                        </a>
-                    </div>
-                </Dropdown>
-                <Modal title="管理笔记本" visible={isModalVisible} onCancel={handleCancel} footer={null}>
+            <div className={styles.main}>
+                <ul>
+                    {menuItem.map(item => {
+                        const isActive = item.id === props.noteMenu.activeTopId;
+                        return <li key={item.id}
+                            onClick={() => handleMenuSelect(item.id, item.name)}
+                            className={`${styles.item} ${isActive ? styles.active : ''}`}
+                        >
+                            <div className={styles.shortLogo}>
+                                {item.name.substr(0, 1)}
+                            </div>
+                            <div className={styles.label}>{item.name}</div>
+                        </li>
+                    })}
+                </ul>
+                <div className={styles.icon}><SettingOutlined onClick={handleShowModal} /></div>
+                
+                <Modal title="管理笔记本" visible={isModalVisible} onCancel={handleCancel} footer={null} style={{ top: 20 }}>
                     <div className={styles.modal}>
                         <List
                             dataSource={menuItem}
                             renderItem={item => (
                                 <List.Item
-                                    actions={[<a onClick={()=>{handleEdit(item.id,item.name)}}>edit</a>, <a key="list-loadmore-more">delete</a>]}>
+                                    actions={[<a onClick={() => { handleEdit(item.id, item.name) }}>edit</a>, <a key="list-loadmore-more">delete</a>]}>
                                     {item.name}
                                 </List.Item>
                             )}
                         />
                     </div>
                 </Modal>
-            </>
+            </div>
         );
     };
     return render();
 };
 
-export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(TopMenu);
+export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu: NoteState, loading }) => ({ note, noteMenu, loading }))(TopMenu);
