@@ -22,3 +22,14 @@ export const isAntDesignProOrDev = (): boolean => {
 };
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
+
+export const getLevel = (parentIds: string) => {
+  if (parentIds) {
+    const idArr = parentIds.split('/').length;
+    const level = idArr - 1;
+    if (level > 0) {
+      return level;
+    }
+  }
+  console.log('数据有误,请联系管理员');
+}

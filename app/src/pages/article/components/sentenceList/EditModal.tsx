@@ -35,19 +35,18 @@ const formLayout = {
 const EditModal: React.FC<SentenceProps> = (props) => {
     const { modalVisible, onCancel, sentence = {}, articleId, single } = props;
 
-    const [currentStep, setCurrentStep] = useState<number>(0);
-    const [selectWords, setSelectWords] = useState<string[]>([]);
-    const [sentences, setSentences] = useState<DisplaySentence[]>([]);
-    const [picture, setPicture] = useState<string>('');
-    const [mp3, setMp3] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
+    const [currentStep, setCurrentStep] = useState < number > (0);
+    const [selectWords, setSelectWords] = useState < string[] > ([]);
+    const [sentences, setSentences] = useState < DisplaySentence[] > ([]);
+    const [picture, setPicture] = useState < string > ('');
+    const [mp3, setMp3] = useState < string > ('');
+    const [loading, setLoading] = useState < boolean > (false);
 
     const [form] = Form.useForm();
 
     const brReg = /[\n]+/;
 
     useEffect(() => {
-        console.log(sentence);
         form.setFieldsValue(sentence);
         setCurrentStep(0);
         if (sentence.id) {
@@ -135,20 +134,22 @@ const EditModal: React.FC<SentenceProps> = (props) => {
         let patt = /([a-z|'|-]+)/ig;
         let r = null;
         setSentences(sentenceStrs.reduce((sentences, item) => {
-            const sentence: DisplaySentence = { allWords: [] };
-            let index = 1;
-            while (r = patt.exec(item)) {
-                const word = r[0];
-                sentence.allWords.push({ text: word, isWord: true });
-                if (r.index > index) {
-                    sentence.allWords.push({ text: item.slice(index, r.index), isWord: false });
+            if (item) {
+                const sentence: DisplaySentence = { allWords: [] };
+                let index = 1;
+                while (r = patt.exec(item)) {
+                    const word = r[0];
+                    if (r.index > index) {
+                        sentence.allWords.push({ text: item.slice(index, r.index).trim(), isWord: false });
+                    }
+                    sentence.allWords.push({ text: word, isWord: true });
+                    index = r.index + word.length;
                 }
-                index = r.index + word.length;
+                if (index < item.length) {
+                    sentence.allWords.push({ text: item.slice(index).trim(), isWord: false });
+                }
+                sentences.push(sentence);
             }
-            if (index < item.length) {
-                sentence.allWords.push({ text: item.slice(index), isWord: false });
-            }
-            sentences.push(sentence);
             return sentences;
         }, sentences));
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Dropdown, Menu, Modal, List } from 'antd';
-import { HistoryOutlined, StarFilled, BookTwoTone, SettingOutlined } from '@ant-design/icons';
+import { Modal, List } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import styles from './styles.less';
 import { connect } from 'umi';
 
@@ -27,10 +27,10 @@ const TopMenu: React.FC<{}> = (props) => {
         });
     }, []);
 
-    const handleMenuSelect = (id:string, name:string) => {
+    const handleMenuSelect = (id: string, name: string) => {
         props.dispatch({
             type: 'noteMenu/updateActiveTop',
-            payload: {id,name},
+            payload: { id, name },
         })
     }
 
@@ -65,7 +65,7 @@ const TopMenu: React.FC<{}> = (props) => {
                     })}
                 </ul>
                 <div className={styles.icon}><SettingOutlined onClick={handleShowModal} /></div>
-                
+
                 <Modal title="管理笔记本" visible={isModalVisible} onCancel={handleCancel} footer={null} style={{ top: 20 }}>
                     <div className={styles.modal}>
                         <List

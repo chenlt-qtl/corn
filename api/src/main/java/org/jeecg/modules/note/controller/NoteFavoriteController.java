@@ -141,19 +141,9 @@ public class NoteFavoriteController {
 
 		 SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 
-		 QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
-		 queryWrapper.eq("create_by",sysUser.getUsername());
 		 result.setSuccess(true);
-		 result.setResult(new ArrayList<>());
+		 result.setResult(noteFavoriteService.queryNotes(sysUser.getUsername()));
 
-		 NoteFavorite noteFavorite = noteFavoriteService.getOne(queryWrapper);
-		 if(noteFavorite != null){
-			 String noteIds = noteFavorite.getNoteIds();
-			 if(StringUtils.isNotBlank(noteIds)){
-				 List<NoteModel> nodeList = noteService.getModelByIds(noteIds.split(","));
-				 result.setResult(nodeList);
-			 }
-		 }
 		 return result;
 	 }
 

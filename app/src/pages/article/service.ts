@@ -1,5 +1,5 @@
 import { request } from 'umi';
-import { TableListParams, ArticleListParams, ArticleItem } from './data.d';
+import { ArticleListParams, ArticleItem } from './data.d';
 
 export async function getArticleList(params?: ArticleListParams) {
   return request('/api/word/article/list', {
@@ -39,6 +39,10 @@ export async function saveSentence(params: ArticleItem) {
       method: 'post',
     },
   });
+}
+
+export async function removeSentence(params: string) {
+  return request('/api/word/sentence/delete?id=' + params, { method: 'DELETE' });
 }
 
 export async function updateArticle(params: ArticleItem) {

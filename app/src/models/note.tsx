@@ -20,6 +20,7 @@ function findNodeById(tree: NoteNode[], id: string) {
 
 export interface NoteState {
     activeTabId: string;
+    activeNoteId: string;
     showNote: NoteItem;
     treeData: NoteNode[];
     selectedKeys: string[];
@@ -38,6 +39,7 @@ export interface NoteModelType {
     };
     reducers: {
         refreshTreeData: Reducer<NoteState>;
+        refreshActiveNoteId:Reducer<NoteState>;
         refreshShowNote: Reducer<NoteState>;
         refreshTreeNote: Reducer<NoteState>;
         refreshSelectedKeys: Reducer<NoteState>;
@@ -49,6 +51,7 @@ const NoteModel: NoteModelType = {
 
     state: {
         activeTabId: '',
+        activeNoteId:'',
         showNote: {},
         treeData: [],
         selectedKeys: [],
@@ -165,6 +168,12 @@ const NoteModel: NoteModelType = {
                 ...state,
                 activeTabId: payload.activeTabId,
                 treeData: payload.data,
+            }
+        },
+        refreshActiveNoteId(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                activeNoteId: payload,
             }
         },
         refreshShowNote(state: NoteState, { payload }): NoteState {

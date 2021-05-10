@@ -29,7 +29,6 @@
   overflow-y: auto;
 }
 .content .menuContent ul li > div {
-  padding: 10px 12px;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -107,9 +106,30 @@
   display: flex;
   white-space: nowrap;
   text-overflow: ellipsis;
+  padding: 10px 12px;
+  position: relative;
 }
 .label > span {
   line-height: 22px;
+}
+.label .addChild {
+  position: absolute;
+  top: 9px;
+  left: 140px;
+  display: none;
+  transition: 0.1s;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  border-radius: 4px;
+  line-height: 23px;
+}
+.label .addChild:hover {
+  transform: scale(1.1);
+  background-color: #CECECE;
+}
+.label:hover .addChild {
+  display: inline-block;
 }
 .active {
   background-color: rgba(205, 205, 205, 0.2);

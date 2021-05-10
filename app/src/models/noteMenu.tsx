@@ -7,7 +7,9 @@ export interface NoteState {
     menu2Item: Object[],
     menu3Item: Object[],
     activeTopId: string,
-    title1:string,
+    activeMenu1Id: string,
+    activeMenu2Id: string,
+    title1: string,
 
 }
 
@@ -16,13 +18,15 @@ export interface NoteModelType {
     state: NoteState;
     effects: {
         updateActiveTop: Effect;
-        updateMenu1:Effect;
+        updateMenu1: Effect;
     }
     reducers: {
         refreshMenu1: Reducer<NoteState>;
         refreshMenu2: Reducer<NoteState>;
         refreshMenu3: Reducer<NoteState>;
         refreshActiveTopId: Reducer<NoteState>;
+        refreshActiveMenu1Id: Reducer<NoteState>;
+        refreshActiveMenu2Id: Reducer<NoteState>;
         refreshTitle1: Reducer<NoteState>;
 
     };
@@ -35,12 +39,14 @@ const NoteModel: NoteModelType = {
         menu2Item: [],
         menu3Item: [],
         activeTopId: '',
-        title1:'',
+        activeMenu1Id: '',
+        activeMenu2Id: '',
+        title1: '',
     },
 
     effects: {
         *updateActiveTop({ payload }, { call, put }) {
-            const {id,name} = payload;
+            const { id, name } = payload;
             yield put({
                 type: 'updateMenu1',
                 payload: id,
@@ -64,7 +70,7 @@ const NoteModel: NoteModelType = {
                     })
                 }
             }
-        }
+        },
     },
     reducers: {
         refreshMenu1(state: NoteState, { payload }): NoteState {
@@ -89,6 +95,18 @@ const NoteModel: NoteModelType = {
             return {
                 ...state,
                 activeTopId: payload,
+            }
+        },
+        refreshActiveMenu1Id(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                activeMenu1Id: payload,
+            }
+        },
+        refreshActiveMenu2Id(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                activeMenu2Id: payload,
             }
         },
         refreshTitle1(state: NoteState, { payload }): NoteState {

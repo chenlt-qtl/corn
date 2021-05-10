@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getSentenceByArticle } from '../../service';
-import { List, Popconfirm } from 'antd';
+import { List, Popconfirm, Spin, message } from 'antd';
 import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
 import { SentenceItem } from '../../data.d';
 import EditModal from './EditModal';
+import { removeSentence } from '../../service';
+
 
 
 export interface SentenceListProps {
@@ -15,11 +17,13 @@ export interface SentenceListProps {
 
 
 const SentenceList: React.FC<SentenceListProps> = (props) => {
-    const { articleId, play, edit=false } = props;
-    const [sentences, setSentences] = useState<SentenceItem[]>([]);
-    const [sentence, setSentence] = useState<SentenceItem>({});
-    const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-    const [single, setSingle] = useState<boolean>(true);
+    const { articleId, play, edit = false } = props;
+    const [sentences, setSentences] = useState < SentenceItem[] > ([]);
+    const [sentence, setSentence] = useState < SentenceItem > ({});
+    const [editModalVisible, setEditModalVisible] = useState < boolean > (false);
+    const [single, setSingle] = useState < boolean > (true);
+    const [loading, setLoading] = useState < boolean > (false);
+
 
     useEffect(() => {
         getSentence();
@@ -41,8 +45,17 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
         setSingle(single);
     }
 
-    const handleDel = (id: string) => {
+    const handleDel = async (id: string) => {
+        setLoading(true);
+        const res = await removeSentence(id);
+        if (res && res.success) {
+            message.success('删除成功');
+            getSentence();
+        } else {
+            message.error('删除失败');
+        }
 
+        setLoading(false);
     }
 
     const getActions = (item: SentenceItem): React.ReactNode[] => {
@@ -66,7 +79,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
 
 
     return (
-        <>
+        <Spin spinning={loading}>
             {edit ? <div className={styles.module}>
                 <div className={styles.moduleTitle}>句子列表</div>
                 <div className={styles.toolbar}>
@@ -80,13 +93,13 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 pagination={false}
                 dataSource={sentences}
                 renderItem={(item: SentenceItem) => (
-                        <List.Item
+                    <List.Item
                         key={item.id}
                         actions={getActions(item)}
                         extra={item.picture ? <img width={100} src={item.picture} /> : ''}
                     >
                         <pre>{item.content}
-                            {item.mp3 ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={()=>play(item.mp3)}></i> : ''}</pre>
+                            {item.mp3 ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => play(item.mp3)}></i> : ''}</pre>
                     </List.Item>
                 )}
             />
@@ -96,7 +109,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                     setEditModalVisible(false);
                 }}
                 modalVisible={editModalVisible}></EditModal> : ''}
-        </>
+        </Spin>
     );
 };
 
