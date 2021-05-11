@@ -92,9 +92,9 @@ public class NoteController {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         try {
             List list;
-            if (parentId == "favorate") {//收藏夹
+            if (parentId.equals("favorate")) {//收藏夹
                 list = noteFavoriteService.queryNotes(sysUser.getUsername());
-            } else if (parentId == "open") {//最近打开
+            } else if (parentId.equals("open")) {//最近打开
                 list = noteOpenHistoryService.queryNotes();
             } else {
                 list = noteService.listNote(sysUser.getUsername(), parentId);
