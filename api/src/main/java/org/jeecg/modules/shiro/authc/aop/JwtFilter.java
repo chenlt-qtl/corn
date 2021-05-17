@@ -34,7 +34,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 				executeLogin(request, response);
 				return true;
 			} catch (Exception e) {
-				throw new AuthenticationException("Token失效，请重新登录", e);
+				throw new AuthenticationException("请重新登录", e);
 			}
 	}
 

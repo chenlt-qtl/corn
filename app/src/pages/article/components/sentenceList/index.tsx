@@ -22,7 +22,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
     const [sentence, setSentence] = useState < SentenceItem > ({});
     const [editModalVisible, setEditModalVisible] = useState < boolean > (false);
     const [single, setSingle] = useState < boolean > (true);
-    const [loading, setLoading] = useState < boolean > (false);
+    const [loading, setLoading] = useState < boolean > (true);
 
 
     useEffect(() => {
@@ -32,8 +32,10 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
     const getSentence = () => {
         getSentenceByArticle(articleId).then(res => {
             if (res) {
+                setLoading(false)
                 if (res.success && res.result) {
                     setSentences(res.result);
+                    props.setSenteceNum(res.result.length)
                 }
             }
         })
@@ -88,6 +90,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 </div>
             </div> : ''}
             <List
+            className={styles.sentenceList}
                 itemLayout="vertical"
                 size="large"
                 pagination={false}

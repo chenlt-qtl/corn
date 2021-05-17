@@ -22,12 +22,14 @@ const layout = {
 const CreateForm = React.forwardRef((props:CreateFormProps, ref) => {
   const { modalVisible, onCancel } = props;
   const [picture, setPicture] = useState<string>('');
+  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [mp3, setMp3] = useState<string>('');
   const [article, setArticle] = useState<ArticleItem>({});
 
   const [form] = Form.useForm();
 
   const handleSaveArticle = async () => {
+    setConfirmLoading(true);
     let value = await form.validateFields();
     value.picture = picture;
     value.mp3 = mp3;
@@ -47,6 +49,7 @@ const CreateForm = React.forwardRef((props:CreateFormProps, ref) => {
         message.error(result.message);
       }
     }
+    setConfirmLoading(false);
   }
 
   const handleImgChange = (value:string) => {
@@ -74,6 +77,7 @@ const CreateForm = React.forwardRef((props:CreateFormProps, ref) => {
       onCancel={() => { onCancel(false) }}
       style={{ top: 20 }}
       onOk={handleSaveArticle}
+      confirmLoading={confirmLoading}
     >
       <Form
         {...layout}

@@ -29,6 +29,7 @@ const WordList: React.FC<WordListProps> = (props) => {
             if (res) {
                 if (res.success) {
                     setWords(res.result.records);
+                    props.setWordsNum(res.result.records.length)
                 }
             }
         })

@@ -64,61 +64,10 @@
   max-width: 9.375rem;
   max-height: 9.375rem;
 }
-.module {
-  margin: 10px 0;
-  display: flex;
-}
 .moduleTitle {
   flex: 1;
   padding: 5px;
   font-size: 16px;
   margin-top: 15px;
   border-left: 5px solid #2ecc71;
-}
-.wordList {
-  padding: 10px;
-  font-size: 16px;
-}
-.wordList * {
-  padding: 0;
-  margin: 0;
-}
-.wordList .row {
-  padding: 8px;
-  transition: all 0.5s;
-  border-radius: 5px;
-}
-.wordList .row ul {
-  display: flex;
-}
-.wordList .row ul li {
-  display: inline-block;
-}
-.wordList .row ul li.phAm,
-.wordList .row ul li.wordName {
-  width: 100px;
-  font-weight: 600;
-}
-.wordList .row ul li.play {
-  width: 100px;
-  text-align: center;
-}
-.wordList .row ul li.play span {
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.wordList .row ul li.play span:hover {
-  transform: scale(1.2);
-  color: #3bbd71;
-}
-.wordList .row ul li.acceptation {
-  flex: 1;
-  min-width: 100px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  word-break: break-all;
-}
-.wordList .row:hover {
-  background-color: rgba(0, 0, 0, 0.1);
 }

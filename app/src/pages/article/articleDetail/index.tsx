@@ -15,9 +15,13 @@ export interface ArticleDetailProps {
 
 const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
   const { id } = props.match.params;
-  const [article, setArticle] = useState<object>({});
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
+  const [article, setArticle] = useState < object > ({});
+  const [isModalVisible, setIsModalVisible] = useState < boolean > (false);
+  const [editModalVisible, setEditModalVisible] = useState < boolean > (false);
+
+  const [sentenceNum, setSentenceNum] = useState < number > (0);
+  const [wordsNum, setWordsNum] = useState < number > (0);
+
   const createForm = useRef();
 
   const player = useRef();
@@ -72,11 +76,11 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
             </div> : ''}
             <div className={styles.infoItem}>
               <div className={styles.itemLabel}>句子数</div>
-              <div className={styles.itemValue}>0</div>
+              <div className={styles.itemValue}>{sentenceNum}</div>
             </div>
             <div className={styles.infoItem}>
               <div className={styles.itemLabel}>单词数</div>
-              <div className={styles.itemValue}>0</div>
+              <div className={styles.itemValue}>{wordsNum}</div>
             </div>
           </div>
           {article.picture ?
@@ -85,8 +89,8 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
             </a> : ''}
         </div>
 
-        <SentenceList articleId={id} play={play} edit={true}></SentenceList>
-        <WordList articleId={id}></WordList>
+        <SentenceList articleId={id} setSenteceNum={setSentenceNum} play={play} edit={true}></SentenceList>
+        <WordList articleId={id} setWordsNum={setWordsNum}></WordList>
 
       </main>
       <Modal title="查看图片" width={660} visible={isModalVisible}

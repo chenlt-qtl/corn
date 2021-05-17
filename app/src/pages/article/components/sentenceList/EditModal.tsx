@@ -136,7 +136,7 @@ const EditModal: React.FC<SentenceProps> = (props) => {
         setSentences(sentenceStrs.reduce((sentences, item) => {
             if (item) {
                 const sentence: DisplaySentence = { allWords: [] };
-                let index = 1;
+                let index = 0;
                 while (r = patt.exec(item)) {
                     const word = r[0];
                     if (r.index > index) {
@@ -162,7 +162,7 @@ const EditModal: React.FC<SentenceProps> = (props) => {
                     <Button onClick={backward}>
                         上一步
                     </Button>
-                    <Button type="primary" onClick={handleNext}>
+                    <Button type="primary" onClick={handleNext} loading={loading}>
                         完成
                     </Button>
                 </>
