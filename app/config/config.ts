@@ -79,7 +79,7 @@ export default defineConfig({
     },
     {
       path: '/',
-      redirect: '/note',
+      redirect: '/noteapp',
     },
     {
       path: '/',

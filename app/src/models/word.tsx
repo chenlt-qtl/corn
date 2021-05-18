@@ -85,7 +85,6 @@ const WordModel: WordModelType = {
     },
     reducers: {
         refreshWordMap(state: WordState, { payload }): WordState {
-            console.log(payload);
             const newWords = new Map(state.wordMap);
             payload.forEach((item: WordItem) => newWords.set(item.wordName, item));
             return {
