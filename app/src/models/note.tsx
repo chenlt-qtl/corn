@@ -1,4 +1,4 @@
-import { queryTreeList, queryNoteById, modifyNote, addNote, queryNote, deleteNote } from '@/pages/note/service'
+import { saveNote,queryTreeList, queryNoteById, modifyNote, addNote, queryNote, deleteNote } from '@/pages/note/service'
 import { NoteItem, NoteNode } from '@/pages/note/data.d';
 import { Effect, Reducer } from 'umi';
 
@@ -35,6 +35,7 @@ export interface NoteModelType {
         queryChildren: Effect;
         modifyNote: Effect;
         addNote: Effect;
+        saveNote: Effect;
         deleteNote: Effect;
     };
     reducers: {
@@ -139,6 +140,13 @@ const NoteModel: NoteModelType = {
                         payload: result.result
                     });
                 }
+                return result;
+            }
+        },
+        *saveNote({ payload }, { call }) {
+            console.log('save');
+            let result = yield call(saveNote, payload);
+            if (result) {
                 return result;
             }
         },

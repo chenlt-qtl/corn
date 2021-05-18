@@ -97,16 +97,11 @@ const Content = React.forwardRef((props, ref) => {
         }
         setSaveStatus(2)
         const noteToSave = { ...note, name: title, text: content.current.innerHTML }
-        if (noteToSave.parentId) {
-            let type;
-            if (noteToSave.createTime) {//修改
-                type = 'note/modifyNote'
-            } else {
-                type = 'note/addNote'
-            }
+        if (noteToSave.id) {
 
             props.dispatch({
-                type, payload: noteToSave
+                type: 'note/saveNote',
+                payload: noteToSave
             }).then((res) => {
                 if (res) {
                     if (noteToSave.createTime) {//修改
@@ -171,12 +166,12 @@ const Content = React.forwardRef((props, ref) => {
 
                 </div>
                 <div className={styles.main}>
-                    {props.children}
+                     {props.children}
                     <div className={styles.content}>
                         <div className={styles.title}><Input group={group} ref={titleInput} value={title} onBlur={handleBlur} onInput={handleTitleChange}></Input>{statusIcons[saveStatus]}</div>
                         <div group={group} className={styles.text} ref={content} onInput={handleChange} onBlur={handleBlur} suppressContentEditableWarning="true" contentEditable>
                         </div>
-                    </div>
+                    </div> 
                 </div>
                 <Modal
                     visible={codeVisible}

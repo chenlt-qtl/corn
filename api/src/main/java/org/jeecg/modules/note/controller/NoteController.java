@@ -205,6 +205,36 @@ public class NoteController {
      * @param note
      * @return
      */
+    @PostMapping(value = "/save")
+    public Result<NoteModel> save(@RequestBody Note note) {
+        Result<NoteModel> result = new Result<NoteModel>();
+        Note noteEntity = noteService.getById(note.getId());
+        if (noteEntity == null) {//新增
+            noteService.setParentIds(note);
+            noteService.saveNote(note);
+        } else {
+            noteService.setParentIds(note);
+            note.setUpdateBy(null);
+            note.setUpdateTime(null);
+            boolean ok = noteService.updateNote(note, noteEntity.getText());
+            note.setText(UpLoadUtil.dbToReal(note.getText(), "html"));
+            if (ok) {
+                NoteModel model = new NoteModel(note);
+                noteService.setParentNames(model);
+                result.setResult(model);
+                result.success("保存成功!");
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 编辑
+     *
+     * @param note
+     * @return
+     */
     @PutMapping(value = "/updateParent")
     public Result<Note> updateParent(@RequestBody Note note) {
         Result<Note> result = new Result<Note>();

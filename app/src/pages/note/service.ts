@@ -35,6 +35,16 @@ export async function addNote(params: NoteItem) {
   });
 }
 
+export async function saveNote(params: NoteItem) {
+  return request('/api/note/save', {
+    method: 'POST',
+    data: {
+      ...params,
+      method: 'post',
+    },
+  });
+}
+
 export async function removeRule(params: { key: number[] }) {
   return request('/api/rule', {
     method: 'POST',
