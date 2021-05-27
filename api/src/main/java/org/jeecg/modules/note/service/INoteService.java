@@ -33,7 +33,8 @@ public interface INoteService extends IService<Note> {
 
     void setParentNames(NoteModel note);
 
-    boolean updateNote(Note note,String oldText);
+    boolean updateText(NoteModel note,String oldText);
 
-    boolean saveNote(Note note);
+    boolean saveNote(NoteModel note);
+
 }

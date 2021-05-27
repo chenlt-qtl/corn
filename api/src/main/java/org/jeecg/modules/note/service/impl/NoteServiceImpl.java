@@ -7,10 +7,12 @@ import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.common.util.tree.TreeUtil;
 import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.note.entity.NoteContent;
 import org.jeecg.modules.note.entity.NoteDelete;
 import org.jeecg.modules.note.mapper.NoteMapper;
 import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
+import org.jeecg.modules.note.service.INoteContentService;
 import org.jeecg.modules.note.service.INoteDeleteService;
 import org.jeecg.modules.note.service.INoteService;
 import org.jeecg.modules.system.entity.SysUser;
@@ -28,7 +30,7 @@ import java.util.List;
 /**
  * @Description: 笔记管理
  * @author： jeecg-boot
- * @date：   2019-04-23
+ * @date： 2019-04-23
  * @version： V1.0
  */
 @Service
@@ -43,22 +45,25 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     @Autowired
     private INoteDeleteService noteDeleteService;
 
+    @Autowired
+    private INoteContentService noteContentService;
+
     @Override
-    public List<Note> listNote(String createBy,String parentId) {
-        return noteMapper.listSon(createBy,parentId);
+    public List<Note> listNote(String createBy, String parentId) {
+        return noteMapper.listSon(createBy, parentId);
     }
 
     @Override
-    public List<Note> searchNote(String createBy,String parentId, String text) {
-        return noteMapper.listAllChildren(createBy,parentId,text,false);
+    public List<Note> searchNote(String createBy, String parentId, String text) {
+        return noteMapper.listAllChildren(createBy, parentId, text, false);
     }
 
     @Override
     public List<NoteModel> getModelByIds(String[] ids) {
         List<NoteModel> list = noteMapper.getByIds(ids);
-        for(NoteModel noteModel:list){
+        for (NoteModel noteModel : list) {
             setParentNames(noteModel);
-            noteModel.setText(UpLoadUtil.dbToReal(noteModel.getText(),"html"));
+            noteModel.setText(UpLoadUtil.dbToReal(noteModel.getText(), "html"));
         }
         return list;
     }
@@ -69,62 +74,64 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public List<NoteTreeModel> queryTreeList(String createBy,String parentId) {
+    public List<NoteTreeModel> queryTreeList(String createBy, String parentId) {
         String rootId = parentId;
-        List<Note> list = noteMapper.listAllChildren(createBy,parentId,null,false);
+        List<Note> list = noteMapper.listAllChildren(createBy, parentId, null, false);
         List<NoteTreeModel> treeList = new ArrayList<>();
-        for(Note note:list){
+        for (Note note : list) {
             NoteTreeModel model = new NoteTreeModel(note);
-            if(parentId.equals(model.getKey())){
+            if (parentId.equals(model.getKey())) {
                 rootId = model.getParentId();
             }
             treeList.add(model);
         }
         // 调用wrapTreeDataToTreeList方法生成树状数据
-        return TreeUtil.wrapTreeDataToTreeList(treeList,rootId);
+        return TreeUtil.wrapTreeDataToTreeList(treeList, rootId);
     }
 
     @Transactional
     @Override
-    public void updateParent(Note note,String oldParents) {
+    public void updateParent(Note note, String oldParents) {
         setParentIds(note);
         note.setUpdateBy(null);
         note.setUpdateTime(null);
-        updateNote(note,"");
+        updateById(note);
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        List<Note> list = noteMapper.listAllChildren(sysUser.getUsername(),note.getId(),null,true);//子笔记
-        for(Note child : list){
-            child.setParentIds(child.getParentIds().replace(oldParents,note.getParentIds()));
-            updateNote(child,"");
+        List<Note> list = noteMapper.listAllChildren(sysUser.getUsername(), note.getId(), null, true);//子笔记
+        for (Note child : list) {
+            child.setParentIds(child.getParentIds().replace(oldParents, note.getParentIds()));
+            updateById(child);
         }
     }
 
-    public boolean updateNote(Note note,String oldNote){
-        try {
-            note.setText(UpLoadUtil.parseText(uploadpath,note.getText(),oldNote));
-            return updateById(note);
-        }catch (DataIntegrityViolationException e){
-            throw new JeecgBootException("笔记本目录最多只能60层!"+note.getParentIds());
-        }
+
+    public boolean updateText(NoteModel note, String oldNote) {
+        note.setText(UpLoadUtil.parseText(uploadpath, note.getText(), oldNote));
+        NoteContent content = noteContentService.addContent(note);
+        note.setContentId(content.getId());
+        return updateById(note);
+
     }
 
-    public boolean saveNote(Note note){
+    public boolean saveNote(NoteModel note) {
         try {
-            note.setText(UpLoadUtil.parseText(uploadpath,note.getText(),""));
+            note.setText(UpLoadUtil.parseText(uploadpath, note.getText(), ""));
+            NoteContent content = noteContentService.addContent(note);
+            note.setContentId(content.getId());
             return save(note);
-        }catch (DataIntegrityViolationException e){
-            throw new JeecgBootException("笔记本目录最多只能60层!"+note.getParentIds());
+        } catch (DataIntegrityViolationException e) {
+            throw new JeecgBootException("笔记本目录最多只能60层!" + note.getParentIds());
         }
     }
 
-    public void delete(String userName, String id){
+    public void delete(String userName, String id) {
         List<String> deleteIds = new ArrayList<>();
         Date now = new Date();
         NoteDelete delete;
 
-        List<Note> list = noteMapper.listAllChildren(userName,id,null,true);//子笔记
+        List<Note> list = noteMapper.listAllChildren(userName, id, null, true);//子笔记
         list.add(getById(id));//自己
-        for(Note child:list){
+        for (Note child : list) {
             deleteIds.add(child.getId());
             delete = new NoteDelete(child);
             delete.setUpdateBy(userName);
@@ -137,13 +144,14 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     /**
      * 设置parentIds
+     *
      * @param note
      */
-    public void setParentIds(Note note){
-        if(StringUtils.isBlank(note.getParentId())||"0".equals(note.getParentId())){
+    public void setParentIds(Note note) {
+        if (StringUtils.isBlank(note.getParentId()) || "0".equals(note.getParentId())) {
             note.setParentId("0");
             note.setParentIds("0");
-        }else {
+        } else {
             Note parent = getById(note.getParentId());
             note.setParentIds(parent.getParentIds() + "/" + note.getParentId());
         }
@@ -151,16 +159,17 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     /**
      * 设置parents
+     *
      * @param note
      */
-    public void setParentNames(NoteModel note){
+    public void setParentNames(NoteModel note) {
         String parentIds = note.getParentIds();
         String parents = "";
-        if(parentIds!=null){
+        if (parentIds != null) {
             String[] parentIdArr = parentIds.split("/");
             List<Note> parentNotes = this.getNameByIds(parentIdArr);
-            for(Note parentNote:parentNotes){
-                parents += parents.length()>0?"/":"";
+            for (Note parentNote : parentNotes) {
+                parents += parents.length() > 0 ? "/" : "";
                 parents += parentNote.getName();
             }
         }

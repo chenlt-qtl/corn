@@ -1,6 +1,5 @@
 package org.jeecg.modules.note.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,33 +8,21 @@ import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.UpLoadUtil;
-import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.note.entity.NoteContent;
 import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
+import org.jeecg.modules.note.service.INoteContentService;
 import org.jeecg.modules.note.service.INoteFavoriteService;
 import org.jeecg.modules.note.service.INoteOpenHistoryService;
 import org.jeecg.modules.note.service.INoteService;
 import org.jeecg.modules.system.entity.SysUser;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Title: Controller
@@ -56,6 +43,9 @@ public class NoteController {
 
     @Autowired
     private INoteOpenHistoryService noteOpenHistoryService;
+
+    @Autowired
+    private INoteContentService noteContentService;
 
     /**
      * 分页列表查询
@@ -128,7 +118,7 @@ public class NoteController {
      * @return
      */
     @PostMapping(value = "/add")
-    public Result<Note> add(@RequestBody Note note) {
+    public Result<Note> add(@RequestBody NoteModel note) {
         Result<Note> result = new Result<Note>();
         try {
             noteService.setParentIds(note);
@@ -149,14 +139,15 @@ public class NoteController {
      * @return
      */
     @PostMapping(value = "/copy")
-    public Result<Note> copy(@RequestBody Note note) {
+    public Result<Note> copy(@RequestBody NoteModel note) {
         Result<Note> result = new Result<Note>();
         try {
             Note parent = noteService.getById(note.getParentId());
             Note oldNote = noteService.getById(note.getId());
-            Note newNote = new Note();
+            NoteContent oldContent = noteContentService.getById(note.getContentId());
+            NoteModel newNote = new NoteModel();
             newNote.setName(oldNote.getName() + "(1)");
-            newNote.setText(oldNote.getText());
+            newNote.setText(oldContent.getText());
             newNote.setParentId(note.getParentId());
             newNote.setParentIds(parent.getParentIds() + "/" + note.getParentId());
             noteService.saveNote(newNote);
@@ -176,55 +167,51 @@ public class NoteController {
      * @param note
      * @return
      */
-    @PutMapping(value = "/edit")
-    public Result<NoteModel> edit(@RequestBody Note note) {
-        Result<NoteModel> result = new Result<NoteModel>();
+    @PostMapping(value = "/updateTitle")
+    public Result<Note> updateTitle(@RequestBody Note note) {
+        Result<Note> result = new Result<Note>();
         Note noteEntity = noteService.getById(note.getId());
-        if (noteEntity == null) {
-            result.error500("未找到对应笔记");
+        if (noteEntity == null) {//新增
+            noteService.setParentIds(note);
+            noteService.saveNote(new NoteModel(note));
+
         } else {
             noteService.setParentIds(note);
             note.setUpdateBy(null);
             note.setUpdateTime(null);
-            boolean ok = noteService.updateNote(note, noteEntity.getText());
-            note.setText(UpLoadUtil.dbToReal(note.getText(), "html"));
-            if (ok) {
-                NoteModel model = new NoteModel(note);
-                noteService.setParentNames(model);
-                result.setResult(model);
-                result.success("修改成功!");
-            }
+            boolean ok = noteService.updateById(note);
         }
-
+        result.setResult(note);
+        result.success("保存成功!");
         return result;
     }
 
     /**
-     * 编辑
+     * 编辑内容
      *
      * @param note
      * @return
      */
-    @PostMapping(value = "/save")
-    public Result<NoteModel> save(@RequestBody Note note) {
+    @PostMapping(value = "/updateText")
+    public Result<NoteModel> updateText(@RequestBody NoteModel note) {
         Result<NoteModel> result = new Result<NoteModel>();
         Note noteEntity = noteService.getById(note.getId());
         if (noteEntity == null) {//新增
             noteService.setParentIds(note);
             noteService.saveNote(note);
         } else {
+            NoteContent content = noteContentService.getById(noteEntity.getContentId());
             noteService.setParentIds(note);
             note.setUpdateBy(null);
             note.setUpdateTime(null);
-            boolean ok = noteService.updateNote(note, noteEntity.getText());
+            boolean ok = noteService.updateText(note, content.getText());
             note.setText(UpLoadUtil.dbToReal(note.getText(), "html"));
             if (ok) {
-                NoteModel model = new NoteModel(note);
-                noteService.setParentNames(model);
-                result.setResult(model);
-                result.success("保存成功!");
+                noteService.setParentNames(note);
             }
         }
+        result.setResult(note);
+        result.success("保存成功!");
 
         return result;
     }
@@ -294,14 +281,18 @@ public class NoteController {
     @GetMapping(value = "/queryById")
     public Result<NoteModel> queryById(@RequestParam(name = "id", required = true) String id) {
         Result<NoteModel> result = new Result<NoteModel>();
+
         Note note = noteService.getById(id);
+
         if (note == null) {
             result.error500("未找到对应实体");
         } else {
-            NoteModel noteModel = new NoteModel(note);
-            noteService.setParentNames(noteModel);//设置父节点名称
-            noteModel.setText(UpLoadUtil.dbToReal(note.getText(), "html"));
-            result.setResult(noteModel);
+            NoteContent content = noteContentService.getById(note.getContentId());
+            NoteModel model = new NoteModel(note,content);
+
+            noteService.setParentNames(model);//设置父节点名称
+            model.setText(UpLoadUtil.dbToReal(content.getText(), "html"));
+            result.setResult(model);
             result.setSuccess(true);
         }
         return result;
@@ -322,75 +313,6 @@ public class NoteController {
         result.setResult(noteList);
         result.setSuccess(true);
         return result;
-    }
-
-    /**
-     * 导出excel
-     *
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value = "/exportXls")
-    public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
-        // Step.1 组装查询条件
-        QueryWrapper<Note> queryWrapper = null;
-        try {
-            String paramsStr = request.getParameter("paramsStr");
-            if (oConvertUtils.isNotEmpty(paramsStr)) {
-                String deString = URLDecoder.decode(paramsStr, "UTF-8");
-                Note note = JSON.parseObject(deString, Note.class);
-                queryWrapper = QueryGenerator.initQueryWrapper(note, request.getParameterMap());
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        //Step.2 AutoPoi 导出Excel
-        ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
-        List<Note> pageList = noteService.list(queryWrapper);
-        //导出文件名称
-        mv.addObject(NormalExcelConstants.FILE_NAME, "笔记管理列表");
-        mv.addObject(NormalExcelConstants.CLASS, Note.class);
-        mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("笔记管理列表数据", "导出人:Jeecg", "导出信息"));
-        mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
-        return mv;
-    }
-
-    /**
-     * 通过excel导入数据
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-        for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-            MultipartFile file = entity.getValue();// 获取上传文件对象
-            ImportParams params = new ImportParams();
-            params.setTitleRows(2);
-            params.setHeadRows(1);
-            params.setNeedSave(true);
-            try {
-                List<Note> listNotes = ExcelImportUtil.importExcel(file.getInputStream(), Note.class, params);
-                for (Note noteExcel : listNotes) {
-                    noteService.saveNote(noteExcel);
-                }
-                return Result.ok("文件导入成功！数据行数：" + listNotes.size());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return Result.error("文件导入失败！");
-            } finally {
-                try {
-                    file.getInputStream().close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return Result.ok("文件导入失败！");
     }
 
 }

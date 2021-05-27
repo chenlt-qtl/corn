@@ -34,4 +34,5 @@ public interface NoteMapper extends BaseMapper<Note> {
     public List<Note> getNameByIds(@Param("ids") String[] ids);
 
     public List<NoteModel> getByIds(@Param("ids") String[] ids);
+
 }

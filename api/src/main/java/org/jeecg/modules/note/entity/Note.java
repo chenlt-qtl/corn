@@ -6,20 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.jeecg.common.exception.JeecgBootException;
-import org.jeecg.common.util.Base64Utils;
-import org.jeecg.common.util.UpLoadUtil;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @Description: 笔记管理
@@ -36,6 +26,9 @@ public class Note implements Serializable {
 	/**id*/
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
+	/**contentId*/
+	@Excel(name = "contentId", width = 32)
+	private java.lang.String contentId;
 	/**name*/
 	@Excel(name = "name", width = 15)
 	private java.lang.String name;
@@ -45,9 +38,7 @@ public class Note implements Serializable {
 	/**pIds*/
 	@Excel(name = "parentIds", width = 15)
 	private java.lang.String parentIds;
-	/**text*/
-	@Excel(name = "text", width = 15)
-	private java.lang.String text;
+
 	/**tag*/
 	@Excel(name = "tag", width = 15)
 	private java.lang.String tag;
@@ -71,11 +62,5 @@ public class Note implements Serializable {
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
 
-	public String getText() {
-		if(StringUtils.isBlank(this.text)){
-			return "<p>&nbsp;</p>";
-		}else {
-			return text;
-		}
-	}
+
 }
