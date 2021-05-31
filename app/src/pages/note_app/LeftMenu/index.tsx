@@ -58,7 +58,7 @@ const LeftMenu: React.FC = (props, ref) => {
         const { id, title, level } = transportNote(note);
 
         props.dispatch({
-            type: 'note/refreshActiveNoteId',
+            type: 'note/queryNote',
             payload: id,
         })//显示笔记
 
