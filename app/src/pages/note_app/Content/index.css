@@ -1,9 +1,13 @@
 .toolbar {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
   border-bottom: 1px solid #e7e7e7;
   padding-bottom: 5px;
+}
+.toolbar .buttons {
+  display: flex;
+  justify-content: center;
 }
 .toolbar .yellow {
   background-color: #FFEB9C;
@@ -17,7 +21,7 @@
   background-color: #C6EFCE;
   color: #006100;
 }
-.toolbar > a {
+.toolbar a {
   display: inline-block;
   margin: 5px;
   padding: 2px 5px;
@@ -64,6 +68,6 @@
 }
 .text {
   padding-top: 50px;
-  height: 100%;
+  margin-bottom: 30px;
   outline: none;
 }

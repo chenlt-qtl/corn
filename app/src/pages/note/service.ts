@@ -1,5 +1,5 @@
 import { request } from 'umi';
-import { NoteListParams, ArticleItem, NoteItem } from './data.d';
+import { NoteItem } from './data.d';
 
 //树形数据结构
 export async function queryTreeList(id:string) {
@@ -14,19 +14,8 @@ export async function queryNote(parentId: string) {
   return request('/api/note/listNote?parentId=' + parentId);
 }
 
-
-export async function modifyNote(params: NoteItem) {
-  return request('/api/note/edit', {
-    method: 'PUT',
-    data: {
-      ...params,
-      method: 'put',
-    },
-  });
-}
-
-export async function addNote(params: NoteItem) {
-  return request('/api/note/add', {
+export async function updateNoteTitle(params: NoteItem) {
+  return request('/api/note/updateTitle', {
     method: 'POST',
     data: {
       ...params,
@@ -35,8 +24,8 @@ export async function addNote(params: NoteItem) {
   });
 }
 
-export async function saveNote(params: NoteItem) {
-  return request('/api/note/save', {
+export async function updateNoteText(params: NoteItem) {
+  return request('/api/note/updateText', {
     method: 'POST',
     data: {
       ...params,

@@ -25,5 +25,10 @@ public class NoteModel extends Note {
     public NoteModel(Note note){
         BeanUtils.copyProperties(note,this);
     }
+    public Note getNote(){
+        Note note = new Note();
+        BeanUtils.copyProperties(this,note);
+        return note;
+    }
 
 }

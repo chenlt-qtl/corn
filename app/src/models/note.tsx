@@ -1,4 +1,4 @@
-import { saveNote,queryTreeList, queryNoteById, modifyNote, addNote, queryNote, deleteNote } from '@/pages/note/service'
+import { updateNoteTitle,queryTreeList, queryNoteById, updateNoteText, queryNote, deleteNote } from '@/pages/note/service'
 import { NoteItem, NoteNode } from '@/pages/note/data.d';
 import { Effect, Reducer } from 'umi';
 
@@ -33,9 +33,8 @@ export interface NoteModelType {
         queryTabTree: Effect;
         queryNote: Effect;
         queryChildren: Effect;
-        modifyNote: Effect;
-        addNote: Effect;
-        saveNote: Effect;
+        updateNoteTitle: Effect;
+        updateNoteText: Effect;
         deleteNote: Effect;
     };
     reducers: {
@@ -93,7 +92,7 @@ const NoteModel: NoteModelType = {
                             payload: note
                         });
                         yield put({
-                            type: 'openNotes/updateOpenNote',
+                            type: 'openNotes/updateOpenNotes',
                             payload: [note, ...openedNotes]
                         });
                     }
@@ -105,47 +104,16 @@ const NoteModel: NoteModelType = {
             let result = yield call(queryNote, payload);
             return result;
         },
-        *modifyNote({ payload }, { call, put, select }) {
-            let result = yield call(modifyNote, payload);
-            if (result) {
-                if (result.success) {
-                    const openedNotes = yield select(state => state.openNotes.openedNotes);
-                    const newNote = result.result;
-                    // 成功
-                    yield put({
-                        type: 'refreshTreeNote',
-                        payload: newNote
-                    });
-                    //刷新已打开的数据
-                    yield put({
-                        type: 'openNotes/updateOpenNote',
-                        payload: openedNotes.map(item => item.id === newNote.id ? newNote : item)
-                    });
-                }
-                return result;
-            }
-        },
-        *addNote({ payload }, { call, put }) {
-            console.log('add');
-            let result = yield call(addNote, payload);
-            if (result) {
-                if (result.success) {
-                    // 成功
-                    yield put({
-                        type: 'refreshTreeNote',
-                        payload: result.result
-                    });
-                    yield put({
-                        type: 'refreshShowNote',
-                        payload: result.result
-                    });
-                }
-                return result;
-            }
-        },
-        *saveNote({ payload }, { call }) {
+        *updateNoteTitle({ payload }, { call }) {
             console.log('save');
-            let result = yield call(saveNote, payload);
+            let result = yield call(updateNoteTitle, payload);
+            if (result) {
+                return result;
+            }
+        },
+        *updateNoteText({ payload }, { call }) {
+            console.log('save');
+            let result = yield call(updateNoteText, payload);
             if (result) {
                 return result;
             }
@@ -189,6 +157,7 @@ const NoteModel: NoteModelType = {
                 ...state,
                 showNote: payload,
                 selectedKeys: [payload.id],
+                activeNoteId: payload.id,
             }
         },
         refreshTreeNote(state: NoteState, { payload }): NoteState {

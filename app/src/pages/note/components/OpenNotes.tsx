@@ -14,7 +14,7 @@ const OpenNotes: React.FC<{}> = (props) => {
     const removeOpenNote = (id: string) => {
         const { openedNotes } = props.openNotes;
         props.dispatch({
-            type: 'openNotes/updateOpenNote',
+            type: 'openNotes/updateOpenNotes',
             payload: openedNotes.filter(item => item.id != id)
         })
         props.dispatch({

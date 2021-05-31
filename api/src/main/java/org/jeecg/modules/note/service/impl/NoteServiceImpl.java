@@ -118,7 +118,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             note.setText(UpLoadUtil.parseText(uploadpath, note.getText(), ""));
             NoteContent content = noteContentService.addContent(note);
             note.setContentId(content.getId());
-            return save(note);
+            return save(note.getNote());
         } catch (DataIntegrityViolationException e) {
             throw new JeecgBootException("笔记本目录最多只能60层!" + note.getParentIds());
         }

@@ -69,7 +69,7 @@ const NoteContent = React.forwardRef((props, ref) => {
                     if (res) {
                         const { result: newNote } = res;
                         props.dispatch({
-                            type: 'openNotes/updateOpenNote',
+                            type: 'openNotes/updateOpenNotes',
                             payload: [newNote, ...props.openNotes.openedNotes]
                         })
                         handleTextStatusChange(0);

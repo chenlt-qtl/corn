@@ -5,7 +5,7 @@ import { Effect, Reducer } from 'umi';
 
 
 export interface OpenNoteState {
-    openedNotes:[NoteItem]|[];
+    openedNotes: [NoteItem] | [];
 }
 
 export interface OpenNoteModelType {
@@ -13,6 +13,7 @@ export interface OpenNoteModelType {
     state: OpenNoteState;
     effects: {
         queryOpenNote: Effect;
+        updateOpenNotes: Effect;
         updateOpenNote: Effect;
     };
     reducers: {
@@ -24,11 +25,11 @@ const OpenNoteModel: OpenNoteModelType = {
     namespace: 'openNotes',
 
     state: {
-        openedNotes:[],
+        openedNotes: [],
     },
 
     effects: {
-        *queryOpenNote({ payload }, { call, put }){
+        *queryOpenNote({ payload }, { call, put }) {
             let result = yield call(queryOpenHistory);
             if (result) {
                 if (result.success) {
@@ -41,10 +42,10 @@ const OpenNoteModel: OpenNoteModelType = {
                 return result;
             }
         },
-        *updateOpenNote({ payload }, { call, put }){
+        *updateOpenNotes({ payload }, { call, put }) {
             let openedNotes = payload;
-            if(openedNotes.length>20){
-                openedNotes = openedNotes.splice(0,20);
+            if (openedNotes.length > 20) {
+                openedNotes = openedNotes.splice(0, 20);
             }
             const openNoteIds = openedNotes.reduce((total: string[], item: NoteItem) => {
                 total.push(item.id!);
@@ -55,15 +56,47 @@ const OpenNoteModel: OpenNoteModelType = {
                 type: 'refreshOpenedNotes',
                 payload: openedNotes
             });
-            let result = yield call(addOpenHistory,openNoteIds.join(','));
+            let result = yield call(addOpenHistory, openNoteIds.join(','));
+            return result;
+        },
+        *updateOpenNote({ payload }, { call, put, select }) {
+
+            const openedNotes = yield select(state => state.openNotes.openedNotes);
+            let newOpenedNotes = [];
+            let exist = false;
+            openedNotes.forEach((item: NoteItem) => {
+                if (item.id == payload.id) {
+                    newOpenedNotes.push(payload)
+                    exist = true
+                } else {
+                    newOpenedNotes.push(item);
+                }
+            })
+            if (!exist) {
+                newOpenedNotes = [payload, ...newOpenedNotes]
+            }
+
+            if (newOpenedNotes.length > 20) {
+                newOpenedNotes = newOpenedNotes.splice(0, 20);
+            }
+            const openNoteIds = newOpenedNotes.reduce((total: string[], item: NoteItem) => {
+                total.push(item.id!);
+                return total;
+            }, []);
+
+            yield put({
+                type: 'refreshOpenedNotes',
+                payload: newOpenedNotes
+            });
+            let result = yield call(addOpenHistory, openNoteIds.join(','));
             return result;
         },
     },
     reducers: {
-        refreshOpenedNotes(state:OpenNoteState, { payload }){
+        refreshOpenedNotes(state: OpenNoteState, { payload }) {
             return {
                 ...state,
-                openedNotes:payload,
+                openedNotes: payload,
             }
         },
     },
