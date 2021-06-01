@@ -32,14 +32,13 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  overflow: hidden;
 }
 .main:hover .label {
   visibility: visible;
   opacity: 1;
 }
 .item {
-  margin: 1px 0;
+  margin: -1px 0;
   cursor: pointer;
   height: 30px;
   position: relative;
@@ -72,6 +71,7 @@
   visibility: hidden;
   opacity: 0;
   transition: 0.3s;
+  font-size: 12px;
   border-right: 1px solid rgba(205, 205, 205, 0.3);
 }
 .item:first-child .label {
