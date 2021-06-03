@@ -27,20 +27,25 @@ const NoteList: React.FC<{}> = (props) => {
       method = 'note/queryTabTree'
       id = props.noteMenu.activeMenu2Id
     }
-
-    props.dispatch({
-      type: method,
-      payload: id,
-    }).then((res) => {
-      if (res) {
-        const { result } = res;
-        props.dispatch({
-          type: `noteMenu/refreshMenu${level}`,
-          payload: result,
-        })
-      }
-    });
-
+    if (id) {
+      props.dispatch({
+        type: method,
+        payload: id,
+      }).then((res) => {
+        if (res) {
+          const { result } = res;
+          props.dispatch({
+            type: `noteMenu/refreshMenu${level}`,
+            payload: result,
+          })
+        }
+      });
+    } else {
+      props.dispatch({
+        type: `noteMenu/refreshMenu${level}`,
+        payload: [],
+      })
+    }
   }
 
   const handleAddNote = (pid: string) => {

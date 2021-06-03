@@ -95,12 +95,15 @@ const NoteModel: NoteModelType = {
             return {
                 ...state,
                 activeTopId: payload,
+                activeMenu1Id: '',
+                activeMenu2Id: '',
             }
         },
         refreshActiveMenu1Id(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
                 activeMenu1Id: payload,
+                activeMenu2Id: '',
             }
         },
         refreshActiveMenu2Id(state: NoteState, { payload }): NoteState {

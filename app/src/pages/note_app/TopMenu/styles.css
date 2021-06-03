@@ -70,7 +70,7 @@
   width: 200px;
   visibility: hidden;
   opacity: 0;
-  transition: 0.3s;
+  transition: 0.1s;
   font-size: 12px;
   border-right: 1px solid rgba(205, 205, 205, 0.3);
 }
@@ -93,4 +93,17 @@
 }
 .active:hover .label {
   background-color: #d5f4e2;
+}
+.modal .title {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+.modal .title span {
+  line-height: 32px;
+}
+.modal .title .buttons {
+  text-align: right;
+  display: flex;
 }

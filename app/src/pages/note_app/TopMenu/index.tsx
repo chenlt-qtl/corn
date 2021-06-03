@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, List } from 'antd';
-import { SettingOutlined } from '@ant-design/icons';
+import { Modal, List, Button, message } from 'antd';
+import { SettingOutlined, CloseOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import styles from './styles.less';
 import { connect } from 'umi';
+import TopForm from './TopForm'
+import { NoteItem } from '@/pages/note/data.d';
+import { guid } from '@/utils/utils'
+
+
 
 
 const TopMenu: React.FC<{}> = (props) => {
@@ -11,8 +16,15 @@ const TopMenu: React.FC<{}> = (props) => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    const [editTopVisible, setEditTopVisible] = useState(false);
+
+    const [topNote, setTopNote] = useState < NoteItem > ({});
 
     useEffect(() => {
+        getTops();
+    }, []);
+
+    const getTops = () => {
         props.dispatch({
             type: 'note/queryChildren',
             payload: '0',
@@ -25,7 +37,16 @@ const TopMenu: React.FC<{}> = (props) => {
                 setMenuItem([...result]);
             }
         });
-    }, []);
+    }
+
+    const handleAdd = () => {
+        if (menuItem.length >= 10) {
+            message.error('最多只能有10个笔记本')
+        } else {
+            setEditTopVisible(true);
+            setTopNote({ name: '', id: guid() });
+        }
+    }
 
     const handleMenuSelect = (id: string, name: string) => {
         props.dispatch({
@@ -42,10 +63,21 @@ const TopMenu: React.FC<{}> = (props) => {
         setIsModalVisible(true)
     }
 
-    const handleEdit = (id, name) => {
+    const handleEdit = (note: NoteItem) => {
+        setEditTopVisible(true);
+        setTopNote(note);
+    }
+
+    const handleDelete = (id: string) => {
 
     }
 
+    const onEditCancel = (needRefresh: boolean) => {
+        if (needRefresh) {
+            getTops();
+        }
+        setEditTopVisible(false);
+    }
 
     const render = function () {
         return (
@@ -66,19 +98,27 @@ const TopMenu: React.FC<{}> = (props) => {
                 </ul>
                 <div className={styles.icon}><SettingOutlined onClick={handleShowModal} /></div>
 
-                <Modal title="管理笔记本" visible={isModalVisible} onCancel={handleCancel} footer={null} style={{ top: 20 }}>
+                <Modal visible={isModalVisible} closable={false} footer={null} style={{ top: 20 }}>
                     <div className={styles.modal}>
+                        <div className={styles.title}>
+                            <span>管理笔记本</span>
+                            <div className={styles.buttons}>
+                                <Button type="text" onClick={handleAdd}><PlusCircleOutlined /></Button>
+                                <Button type="text" onClick={handleCancel}><CloseOutlined /></Button>
+                            </div>
+                        </div>
                         <List
                             dataSource={menuItem}
                             renderItem={item => (
                                 <List.Item
-                                    actions={[<a onClick={() => { handleEdit(item.id, item.name) }}>edit</a>, <a key="list-loadmore-more">delete</a>]}>
+                                    actions={[<a onClick={() => { handleEdit(item) }}>edit</a>, <a onClick={() => { handleDelete(item.id) }}>delete</a>]}>
                                     {item.name}
                                 </List.Item>
                             )}
                         />
                     </div>
                 </Modal>
+                <TopForm onCancel={onEditCancel} note={topNote} modalVisible={editTopVisible}></TopForm>
             </div>
         );
     };

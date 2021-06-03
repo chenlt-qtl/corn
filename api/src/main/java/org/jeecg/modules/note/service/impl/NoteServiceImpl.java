@@ -63,7 +63,6 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         List<NoteModel> list = noteMapper.getByIds(ids);
         for (NoteModel noteModel : list) {
             setParentNames(noteModel);
-            noteModel.setText(UpLoadUtil.dbToReal(noteModel.getText(), "html"));
         }
         return list;
     }

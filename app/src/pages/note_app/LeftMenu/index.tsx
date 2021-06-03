@@ -54,26 +54,27 @@ const LeftMenu: React.FC = (props, ref) => {
     }
 
     const handleMenuSelect = (note: object) => {
-        console.log(2);
         const { id, title, level } = transportNote(note);
-
-        props.dispatch({
-            type: 'note/queryNote',
-            payload: id,
-        })//显示笔记
-
+        if (id != "open" && id != "favorate") {
+            props.dispatch({
+                type: 'note/queryNote',
+                payload: id,
+            })//查询笔记内容
+        }
         if (level == 1) {
             setTitle2(title)
             props.dispatch({
                 type: 'noteMenu/refreshActiveMenu1Id',
                 payload: id,
             })
+            setActiveMenu3Id('');
         } else if (level == 2) {
             setTitle3(title)
             props.dispatch({
                 type: 'noteMenu/refreshActiveMenu2Id',
                 payload: id,
             })
+            setActiveMenu3Id('');
         } else {
             setActiveMenu3Id(id);
         }
@@ -167,7 +168,6 @@ const LeftMenu: React.FC = (props, ref) => {
                                 {(level <= 3 && id != 'open' && id != 'favorate') ? <span className={styles.addChild} onClick={e => {
                                     e.stopPropagation();
                                     e.preventDefault();
-                                    console.log(1);
                                     handleAddNote(id);
                                 }}>
                                     <PlusOutlined title='增加子笔记' />
