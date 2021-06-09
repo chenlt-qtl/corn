@@ -41,6 +41,9 @@
   padding: 10px 12px;
   text-align: center;
   flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .content .button {
   padding: 0px 10px 5px 10px;
@@ -104,13 +107,16 @@
   flex: 1;
   overflow: hidden;
   display: flex;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   padding: 10px 12px;
   position: relative;
 }
 .label > span {
   line-height: 22px;
+}
+.label .noteTitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .label .addChild {
   position: absolute;

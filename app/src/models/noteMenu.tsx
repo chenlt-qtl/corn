@@ -10,6 +10,8 @@ export interface NoteState {
     activeMenu1Id: string,
     activeMenu2Id: string,
     title1: string,
+    title2: string,
+    title3: string,
 
 }
 
@@ -28,7 +30,8 @@ export interface NoteModelType {
         refreshActiveMenu1Id: Reducer<NoteState>;
         refreshActiveMenu2Id: Reducer<NoteState>;
         refreshTitle1: Reducer<NoteState>;
-
+        refreshTitle2: Reducer<NoteState>;
+        refreshTitle3: Reducer<NoteState>;
     };
 }
 
@@ -42,6 +45,8 @@ const NoteModel: NoteModelType = {
         activeMenu1Id: '',
         activeMenu2Id: '',
         title1: '',
+        title2: '',
+        title3: '',
     },
 
     effects: {
@@ -102,20 +107,34 @@ const NoteModel: NoteModelType = {
         refreshActiveMenu1Id(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                activeMenu1Id: payload,
+                activeMenu1Id: payload.id,
+                title2: payload.title,
                 activeMenu2Id: '',
             }
         },
         refreshActiveMenu2Id(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                activeMenu2Id: payload,
+                activeMenu2Id: payload.id,
+                title3: payload.title,
             }
         },
         refreshTitle1(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
                 title1: payload,
+            }
+        },
+        refreshTitle2(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                title2: payload,
+            }
+        },
+        refreshTitle3(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                title3: payload,
             }
         },
     },

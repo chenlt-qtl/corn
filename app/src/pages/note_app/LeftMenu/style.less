@@ -51,6 +51,9 @@
     padding: 10px 12px;
     text-align: center;
     flex-shrink: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .button {
@@ -137,13 +140,17 @@
   flex: 1;
   overflow: hidden;
   display: flex;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   padding: 10px 12px;
   position: relative;
 
   >span {
     line-height: 22px;
+  }
+
+  .noteTitle {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .addChild {
@@ -159,7 +166,7 @@
     line-height: 23px;
 
     &:hover {
-      transform:scale(1.1);
+      transform: scale(1.1);
       background-color: #CECECE;
     }
   }

@@ -7,7 +7,12 @@
 }
 .toolbar .buttons {
   display: flex;
+  flex: 1;
   justify-content: center;
+}
+.toolbar .status {
+  margin: 5px;
+  padding: 2px 5px;
 }
 .toolbar .yellow {
   background-color: #FFEB9C;
@@ -70,4 +75,8 @@
   padding-top: 50px;
   margin-bottom: 30px;
   outline: none;
+}
+.text hr {
+  border-top: 1px dashed #8c8b8b;
+  border-bottom: #fff;
 }

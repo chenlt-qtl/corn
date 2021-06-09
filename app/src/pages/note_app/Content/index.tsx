@@ -174,7 +174,7 @@ const Content = React.forwardRef((props, ref) => {
                 <div className={styles.main}>
                     {props.children}
                     <div className={styles.content}>
-                        <div className={styles.title}><Input ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input></div>
+                        <div className={styles.title}><Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input></div>
                         <div group={group} className={styles.text} ref={content} onInput={handleChange} onBlur={e => handleBlur(e, 'content')} suppressContentEditableWarning="true" contentEditable>
                         </div>
                     </div>

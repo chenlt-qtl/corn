@@ -1,4 +1,4 @@
-import { updateNoteTitle,queryTreeList, queryNoteById, updateNoteText, queryNote, deleteNote } from '@/pages/note/service'
+import { updateNoteTitle, queryTreeList, queryNoteById, updateNoteText, queryNote, deleteNote } from '@/pages/note/service'
 import { NoteItem, NoteNode } from '@/pages/note/data.d';
 import { Effect, Reducer } from 'umi';
 
@@ -39,7 +39,7 @@ export interface NoteModelType {
     };
     reducers: {
         refreshTreeData: Reducer<NoteState>;
-        refreshActiveNoteId:Reducer<NoteState>;
+        refreshActiveNoteId: Reducer<NoteState>;
         refreshShowNote: Reducer<NoteState>;
         refreshTreeNote: Reducer<NoteState>;
         refreshSelectedKeys: Reducer<NoteState>;
@@ -51,7 +51,7 @@ const NoteModel: NoteModelType = {
 
     state: {
         activeTabId: '',
-        activeNoteId:'',
+        activeNoteId: '',
         showNote: {},
         treeData: [],
         selectedKeys: [],
@@ -104,15 +104,29 @@ const NoteModel: NoteModelType = {
             let result = yield call(queryNote, payload);
             return result;
         },
-        *updateNoteTitle({ payload }, { call }) {
-            console.log('save');
+        *updateNoteTitle({ payload }, { call, put, select }) {
+            console.log('updateNoteTitle');
+            let type;
+            const activeMenu1Id = yield select(state => state.noteMenu.activeMenu1Id);
+            const activeMenu2Id = yield select(state => state.noteMenu.activeMenu2Id);
             let result = yield call(updateNoteTitle, payload);
             if (result) {
+                if (payload.id == activeMenu1Id) {
+                    type = 'noteMenu/refreshTitle2'
+                } else if (payload.id == activeMenu2Id) {
+                    type = 'noteMenu/refreshTitle3'
+                }
+                if (type) {
+                    yield put({
+                        type,
+                        payload: payload.name
+                    });
+                }
                 return result;
             }
         },
         *updateNoteText({ payload }, { call }) {
-            console.log('save');
+            console.log('updateNoteText');
             let result = yield call(updateNoteText, payload);
             if (result) {
                 return result;

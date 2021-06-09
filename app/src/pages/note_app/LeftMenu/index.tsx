@@ -20,9 +20,6 @@ const LeftMenu: React.FC = (props, ref) => {
 
     const [activeMenu3Id, setActiveMenu3Id] = useState < string > ('');
 
-    const [title2, setTitle2] = useState < string > ('');
-    const [title3, setTitle3] = useState < string > ('');
-
     const [closeMenus, setCloseMenus] = useState < string[] > ([]);
 
 
@@ -62,17 +59,15 @@ const LeftMenu: React.FC = (props, ref) => {
             })//查询笔记内容
         }
         if (level == 1) {
-            setTitle2(title)
             props.dispatch({
                 type: 'noteMenu/refreshActiveMenu1Id',
-                payload: id,
-            })
+                payload: {id,title},
+            }),
             setActiveMenu3Id('');
         } else if (level == 2) {
-            setTitle3(title)
             props.dispatch({
                 type: 'noteMenu/refreshActiveMenu2Id',
-                payload: id,
+                payload: {id,title},
             })
             setActiveMenu3Id('');
         } else {
@@ -164,7 +159,7 @@ const LeftMenu: React.FC = (props, ref) => {
                         <div className={`${styles.menu1Item} ${activeId == id ? styles.active : ''}`}>
                             <div className={styles.label} onClick={() => handleMenuSelect(item)} style={{ 'paddingLeft': `${isLevel3 ? (level - 3) * 8 + 12 : 12}px` }}>
                                 {getIcon(note)}
-                                &nbsp;&nbsp;{title}
+                                <div className={styles.noteTitle}>&nbsp;&nbsp;{title}</div>
                                 {(level <= 3 && id != 'open' && id != 'favorate') ? <span className={styles.addChild} onClick={e => {
                                     e.stopPropagation();
                                     e.preventDefault();
@@ -207,7 +202,7 @@ const LeftMenu: React.FC = (props, ref) => {
                         </div>
                         {menu2Item.length > 0 ?
                             <div className={styles.menuContent}>
-                                <div className={styles.title}>{title2}</div>
+                                <div className={styles.title}>{props.noteMenu.title2}</div>
                                 {getMenu(menu2Item, props.noteMenu.activeMenu2Id)}
                                 <div className={styles.button}>
                                     <Button block onClick={() => handleAddNote(props.noteMenu.activeMenu1Id)}>增加</Button>
@@ -215,7 +210,7 @@ const LeftMenu: React.FC = (props, ref) => {
                             </div> : ''}
                         {menu3Item.length > 0 ?
                             <div className={styles.menuContent}>
-                                <div className={styles.title}>{title3}</div>
+                                <div className={styles.title}>{props.noteMenu.title3}</div>
                                 {getMenu(menu3Item, activeMenu3Id)}
                                 <div className={styles.button}>
                                     <Button block onClick={() => handleAddNote(props.noteMenu.activeMenu2Id)}>增加</Button>
