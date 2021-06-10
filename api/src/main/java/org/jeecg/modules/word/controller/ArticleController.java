@@ -1,28 +1,23 @@
 package org.jeecg.modules.word.controller;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.Article;
 import org.jeecg.modules.word.service.IArticleService;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-
-import org.jeecg.modules.word.service.ISentenceService;
-import org.jeecg.modules.word.service.IWordService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Title: Controller
@@ -37,12 +32,6 @@ import org.springframework.web.bind.annotation.*;
 public class ArticleController {
 	@Autowired
 	private IArticleService articleService;
-
-	 @Autowired
-	 private ISentenceService sentenceService;
-
-	 @Autowired
-	 private IWordService wordService;
 
 	 @Value(value = "${jeecg.path.upload}")
 	 private String uploadpath;

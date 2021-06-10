@@ -1,24 +1,25 @@
-import React, { useState, useEffect, useRef, Fragment } from 'react';
-import { Spin, Tabs, Anchor, Empty } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Spin, Anchor, Empty, Modal,Button } from 'antd';
 import styles from './styles.less';
 import { WordItem, IcibaSentenceItem, SentenceItem } from '../data';
-import { connect, history } from 'umi';
+import { connect } from 'umi';
 import 'font-awesome/css/font-awesome.min.css';
 import { StarFilled, StarOutlined } from '@ant-design/icons';
 
 
-const { TabPane } = Tabs;
 const { Link } = Anchor;
 
 export interface WordDetailProps {
-    match: { params: { wordName: string } }
+    wordName: string
+    isModalVisible: boolean
+    hideWordModal: () => void
 }
 
 
 const WordDetail: React.FC<WordDetailProps> = (props) => {
     const { wordName } = props.match.params;
-    const [word, setWord] = useState<WordItem>({});
-    const [moreSentence, setMoreSentence] = useState<SentenceItem[]>([]);//更多例句
+    const [word, setWord] = useState < WordItem > ({});
+    const [moreSentence, setMoreSentence] = useState < SentenceItem[] > ([]);//更多例句
     const player = useRef();
     const source = useRef();
     const refs = [useRef(), useRef()];
@@ -52,14 +53,6 @@ const WordDetail: React.FC<WordDetailProps> = (props) => {
         player.current!.play();
     }
 
-    const handleTabChange = (index: number) => {
-        // console.log(index);
-        // if (index >= 0 && refs[index]) {
-        //     refs[index].current.scrollIntoView();
-        // }
-        history.push('#aaa');
-    }
-
     const saveRel = () => {
 
     }
@@ -68,7 +61,13 @@ const WordDetail: React.FC<WordDetailProps> = (props) => {
     const moreLoading = props.loading.effects["word/getSentenceByWord"];
     const reg = /^[\s]/;
     return (
-        <>
+        <Modal title="单词详情" width={660} visible={props.isModalVisible}
+            onCancel={() => { props.hideWordModal(); }}
+            footer={
+                <Button onClick={() => { props.hideWordModal(); }}>
+                    关闭
+            </Button>
+            }>
             <Spin spinning={loading}>
                 <main className={styles.word}>
                     <header className={styles.wordName}>{word.wordName}
@@ -136,7 +135,7 @@ const WordDetail: React.FC<WordDetailProps> = (props) => {
                 <source ref={source} src={word.phAnMp3} type="audio/mpeg" />
                   您的浏览器不支持 audio 元素。
             </audio>
-        </>
+        </Modal>
     );
 };
 

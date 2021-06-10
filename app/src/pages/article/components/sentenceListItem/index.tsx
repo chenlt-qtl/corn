@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { List, Popconfirm } from 'antd';
 import styles from './styles.less';
-import { EditOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { SentenceItem } from '../../data';
 import 'font-awesome/css/font-awesome.min.css';
 

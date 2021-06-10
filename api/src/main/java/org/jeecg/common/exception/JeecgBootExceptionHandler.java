@@ -22,8 +22,8 @@ public class JeecgBootExceptionHandler {
 	/**
 	 * 处理自定义异常
 	 */
-	@ExceptionHandler(JeecgBootException.class)
-	public Result<?> handleRRException(JeecgBootException e){
+	@ExceptionHandler(CornException.class)
+	public Result<?> handleRRException(CornException e){
 		log.error(e.getMessage(), e);
 		return Result.error(e.getMessage());
 	}

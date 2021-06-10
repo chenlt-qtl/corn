@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jeecg.common.constant.DataBaseConstant;
-import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.exception.CornException;
 import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.system.model.SysUserCacheInfo;
@@ -82,13 +82,13 @@ public class JwtUtil {
 	 * 
 	 * @param request
 	 * @return
-	 * @throws JeecgBootException
+	 * @throws CornException
 	 */
-	public static String getUserNameByToken(HttpServletRequest request) throws JeecgBootException {
+	public static String getUserNameByToken(HttpServletRequest request) throws CornException {
 		String accessToken = request.getHeader("X-Access-Token");
 		String username = getUsername(accessToken);
 		if (oConvertUtils.isEmpty(username)) {
-			throw new JeecgBootException("未获取到用户");
+			throw new CornException("未获取到用户");
 		}
 		return username;
 	}

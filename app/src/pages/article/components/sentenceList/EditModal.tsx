@@ -5,6 +5,7 @@ import { SentenceItem, ArticleItem, WordItem } from '../../data';
 import { saveSentence, getWordBySentence } from '../../service';
 import ImgUpload from '../ImgUpload'
 import Mp3Upload from '../Mp3Upload'
+import { brReg, DisplaySentence, splipSentences } from '../../utils'
 
 
 const { TextArea } = Input;
@@ -19,13 +20,6 @@ export interface SentenceProps {
     onCancel: (reload: boolean) => void;
 }
 
-interface DisplaySentence {
-    id?: string;
-    content?: string;
-    mp3?: string;
-    picture?: string;
-    allWords: { text: string, isWord: boolean }[]
-}
 
 const formLayout = {
     labelCol: { span: 3 },
@@ -43,8 +37,6 @@ const EditModal: React.FC<SentenceProps> = (props) => {
     const [loading, setLoading] = useState < boolean > (false);
 
     const [form] = Form.useForm();
-
-    const brReg = /[\n]+/;
 
     useEffect(() => {
         form.setFieldsValue(sentence);
@@ -69,7 +61,7 @@ const EditModal: React.FC<SentenceProps> = (props) => {
 
         if (currentStep === 0) {
             setCurrentStep(currentStep + 1);
-            parseSentences(formValue.content);
+            setSentences(splipSentences(formValue.content.split(brReg)));
         } else {//提交 
             setLoading(true);
             const article: ArticleItem = { id: articleId };
@@ -125,34 +117,6 @@ const EditModal: React.FC<SentenceProps> = (props) => {
     const handleMp3Change = (value: string) => {
         setMp3(value);
     };
-
-    //获取选择单词界面
-    const parseSentences = (content: string) => {
-        const sentenceStrs = single ? [content] : content.split(brReg);
-        const sentences: DisplaySentence[] = [];
-
-        let patt = /([a-z|'|-]+)/ig;
-        let r = null;
-        setSentences(sentenceStrs.reduce((sentences, item) => {
-            if (item) {
-                const sentence: DisplaySentence = { allWords: [] };
-                let index = 0;
-                while (r = patt.exec(item)) {
-                    const word = r[0];
-                    if (r.index > index) {
-                        sentence.allWords.push({ text: item.slice(index, r.index).trim(), isWord: false });
-                    }
-                    sentence.allWords.push({ text: word, isWord: true });
-                    index = r.index + word.length;
-                }
-                if (index < item.length) {
-                    sentence.allWords.push({ text: item.slice(index).trim(), isWord: false });
-                }
-                sentences.push(sentence);
-            }
-            return sentences;
-        }, sentences));
-    }
 
     const renderFooter = () => {
         if (currentStep === 1) {

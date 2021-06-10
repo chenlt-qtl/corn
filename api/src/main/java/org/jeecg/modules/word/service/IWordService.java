@@ -1,8 +1,8 @@
 package org.jeecg.modules.word.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.jeecg.modules.word.entity.Word;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.model.SentenceVo;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface IWordService extends IService<Word> {
 
-    public Word saveWord(String wordName) throws Exception;
+    public Word getWord(String wordName) throws Exception;
 
     public IPage<Map> pageSearchWord(String wordName, int pageNo, int pageSize);
 
@@ -25,4 +25,5 @@ public interface IWordService extends IService<Word> {
     public List<Map> searchWordBySentence(String sentenceId);
 
     public void saveWord(SentenceVo sentenceVo) ;
+
 }

@@ -4,17 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.system.entity.SysUser;
-import org.jeecg.modules.word.entity.Acceptation;
 import org.jeecg.modules.word.entity.IcibaSentence;
 import org.jeecg.modules.word.entity.SentenceWordRel;
 import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.mapper.WordMapper;
 import org.jeecg.modules.word.model.SentenceVo;
-import org.jeecg.modules.word.service.*;
+import org.jeecg.modules.word.service.IIcibaSentenceService;
+import org.jeecg.modules.word.service.ISentenceWordRelService;
+import org.jeecg.modules.word.service.IWordService;
 import org.jeecg.modules.word.util.ParseIciba;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +42,6 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     private WordMapper wordMapper;
 
     @Autowired
-    private IAcceptationService acceptationService;
-
-    @Autowired
-    private IWordUserService wordUserService;
-
-    @Autowired
     private IIcibaSentenceService icibaSentenceService;
 
     @Autowired
@@ -57,36 +51,28 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     private String uploadpath;
 
     @Override
-    public Word saveWord(String wordName) throws Exception {
-        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+    public Word getWord(String wordName) throws Exception {
+        String lowerCase = wordName.toLowerCase();//转小写
         List<Word> list = wordMapper.selectByMap(new HashMap() {{
-            this.put("word_name", wordName);
+            this.put("word_name", lowerCase);
         }});
-        Word word;
+        Word word = null;
         if (!list.isEmpty()) {
             word = list.get(0);//已存在数据库中
         } else {//查API
-            Map detailMap = ParseIciba.getWordFromIciba(wordName, uploadpath);
-            word = (Word) detailMap.get("word");
-            save(word);
-            if (detailMap.containsKey("acceptations")) {//解释
-                List<Acceptation> acceptations = (List) detailMap.get("acceptations");
-                for (Acceptation acceptation : acceptations) {
-                    acceptation.setWordId(word.getId());
-                    acceptationService.save(acceptation);
-                }
-            }
-            if (detailMap.containsKey("icibaSentence")) {//例句
-                List<IcibaSentence> icibaSentences = (List) detailMap.get("icibaSentence");
-                for (IcibaSentence icibaSentence : icibaSentences) {
-                    icibaSentence.setWordId(word.getId());
-                    icibaSentenceService.save(icibaSentence);
+            Map detailMap = ParseIciba.getWordFromIciba(lowerCase, uploadpath);
+            if(detailMap != null) {
+                word = (Word) detailMap.get("word");
+                save(word);
+                if (detailMap.containsKey("icibaSentence")) {//例句
+                    List<IcibaSentence> icibaSentences = (List) detailMap.get("icibaSentence");
+                    for (IcibaSentence icibaSentence : icibaSentences) {
+                        icibaSentence.setWordId(word.getId());
+                        icibaSentenceService.save(icibaSentence);
+                    }
                 }
             }
         }
-        //保存word用户关联信息
-        wordUserService.saveRel(sysUser.getUsername(), word.getId());
-
         return word;
     }
 
@@ -145,7 +131,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
             for (Word wordVo : sentenceVo.getWords()) {
                 Word word = null;
                 try {
-                    word = saveWord(wordVo.getWordName().toLowerCase());
+                    word = getWord(wordVo.getWordName().toLowerCase());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -158,4 +144,6 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
             }
         }
     }
+
+
 }

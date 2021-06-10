@@ -3,6 +3,8 @@ package org.jeecg.modules.word.service;
 import org.jeecg.modules.word.entity.IcibaSentence;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * @Description: iciba_sentence
  * @author： jeecg-boot
@@ -11,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IIcibaSentenceService extends IService<IcibaSentence> {
 
+    List<IcibaSentence> getByWordId(String wordId);
 }

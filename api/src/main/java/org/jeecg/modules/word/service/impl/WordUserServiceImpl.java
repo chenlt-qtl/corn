@@ -1,6 +1,8 @@
 package org.jeecg.modules.word.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.shiro.SecurityUtils;
+import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.WordUser;
 import org.jeecg.modules.word.mapper.WordMapper;
 import org.jeecg.modules.word.mapper.WordUserMapper;
@@ -26,20 +28,21 @@ public class WordUserServiceImpl extends ServiceImpl<WordUserMapper, WordUser> i
     private WordUserMapper wordUserMapper;
 
     @Override
-    public void saveRel(String userName, String wordId) {
-
-        if(getRel(userName,wordId)==null){
+    public void saveRel(String wordId) {
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        if(getRel(wordId)==null){
             WordUser wordUser = new WordUser();
-            wordUser.setUser(userName);
+            wordUser.setUser(sysUser.getUsername());
             wordUser.setWordId(wordId);
             save(wordUser);
         }
     }
 
     @Override
-    public WordUser getRel(String userName, String wordId) {
+    public WordUser getRel(String wordId) {
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<WordUser> wrapper = new QueryWrapper();
-        wrapper.eq("user",userName);
+        wrapper.eq("user",sysUser.getUsername());
         wrapper.eq("word_id",wordId);
         List<WordUser> list = wordUserMapper.selectList(wrapper);
         if(!list.isEmpty()){

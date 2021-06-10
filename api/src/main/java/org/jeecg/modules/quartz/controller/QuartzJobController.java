@@ -13,12 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSON;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.constant.CommonConstant;
-import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.exception.CornException;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.quartz.entity.QuartzJob;
 import org.jeecg.modules.quartz.service.IQuartzJobService;
-import org.jeecg.modules.system.entity.SysUser;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -200,7 +199,7 @@ public class QuartzJobController {
 		try {
 			scheduler.pauseJob(JobKey.jobKey(job.getJobClassName().trim()));
 		} catch (SchedulerException e) {
-			throw new JeecgBootException("暂停定时任务失败");
+			throw new CornException("暂停定时任务失败");
 		}
 		job.setStatus(CommonConstant.STATUS_DISABLE);
 		quartzJobService.updateById(job);
@@ -219,7 +218,7 @@ public class QuartzJobController {
 		try {
 			scheduler.resumeJob(JobKey.jobKey(job.getJobClassName().trim()));
 		} catch (SchedulerException e) {
-			throw new JeecgBootException("恢复定时任务失败");
+			throw new CornException("恢复定时任务失败");
 		}
 		job.setStatus(CommonConstant.STATUS_NORMAL);
 		quartzJobService.updateById(job);
@@ -270,9 +269,9 @@ public class QuartzJobController {
 			scheduler.scheduleJob(jobDetail, trigger);
 		} catch (SchedulerException e) {
 			log.error(e.toString());
-			throw new JeecgBootException("创建定时任务失败");
+			throw new CornException("创建定时任务失败");
 		} catch (Exception e) {
-			throw new JeecgBootException("后台找不到该类名任务");
+			throw new CornException("后台找不到该类名任务");
 		}
 	}
 
@@ -288,7 +287,7 @@ public class QuartzJobController {
 			scheduler.unscheduleJob(TriggerKey.triggerKey(jobClassName));
 			scheduler.deleteJob(JobKey.jobKey(jobClassName));
 		} catch (Exception e) {
-			throw new JeecgBootException("删除定时任务失败");
+			throw new CornException("删除定时任务失败");
 		}
 	}
 

@@ -1,7 +1,7 @@
 package org.jeecg.common.util;
 
 import com.coremedia.iso.IsoFile;
-import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.exception.CornException;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ public class VideoUtil {
     public static long getDuration(String filePath) throws IOException {
         String format = getVideoFormat(filePath);
         if(!"mp4".equals(format)){
-            throw new JeecgBootException("只支持获取mp4的时长");
+            throw new CornException("只支持获取mp4的时长");
         }
         long result = VideoUtil.getMp4Duration(filePath);
         return result;

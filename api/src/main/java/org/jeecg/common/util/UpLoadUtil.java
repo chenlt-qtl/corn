@@ -3,7 +3,7 @@ package org.jeecg.common.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.exception.CornException;
 import org.jeecg.common.system.controller.CommonController;
 import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Value;
@@ -271,7 +271,7 @@ public class UpLoadUtil {
                             matcher.appendReplacement(sbr, pathArr[1]);
                         }
                     } catch (IOException e) {
-                        throw new JeecgBootException("保存图片出错");
+                        throw new CornException("保存图片出错");
                     }
                 }
             }

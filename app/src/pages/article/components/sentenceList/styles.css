@@ -58,11 +58,26 @@
 }
 .sentenceList {
   padding: 10px;
-  max-height: 300px;
   overflow-y: auto;
 }
 .sentenceList pre {
   white-space: pre-wrap;
   word-wrap: break-word;
   *white-space: normal;
+}
+.sentenceList .item {
+  display: flex;
+}
+.sentenceList .item pre {
+  margin-bottom: 0;
+}
+.sentenceList .item :global .ant-list-item-action {
+  margin-top: 0;
+}
+.page {
+  padding: 20px;
+  text-align: center;
+}
+.words {
+  cursor: pointer;
 }

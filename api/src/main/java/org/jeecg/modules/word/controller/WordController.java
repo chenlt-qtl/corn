@@ -1,37 +1,21 @@
 package org.jeecg.modules.word.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.util.UpLoadUtil;
-import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.system.entity.SysUser;
-import org.jeecg.modules.word.entity.IcibaSentence;
-import org.jeecg.modules.word.entity.Sentence;
 import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.model.WordVo;
-import org.jeecg.modules.word.service.*;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
+import org.jeecg.modules.word.service.IIcibaSentenceService;
+import org.jeecg.modules.word.service.ISentenceService;
+import org.jeecg.modules.word.service.IWordService;
+import org.jeecg.modules.word.service.IWordUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: Controller
@@ -54,11 +38,7 @@ public class WordController {
     private ISentenceService sentenceService;
 
     @Autowired
-    private IAcceptationService acceptationService;
-
-    @Autowired
     private IWordUserService wordUserService;
-
 
 
     /**
@@ -192,35 +172,21 @@ public class WordController {
     @GetMapping(value = "/queryByWordName")
     public Result<WordVo> queryByWordName(@RequestParam(name = "wordName", required = true) String wordName) {
         Result<WordVo> result = new Result<WordVo>();
-        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        WordVo wordVo = null;
         try {
-            wordVo = new WordVo(wordService.saveWord(wordName));
-            wordVo.setPhAnMp3(UpLoadUtil.dbToReal(wordVo.getPhAnMp3()));
+
+            WordVo wordVo = new WordVo(wordService.getWord(wordName));
             String wordId = wordVo.getId();
 
-            Collection<IcibaSentence> icibaSentence = icibaSentenceService.listByMap(new HashMap<String, Object>() {{
-                put("word_id", wordId);
-            }});
-
-            wordVo.setAcceptation(acceptationService.getByWord(wordId));
-            wordVo.setIcibaSentences(new ArrayList(icibaSentence));
+            wordVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
             wordVo.setSentences(sentenceService.getSentencesByWord(wordId));
-            for(Sentence sentence:wordVo.getSentences()){
-                sentence.setMp3(UpLoadUtil.dbToReal(sentence.getMp3()));
-                sentence.setPicture(UpLoadUtil.dbToReal(sentence.getPicture()));
-            }
-            wordVo.setWordUserRel(wordUserService.getRel(sysUser.getUsername(),wordId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (wordVo == null) {
-            result.error500("未查到单词");
-        } else {
+            wordVo.setWordUserRel(wordUserService.getRel(wordId));
 
             result.setResult(wordVo);
             result.setSuccess(true);
+        } catch (Exception e) {
+            result.error500("未查到单词");
         }
+
         return result;
     }
 
@@ -248,73 +214,5 @@ public class WordController {
         return result;
     }
 
-    /**
-     * 导出excel
-     *
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value = "/exportXls")
-    public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
-        // Step.1 组装查询条件
-        QueryWrapper<Word> queryWrapper = null;
-        try {
-            String paramsStr = request.getParameter("paramsStr");
-            if (oConvertUtils.isNotEmpty(paramsStr)) {
-                String deString = URLDecoder.decode(paramsStr, "UTF-8");
-                Word word = JSON.parseObject(deString, Word.class);
-                queryWrapper = QueryGenerator.initQueryWrapper(word, request.getParameterMap());
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        //Step.2 AutoPoi 导出Excel
-        ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
-        List<Word> pageList = wordService.list(queryWrapper);
-        //导出文件名称
-        mv.addObject(NormalExcelConstants.FILE_NAME, "word列表");
-        mv.addObject(NormalExcelConstants.CLASS, Word.class);
-        mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("word列表数据", "导出人:Jeecg", "导出信息"));
-        mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
-        return mv;
-    }
-
-    /**
-     * 通过excel导入数据
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-        for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-            MultipartFile file = entity.getValue();// 获取上传文件对象
-            ImportParams params = new ImportParams();
-            params.setTitleRows(2);
-            params.setHeadRows(1);
-            params.setNeedSave(true);
-            try {
-                List<Word> listWords = ExcelImportUtil.importExcel(file.getInputStream(), Word.class, params);
-                for (Word wordExcel : listWords) {
-                    wordService.save(wordExcel);
-                }
-                return Result.ok("文件导入成功！数据行数：" + listWords.size());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return Result.error("文件导入失败！");
-            } finally {
-                try {
-                    file.getInputStream().close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return Result.ok("文件导入失败！");
-    }
 
 }

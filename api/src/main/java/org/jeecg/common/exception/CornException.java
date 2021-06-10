@@ -1,18 +1,18 @@
 package org.jeecg.common.exception;
 
-public class JeecgBootException extends RuntimeException {
+public class CornException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
-	public JeecgBootException(String message){
+	public CornException(String message){
 		super(message);
 	}
 	
-	public JeecgBootException(Throwable cause)
+	public CornException(Throwable cause)
 	{
 		super(cause);
 	}
 	
-	public JeecgBootException(String message,Throwable cause)
+	public CornException(String message, Throwable cause)
 	{
 		super(message,cause);
 	}

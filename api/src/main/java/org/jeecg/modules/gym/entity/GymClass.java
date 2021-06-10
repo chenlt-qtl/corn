@@ -1,9 +1,6 @@
 package org.jeecg.modules.gym.entity;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.regex.Matcher;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -11,16 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.jeecg.common.exception.JeecgBootException;
-import org.jeecg.common.util.Base64Utils;
-import org.jeecg.common.util.UpLoadUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Description: test

@@ -1,5 +1,6 @@
 import { request } from 'umi';
 import { ArticleListParams, ArticleItem } from './data.d';
+import { stringify } from 'qs';
 
 export async function getArticleList(params?: ArticleListParams) {
   return request('/api/word/article/list', {
@@ -7,8 +8,8 @@ export async function getArticleList(params?: ArticleListParams) {
   });
 }
 
-export async function getSentenceByArticle(params: string) {
-  return request('/api/word/sentence/listByArticle?articleId=' + params);
+export async function getSentenceByArticle(params:object) {
+  return request('/api/word/sentence/listByArticle?' + stringify(params));
 }
 
 export async function getArticle(params: string) {

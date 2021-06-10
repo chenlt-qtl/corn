@@ -13,7 +13,6 @@ export interface WordModelType {
     effects: {
         getWordByArticle: Effect;
         getWordByWordName: Effect;
-        getWordFromDb: Effect;
         getSentenceByWord: Effect;
     };
     reducers: {
@@ -43,21 +42,6 @@ const WordModel: WordModelType = {
         },
 
         *getWordByWordName({ payload }, { call, put, select }) {
-            const wordMap = yield select(state => state.word.wordMap);
-            const word = wordMap.get(payload);
-            if (word) {
-                return word;
-            } else {
-                //后台获取
-                yield put({
-                    type: 'getWordFromDb',
-                    payload: payload,
-                });
-                return wordMap.get(payload);
-
-            }
-        },
-        *getWordFromDb({ payload }, { call, put, select }) {
             let result = yield call(queryByWordName, payload);
             if (result) {
                 if (result.success && result.result) {

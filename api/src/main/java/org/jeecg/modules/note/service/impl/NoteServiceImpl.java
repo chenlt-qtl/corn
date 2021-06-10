@@ -3,7 +3,7 @@ package org.jeecg.modules.note.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.exception.CornException;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.common.util.tree.TreeUtil;
 import org.jeecg.modules.note.entity.Note;
@@ -119,7 +119,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             note.setContentId(content.getId());
             return save(note.getNote());
         } catch (DataIntegrityViolationException e) {
-            throw new JeecgBootException("笔记本目录最多只能60层!" + note.getParentIds());
+            throw new CornException("笔记本目录最多只能60层!" + note.getParentIds());
         }
     }
 

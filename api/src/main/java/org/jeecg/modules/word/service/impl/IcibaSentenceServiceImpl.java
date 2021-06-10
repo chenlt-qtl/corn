@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * @Description: iciba_sentence
  * @author： jeecg-boot
@@ -16,4 +21,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 @Service
 public class IcibaSentenceServiceImpl extends ServiceImpl<IcibaSentenceMapper, IcibaSentence> implements IIcibaSentenceService {
 
+    @Override
+    public List<IcibaSentence> getByWordId(String wordId) {
+        Collection<IcibaSentence> icibaSentence = listByMap(new HashMap<String, Object>() {{
+            put("word_id", wordId);
+        }});
+
+        return new ArrayList(icibaSentence);
+    }
 }

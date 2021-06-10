@@ -37,10 +37,6 @@ const TableList: React.FC<{}> = () => {
         handleModalVisible(true);
     }
 
-    const showDetail = (id: string) => {
-
-    }
-
     const getActions = (item: ArticleItem): React.ReactNode[] => {
         const actions = [
             <StarOutlined />,

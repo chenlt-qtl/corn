@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.exception.CornException;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.online.cgreport.def.CgReportConstant;
 import org.jeecg.modules.online.cgreport.entity.OnlCgreportHead;
@@ -198,7 +198,7 @@ public class OnlCgreportHeadServiceImpl extends ServiceImpl<OnlCgreportHeadMappe
 		String pagesql = SqlUtil.jeecgCreatePageSql(sql,null,page,rows);
 		List<Map<?, ?>> result = mapper.executeSelete(pagesql);
 		if(result.size()<1){
-			throw new JeecgBootException("该报表sql没有数据");
+			throw new CornException("该报表sql没有数据");
 		}
 		Set fieldsSet= result.get(0).keySet();
 		List<String> fileds = new ArrayList<String>(fieldsSet);

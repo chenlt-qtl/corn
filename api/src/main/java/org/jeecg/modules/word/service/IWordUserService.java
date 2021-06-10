@@ -11,8 +11,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IWordUserService extends IService<WordUser> {
 
-    void saveRel(String userName,String wordId);
+    void saveRel(String wordId);
 
-    WordUser getRel(String userName,String wordId);
+    WordUser getRel(String wordId);
 
 }

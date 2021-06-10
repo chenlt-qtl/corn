@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.exception.JeecgBootException;
+import org.jeecg.common.exception.CornException;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.online.cgreport.def.CgReportConstant;
 import org.jeecg.modules.online.cgreport.entity.OnlCgreportHead;
@@ -146,7 +146,7 @@ public class OnlCgreportAPI {
 			try{
 				cgReportMap = onlCgreportHeadService.queryCgReportConfig(reportId);
 			}catch (Exception e) {
-				throw new JeecgBootException("动态报表配置不存在!");
+				throw new CornException("动态报表配置不存在!");
 			}
 			List<Map<String,Object>> fieldList = (List<Map<String, Object>>) cgReportMap.get(CgReportConstant.ITEMS);
 			Map<String, Object> configM = (Map<String, Object>) cgReportMap.get(CgReportConstant.MAIN);
@@ -246,7 +246,7 @@ public class OnlCgreportAPI {
 			//---------------------------------------------------------------------------------------------------------------------
 			
 		} else {
-			throw new JeecgBootException("参数错误");
+			throw new CornException("参数错误");
 		}
 	}
 

@@ -30,6 +30,9 @@ public class Word implements Serializable {
 	/**phAm*/
 	@Excel(name = "phAm", width = 15)
 	private java.lang.String phAm;
+	/**phAm*/
+	@Excel(name = "acceptation", width = 50)
+	private java.lang.String acceptation;
 	/**exchange*/
 	@Excel(name = "exchange", width = 15)
 	private java.lang.String exchange;
