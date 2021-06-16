@@ -80,3 +80,14 @@ export async function deleteNote(id: String) {
     },
   });
 }
+
+export async function uploadImg(img: String) {
+  console.log(234234);
+  
+  return request('/api/sys/common/uploadImg/note', {
+    method: 'POST',
+    data: {
+      file:img,
+    },
+  });
+}

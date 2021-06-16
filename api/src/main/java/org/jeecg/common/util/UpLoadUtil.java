@@ -26,18 +26,17 @@ import java.util.regex.Pattern;
 public class UpLoadUtil {
 
     public static final String DB_PATH_PRE = "baseUrl/";
-    private static final Pattern BASE64_PATTERN = Pattern.compile("data\\:image/(jpeg|png|gif|jpg|bmp);base64\\,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?");
+    public static final Pattern BASE64_PATTERN = Pattern.compile("data\\:image/(jpeg|png|gif|jpg|bmp);base64\\,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?");
 
     private static String realPre;
 
     private static String realPrePattern;
 
 
-
     @Value(value = "${jeecg.path.pre}")
     public void setRealPre(String pre) {
         UpLoadUtil.realPre = pre;
-        UpLoadUtil.realPrePattern = "[\\\\/]?"+UpLoadUtil.realPre.replaceAll("^[\\\\/]","");
+        UpLoadUtil.realPrePattern = "[\\\\/]?" + UpLoadUtil.realPre.replaceAll("^[\\\\/]", "");
     }
 
     /**
@@ -148,6 +147,8 @@ public class UpLoadUtil {
         Pattern imgPattern;
         if ("html".equals(type)) {
             imgPattern = Pattern.compile("(?<=<img src=\")(" + realPrePattern + ")");
+        } else if ("md".equals(type)) {
+            imgPattern = Pattern.compile("(?<=][(])(" + realPre + ")");
         } else {
             imgPattern = Pattern.compile("^(" + realPrePattern + ")");
         }
@@ -182,6 +183,8 @@ public class UpLoadUtil {
             Pattern imgPattern;
             if ("html".equals(type)) {
                 imgPattern = Pattern.compile("(?<=<img src=\")" + UpLoadUtil.DB_PATH_PRE);
+            } else if ("md".equals(type)) {
+                imgPattern = Pattern.compile("(?<=][(])" + UpLoadUtil.DB_PATH_PRE);
             } else {
                 imgPattern = Pattern.compile(UpLoadUtil.DB_PATH_PRE);
             }
@@ -205,10 +208,15 @@ public class UpLoadUtil {
      * @param text
      * @return
      */
-    public static String[] getImgUrls(String text) {
+    public static String[] getImgUrls(String text, String type) {
         List<String> result = new ArrayList<>();
-        text = realToDb(text, "html");
-        Pattern imgPattern = Pattern.compile("(?<=<img src=\"" + DB_PATH_PRE + ")([/|0-9a-z]+?)\\.(jpeg|png|gif|jpg|bmp)");
+        text = realToDb(text, type);
+        Pattern imgPattern;
+        if (type == "html") {
+            imgPattern = Pattern.compile("(?<=<img src=\"" + DB_PATH_PRE + ")([/|0-9a-z]+?)\\.(jpeg|png|gif|jpg|bmp)");
+        } else {
+            imgPattern = Pattern.compile("(?<=][(]" + DB_PATH_PRE + ")([/|0-9a-z]+?)\\.(jpeg|png|gif|jpg|bmp)");
+        }
         Matcher matcher = imgPattern.matcher(text);
         while (matcher.find()) {
             result.add(matcher.group(0));
@@ -254,7 +262,7 @@ public class UpLoadUtil {
             return "";
         }
         //---------------处理旧的数据----------------
-        text = realToDb(text, "html");
+        text = realToDb(text, "md");
 
         //---------------处理base64------------------
         Matcher matcher = BASE64_PATTERN.matcher(text);
@@ -282,7 +290,7 @@ public class UpLoadUtil {
         String newText = sbr.toString();
 
         if (StringUtils.isNotBlank(oldText)) {
-            String[] imgs = UpLoadUtil.getImgUrls(oldText);
+            String[] imgs = UpLoadUtil.getImgUrls(oldText, "md");
             for (String imgUrl : imgs) {
                 if (newText.indexOf(imgUrl) == -1) {//图片被删除了
                     UpLoadUtil.delImg(uploadPath, imgUrl);
@@ -313,11 +321,25 @@ public class UpLoadUtil {
 //        System.out.println(UpLoadUtil.realPre.replaceAll("^[\\\\/]",""));
 //        UpLoadUtil.realPre = "\\upload/";
 //        System.out.println(UpLoadUtil.realPre.replaceAll("^[\\\\/]",""));
-        UpLoadUtil.realPre = "/upload/";
-        UpLoadUtil.realPrePattern = "[\\\\/]?"+UpLoadUtil.realPre.replaceAll("^[\\\\/]","");
-        String result = dbToReal("baseUrl/note/damu/20210111/1610355128657.png");
+        UpLoadUtil.realPre = "http://localhost:8089/";
+        UpLoadUtil.realPrePattern = "[\\\\/]?" + UpLoadUtil.realPre.replaceAll("^[\\\\/]", "");
+        System.out.println(UpLoadUtil.realPrePattern);
+//        String result = dbToReal("baseUrl/note/damu/20210111/1610355128657.png");
 //        String result = realToDb("<p><img src=\"upload/note/damu/20210112/1610432817412.png\" alt=\"\" /></p>","html");
-        System.out.println(result);
+//        String result = realToDb("![](http://localhost:8089/note/damu/20210616/1623823893226.png)","md");
+//        String result = dbToReal("# 6666\n" +
+//                "## 55\n" +
+//                "### **ccc**\n" +
+//                "![](baseUrl/note/damu/20210616/1623823893226.png)\n");
+
+        String result[] = getImgUrls("# 6666\n" +
+                "## 55\n" +
+                "### **ccc**\n" +
+                "![](baseUrl/note/damu/20210616/1623823893226.png)\n","md");
+        for(String str:result) {
+            System.out.println(str);
+        }
+
 //
 //        System.out.println("=======================");
 //        sbr = new StringBuffer();

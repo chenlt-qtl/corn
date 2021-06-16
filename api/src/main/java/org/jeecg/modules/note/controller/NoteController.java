@@ -291,7 +291,7 @@ public class NoteController {
             NoteModel model = new NoteModel(note,content);
 
             noteService.setParentNames(model);//设置父节点名称
-            model.setText(UpLoadUtil.dbToReal(content.getText(), "html"));
+            model.setText(UpLoadUtil.dbToReal(content.getText(), "md"));
             result.setResult(model);
             result.setSuccess(true);
         }

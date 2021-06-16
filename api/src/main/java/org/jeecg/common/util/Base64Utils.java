@@ -4,6 +4,7 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
+import java.util.Base64;
 
 public class Base64Utils {
 
@@ -76,4 +77,25 @@ public class Base64Utils {
             return true;
         }
     }
+
+    /**
+     * 判断图片base64字符串的文件格式
+     *
+     * @param base64ImgData
+     * @return
+     */
+    public static String checkImageBase64Format(String base64ImgData) {
+        byte[] b = Base64.getDecoder().decode(base64ImgData);
+        String type = "";
+        if (0x424D == ((b[0] & 0xff) << 8 | (b[1] & 0xff))) {
+            type = "bmp";
+        } else if (0x8950 == ((b[0] & 0xff) << 8 | (b[1] & 0xff))) {
+            type = "png";
+        } else if (0xFFD8 == ((b[0] & 0xff) << 8 | (b[1] & 0xff))) {
+            type = "jpg";
+        }
+        return type;
+    }
+
+
 }

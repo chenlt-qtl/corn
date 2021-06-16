@@ -4,6 +4,7 @@ import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined } from '@
 import styles from './index.less';
 import { connect } from 'umi';
 import { getLevel, guid } from '@/utils/utils'
+import MarkDownIt from './MarkDownIt'
 
 const { TextArea } = Input;
 
@@ -28,7 +29,7 @@ const Content = React.forwardRef((props, ref) => {
     }
 
     const showCode = () => {
-        setCode(content.current.innerHTML);
+        // setCode(content.current.innerHTML);
         setCodeVisible(true);
     }
     useImperativeHandle(ref, () => ({
@@ -38,7 +39,7 @@ const Content = React.forwardRef((props, ref) => {
             setSaveStatus(1)
             const note = { name: '新文档', parentId, id };
             setTitle('新文档');
-            content.current.innerHTML = '';
+            // content.current.innerHTML = '';
             props.dispatch({
                 type: 'note/refreshShowNote',
                 payload: note,
@@ -47,7 +48,7 @@ const Content = React.forwardRef((props, ref) => {
     }));
 
     const handleUpdateCode = () => {
-        content.current.innerHTML = code;
+        // content.current.innerHTML = code;
         setCodeVisible(false);
     }
 
@@ -71,11 +72,11 @@ const Content = React.forwardRef((props, ref) => {
     const handleShowNote = (note) => {
         console.log('handleShowNote');
         setTitle(note.name);
-        content.current.innerHTML = note.text || '';
+        // content.current.innerHTML = note.text || '';
         setSaveStatus(0)
     }
 
-    const saveNote = (type) => {
+    const saveNote = (type:string,text:string) => {
         if (saveStatus == 0) {
             return;
         }
@@ -86,12 +87,13 @@ const Content = React.forwardRef((props, ref) => {
 
             setSaveStatus(2)
             noteToSave.name = title
-            noteToSave.text = content.current.innerHTML
+            
             let method
             if (type == 'title') {
                 method = 'note/updateNoteTitle'
             } else {
                 method = 'note/updateNoteText'
+                noteToSave.text = text
             }
 
             props.dispatch({
@@ -175,8 +177,9 @@ const Content = React.forwardRef((props, ref) => {
                     {props.children}
                     <div className={styles.content}>
                         <div className={styles.title}><Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input></div>
-                        <div group={group} className={styles.text} ref={content} onInput={handleChange} onBlur={e => handleBlur(e, 'content')} suppressContentEditableWarning="true" contentEditable>
-                        </div>
+                        {/* <div group={group} className={styles.text} ref={content} onInput={handleChange} onBlur={e => handleBlur(e, 'content')} suppressContentEditableWarning="true" contentEditable>
+                        </div> */}
+                        <MarkDownIt handleChange={handleChange} saveContent={(text:string)=>saveNote('content',text)}></MarkDownIt>
                     </div>
                 </div>
                 <Modal
