@@ -72,7 +72,7 @@ const Content = React.forwardRef((props, ref) => {
     const handleShowNote = (note) => {
         console.log('handleShowNote');
         setTitle(note.name);
-        // content.current.innerHTML = note.text || '';
+        content.current.innerHTML = note.text || '';
         setSaveStatus(0)
     }
 
@@ -177,9 +177,10 @@ const Content = React.forwardRef((props, ref) => {
                     {props.children}
                     <div className={styles.content}>
                         <div className={styles.title}><Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input></div>
-                        {/* <div group={group} className={styles.text} ref={content} onInput={handleChange} onBlur={e => handleBlur(e, 'content')} suppressContentEditableWarning="true" contentEditable>
-                        </div> */}
                         <MarkDownIt handleChange={handleChange} saveContent={(text:string)=>saveNote('content',text)}></MarkDownIt>
+                        -------------------------------------------------------------------------------------
+                        <div group={group} className={styles.text} ref={content} suppressContentEditableWarning="true" contentEditable>
+                        </div>
                     </div>
                 </div>
                 <Modal
