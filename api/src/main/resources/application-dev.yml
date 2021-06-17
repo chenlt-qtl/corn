@@ -14,7 +14,7 @@ jeecg :
     upload: D://upFiles
     #文件显示时的前缀
 #    pre: /upload/
-    pre: http://localhost:8089/
+    pre: http://localhost:89/
 logging:
   level:
     root: INFO

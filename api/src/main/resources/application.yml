@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 89
   servlet:
     compression:
       enabled: true
@@ -77,8 +77,8 @@ spring:
       datasource:
         master:
           url: jdbc:mysql://127.0.0.1:3306/corn?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=UTC
-          username: root
-          password: root
+          username: corn
+          password: corn2020!@#
           driver-class-name: com.mysql.cj.jdbc.Driver
           # 多数据源配置
           #multi-datasource1:
@@ -94,7 +94,7 @@ spring:
       pool:
         max-active: 8   #最大连接数据库连接数,设 0 为没有限制
         max-idle: 8     #最大等待连接中的数量,设 0 为没有限制
-        max-wait: 1000ms  #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        max-wait: -1ms  #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
         min-idle: 0     #最小等待连接中的数量,设 0 为没有限制
       shutdown-timeout: 100ms
     password: 'qwe!@#'
@@ -109,10 +109,12 @@ jeecg :
   path :
     #文件上传根目录 设置
     upload: /root/file/upload
+    #文件显示时的前缀
+    pre: upload/
 logging:
   level:
-    root: WARN
+    root: INFO
   root:
+    file-name: api
     appender: RollingFile
-    path: /root/app/api/logs/
-
+    path: /root/server/api/logs/
