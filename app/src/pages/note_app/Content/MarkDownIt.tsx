@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Input } from 'antd';
-import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
+import { EyeOutlined, InteractionOutlined, CheckCircleOutlined, EditOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { connect } from 'umi';
 import { getLevel, guid } from '@/utils/utils'
@@ -33,15 +33,16 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 
 const MarkDownIt = React.forwardRef((props, ref) => {
     const [value, setValue] = useState("");
+    const [displayIndex, setDisplayIndex] = useState<number>(0);
+    const content = useRef();
 
     useEffect(() => {
-        const text = props.note.showNote.text;
-        if(text){
-            setValue(props.note.showNote.text);
-        }else{
-            setValue("");
-        }
-        
+        const text = props.note.showNote.text || "";
+        setDisplayIndex(0);
+        setValue(text);
+        content.current.innerHTML = text;
+
+
     }, [props.note.showNote])
 
 
@@ -51,10 +52,10 @@ const MarkDownIt = React.forwardRef((props, ref) => {
         props.handleChange();
     }
 
-    const saveContent = ()=>{
-        console.log('save note',value);
+    const saveContent = () => {
+        console.log('save note', value);
         props.saveContent(value);
-        
+
     }
 
     const handleImageUpload = (file, callback) => {
@@ -72,44 +73,69 @@ const MarkDownIt = React.forwardRef((props, ref) => {
             }
             const blob = convertBase64UrlToBlob(reader.result)
             console.log(blob);
-            
+
             let result = await uploadImg(reader.result)
-            if(result.success){
+            if (result.success) {
                 callback(result.result)
-            }else{
+            } else {
                 console.log(result.message);
-                
+
             }
-            
+
         }
         reader.readAsDataURL(file)
     }
 
+    const editBtn = <EditOutlined onClick={()=>setDisplayIndex(1)} />
+    const viewBtn = <EyeOutlined onClick={()=>setDisplayIndex(0)} />
+    const oldBtn = <InteractionOutlined onClick={()=>setDisplayIndex(2)} />
+
+    const getDisplayBtn = () => {
+        
+        if (displayIndex == 0) {
+            return <>{editBtn}{oldBtn}</>
+        } else if (displayIndex == 1) {
+            return <>{viewBtn}{oldBtn}</>
+        } else if (displayIndex == 2) {
+            return <>{editBtn}{viewBtn}</>
+        }
+
+    }
+
 
     const render = function () {
-    return (
-        <>
-            <MdEditor
-                value={value}
-                style={{ height: "300px" }}
-                renderHTML={(text) => mdParser.render(text)}
-                onChange={handleEditorChange}
-                plugins={plugins}
-                config={{ view: { html: false } }}
-                onImageUpload={handleImageUpload}
-                onBlur={saveContent}
-            />
-            <MdEditor
-                value={value}
-                style={{ border: 0 }}
-                renderHTML={(text) => mdParser.render(text)}
-                config={{ view: { menu: false, md: false } }}
-                readOnly={true}
-            />
-        </>
-    );
-};
-return render();
+        return (
+            <>
+                <div className={styles.buttons}>{getDisplayBtn()}</div>
+                <div style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
+                    <MdEditor
+                        value={value}
+                        style={{ height: "600px" }}
+                        renderHTML={(text) => mdParser.render(text)}
+                        onChange={handleEditorChange}
+                        // plugins={plugins}
+                        config={{ view: { html: false } }}
+                        onImageUpload={handleImageUpload}
+                        onBlur={saveContent}
+                    />
+                </div>
+                <div style={{ display: displayIndex == 0 ? 'block' : 'none' }}>
+                    <MdEditor
+                        value={value}
+                        style={{ border: 0 }}
+                        renderHTML={(text) => mdParser.render(text)}
+                        config={{ view: { menu: false, md: false } }}
+                        readOnly={true}
+                    />
+                </div>
+                <div style={{ display: displayIndex == 2 ? 'block' : 'none' }}>
+                    <div ref={content} suppressContentEditableWarning="true" contentEditable>
+                    </div>
+                </div>
+            </>
+        );
+    };
+    return render();
 });
 
 export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) =>
