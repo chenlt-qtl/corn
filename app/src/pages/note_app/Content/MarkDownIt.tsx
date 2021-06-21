@@ -1,20 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Input } from 'antd';
 import { EyeOutlined, InteractionOutlined, CheckCircleOutlined, EditOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { connect } from 'umi';
-import { getLevel, guid } from '@/utils/utils'
 
 import { uploadImg } from '@/pages/note/service'
 
-import MarkdownIt from 'markdown-it'
 import MdEditor, { Plugins } from 'react-markdown-editor-lite'
 // 导入编辑器的样式
 import 'react-markdown-editor-lite/lib/index.css';
 
+import marked from 'marked'
+import hljs from "highlight.js";
+import 'highlight.js/styles/monokai-sublime.css';
 
 
-const mdParser = new MarkdownIt();
+marked.setOptions({
+    renderer: new marked.Renderer(),
+    highlight: function (code) {
+      return hljs.highlightAuto(code).value;
+    },
+    gfm: true, // 允许 Git Hub标准的markdown.
+    pedantic: false, // 不纠正原始模型任何的不良行为和错误（默认为false）
+    sanitize: false, // 对输出进行过滤（清理），将忽略任何已经输入的html代码（标签）
+    tables: true, // 允许支持表格语法（该选项要求 gfm 为true）
+    breaks: false, // 允许回车换行（该选项要求 gfm 为true）
+    smartLists: true, // 使用比原生markdown更时髦的列表
+    smartypants: false, // 使用更为时髦的标点
+  })
 
 MdEditor.use(Plugins.TabInsert, {
     /**
@@ -35,6 +47,7 @@ const MarkDownIt = React.forwardRef((props, ref) => {
     const [value, setValue] = useState("");
     const [displayIndex, setDisplayIndex] = useState<number>(0);
     const content = useRef();
+    const [menus, setMenus] = useState<[]>([]);
 
     useEffect(() => {
         const text = props.note.showNote.text || "";
@@ -47,7 +60,6 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
 
     const handleEditorChange = ({ html, text }) => {
-        console.log('handleEditorChange', html, text)
         setValue(text);
         props.handleChange();
     }
@@ -102,6 +114,12 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
     }
 
+    const renderHTML = (text:string)=>{
+        let html = marked(text);
+        console.log(html);
+        return html
+    }
+
 
     const render = function () {
         return (
@@ -111,7 +129,7 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                     <MdEditor
                         value={value}
                         style={{ height: "600px" }}
-                        renderHTML={(text) => mdParser.render(text)}
+                        renderHTML={renderHTML}
                         onChange={handleEditorChange}
                         // plugins={plugins}
                         config={{ view: { html: false } }}
@@ -120,10 +138,11 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                     />
                 </div>
                 <div style={{ display: displayIndex == 0 ? 'block' : 'none' }}>
+                    <div>{menus}</div>
                     <MdEditor
                         value={value}
                         style={{ border: 0 }}
-                        renderHTML={(text) => mdParser.render(text)}
+                        renderHTML={renderHTML}
                         config={{ view: { menu: false, md: false } }}
                         readOnly={true}
                     />
