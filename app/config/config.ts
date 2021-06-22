@@ -115,13 +115,13 @@ export default defineConfig({
           icon: 'smile',
           component: './article/splicMp3',
         },
-        {
-          path: '/word/:wordName',
-          name: 'wordDetail',
-          layout: false,
-          icon: 'smile',
-          component: './article/WordDetail',
-        },
+        // {
+        //   path: '/word/:wordName',
+        //   name: 'wordDetail',
+        //   layout: false,
+        //   icon: 'smile',
+        //   component: './article/WordDetail',
+        // },
       ],
     },
     {

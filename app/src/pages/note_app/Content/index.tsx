@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { Modal, Input } from 'antd';
-import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined } from '@ant-design/icons';
+import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined,EyeOutlined,EditOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { connect } from 'umi';
 import { getLevel, guid } from '@/utils/utils'
@@ -17,21 +17,14 @@ const group = 'group';
 
 const Content = React.forwardRef((props, ref) => {
 
-    const content = useRef();
     const titleInput = useRef();
-    const [code, setCode] = useState < string > ('');
-    const [saveStatus, setSaveStatus] = useState < Number > (null);//0:已保存 1:未保存 2:正在保存
-    const [title, setTitle] = useState < string > ('');
-    const [codeVisible, setCodeVisible] = useState < boolean > (false);
+    const [code, setCode] = useState<string>('');
+    const [saveStatus, setSaveStatus] = useState<Number>(null);//0:已保存 1:未保存 2:正在保存
+    const [title, setTitle] = useState<string>('');
+    const [codeVisible, setCodeVisible] = useState<boolean>(false);
+    const [displayIndex, setDisplayIndex] = useState<number>(-1);
 
-    const execCommand = (command: string, param1: string = '') => {
-        document.execCommand(command, false, param1);
-    }
 
-    const showCode = () => {
-        // setCode(content.current.innerHTML);
-        setCodeVisible(true);
-    }
     useImperativeHandle(ref, () => ({
         handleAddNote: (parentId: string) => {
             console.log('handleAddNote');
@@ -73,10 +66,11 @@ const Content = React.forwardRef((props, ref) => {
         console.log('handleShowNote');
         setTitle(note.name);
         // content.current.innerHTML = note.text || '';
+        setDisplayIndex(0)
         setSaveStatus(0)
     }
 
-    const saveNote = (type:string,text:string) => {
+    const saveNote = (type: string, text: string) => {
         if (saveStatus == 0) {
             return;
         }
@@ -87,7 +81,7 @@ const Content = React.forwardRef((props, ref) => {
 
             setSaveStatus(2)
             noteToSave.name = title
-            
+
             let method
             if (type == 'title') {
                 method = 'note/updateNoteTitle'
@@ -137,7 +131,7 @@ const Content = React.forwardRef((props, ref) => {
     const render = function () {
         return (
             <>
-                <div className={styles.toolbar} onBlur={e => handleBlur(e, 'content')}>
+                {/* <div className={styles.toolbar} onBlur={e => handleBlur(e, 'content')}>
                     <div className={styles.buttons}>
                         <a group={group} onClick={showCode} href='#'>code</a>
                         <a group={group} onClick={() => execCommand('bold')} href='#'><b>Bold</b></a>
@@ -172,13 +166,17 @@ const Content = React.forwardRef((props, ref) => {
                         {statusIcons[saveStatus]}
                     </div>
 
-                </div>
+                </div> */}
                 <div className={styles.main}>
                     {props.children}
                     <div className={styles.content}>
+                        <div className={styles.buttons}> {displayIndex == 0 ? <EditOutlined onClick={() => setDisplayIndex(1)} /> :
+                            <EyeOutlined onClick={() => {
+                                setDisplayIndex(0)
+                            }} />}{statusIcons[saveStatus]}</div>
                         <div className={styles.title}><Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input></div>
-                        <MarkDownIt handleChange={handleChange} saveContent={(text:string)=>saveNote('content',text)}></MarkDownIt>
-                        
+                        <MarkDownIt handleChange={handleChange} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDownIt>
+
                     </div>
                 </div>
                 <Modal

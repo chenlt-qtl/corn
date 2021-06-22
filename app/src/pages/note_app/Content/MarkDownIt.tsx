@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { EyeOutlined, InteractionOutlined, CheckCircleOutlined, EditOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { connect } from 'umi';
 
@@ -52,26 +52,18 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 
 
 const MarkDownIt = React.forwardRef((props, ref) => {
-    const [value, setValue] = useState < string > ("");
-    const [displayIndex, setDisplayIndex] = useState < number > (-1);
-    const content = useRef();
-    const [htmlStr, setHtmlStr] = useState < string > ("");
+    const [value, setValue] = useState<string>("");
+    const [htmlStr, setHtmlStr] = useState<string>("");
 
     useEffect(() => {
-        console.log(666);
         const text = props.note.showNote.text || "";
-        setDisplayIndex(0);
+        setHtmlStr(renderHTML(text))
         setValue(text);
     }, [props.note.showNote])
 
     useEffect(() => {
-        if (displayIndex == 0) {
-            // setHtmlStr(renderHTML(text))
-        } else if (displayIndex == 2) {
-            content.current.html = value
-        }
-    }, [displayIndex])
-
+        setHtmlStr(renderHTML(value))
+    }, [props.displayIndex])
 
     const handleEditorChange = ({ html, text }) => {
         setValue(text);
@@ -112,20 +104,6 @@ const MarkDownIt = React.forwardRef((props, ref) => {
         reader.readAsDataURL(file)
     }
 
-    const editBtn = <EditOutlined onClick={() => setDisplayIndex(1)} />
-    const viewBtn = <EyeOutlined onClick={() => setDisplayIndex(0)} />
-    const oldBtn = <InteractionOutlined onClick={() => { setDisplayIndex(2) }} />
-
-    const getDisplayBtn = () => {
-        if (displayIndex == 0) {
-            return <>{editBtn}{oldBtn}</>
-        } else if (displayIndex == 1) {
-            return <>{viewBtn}{oldBtn}</>
-        } else if (displayIndex == 2) {
-            return <>{editBtn}{viewBtn}</>
-        }
-    }
-
     const renderHTML = (text: string) => {
         tocify = new Tocify();
         let html = marked(text);
@@ -134,10 +112,10 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
 
     const render = function () {
-        console.log(444);
+        const { displayIndex } = props;
         return (
             <>
-                <div className={styles.buttons}>{getDisplayBtn()}</div>
+
                 {displayIndex == 1 ?
                     <div style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
                         <MdEditor
@@ -146,23 +124,17 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                             renderHTML={(text) => marked(text)}
                             onChange={handleEditorChange}
                             // plugins={plugins}
-                            // config={{ view: { html: false } }}
                             onImageUpload={handleImageUpload}
                             onBlur={saveContent}
                         />
                     </div> : ''}
+
                 {displayIndex == 0 ?
-                    <div>
-                        <div
-                            className="content"
-                            dangerouslySetInnerHTML={{ __html: htmlStr }}
-                        />
-                        <div className="toc">{tocify && tocify.render()}</div>
-                    </div> : ''}
-                {displayIndex == 2 ?
-                    <div>
-                        <div ref={content} suppressContentEditableWarning="true" contentEditable>
-                        </div>
+                    <div className={styles.view}>
+                        <div className={styles.toc}>
+                            <span>大纲</span>
+                            {tocify && tocify.render()}</div>
+                        <div className={styles.text} dangerouslySetInnerHTML={{ __html: htmlStr }} />
                     </div> : ''}
             </>
         );
