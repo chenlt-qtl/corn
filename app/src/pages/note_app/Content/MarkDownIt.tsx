@@ -12,12 +12,20 @@ import 'react-markdown-editor-lite/lib/index.css';
 import marked from 'marked'
 import hljs from "highlight.js";
 import 'highlight.js/styles/monokai-sublime.css';
+import Tocify from './Tocify';
+
+let tocify = new Tocify();
+const renderer = new marked.Renderer();
+renderer.heading = function (text, level, raw) {
+    const anchor = tocify.add(text, level);
+    return `<a id="${anchor}" href="#${anchor}" class="anchor-fix"><h${level}>${text}</h${level}></a>\n`;
+};
 
 
 marked.setOptions({
-    renderer: new marked.Renderer(),
+    renderer,
     highlight: function (code) {
-      return hljs.highlightAuto(code).value;
+        return hljs.highlightAuto(code).value;
     },
     gfm: true, // 允许 Git Hub标准的markdown.
     pedantic: false, // 不纠正原始模型任何的不良行为和错误（默认为false）
@@ -26,7 +34,7 @@ marked.setOptions({
     breaks: false, // 允许回车换行（该选项要求 gfm 为true）
     smartLists: true, // 使用比原生markdown更时髦的列表
     smartypants: false, // 使用更为时髦的标点
-  })
+})
 
 MdEditor.use(Plugins.TabInsert, {
     /**
@@ -44,19 +52,25 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 
 
 const MarkDownIt = React.forwardRef((props, ref) => {
-    const [value, setValue] = useState("");
-    const [displayIndex, setDisplayIndex] = useState<number>(0);
+    const [value, setValue] = useState < string > ("");
+    const [displayIndex, setDisplayIndex] = useState < number > (-1);
     const content = useRef();
-    const [menus, setMenus] = useState<[]>([]);
+    const [htmlStr, setHtmlStr] = useState < string > ("");
 
     useEffect(() => {
+        console.log(666);
         const text = props.note.showNote.text || "";
         setDisplayIndex(0);
         setValue(text);
-        content.current.innerHTML = text;
-
-
     }, [props.note.showNote])
+
+    useEffect(() => {
+        if (displayIndex == 0) {
+            // setHtmlStr(renderHTML(text))
+        } else if (displayIndex == 2) {
+            content.current.html = value
+        }
+    }, [displayIndex])
 
 
     const handleEditorChange = ({ html, text }) => {
@@ -98,12 +112,11 @@ const MarkDownIt = React.forwardRef((props, ref) => {
         reader.readAsDataURL(file)
     }
 
-    const editBtn = <EditOutlined onClick={()=>setDisplayIndex(1)} />
-    const viewBtn = <EyeOutlined onClick={()=>setDisplayIndex(0)} />
-    const oldBtn = <InteractionOutlined onClick={()=>setDisplayIndex(2)} />
+    const editBtn = <EditOutlined onClick={() => setDisplayIndex(1)} />
+    const viewBtn = <EyeOutlined onClick={() => setDisplayIndex(0)} />
+    const oldBtn = <InteractionOutlined onClick={() => { setDisplayIndex(2) }} />
 
     const getDisplayBtn = () => {
-        
         if (displayIndex == 0) {
             return <>{editBtn}{oldBtn}</>
         } else if (displayIndex == 1) {
@@ -111,46 +124,46 @@ const MarkDownIt = React.forwardRef((props, ref) => {
         } else if (displayIndex == 2) {
             return <>{editBtn}{viewBtn}</>
         }
-
     }
 
-    const renderHTML = (text:string)=>{
+    const renderHTML = (text: string) => {
+        tocify = new Tocify();
         let html = marked(text);
-        console.log(html);
         return html
     }
 
 
     const render = function () {
+        console.log(444);
         return (
             <>
                 <div className={styles.buttons}>{getDisplayBtn()}</div>
-                <div style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
-                    <MdEditor
-                        value={value}
-                        style={{ height: "600px" }}
-                        renderHTML={renderHTML}
-                        onChange={handleEditorChange}
-                        // plugins={plugins}
-                        config={{ view: { html: false } }}
-                        onImageUpload={handleImageUpload}
-                        onBlur={saveContent}
-                    />
-                </div>
-                <div style={{ display: displayIndex == 0 ? 'block' : 'none' }}>
-                    <div>{menus}</div>
-                    <MdEditor
-                        value={value}
-                        style={{ border: 0 }}
-                        renderHTML={renderHTML}
-                        config={{ view: { menu: false, md: false } }}
-                        readOnly={true}
-                    />
-                </div>
-                <div style={{ display: displayIndex == 2 ? 'block' : 'none' }}>
-                    <div ref={content} suppressContentEditableWarning="true" contentEditable>
-                    </div>
-                </div>
+                {displayIndex == 1 ?
+                    <div style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
+                        <MdEditor
+                            value={value}
+                            style={{ height: "600px" }}
+                            renderHTML={(text) => marked(text)}
+                            onChange={handleEditorChange}
+                            // plugins={plugins}
+                            // config={{ view: { html: false } }}
+                            onImageUpload={handleImageUpload}
+                            onBlur={saveContent}
+                        />
+                    </div> : ''}
+                {displayIndex == 0 ?
+                    <div>
+                        <div
+                            className="content"
+                            dangerouslySetInnerHTML={{ __html: htmlStr }}
+                        />
+                        <div className="toc">{tocify && tocify.render()}</div>
+                    </div> : ''}
+                {displayIndex == 2 ?
+                    <div>
+                        <div ref={content} suppressContentEditableWarning="true" contentEditable>
+                        </div>
+                    </div> : ''}
             </>
         );
     };
