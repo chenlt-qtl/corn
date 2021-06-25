@@ -15,6 +15,10 @@ import 'highlight.js/styles/monokai-sublime.css';
 import Tocify from './Tocify';
 
 let tocify = new Tocify();
+
+/**
+ * 解析md
+ */
 const renderer = new marked.Renderer();
 renderer.heading = function (text, level, raw) {
     const anchor = tocify.add(text, level);
@@ -32,7 +36,7 @@ marked.setOptions({
     sanitize: false, // 对输出进行过滤（清理），将忽略任何已经输入的html代码（标签）
     tables: true, // 允许支持表格语法（该选项要求 gfm 为true）
     breaks: false, // 允许回车换行（该选项要求 gfm 为true）
-    smartLists: true, // 使用比原生markdown更时髦的列表
+    smartLists: false, // 使用比原生markdown更时髦的列表
     smartypants: false, // 使用更为时髦的标点
 })
 
@@ -57,13 +61,9 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         const text = props.note.showNote.text || "";
-        setHtmlStr(renderHTML(text))
         setValue(text);
+        setHtmlStr(marked(text));
     }, [props.note.showNote])
-
-    useEffect(() => {
-        setHtmlStr(renderHTML(value))
-    }, [props.displayIndex])
 
     const handleEditorChange = ({ html, text }) => {
         setValue(text);
@@ -71,9 +71,7 @@ const MarkDownIt = React.forwardRef((props, ref) => {
     }
 
     const saveContent = () => {
-        console.log('save note', value);
         props.saveContent(value);
-
     }
 
     const handleImageUpload = (file, callback) => {
@@ -105,8 +103,9 @@ const MarkDownIt = React.forwardRef((props, ref) => {
     }
 
     const renderHTML = (text: string) => {
-        tocify = new Tocify();
+        tocify.reset();
         let html = marked(text);
+        setHtmlStr(html);
         return html
     }
 
@@ -117,11 +116,11 @@ const MarkDownIt = React.forwardRef((props, ref) => {
             <>
 
                 {displayIndex == 1 ?
-                    <div style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
+                    <div className={styles.text} style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
                         <MdEditor
                             value={value}
                             style={{ height: "600px" }}
-                            renderHTML={(text) => marked(text)}
+                            renderHTML={renderHTML}
                             onChange={handleEditorChange}
                             // plugins={plugins}
                             onImageUpload={handleImageUpload}
@@ -134,7 +133,16 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                         <div className={styles.toc}>
                             <span>大纲</span>
                             {tocify && tocify.render()}</div>
-                        <div className={styles.text} dangerouslySetInnerHTML={{ __html: htmlStr }} />
+
+                        <div className={styles.text}>
+                            <MdEditor
+                                value={value}
+                                style={{ border: 0 }}
+                                renderHTML={() => htmlStr}
+                                config={{ view: { menu: false, md: false } }}
+                                readOnly={true}
+                            />
+                        </div>
                     </div> : ''}
             </>
         );
