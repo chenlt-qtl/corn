@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import styles from './index.less';
+import styles from './md.less';
 import { connect } from 'umi';
 
 import { uploadImg } from '@/pages/note/service'
@@ -62,7 +61,7 @@ const MarkDownIt = React.forwardRef((props, ref) => {
     useEffect(() => {
         const text = props.note.showNote.text || "";
         setValue(text);
-        setHtmlStr(marked(text));
+        renderHTML(text);
     }, [props.note.showNote])
 
     const handleEditorChange = ({ html, text }) => {
