@@ -102,11 +102,16 @@ export default defineConfig({
           component: './article/articleList',
         },
         {
-          path: '/article/:id',
+          path: '/word',
+          name: 'wordList',
+          component: './word/articleList',
+        },
+        {
+          path: '/word/:id',
           name: 'articleDetail',
           layout: false,
           icon: 'smile',
-          component: './article/ArticleDetail',
+          component: './word/articleDetail',
         },
         {
           path: '/splicMp3',

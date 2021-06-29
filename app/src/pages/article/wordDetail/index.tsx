@@ -17,7 +17,7 @@ export interface WordDetailProps {
 
 
 const WordDetail: React.FC<WordDetailProps> = (props) => {
-    const { wordName } = props.match.params;
+    const { wordName } = props.match?props.match.params:props.wordName;
     const [word, setWord] = useState < WordItem > ({});
     const [moreSentence, setMoreSentence] = useState < SentenceItem[] > ([]);//更多例句
     const player = useRef();
@@ -26,7 +26,7 @@ const WordDetail: React.FC<WordDetailProps> = (props) => {
 
     useEffect(() => {
         props.dispatch({
-            type: 'word/getWordFromDb',
+            type: 'word/getWordByWordName',
             payload: wordName
         }).then((res: WordItem) => {
             if (res) {

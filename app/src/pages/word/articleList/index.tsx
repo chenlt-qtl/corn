@@ -1,14 +1,15 @@
 import { EditOutlined, StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { List, Card, Button, Input, Popconfirm } from 'antd';
+import { List, Button, Input, Popconfirm } from 'antd';
 import { Link } from 'umi';
 import React, { useState, useEffect, useRef } from 'react';
 import { ArticleItem } from '../data';
 import { getArticleList, removeArticle } from '../service';
-import CreateForm from '../components/CreateForm';
+import styles from './styles.less'
+import ArticleEditModal from '../articleEditModal'
 
 const { Search } = Input;
 
-const TableList: React.FC<{}> = () => {
+const ArticleList: React.FC<{}> = () => {
 
     const [listData, setListData] = useState<ArticleItem[]>([]);
     const [total, setTotal] = useState<number>(0);
@@ -40,9 +41,7 @@ const TableList: React.FC<{}> = () => {
     }
 
     const getActions = (item: ArticleItem): React.ReactNode[] => {
-        const actions = [
-            <StarOutlined />,
-            <EditOutlined />,];
+        const actions = [<StarOutlined />];
         if (item.mp3) {
             actions.push(<PlayCircleOutlined />);
         }
@@ -61,7 +60,7 @@ const TableList: React.FC<{}> = () => {
 
     return (
         <>
-            <Card>
+            <div className={styles.content}>
                 <Search placeholder="input search text" style={{ width: 200, marginRight: '20px' }} />
                 <Button shape="circle" type="primary" onClick={handleAdd}>
                     <PlusOutlined />
@@ -85,7 +84,6 @@ const TableList: React.FC<{}> = () => {
                             extra={item.picture ?
                                 <img
                                     width={100}
-                                    alt="logo"
                                     src={item.picture}
                                 /> : ''
                             }
@@ -96,11 +94,11 @@ const TableList: React.FC<{}> = () => {
                         </List.Item>
                     )}
                 />
-            </Card>
-            <CreateForm ref={createForm} onCancel={(reload: boolean) => { reload && getTableData(); handleModalVisible(false) }} modalVisible={createModalVisible}>
-            </CreateForm>
+            </div>
+            <ArticleEditModal ref={createForm} onCancel={(reload: boolean) => { reload && getTableData(); handleModalVisible(false) }} modalVisible={createModalVisible}>
+            </ArticleEditModal>
         </>
     );
 };
 
-export default TableList;
+export default ArticleList;
