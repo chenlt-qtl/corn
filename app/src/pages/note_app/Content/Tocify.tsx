@@ -17,15 +17,17 @@ export default class Tocify {
   anchors: string[];
 
   tocItems: TocItems = [];
+  i: number = 0;
 
   constructor() {
+    this.i = 0;
     this.anchors = [];
     this.tocItems = [];
   }
 
   add(text: string, level: number, id: string = '') {
-    const count = this.anchors.filter(anchor => anchor === text).length;
-    const anchor = id || (count ? `${text}${count}` : text);
+
+    const anchor = (id || text) + (this.i++);
     this.anchors.push(anchor);
     const item = { anchor, level, text };
     const items = this.tocItems;
@@ -61,6 +63,7 @@ export default class Tocify {
   reset = () => {
     this.tocItems = [];
     this.anchors = [];
+    this.i = 0;
   };
 
   renderToc(items: TocItem[]) { // 递归 render
