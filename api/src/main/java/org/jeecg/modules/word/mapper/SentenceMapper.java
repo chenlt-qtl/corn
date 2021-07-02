@@ -14,5 +14,5 @@ import java.util.List;
  */
 public interface SentenceMapper extends BaseMapper<Sentence> {
 
-    List<Sentence> getByWord(@Param("wordId") String wordId);
+    List<Sentence> getByWord(@Param("wordName") String wordName);
 }

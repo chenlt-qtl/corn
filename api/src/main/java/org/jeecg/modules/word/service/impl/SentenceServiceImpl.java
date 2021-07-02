@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @Description: word_sentence
@@ -36,8 +37,8 @@ public class SentenceServiceImpl extends ServiceImpl<SentenceMapper, Sentence> i
     private SentenceMapper sentenceMapper;
 
     @Override
-    public List<Sentence> getSentencesByWord(String wordId) {
-        List<Sentence> sentences = sentenceMapper.getByWord(wordId);
+    public List<Sentence> getSentencesByWord(String wordName) {
+        List<Sentence> sentences = sentenceMapper.getByWord(wordName.toLowerCase(Locale.ROOT));
         for(Sentence sentence:sentences){
             sentence.setMp3(UpLoadUtil.dbToReal(sentence.getMp3()));
             sentence.setPicture(UpLoadUtil.dbToReal(sentence.getPicture()));

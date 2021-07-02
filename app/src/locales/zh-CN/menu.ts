@@ -52,6 +52,7 @@ export default {
   'menu.corn':'主页',
   'menu.articleList':'文章列表',
   'menu.articleDetail':'文章明细',
+  'menu.noteapp':'笔记',
   'menu.note':'笔记',
   'menu.wordDetail':'单词信息',
   'menu.splicMp3':'语音分割',

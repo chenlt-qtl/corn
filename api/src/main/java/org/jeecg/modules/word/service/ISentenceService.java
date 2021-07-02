@@ -1,5 +1,6 @@
 package org.jeecg.modules.word.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.word.entity.Sentence;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.word.model.SentenceVo;
@@ -17,5 +18,5 @@ public interface ISentenceService extends IService<Sentence> {
 
     void saveSentences(String articleId, List<SentenceVo> sentences);
 
-    List<Sentence> getSentencesByWord(String wordId);
+    List<Sentence> getSentencesByWord(@Param("wordName") String wordName);
 }

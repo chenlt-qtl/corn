@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Empty, Spin } from 'antd';
 import styles from './styles.less';
 import { WordItem } from '../data.d';
 import { PlayCircleOutlined } from '@ant-design/icons';
-// import WordPopover from '../wordPopover';
 import { connect, WordState } from 'umi';
 
 
@@ -15,7 +14,6 @@ export interface WordListProps {
 
 const WordList: React.FC<WordListProps> = (props) => {
     const { articleId } = props;
-    const [words, setWords] = useState<WordItem[]>([]);
 
     useEffect(() => {
         getWords();
@@ -28,8 +26,7 @@ const WordList: React.FC<WordListProps> = (props) => {
         }).then((res) => {
             if (res) {
                 if (res.success) {
-                    setWords(res.result.records);
-                    props.setWordsNum(res.result.records.length)
+                    props.setWordsNum(props.word.words.length);
                 }
             }
         })
@@ -43,26 +40,20 @@ const WordList: React.FC<WordListProps> = (props) => {
             </div>
             <Spin spinning={loading}>
                 <div className={styles.wordList}>
-                    {words.length > 0 ?
+                    {props.word.words.length > 0 ?
                         <ul>
-                            {words.map((item: WordItem) => (
+                            {props.word.words.map((item: WordItem) => (
                                 <li key={item.id} className={styles.row}>
                                     <ul>
                                         <li className={styles.wordName}>
-                                            {/* <WordPopover wordName={item.wordName}>
-                                                {item.wordName}
-                                            </WordPopover>
-                                        </li>
-                                        <li className={styles.phAm}>
-                                            <WordPopover wordName={item.wordName}>
-                                                /{item.phAm}/
-                                            </WordPopover>
+                                            {item.wordName}
                                         </li>
                                         <li className={styles.play}><PlayCircleOutlined /></li>
+                                        <li className={styles.phAm}>
+                                            /{item.phAm}/
+                                        </li>
                                         <li className={styles.acceptation}>
-                                            <WordPopover wordName={item.wordName}>
-                                                {item.acceptation}
-                                            </WordPopover> */}
+                                            {item.acceptation}
                                         </li>
                                     </ul>
                                 </li>

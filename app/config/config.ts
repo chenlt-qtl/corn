@@ -87,11 +87,6 @@ export default defineConfig({
       layout:false,
       routes: [
         {
-          path: '/note',
-          name: 'note',
-          component: './note',
-        },
-        {
           path: '/noteapp',
           name: 'noteapp',
           component: './note_app',

@@ -1,4 +1,4 @@
-import { EditOutlined, StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { List, Button, Input, Popconfirm } from 'antd';
 import { Link } from 'umi';
 import React, { useState, useEffect, useRef } from 'react';
@@ -89,7 +89,7 @@ const ArticleList: React.FC<{}> = () => {
                             }
                         >
                             <List.Item.Meta
-                                title={<Link to={`/article/${item.id}`}>{item.title}</Link>}
+                                title={<Link to={`/word/${item.id}`}>{item.title}</Link>}
                             />
                         </List.Item>
                     )}

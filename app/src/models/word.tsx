@@ -4,7 +4,9 @@ import { Effect, Reducer } from 'umi';
 
 
 export interface WordState {
-    wordMap: Map
+    wordMap: Map;
+    words: WordItem[];
+    wordNames:string[];
 }
 
 export interface WordModelType {
@@ -23,7 +25,9 @@ export interface WordModelType {
 const WordModel: WordModelType = {
     namespace: 'word',
     state: {
-        wordMap: new Map()
+        wordMap: new Map(),
+        words:[],
+        wordNames:[]
     },
 
     effects: {
@@ -34,6 +38,10 @@ const WordModel: WordModelType = {
                     // 成功
                     yield put({
                         type: 'refreshWordMap',
+                        payload: result.result.records,
+                    });
+                    yield put({
+                        type: 'refreshWords',
                         payload: result.result.records,
                     });
                 }
@@ -74,6 +82,15 @@ const WordModel: WordModelType = {
             return {
                 ...state,
                 wordMap: newWords,
+            }
+        },
+        refreshWords(state: WordState, { payload }): WordState {
+            const wordNames = [];
+            payload.forEach((item: WordItem) => wordNames.push(item.wordName));
+            return {
+                ...state,
+                words: payload,
+                wordNames
             }
         },
     },

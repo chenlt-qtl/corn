@@ -1,38 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { getSentenceByArticle,removeSentence } from '../service';
-import { List, Popconfirm, Spin, message, Drawer, Pagination } from 'antd';
+import { getSentenceByArticle, removeSentence } from '../service';
+import { List, Popconfirm, Spin, message, Pagination } from 'antd';
 import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
 import { SentenceItem } from '../data.d';
-// import EditModal from './EditModal';
-import {  splipSentences } from '../utils'
-// import WordShortDetail from '../wordShortDetail';
-// import WordDetail from '../../wordDetail';
+import ArticleEditModal from '../articleEditModal';
+import { splipSentences } from '../utils'
+import { connect, WordState } from 'umi';
 
 
 
 export interface SentenceListProps {
     articleId: string
+    onSearchWord: (wordName: string) => void
     play: (mp3: string) => void
     edit: boolean
 }
 
 
 const SentenceList: React.FC<SentenceListProps> = (props) => {
-    const { articleId, play, edit = false } = props;
-    const [sentences, setSentences] = useState < SentenceItem[] > ([]);
-    const [sentence, setSentence] = useState < SentenceItem > ({});
-    const [editModalVisible, setEditModalVisible] = useState < boolean > (false);
-    const [single, setSingle] = useState < boolean > (true);
-    const [loading, setLoading] = useState < boolean > (true);
+    const { articleId, play, onSearchWord, edit = false } = props;
+    const [sentences, setSentences] = useState<SentenceItem[]>([]);
+    const [sentence, setSentence] = useState<SentenceItem>({});
+    const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
+    const [single, setSingle] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    const [wordName, setWordName] = useState < string > ('');
-    const [drawerVisible, setDrawerVisible] = useState < boolean > (false);
-
-    const [total, setTotal] = useState < number > (0);
-    const [pageNo, setPageNo] = useState < number > (0);
-
-    const [wordModalVisible, setWordModalVisible] = useState < boolean > (false);
+    const [total, setTotal] = useState<number>(0);
+    const [pageNo, setPageNo] = useState<number>(0);
 
 
     useEffect(() => {
@@ -94,20 +89,16 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
         const sentences = splipSentences([content]);
         const result = sentences.length > 0 && sentences[0].allWords.map(word => {
             const text = word.text;
+            const isRelated = props.word.wordNames.includes(text.toLowerCase())
             if (word.isWord) {
-                return <span className={styles.words} onClick={() => getWords(text)}>
-                    &nbsp;{text}
+                return <span className={`${styles.words} ${isRelated?styles.related:''}`} onClick={() => onSearchWord(text)}>
+                   {text}
                 </span>
             } else {
                 return text;
             }
         })
         return result;
-    }
-
-    const getWords = (wordName: string) => {
-        setWordName(wordName)
-        setDrawerVisible(true)
     }
 
     return (
@@ -139,24 +130,17 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 onChange={(page = 1) => {
                     setPageNo(page);
                 }} />
-            {edit ? <EditModal articleId={articleId} sentence={sentence} single={single}
+            {edit ? <ArticleEditModal articleId={articleId} sentence={sentence} single={single}
                 onCancel={(reload) => {
                     reload && getSentence();
                     setEditModalVisible(false);
                 }}
-                modalVisible={editModalVisible}></EditModal> : ''}
-            <Drawer
-                title={wordName}
-                placement="right"
-                closable={false}
-                visible={drawerVisible}
-                onClose={() => { setDrawerVisible(false) }}
-            >
-                {/* <WordShortDetail wordName={wordName} /> */}
-            </Drawer>
-            {/* <WordDetail wordName={wordName} isModalVisible={wordModalVisible} hideWordModal={()=>setWordModalVisible(false)}/> */}
+                modalVisible={editModalVisible}></ArticleEditModal> : ''}
         </Spin>
     );
 };
 
-export default SentenceList;
+
+export default connect(({ word, loading }: { word: WordState, loading }) => (
+    { word, loading })
+)(SentenceList);

@@ -178,12 +178,13 @@ public class WordController {
             String wordId = wordVo.getId();
 
             wordVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
-            wordVo.setSentences(sentenceService.getSentencesByWord(wordId));
+            wordVo.setSentences(sentenceService.getSentencesByWord(wordName));
             wordVo.setWordUserRel(wordUserService.getRel(wordId));
 
             result.setResult(wordVo);
             result.setSuccess(true);
         } catch (Exception e) {
+            e.printStackTrace();
             result.error500("未查到单词");
         }
 
