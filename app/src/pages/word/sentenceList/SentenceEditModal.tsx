@@ -1,12 +1,12 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { Form, Input, Modal, Steps, Button, Spin } from 'antd';
 import styles from './styles.less';
-import { SentenceItem, ArticleItem, WordItem } from '../../data';
-import { saveSentence, getWordByArticle } from '../../service';
-import ImgUpload from '../ImgUpload'
-import Mp3Upload from '../Mp3Upload'
-import { brReg, DisplaySentence, splipSentences } from '../../utils'
-
+import { SentenceItem, ArticleItem } from '../data';
+import { saveSentence } from '../service';
+import ImgUpload from '../components/ImgUpload'
+import Mp3Upload from '../components/Mp3Upload'
+import { brReg, DisplaySentence, splipSentences } from '../utils'
+import { connect, WordState } from 'umi';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -26,38 +26,32 @@ const formLayout = {
     wrapperCol: { span: 18 },
 };
 
-const EditModal: React.FC<SentenceProps> = (props) => {
+const SentenceEditModal: React.FC<SentenceProps> = (props) => {
     const { modalVisible, onCancel, sentence = {}, articleId, single } = props;
 
-    const [currentStep, setCurrentStep] = useState < number > (0);
-    const [selectWords, setSelectWords] = useState < string[] > ([]);
-    const [sentences, setSentences] = useState < DisplaySentence[] > ([]);
-    const [picture, setPicture] = useState < string > ('');
-    const [mp3, setMp3] = useState < string > ('');
-    const [loading, setLoading] = useState < boolean > (false);
+    const [currentStep, setCurrentStep] = useState<number>(0);
+    const [selectWords, setSelectWords] = useState<string[]>([]);
+    const [sentences, setSentences] = useState<DisplaySentence[]>([]);
+    const [picture, setPicture] = useState<string>('');
+    const [mp3, setMp3] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
     const [form] = Form.useForm();
 
     useEffect(() => {
         form.setFieldsValue(sentence);
         setCurrentStep(0);
+        setSelectWords([...props.word.wordNames]);
         if (sentence.id) {
             const { picture = '', mp3 = '' } = sentence;
             setPicture(picture);
             setMp3(mp3);
-            setLoading(true);
-            getWordByArticle(articleId).then(res => {
-                if (res && res.result) {
-                    const { records } = res.result;
-                    setSelectWords(records.map((item: WordItem) => item.wordName));
-                }
-                setLoading(false);
-            });
         }
-    }, [sentence])
+    }, [modalVisible])
 
     const handleNext = async () => {
         const formValue = await form.validateFields();
+        const wordNames = props.word.wordNames;
 
         if (currentStep === 0) {
             setCurrentStep(currentStep + 1);
@@ -76,9 +70,14 @@ const EditModal: React.FC<SentenceProps> = (props) => {
                         }
                         return total;
                     }, " "),
-                    words: sentence.allWords.filter(item => selectWords.includes(item.text.toLowerCase())).map(item => ({ wordName: item.text }))
                 }
             })
+            article.addWordNames = selectWords.filter(word => !wordNames.includes(word));
+            article.removeWordNames = wordNames.filter(word => !selectWords.includes(word));
+            console.log('====================================');
+            console.log('wordNames', wordNames);
+            console.log('selectWords', selectWords);
+            console.log('====================================');
             if (single && article.sentences[0]) {
                 mp3 && (article.sentences[0].mp3 = mp3);
                 picture && (article.sentences[0].picture = picture);
@@ -188,10 +187,11 @@ const EditModal: React.FC<SentenceProps> = (props) => {
                             {
                                 sentences.map(item =>
                                 (<p key={++key}>
-                                    {item.allWords.map(({ text, isWord }) =>
-                                        isWord ? <span key={++key} className={selectWords.includes(text.toLowerCase()) ? styles.selected : null}
+                                    {item.allWords.map(({ text, isWord }) => {
+                                        return isWord ? <span key={++key} className={selectWords.includes(text.toLowerCase()) ? styles.selected : null}
                                             onClick={() => { handleClickWord(text) }} >{text}</span> :
                                             <Fragment key={++key}>{text}{brReg.test(text) ? <br key={++key} /> : ''}</Fragment>
+                                    }
 
                                     )}
                                 </p>)
@@ -205,4 +205,6 @@ const EditModal: React.FC<SentenceProps> = (props) => {
     );
 };
 
-export default EditModal;
+export default connect(({ word }: { word: WordState }) => (
+    { word })
+)(SentenceEditModal);

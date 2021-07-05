@@ -8,12 +8,10 @@ import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.IcibaSentence;
-import org.jeecg.modules.word.entity.SentenceWordRel;
 import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.mapper.WordMapper;
 import org.jeecg.modules.word.model.SentenceVo;
 import org.jeecg.modules.word.service.IIcibaSentenceService;
-import org.jeecg.modules.word.service.ISentenceWordRelService;
 import org.jeecg.modules.word.service.IWordService;
 import org.jeecg.modules.word.util.ParseIciba;
 import org.slf4j.Logger;
@@ -43,9 +41,6 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
 
     @Autowired
     private IIcibaSentenceService icibaSentenceService;
-
-    @Autowired
-    private ISentenceWordRelService sentenceWordRelService;
 
     @Value(value = "${jeecg.path.upload}")
     private String uploadpath;
@@ -106,21 +101,12 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
         return list;
     }
 
-    @Override
-    public List<Map> searchWordBySentence(String sentenceId) {
-        QueryWrapper<Map> wrapper = new QueryWrapper();
-        wrapper.eq("sentence_id", sentenceId);
-        List<Map> list = wordMapper.searchWordBySentence(wrapper);
-        handleMapUrl(list);
-        return list;
-    }
 
     private void handleMapUrl(List<Map> list) {
         list.forEach((map) -> {
             Object mp3 = map.get("mp3");
             if (null != mp3) {
                 map.put("mp3", UpLoadUtil.dbToReal(String.valueOf(mp3)));
-                //map.put("key", mp3Str);
             }
         });
     }
@@ -129,17 +115,10 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     public void saveWord(SentenceVo sentenceVo) {
         if (sentenceVo.getWords() != null && !sentenceVo.getWords().isEmpty()) {
             for (Word wordVo : sentenceVo.getWords()) {
-                Word word = null;
                 try {
-                    word = getWord(wordVo.getWordName().toLowerCase());
+                    getWord(wordVo.getWordName().toLowerCase());
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-                if (word != null) {
-                    SentenceWordRel sentenceWordRel = new SentenceWordRel();
-                    sentenceWordRel.setSentenceId(sentenceVo.getId());
-                    sentenceWordRel.setWordId(word.getId());
-                    sentenceWordRelService.save(sentenceWordRel);
                 }
             }
         }

@@ -1,38 +1,35 @@
 package org.jeecg.modules.word.entity;
 
-import java.io.Serializable;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Data;
 import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
 
 /**
- * @Description: acceptation
+ * @Description: word_article_word_rel
  * @author： jeecg-boot
  * @date：   2019-08-22
  * @version： V1.0
  */
 @Data
-@TableName("word_acceptation")
-public class Acceptation implements Serializable {
+@TableName("word_article_word_rel")
+public class ArticleWordRel implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
 	@TableId(type = IdType.UUID)
 	private java.lang.String id;
+	/**sentenceId*/
+	@Excel(name = "articleId", width = 15)
+	private java.lang.String articleId;
 	/**wordId*/
 	@Excel(name = "wordId", width = 15)
 	private java.lang.String wordId;
-	/**pos*/
-	@Excel(name = "pos", width = 15)
-	private java.lang.String pos;
-	/**acceptation*/
-	@Excel(name = "acceptation", width = 15)
-	private java.lang.String acceptation;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.String status;

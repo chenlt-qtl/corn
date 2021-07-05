@@ -9,6 +9,8 @@ export interface ArticleItem {
   createTime?: Date;
   createBy?: string;
   sentences?: SentenceItem[];
+  addWordNames?:String[];
+  removeWordNames?:String[];
 }
 
 export interface SentenceItem {
@@ -23,7 +25,6 @@ export interface SentenceItem {
   updateTime?: Date;
   createTime?: Date;
   createBy?: string;
-  words?:WordItem[]
 }
 
 export interface WordItem {

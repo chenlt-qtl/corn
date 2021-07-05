@@ -1,68 +1,66 @@
 package org.jeecg.modules.word.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.word.entity.SentenceWordRel;
-import org.jeecg.modules.word.service.ISentenceWordRelService;
-
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-
+import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.word.entity.ArticleWordRel;
+import org.jeecg.modules.word.service.IArticleWordRelService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
 
- /**
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+/**
  * @Title: Controller
- * @Description: word_sentence_word_rel
+ * @Description: word_article_word_rel
  * @author： jeecg-boot
  * @date：   2019-08-22
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/word/sentenceWordRel")
+@RequestMapping("/word/articleWordRel")
 @Slf4j
-public class SentenceWordRelController {
+public class ArticleWordRelController {
 	@Autowired
-	private ISentenceWordRelService sentenceWordRelService;
+	private IArticleWordRelService ArticleWordRelService;
 	
 	/**
 	  * 分页列表查询
-	 * @param sentenceWordRel
+	 * @param ArticleWordRel
 	 * @param pageNo
 	 * @param pageSize
 	 * @param req
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<SentenceWordRel>> queryPageList(SentenceWordRel sentenceWordRel,
-									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-									  HttpServletRequest req) {
-		Result<IPage<SentenceWordRel>> result = new Result<IPage<SentenceWordRel>>();
-		QueryWrapper<SentenceWordRel> queryWrapper = QueryGenerator.initQueryWrapper(sentenceWordRel, req.getParameterMap());
-		Page<SentenceWordRel> page = new Page<SentenceWordRel>(pageNo, pageSize);
-		IPage<SentenceWordRel> pageList = sentenceWordRelService.page(page, queryWrapper);
+	public Result<IPage<ArticleWordRel>> queryPageList(ArticleWordRel ArticleWordRel,
+													   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+													   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+													   HttpServletRequest req) {
+		Result<IPage<ArticleWordRel>> result = new Result<IPage<ArticleWordRel>>();
+		QueryWrapper<ArticleWordRel> queryWrapper = QueryGenerator.initQueryWrapper(ArticleWordRel, req.getParameterMap());
+		Page<ArticleWordRel> page = new Page<ArticleWordRel>(pageNo, pageSize);
+		IPage<ArticleWordRel> pageList = ArticleWordRelService.page(page, queryWrapper);
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
@@ -70,14 +68,14 @@ public class SentenceWordRelController {
 	
 	/**
 	  *   添加
-	 * @param sentenceWordRel
+	 * @param ArticleWordRel
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result<SentenceWordRel> add(@RequestBody SentenceWordRel sentenceWordRel) {
-		Result<SentenceWordRel> result = new Result<SentenceWordRel>();
+	public Result<ArticleWordRel> add(@RequestBody ArticleWordRel ArticleWordRel) {
+		Result<ArticleWordRel> result = new Result<ArticleWordRel>();
 		try {
-			sentenceWordRelService.save(sentenceWordRel);
+			ArticleWordRelService.save(ArticleWordRel);
 			result.success("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,17 +87,17 @@ public class SentenceWordRelController {
 	
 	/**
 	  *  编辑
-	 * @param sentenceWordRel
+	 * @param ArticleWordRel
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<SentenceWordRel> edit(@RequestBody SentenceWordRel sentenceWordRel) {
-		Result<SentenceWordRel> result = new Result<SentenceWordRel>();
-		SentenceWordRel sentenceWordRelEntity = sentenceWordRelService.getById(sentenceWordRel.getId());
-		if(sentenceWordRelEntity==null) {
+	public Result<ArticleWordRel> edit(@RequestBody ArticleWordRel ArticleWordRel) {
+		Result<ArticleWordRel> result = new Result<ArticleWordRel>();
+		ArticleWordRel ArticleWordRelEntity = ArticleWordRelService.getById(ArticleWordRel.getId());
+		if(ArticleWordRelEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
-			boolean ok = sentenceWordRelService.updateById(sentenceWordRel);
+			boolean ok = ArticleWordRelService.updateById(ArticleWordRel);
 			//TODO 返回false说明什么？
 			if(ok) {
 				result.success("修改成功!");
@@ -115,13 +113,13 @@ public class SentenceWordRelController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result<SentenceWordRel> delete(@RequestParam(name="id",required=true) String id) {
-		Result<SentenceWordRel> result = new Result<SentenceWordRel>();
-		SentenceWordRel sentenceWordRel = sentenceWordRelService.getById(id);
-		if(sentenceWordRel==null) {
+	public Result<ArticleWordRel> delete(@RequestParam(name="id",required=true) String id) {
+		Result<ArticleWordRel> result = new Result<ArticleWordRel>();
+		ArticleWordRel ArticleWordRel = ArticleWordRelService.getById(id);
+		if(ArticleWordRel==null) {
 			result.error500("未找到对应实体");
 		}else {
-			boolean ok = sentenceWordRelService.removeById(id);
+			boolean ok = ArticleWordRelService.removeById(id);
 			if(ok) {
 				result.success("删除成功!");
 			}
@@ -136,12 +134,12 @@ public class SentenceWordRelController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/deleteBatch")
-	public Result<SentenceWordRel> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<SentenceWordRel> result = new Result<SentenceWordRel>();
+	public Result<ArticleWordRel> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
+		Result<ArticleWordRel> result = new Result<ArticleWordRel>();
 		if(ids==null || "".equals(ids.trim())) {
 			result.error500("参数不识别！");
 		}else {
-			this.sentenceWordRelService.removeByIds(Arrays.asList(ids.split(",")));
+			this.ArticleWordRelService.removeByIds(Arrays.asList(ids.split(",")));
 			result.success("删除成功!");
 		}
 		return result;
@@ -153,13 +151,13 @@ public class SentenceWordRelController {
 	 * @return
 	 */
 	@GetMapping(value = "/queryById")
-	public Result<SentenceWordRel> queryById(@RequestParam(name="id",required=true) String id) {
-		Result<SentenceWordRel> result = new Result<SentenceWordRel>();
-		SentenceWordRel sentenceWordRel = sentenceWordRelService.getById(id);
-		if(sentenceWordRel==null) {
+	public Result<ArticleWordRel> queryById(@RequestParam(name="id",required=true) String id) {
+		Result<ArticleWordRel> result = new Result<ArticleWordRel>();
+		ArticleWordRel ArticleWordRel = ArticleWordRelService.getById(id);
+		if(ArticleWordRel==null) {
 			result.error500("未找到对应实体");
 		}else {
-			result.setResult(sentenceWordRel);
+			result.setResult(ArticleWordRel);
 			result.setSuccess(true);
 		}
 		return result;
@@ -174,13 +172,13 @@ public class SentenceWordRelController {
   @RequestMapping(value = "/exportXls")
   public ModelAndView exportXls(HttpServletRequest request, HttpServletResponse response) {
       // Step.1 组装查询条件
-      QueryWrapper<SentenceWordRel> queryWrapper = null;
+      QueryWrapper<ArticleWordRel> queryWrapper = null;
       try {
           String paramsStr = request.getParameter("paramsStr");
           if (oConvertUtils.isNotEmpty(paramsStr)) {
               String deString = URLDecoder.decode(paramsStr, "UTF-8");
-              SentenceWordRel sentenceWordRel = JSON.parseObject(deString, SentenceWordRel.class);
-              queryWrapper = QueryGenerator.initQueryWrapper(sentenceWordRel, request.getParameterMap());
+              ArticleWordRel ArticleWordRel = JSON.parseObject(deString, ArticleWordRel.class);
+              queryWrapper = QueryGenerator.initQueryWrapper(ArticleWordRel, request.getParameterMap());
           }
       } catch (UnsupportedEncodingException e) {
           e.printStackTrace();
@@ -188,10 +186,10 @@ public class SentenceWordRelController {
 
       //Step.2 AutoPoi 导出Excel
       ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
-      List<SentenceWordRel> pageList = sentenceWordRelService.list(queryWrapper);
+      List<ArticleWordRel> pageList = ArticleWordRelService.list(queryWrapper);
       //导出文件名称
       mv.addObject(NormalExcelConstants.FILE_NAME, "word_sentence_word_rel列表");
-      mv.addObject(NormalExcelConstants.CLASS, SentenceWordRel.class);
+      mv.addObject(NormalExcelConstants.CLASS, ArticleWordRel.class);
       mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("word_sentence_word_rel列表数据", "导出人:Jeecg", "导出信息"));
       mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
       return mv;
@@ -215,11 +213,11 @@ public class SentenceWordRelController {
           params.setHeadRows(1);
           params.setNeedSave(true);
           try {
-              List<SentenceWordRel> listSentenceWordRels = ExcelImportUtil.importExcel(file.getInputStream(), SentenceWordRel.class, params);
-              for (SentenceWordRel sentenceWordRelExcel : listSentenceWordRels) {
-                  sentenceWordRelService.save(sentenceWordRelExcel);
+              List<ArticleWordRel> listArticleWordRels = ExcelImportUtil.importExcel(file.getInputStream(), ArticleWordRel.class, params);
+              for (ArticleWordRel ArticleWordRelExcel : listArticleWordRels) {
+                  ArticleWordRelService.save(ArticleWordRelExcel);
               }
-              return Result.ok("文件导入成功！数据行数：" + listSentenceWordRels.size());
+              return Result.ok("文件导入成功！数据行数：" + listArticleWordRels.size());
           } catch (Exception e) {
               log.error(e.getMessage());
               return Result.error("文件导入失败！");

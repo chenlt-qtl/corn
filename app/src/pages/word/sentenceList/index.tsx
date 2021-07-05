@@ -4,7 +4,7 @@ import { List, Popconfirm, Spin, message, Pagination } from 'antd';
 import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
 import { SentenceItem } from '../data.d';
-import ArticleEditModal from '../articleEditModal';
+import SentenceEditModal from './SentenceEditModal';
 import { splipSentences } from '../utils'
 import { connect, WordState } from 'umi';
 
@@ -42,6 +42,19 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                     setSentences(res.result.records);
                     setTotal(res.result.total)
                     props.setSenteceNum(res.result.total)
+                }
+            }
+        })
+    }
+
+    const getWords = () => {
+        props.dispatch({
+            type: 'word/getWordByArticle',
+            payload: articleId
+        }).then((res) => {
+            if (res) {
+                if (res.success) {
+                    props.setWordsNum(props.word.words.length);
                 }
             }
         })
@@ -87,12 +100,12 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
 
     const transSentence = (content: string) => {
         const sentences = splipSentences([content]);
-        const result = sentences.length > 0 && sentences[0].allWords.map(word => {
+        const result = sentences.length > 0 && sentences[0].allWords.map((word,index) => {
             const text = word.text;
             const isRelated = props.word.wordNames.includes(text.toLowerCase())
             if (word.isWord) {
-                return <span className={`${styles.words} ${isRelated?styles.related:''}`} onClick={() => onSearchWord(text)}>
-                   {text}
+                return <span key={text+index} className={`${styles.words} ${isRelated ? styles.related : ''}`} onClick={() => onSearchWord(text)}>
+                    {text}
                 </span>
             } else {
                 return text;
@@ -130,12 +143,13 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 onChange={(page = 1) => {
                     setPageNo(page);
                 }} />
-            {edit ? <ArticleEditModal articleId={articleId} sentence={sentence} single={single}
+            {edit ? <SentenceEditModal articleId={articleId} sentence={sentence} single={single}
                 onCancel={(reload) => {
                     reload && getSentence();
+                    reload && getWords();
                     setEditModalVisible(false);
                 }}
-                modalVisible={editModalVisible}></ArticleEditModal> : ''}
+                modalVisible={editModalVisible}></SentenceEditModal> : ''}
         </Spin>
     );
 };

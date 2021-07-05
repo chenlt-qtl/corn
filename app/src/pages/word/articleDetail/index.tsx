@@ -7,6 +7,7 @@ import ArticleEditModal from '../articleEditModal';
 import WordList from '../wordList';
 import SentenceList from '../sentenceList';
 import WordDetailModal from '../wordDetailModal';
+import { Link,history } from 'umi';
 
 export interface ArticleDetailProps {
     match: object
@@ -65,13 +66,25 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
         }
     }
 
+    const delArticle = ()=>{
+        props.dispatch({
+            type: 'word/removeArticle',
+            payload: id
+        }).then((res) => {
+            if (res) {
+                history.push('/word');
+            }
+        })
+    }
+
     return (
         <>
             <main className={styles.main}>
                 <header className={styles.header}>
                     <div className={styles.title}><h1>{article.title}</h1></div>
                     <div className={styles.toolbar}>
-                        <ArrowLeftOutlined /><EditOutlined onClick={openEditModel} /><DeleteOutlined />
+                        <Link to="/word"><ArrowLeftOutlined /></Link>
+                        <EditOutlined onClick={openEditModel} /><DeleteOutlined onClick={delArticle} />
                     </div>
                 </header>
 
@@ -99,7 +112,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                         </a> : ''}
                 </div>
 
-                <SentenceList articleId={id} onSearchWord={onSearchWord} setSenteceNum={setSentenceNum} play={play} edit={true}></SentenceList>
+                <SentenceList articleId={id} onSearchWord={onSearchWord} setSenteceNum={setSentenceNum} setWordsNum={setWordsNum} play={play} edit={true}></SentenceList>
                 <WordList articleId={id} onSearchWord={onSearchWord} setWordsNum={setWordsNum}></WordList>
 
             </main>

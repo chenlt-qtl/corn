@@ -9,6 +9,7 @@ import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.word.entity.Article;
 import org.jeecg.modules.word.entity.Sentence;
 import org.jeecg.modules.word.model.ArticalVo;
+import org.jeecg.modules.word.service.IArticleWordRelService;
 import org.jeecg.modules.word.service.ISentenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,9 @@ import java.util.Arrays;
 public class SentenceController {
     @Autowired
     private ISentenceService sentenceService;
+
+    @Autowired
+    private IArticleWordRelService articleWordRelService;
 
 
     /**
@@ -118,7 +122,8 @@ public class SentenceController {
     @PostMapping("/save")
     public Result saveSentence(@RequestBody ArticalVo articleVo) {
         sentenceService.saveSentences(articleVo.getId(), articleVo.getSentences());
-        Result<Article> result = new Result<Article>();
+        articleWordRelService.saveWords(articleVo.getId(),articleVo.getAddWordNames(),articleVo.getRemoveWordNames());//保存文章与单词的关联
+        Result<Article> result = new Result();
         result.setSuccess(true);
         return result;
     }

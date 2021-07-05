@@ -11,19 +11,17 @@ import java.util.Map;
 /**
  * @Description: word
  * @author： jeecg-boot
- * @date：   2019-08-22
+ * @date： 2019-08-22
  * @version： V1.0
  */
 public interface IWordService extends IService<Word> {
 
-    public Word getWord(String wordName) throws Exception;
+    Word getWord(String wordName) throws Exception;
 
-    public IPage<Map> pageSearchWord(String wordName, int pageNo, int pageSize);
+    IPage<Map> pageSearchWord(String wordName, int pageNo, int pageSize);
 
-    public List<Map> searchWordByArticle(String articleId);
+    List<Map> searchWordByArticle(String articleId);
 
-    public List<Map> searchWordBySentence(String sentenceId);
-
-    public void saveWord(SentenceVo sentenceVo) ;
+    void saveWord(SentenceVo sentenceVo);
 
 }

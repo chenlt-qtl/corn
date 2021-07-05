@@ -8,4 +8,6 @@ import java.util.List;
 @Data
 public class ArticalVo extends Article{
     private List<SentenceVo> sentences;
+    private String[] addWordNames;
+    private String[] removeWordNames;
 }

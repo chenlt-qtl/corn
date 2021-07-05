@@ -203,17 +203,5 @@ public class WordController {
         return result;
     }
 
-    @GetMapping(value = "/queryBySentence")
-    public Result<Map> queryBySentence(@RequestParam(name = "id", required = true) String id) {
-        Result<Map> result = new Result<Map>();
-        //获取word
-        List<Map> words = wordService.searchWordBySentence(id);
-        result.setResult(new HashMap() {{
-            put("records", words);
-        }});
-        result.setSuccess(true);
-        return result;
-    }
-
 
 }

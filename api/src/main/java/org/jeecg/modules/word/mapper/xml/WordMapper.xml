@@ -3,24 +3,31 @@
 <mapper namespace="org.jeecg.modules.word.mapper.WordMapper">
 
     <select id="pageSeachWord" resultType="java.util.Map">
-        select * from (select a.id as id,a.word_name as wordName ,a.ph_am as phAm, a.ph_an_mp3 as mp3 ,b.user,
-        group_concat(concat(c.pos,' ', c.acceptation) separator "\n") as acceptation
-        from word a , word_user_rel b,word_acceptation c where a.id=b.word_id and c.word_id=a.id GROUP BY a.id,a.word_name ,b.user ,a.ph_am ,a.ph_an_mp3)
-        data ${ew.customSqlSegment}
+        select *
+        from (select a.id        as id,
+                     a.word_name as wordName,
+                     a.ph_am     as phAm,
+                     a.ph_an_mp3 as mp3,
+                     b.user,
+                     a.acceptation
+              from word a,
+                   word_user_rel b
+                   where a.id = b.word_id
+             ) data ${ew.customSqlSegment}
     </select>
 
     <select id="seachWordByArticle" resultType="java.util.Map">
-       select * from (select a.id as id,d.article_id,a.word_name as wordName ,a.ph_am as phAm, a.ph_an_mp3 as mp3 ,
-        group_concat(concat(c.pos,' ', c.acceptation) separator "\n") as acceptation
-        from word a , word_sentence_word_rel b,word_acceptation c, word_sentence d where a.id=b.word_id and d.id=b.sentence_id and c.word_id=a.id GROUP BY a.id ,a.word_name ,a.ph_am ,a.ph_an_mp3,d.article_id)
-        data ${ew.customSqlSegment}
+        select *
+        from (select a.id        as id,
+                     b.article_id,
+                     a.word_name as wordName,
+                     a.ph_am     as phAm,
+                     a.ph_an_mp3 as mp3,
+                     a.acceptation
+              from word a,
+                   word_article_word_rel b
+              where a.id = b.word_id) data ${ew.customSqlSegment}
     </select>
 
-    <select id="searchWordBySentence" resultType="java.util.Map">
-       select * from (select a.id as id,b.sentence_id,a.word_name as wordName ,a.ph_am as phAm, a.ph_an_mp3 as mp3 ,
-        group_concat(concat(c.pos,' ', c.acceptation) separator "\n") as acceptation
-        from word a , word_sentence_word_rel b,word_acceptation c where a.id=b.word_id and c.word_id=a.id GROUP BY a.id,a.word_name ,a.ph_am ,a.ph_an_mp3,b.sentence_id)
-        data ${ew.customSqlSegment}
-    </select>
 
 </mapper>

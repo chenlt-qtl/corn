@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.word.mapper.ArticleWordRelMapper">
+    <delete id="removeByWordName">
+        delete from word_article_word_rel
+        where article_id = #{articleId}
+        <if test="removeWordNames != null and removeWordNames.length>0">
+            and word_id in (select id from word where word_name in
+            <foreach collection="removeWordNames" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+            )
+        </if>
+    </delete>
+</mapper>
