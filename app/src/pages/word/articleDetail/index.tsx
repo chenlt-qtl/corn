@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getArticle } from '../service';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Popconfirm } from 'antd';
 import styles from './styles.less';
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import ArticleEditModal from '../articleEditModal';
 import WordList from '../wordList';
 import SentenceList from '../sentenceList';
 import WordDetailModal from '../wordDetailModal';
-import { Link,history } from 'umi';
+import { Link, history,connect } from 'umi';
 
 export interface ArticleDetailProps {
     match: object
@@ -66,7 +66,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
         }
     }
 
-    const delArticle = ()=>{
+    const delArticle = () => {
         props.dispatch({
             type: 'word/removeArticle',
             payload: id
@@ -84,7 +84,13 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                     <div className={styles.title}><h1>{article.title}</h1></div>
                     <div className={styles.toolbar}>
                         <Link to="/word"><ArrowLeftOutlined /></Link>
-                        <EditOutlined onClick={openEditModel} /><DeleteOutlined onClick={delArticle} />
+                        <EditOutlined onClick={openEditModel} />
+                        <Popconfirm
+                            title="确认要删除这篇文章?"
+                            onConfirm={delArticle}
+                            okText="是"
+                            cancelText="否"
+                        ><DeleteOutlined /></Popconfirm>
                     </div>
                 </header>
 
@@ -142,4 +148,4 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
     );
 };
 
-export default ArticleDetail;
+export default connect()(ArticleDetail);

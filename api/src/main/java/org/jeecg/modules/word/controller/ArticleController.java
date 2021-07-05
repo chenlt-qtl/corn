@@ -9,13 +9,16 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.Article;
+import org.jeecg.modules.word.entity.ArticleWordRel;
+import org.jeecg.modules.word.entity.Sentence;
 import org.jeecg.modules.word.service.IArticleService;
+import org.jeecg.modules.word.service.IArticleWordRelService;
+import org.jeecg.modules.word.service.ISentenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +35,12 @@ import java.util.Map;
 public class ArticleController {
     @Autowired
     private IArticleService articleService;
+
+    @Autowired
+    private IArticleWordRelService articleWordRelService;
+
+    @Autowired
+    private ISentenceService sentenceService;
 
     @Value(value = "${jeecg.path.upload}")
     private String uploadpath;
@@ -134,30 +143,20 @@ public class ArticleController {
             UpLoadUtil.delImg(uploadpath, article.getMp3());
             UpLoadUtil.delImg(uploadpath, article.getPicture());
 
-            boolean ok = articleService.removeById(id);
-            if (ok) {
-                result.success("删除成功!");
-            }
-        }
+            articleService.removeById(id);
 
-        return result;
-    }
 
-    /**
-     * 批量删除
-     *
-     * @param ids
-     * @return
-     */
-    @DeleteMapping(value = "/deleteBatch")
-    public Result<Article> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
-        Result<Article> result = new Result<Article>();
-        if (ids == null || "".equals(ids.trim())) {
-            result.error500("参数不识别！");
-        } else {
-            this.articleService.removeByIds(Arrays.asList(ids.split(",")));
+            QueryWrapper<ArticleWordRel> wrapper = new QueryWrapper<>();
+            wrapper.eq("article_id",id);
+            articleWordRelService.remove(wrapper);
+
+            QueryWrapper<Sentence> sentenceWrapper = new QueryWrapper<>();
+            sentenceWrapper.eq("article_id",id);
+            sentenceService.remove(sentenceWrapper);
+
             result.success("删除成功!");
         }
+
         return result;
     }
 
