@@ -1,4 +1,4 @@
-import { getWordByArticle, queryByWordName, querySentenceByWord, removeArticle } from '@/pages/article/service'
+import { getWordByArticle, queryByWordName, removeArticle, addWordUserRel, removeWordUserRel,addArticleWordRel,removeArticleWordRel } from '@/pages/word/service'
 import { WordItem } from '@/pages/article/data.d';
 import { Effect, Reducer } from 'umi';
 
@@ -17,6 +17,11 @@ export interface WordModelType {
         getWordByWordName: Effect;
         getSentenceByWord: Effect;
         removeArticle: Effect;
+        addWordUserRel: Effect;
+        removeWordUserRel: Effect;
+        addArticleWordRel: Effect;
+        removeArticleWordRel: Effect;
+
     };
     reducers: {
         refreshWordMap: Reducer<WordState>;
@@ -51,7 +56,8 @@ const WordModel: WordModelType = {
         },
 
         *getWordByWordName({ payload }, { call, put, select }) {
-            let result = yield call(queryByWordName, payload);
+            const { wordName, articleId } = payload;
+            let result = yield call(queryByWordName, wordName, articleId);
             if (result) {
                 if (result.success && result.result) {
                     // 成功
@@ -64,17 +70,6 @@ const WordModel: WordModelType = {
 
             }
         },
-        *getSentenceByWord({ payload }, { call, put, select }) {
-            let result = yield call(querySentenceByWord, payload);
-            if (result) {
-                if (result.success && result.result) {
-                    // 成功
-                    return result.result;
-                }
-
-            }
-
-        },
         *removeArticle({ payload }, { call }) {
             let result = yield call(removeArticle, payload);
             if (result) {
@@ -82,6 +77,38 @@ const WordModel: WordModelType = {
             }
 
         },
+        *addWordUserRel({ payload }, { call, put }) {
+            let result = yield call(addWordUserRel, payload);
+            if (result) {
+                return result;
+            }
+        },
+        *removeWordUserRel({ payload }, { call, put }) {
+            let result = yield call(removeWordUserRel, payload);
+            if (result) {
+                return result;
+            }
+        },
+        *addArticleWordRel({ payload }, { call, put }) {
+            let result = yield call(addArticleWordRel, payload);
+            if (result) {
+                yield put({
+                    type: 'getWordByArticle',
+                    payload: payload.articleId,
+                });
+                return result;
+            }
+        },
+        *removeArticleWordRel({ payload }, { call, put }) {
+            let result = yield call(removeArticleWordRel, payload);
+            if (result) {
+                yield put({
+                    type: 'getWordByArticle',
+                    payload: payload.articleId,
+                });
+                return result;
+            }
+        }
 
     },
     reducers: {

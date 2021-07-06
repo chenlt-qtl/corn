@@ -113,13 +113,13 @@ public class ArticleWordRelController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result<ArticleWordRel> delete(@RequestParam(name="id",required=true) String id) {
+	public Result<ArticleWordRel> delete(@RequestParam(name="wordId",required=true) String wordId,@RequestParam(name="articleId",required=true) String articleId) {
 		Result<ArticleWordRel> result = new Result<ArticleWordRel>();
-		ArticleWordRel ArticleWordRel = ArticleWordRelService.getById(id);
-		if(ArticleWordRel==null) {
+		ArticleWordRel articleWordRel = ArticleWordRelService.getRel(articleId,wordId);
+		if(articleWordRel==null) {
 			result.error500("未找到对应实体");
 		}else {
-			boolean ok = ArticleWordRelService.removeById(id);
+			boolean ok = ArticleWordRelService.removeById(articleWordRel.getId());
 			if(ok) {
 				result.success("删除成功!");
 			}

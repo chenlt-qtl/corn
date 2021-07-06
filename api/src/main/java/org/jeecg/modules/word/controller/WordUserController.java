@@ -1,36 +1,34 @@
 package org.jeecg.modules.word.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.word.entity.WordUser;
 import org.jeecg.modules.word.service.IWordUserService;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
  /**
  * @Title: Controller
@@ -40,7 +38,7 @@ import com.alibaba.fastjson.JSON;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/wordUser/wordUser")
+@RequestMapping("/word/wordUser")
 @Slf4j
 public class WordUserController {
 	@Autowired
@@ -70,14 +68,14 @@ public class WordUserController {
 	
 	/**
 	  *   添加
-	 * @param wordUser
+	 * @param wordId
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result<WordUser> add(@RequestBody WordUser wordUser) {
+	public Result<WordUser> add(@RequestParam(name="wordId",required=true) String wordId) {
 		Result<WordUser> result = new Result<WordUser>();
 		try {
-			wordUserService.save(wordUser);
+			wordUserService.saveRel(wordId);
 			result.success("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,17 +109,17 @@ public class WordUserController {
 	
 	/**
 	  *   通过id删除
-	 * @param id
+	 * @param wordId
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result<WordUser> delete(@RequestParam(name="id",required=true) String id) {
+	public Result<WordUser> delete(@RequestParam(name="wordId",required=true) String wordId) {
 		Result<WordUser> result = new Result<WordUser>();
-		WordUser wordUser = wordUserService.getById(id);
+		WordUser wordUser = wordUserService.getRel(wordId);
 		if(wordUser==null) {
 			result.error500("未找到对应实体");
 		}else {
-			boolean ok = wordUserService.removeById(id);
+			boolean ok = wordUserService.removeById(wordUser.getId());
 			if(ok) {
 				result.success("删除成功!");
 			}

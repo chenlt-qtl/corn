@@ -1,37 +1,41 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Spin, Anchor, Empty, Modal, Button } from 'antd';
+import { Spin, Anchor, Modal, Button } from 'antd';
 import styles from './styles.less';
 import { WordItem, IcibaSentenceItem, SentenceItem } from '../data';
 import { connect } from 'umi';
 import 'font-awesome/css/font-awesome.min.css';
-import { StarFilled, StarOutlined } from '@ant-design/icons';
+import { StarFilled, StarOutlined, ApiOutlined } from '@ant-design/icons';
 
 
 const { Link } = Anchor;
 
 export interface WordDetailProps {
     wordName: string
+    articleId: string
     isModalVisible: boolean
     hideWordModal: () => void
 }
 
 
 const wordDetailModal: React.FC<WordDetailProps> = (props) => {
-    const { wordName } = props.match ? props.match.params : props;
+    const { wordName, articleId } = props.match ? props.match.params : props;
     const [word, setWord] = useState<WordItem>({});
-    const [moreSentence, setMoreSentence] = useState<SentenceItem[]>([]);//更多例句
     const player = useRef();
     const source = useRef();
     const refs = [useRef(), useRef()];
+    const [relWithUser, setRelWithUser] = useState<boolean | undefined>(false);
+    const [relWithArticle, setRelWithArticle] = useState<boolean | undefined>(false);
 
     useEffect(() => {
         if (wordName) {
             props.dispatch({
                 type: 'word/getWordByWordName',
-                payload: wordName
+                payload: { wordName, articleId }
             }).then((res: WordItem) => {
                 if (res) {
                     setWord(res);
+                    setRelWithUser(res.relWithUser);
+                    setRelWithArticle(res.relWithArticle);
                 }
             })
         }
@@ -46,11 +50,46 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
         player.current!.play();
     }
 
-    const saveRel = () => {
-
+    const saveRel = async () => {
+        props.dispatch({
+            type: 'word/addWordUserRel',
+            payload: word.id
+        }).then((res) => {
+            if (res.success) {
+                setRelWithUser(true);
+            }
+        })
     }
 
-    const loading = props.loading.effects["word/getWordByWordName"];
+    const removeRel = async () => {
+        props.dispatch({
+            type: 'word/removeWordUserRel',
+            payload: word.id
+        }).then((res) => {
+            if (res.success) {
+                setRelWithUser(false);
+            }
+        })
+    }
+
+    const updateArticleWordRel = async () => {
+        let type;
+        if (relWithArticle) {
+            type = 'word/removeArticleWordRel'
+        } else {
+            type = 'word/addArticleWordRel'
+        }
+        props.dispatch({
+            type,
+            payload: { wordId: word.id, articleId }
+        }).then((res) => {
+            if (res.success) {
+                setRelWithArticle(!relWithArticle);
+            }
+        })
+    }
+
+    const loading = props.loading.effects["word/getWordByWordName"] || props.loading.effects["word/addWordUserRel"] || props.loading.effects["word/removeWordUserRel"] || false;
     const reg = /^[\s]/;
     return (
         <Modal title="单词详情" width={660} visible={props.isModalVisible}
@@ -64,9 +103,11 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                 <main className={styles.word}>
                     <header className={styles.wordName}>{word.wordName}
                         <div className={styles.star}>
-                            {word.wordUserRel ?
-                                <StarFilled className={styles.favorate} /> :
+                            {relWithUser ?
+                                <StarFilled onClick={removeRel} className={styles.favorate} /> :
                                 <StarOutlined onClick={saveRel} className={styles.notFavorate} />}
+
+                            {articleId ? <ApiOutlined onClick={updateArticleWordRel} className={relWithArticle ? styles.favorate : styles.notFavorate} /> : ''}
                         </div>
                     </header>
                     <section className={styles.phAm}>/{word.phAm}/<i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => { play(word.phAnMp3) }}></i></section>
@@ -78,7 +119,7 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                         </Anchor>
                     </nav>
                     <section className={styles.acceptation}>
-                        {word.acceptation?.split("|").map(text=><p>{text}</p>)}
+                        {word.acceptation?.split("|").map((text, index) => <p key={index}>{text}</p>)}
                     </section>
                     <section className={styles.acceptation}>
                         {word.icibaSentences ?

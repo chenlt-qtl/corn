@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.model.WordVo;
-import org.jeecg.modules.word.service.IIcibaSentenceService;
-import org.jeecg.modules.word.service.ISentenceService;
-import org.jeecg.modules.word.service.IWordService;
-import org.jeecg.modules.word.service.IWordUserService;
+import org.jeecg.modules.word.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +36,9 @@ public class WordController {
 
     @Autowired
     private IWordUserService wordUserService;
+
+    @Autowired
+    private IArticleWordRelService articleWordRelService;
 
 
     /**
@@ -170,7 +170,7 @@ public class WordController {
      * @return
      */
     @GetMapping(value = "/queryByWordName")
-    public Result<WordVo> queryByWordName(@RequestParam(name = "wordName", required = true) String wordName) {
+    public Result<WordVo> queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = true) String articleId) {
         Result<WordVo> result = new Result<WordVo>();
         try {
 
@@ -179,7 +179,8 @@ public class WordController {
 
             wordVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
             wordVo.setSentences(sentenceService.getSentencesByWord(wordName));
-            wordVo.setWordUserRel(wordUserService.getRel(wordId));
+            wordVo.setRelWithUser(wordUserService.getRel(wordId) != null);
+            wordVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
 
             result.setResult(wordVo);
             result.setSuccess(true);

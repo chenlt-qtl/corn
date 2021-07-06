@@ -36,7 +36,8 @@ export interface WordItem {
   acceptation?:string;
   parts?: string;
   phAnMp3?: string;
-  wordUserRel?:WordUserItem;
+  relWithUser?:boolean;
+  relWithArticle?:boolean;
   icibaSentences?:[IcibaSentenceItem]
   sentences?:[SentenceItem]
   status?: number;
@@ -50,6 +51,11 @@ interface WordUserItem {
   wordId:string;
   user:string;
   familiarity:number;
+}
+
+export interface ArticleWordRelItem {
+  wordId:string;
+  articleId:string;
 }
 
 export interface IcibaSentenceItem {

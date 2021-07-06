@@ -11,4 +11,6 @@ import org.jeecg.modules.word.entity.ArticleWordRel;
  */
 public interface IArticleWordRelService extends IService<ArticleWordRel> {
     void saveWords(String articleId,String[] addWordNames,String[] removeWordNames);
+
+    ArticleWordRel getRel(String articleId,String wordId);
 }

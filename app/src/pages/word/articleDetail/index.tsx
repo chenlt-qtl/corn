@@ -142,7 +142,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                 您的浏览器不支持 audio 元素。
             </audio>
 
-            <WordDetailModal wordName={wordName} isModalVisible={wordModalVisible} hideWordModal={() => setWordModalVisible(false)} />
+            <WordDetailModal wordName={wordName} articleId={id} isModalVisible={wordModalVisible} hideWordModal={() => setWordModalVisible(false)} />
 
         </>
     );

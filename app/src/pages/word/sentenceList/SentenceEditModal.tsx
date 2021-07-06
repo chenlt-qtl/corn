@@ -74,10 +74,6 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
             })
             article.addWordNames = selectWords.filter(word => !wordNames.includes(word));
             article.removeWordNames = wordNames.filter(word => !selectWords.includes(word));
-            console.log('====================================');
-            console.log('wordNames', wordNames);
-            console.log('selectWords', selectWords);
-            console.log('====================================');
             if (single && article.sentences[0]) {
                 mp3 && (article.sentences[0].mp3 = mp3);
                 picture && (article.sentences[0].picture = picture);

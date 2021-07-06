@@ -1,5 +1,5 @@
 import { request } from 'umi';
-import { ArticleListParams, ArticleItem } from './data.d';
+import { ArticleListParams, ArticleItem,ArticleWordRelItem } from './data.d';
 import { stringify } from 'qs';
 
 export async function getArticleList(params?: ArticleListParams) {
@@ -8,7 +8,7 @@ export async function getArticleList(params?: ArticleListParams) {
   });
 }
 
-export async function getSentenceByArticle(params:object) {
+export async function getSentenceByArticle(params: object) {
   return request('/api/word/sentence/listByArticle?' + stringify(params));
 }
 
@@ -61,8 +61,23 @@ export async function getWordByArticle(params: string) {
   return request('/api/word/word/queryByArticle?id=' + params);
 }
 
-export async function queryByWordName(params: string) {
-  return request('/api/word/word/queryByWordName?wordName=' + params);
+export async function queryByWordName(wordName: string, articleId: string) {
+  return request('/api/word/word/queryByWordName?wordName=' + wordName + "&articleId=" + articleId);
 }
 
+export async function addWordUserRel(params: string) {
+  return request('/api/word/wordUser/add?wordId=' + params, { method: 'POST' });
+}
+
+export async function removeWordUserRel(params: string) {
+  return request('/api/word/wordUser/delete?wordId=' + params, { method: 'DELETE' });
+}
+
+export async function addArticleWordRel(params:ArticleWordRelItem) {
+  return request('/api/word/articleWordRel/add', { method: 'POST',data:params });
+}
+
+export async function removeArticleWordRel(params:ArticleWordRelItem) {
+  return request('/api/word/articleWordRel/delete?wordId=' + params.wordId + '&articleId=' + params.articleId, { method: 'DELETE' });
+}
 

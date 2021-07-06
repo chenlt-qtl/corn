@@ -6,7 +6,6 @@ import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.word.entity.IcibaSentence;
 import org.jeecg.modules.word.entity.Sentence;
 import org.jeecg.modules.word.entity.Word;
-import org.jeecg.modules.word.entity.WordUser;
 
 import java.util.List;
 
@@ -14,14 +13,16 @@ import java.util.List;
 public class WordVo extends Word {
 
     public WordVo(Word word) throws Exception {
-        PropertyUtils.copyProperties(this,word);
+        PropertyUtils.copyProperties(this, word);
         this.setPhAnMp3(UpLoadUtil.dbToReal(word.getPhAnMp3()));
-
     }
+
+    boolean relWithUser = false;
+
+    boolean relWithArticle = false;
 
     List<Sentence> sentences;
 
     List<IcibaSentence> icibaSentences;
 
-    WordUser wordUserRel;
 }
