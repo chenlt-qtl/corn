@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './md.less';
 import { connect } from 'umi';
-
+import { CloseOutlined,BarsOutlined } from '@ant-design/icons';
 import { uploadImg } from '@/pages/note/service'
 
 import MdEditor, { Plugins } from 'react-markdown-editor-lite'
@@ -56,12 +56,14 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 
 const MarkDownIt = React.forwardRef((props, ref) => {
     const [value, setValue] = useState<string>("");
+    const [showToc, setShowToc] = useState<boolean>(true);
     const [htmlStr, setHtmlStr] = useState<string>("");
 
     useEffect(() => {
         const text = props.note.showNote.text || "";
         setValue(text);
         renderHTML(text);
+        setShowToc(true);
     }, [props.note.showNote])
 
     const handleEditorChange = ({ html, text }) => {
@@ -129,9 +131,10 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
                 {displayIndex == 0 ?
                     <div className={styles.view}>
-                        <div className={styles.toc}>
-                            <span>大纲</span>
-                            {tocify && tocify.render()}</div>
+                        {showToc?<div className={styles.toc}>
+                            <div className={styles.title}><span>大纲</span><CloseOutlined onClick={()=>{setShowToc(false)}} /></div>
+                            {tocify && tocify.render()}
+                        </div>:<BarsOutlined onClick={()=>{setShowToc(true)}}/>}
 
                         <div className={styles.text}>
                             <MdEditor
