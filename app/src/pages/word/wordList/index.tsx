@@ -53,7 +53,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                                             /{item.phAm}/
                                         </li>
                                         <li className={styles.acceptation}>
-                                            {item.acceptation}
+                                            {item.acceptation?.split("|").join(" ")}
                                         </li>
                                     </ul>
                                 </li>

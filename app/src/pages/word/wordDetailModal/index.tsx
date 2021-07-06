@@ -77,7 +77,9 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                             <Link href="#zdylj" title="自定义例句" />
                         </Anchor>
                     </nav>
-                    <section className={styles.acceptation}>{word.acceptation}</section>
+                    <section className={styles.acceptation}>
+                        {word.acceptation?.split("|").map(text=><p>{text}</p>)}
+                    </section>
                     <section className={styles.acceptation}>
                         {word.icibaSentences ?
                             <>
@@ -106,7 +108,7 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                                 ))}
                             </> : ''}
                     </section>
-                    
+
                 </main>
             </Spin>
             <audio ref={player}>
