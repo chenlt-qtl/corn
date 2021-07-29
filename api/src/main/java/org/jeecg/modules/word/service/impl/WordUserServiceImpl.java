@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @Description: test
  * @author： jeecg-boot
- * @date：   2019-11-05
+ * @date： 2019-11-05
  * @version： V1.0
  */
 @Service
@@ -29,7 +29,7 @@ public class WordUserServiceImpl extends ServiceImpl<WordUserMapper, WordUser> i
     @Override
     public void saveRel(String wordId) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        if(getRel(wordId)==null){
+        if (getRel(wordId) == null) {
             WordUser wordUser = new WordUser();
             wordUser.setUser(sysUser.getUsername());
             wordUser.setFamiliarity(DEFAULT_SCORE);
@@ -42,13 +42,24 @@ public class WordUserServiceImpl extends ServiceImpl<WordUserMapper, WordUser> i
     public WordUser getRel(String wordId) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<WordUser> wrapper = new QueryWrapper();
-        wrapper.eq("user",sysUser.getUsername());
-        wrapper.eq("word_id",wordId);
+        wrapper.eq("user", sysUser.getUsername());
+        wrapper.eq("word_id", wordId);
         List<WordUser> list = wordUserMapper.selectList(wrapper);
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             return list.get(0);
-        }else {
+        } else {
             return null;
+        }
+    }
+
+    @Override
+    public void removeByWordIds(List<String> wordIds) {
+        if (wordIds != null && !wordIds.isEmpty()) {
+            SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+            QueryWrapper<WordUser> wrapper = new QueryWrapper();
+            wrapper.eq("user", sysUser.getUsername());
+            wrapper.in("word_id", wordIds);
+            wordUserMapper.delete(wrapper);
         }
     }
 }

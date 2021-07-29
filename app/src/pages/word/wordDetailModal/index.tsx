@@ -53,7 +53,7 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
     const saveRel = async () => {
         props.dispatch({
             type: 'word/addWordUserRel',
-            payload: word.id
+            payload: { wordId: word.id, articleId }
         }).then((res) => {
             if (res.success) {
                 setRelWithUser(true);
@@ -64,7 +64,7 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
     const removeRel = async () => {
         props.dispatch({
             type: 'word/removeWordUserRel',
-            payload: word.id
+            payload: { wordId: word.id, articleId }
         }).then((res) => {
             if (res.success) {
                 setRelWithUser(false);
@@ -84,6 +84,9 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
             payload: { wordId: word.id, articleId }
         }).then((res) => {
             if (res.success) {
+                if (!relWithArticle) {
+                    setRelWithUser(true);
+                }
                 setRelWithArticle(!relWithArticle);
             }
         })
@@ -107,7 +110,7 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                                 <StarFilled onClick={removeRel} className={styles.favorate} /> :
                                 <StarOutlined onClick={saveRel} className={styles.notFavorate} />}
 
-                            {articleId ? <ApiOutlined onClick={updateArticleWordRel} className={relWithArticle ? styles.favorate : styles.notFavorate} /> : ''}
+                            {articleId ? <ApiOutlined onClick={updateArticleWordRel} className={(relWithArticle && relWithUser) ? styles.favorate : styles.notFavorate} /> : ''}
                         </div>
                     </header>
                     <section className={styles.phAm}>/{word.phAm}/<i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => { play(word.phAnMp3) }}></i></section>

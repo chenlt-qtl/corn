@@ -1,16 +1,16 @@
 package org.jeecg.modules.word.entity;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Data;
 import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * @Description: iciba_sentence
@@ -65,6 +65,7 @@ public class IcibaSentence implements Serializable {
 
 	public String getTrans()  {
 		try {
+			trans = trans.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
 			return URLDecoder.decode(trans, "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			return "";

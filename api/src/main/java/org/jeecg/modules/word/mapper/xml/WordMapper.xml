@@ -12,7 +12,7 @@
                      a.acceptation
               from word a,
                    word_user_rel b
-                   where a.id = b.word_id
+              where a.id = b.word_id
              ) data ${ew.customSqlSegment}
     </select>
 
@@ -24,9 +24,13 @@
                      a.ph_am     as phAm,
                      a.ph_an_mp3 as mp3,
                      a.acceptation
-              from word a,
-                   word_article_word_rel b
-              where a.id = b.word_id) data ${ew.customSqlSegment}
+              from word a
+                       join
+                   word_article_word_rel b on a.id = b.word_id
+                       and exists(select 1
+                                  from word_user_rel c
+                                  where c.word_id = b.word_id)
+             ) data ${ew.customSqlSegment}
     </select>
 
 

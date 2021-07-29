@@ -1,10 +1,7 @@
 package org.jeecg.modules.word.mapper;
 
-import org.apache.ibatis.annotations.Param;
-import org.jeecg.modules.word.entity.WordUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
-import java.util.List;
+import org.jeecg.modules.word.entity.WordUser;
 
 /**
  * @Description: test

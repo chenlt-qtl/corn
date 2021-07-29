@@ -122,7 +122,7 @@ public class SentenceController {
     @PostMapping("/save")
     public Result saveSentence(@RequestBody ArticalVo articleVo) {
         sentenceService.saveSentences(articleVo.getId(), articleVo.getSentences());
-        articleWordRelService.saveWords(articleVo.getId(),articleVo.getAddWordNames(),articleVo.getRemoveWordNames());//保存文章与单词的关联
+        articleWordRelService.saveRels(articleVo.getId(),articleVo.getAddWordNames(),articleVo.getRemoveWordNames());//保存文章与单词的关联
         Result<Article> result = new Result();
         result.setSuccess(true);
         return result;

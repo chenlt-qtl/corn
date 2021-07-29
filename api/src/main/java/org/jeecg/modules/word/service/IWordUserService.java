@@ -1,7 +1,9 @@
 package org.jeecg.modules.word.service;
 
-import org.jeecg.modules.word.entity.WordUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.word.entity.WordUser;
+
+import java.util.List;
 
 /**
  * @Description: test
@@ -15,4 +17,5 @@ public interface IWordUserService extends IService<WordUser> {
 
     WordUser getRel(String wordId);
 
+    void removeByWordIds(List<String> wordIds);
 }

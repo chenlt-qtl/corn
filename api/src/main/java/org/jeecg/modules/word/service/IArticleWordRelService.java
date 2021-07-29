@@ -3,6 +3,8 @@ package org.jeecg.modules.word.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.word.entity.ArticleWordRel;
 
+import java.util.List;
+
 /**
  * @Description: word_article_word_rel
  * @author： jeecg-boot
@@ -10,7 +12,18 @@ import org.jeecg.modules.word.entity.ArticleWordRel;
  * @version： V1.0
  */
 public interface IArticleWordRelService extends IService<ArticleWordRel> {
-    void saveWords(String articleId,String[] addWordNames,String[] removeWordNames);
 
-    ArticleWordRel getRel(String articleId,String wordId);
+    void saveRels(String articleId,String[] addWordNames,String[] removeWordNames);
+
+    void saveRels(String articleId,String wordId);
+
+    ArticleWordRel getRel(String articleId, String wordId);
+
+    void removeByWordNames(String articleId, String[] wordNames);
+
+    List<String> getRemoveWordIds(String articleId, List<String> wordIds);
+
+    void removeRelByArticle(String articleId,String[] wordNames);
+
+    void removeAricleRel(ArticleWordRel articleWordRel);
 }

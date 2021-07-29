@@ -78,15 +78,27 @@ const WordModel: WordModelType = {
 
         },
         *addWordUserRel({ payload }, { call, put }) {
-            let result = yield call(addWordUserRel, payload);
+            let result = yield call(addWordUserRel, payload.wordId);
             if (result) {
-                return result;
+                if (result) {
+                    yield put({
+                        type: 'getWordByArticle',
+                        payload: payload.articleId,
+                    });
+                    return result;
+                }
             }
         },
         *removeWordUserRel({ payload }, { call, put }) {
-            let result = yield call(removeWordUserRel, payload);
+            let result = yield call(removeWordUserRel, payload.wordId);
             if (result) {
-                return result;
+                if (result) {
+                    yield put({
+                        type: 'getWordByArticle',
+                        payload: payload.articleId,
+                    });
+                    return result;
+                }
             }
         },
         *addArticleWordRel({ payload }, { call, put }) {

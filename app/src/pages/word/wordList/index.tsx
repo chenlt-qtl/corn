@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useRef } from 'react';
 import { Empty, Spin } from 'antd';
 import styles from './styles.less';
 import { WordItem } from '../data.d';
@@ -14,6 +14,9 @@ export interface WordListProps {
 
 const WordList: React.FC<WordListProps> = (props) => {
     const { articleId } = props;
+
+    const player = useRef();
+    const source = useRef();
 
     useEffect(() => {
         getWords();
@@ -33,6 +36,15 @@ const WordList: React.FC<WordListProps> = (props) => {
     }
     const loading = props.loading.effects["word/getWordByArticle"];
 
+    const play = (src: string | undefined) => {
+        console.log(src);
+        if (src) {
+            source.current.src = src;
+        }
+        player.current!.load();
+        player.current!.play();
+    }
+
     return (
         <>
             <div className={styles.module}>
@@ -48,7 +60,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                                         <li className={styles.wordName}>
                                             {item.wordName}
                                         </li>
-                                        <li className={styles.play}><PlayCircleOutlined /></li>
+                                        <li className={styles.play}><PlayCircleOutlined onClick={() => { play(item.mp3) }}/></li>
                                         <li className={styles.phAm}>
                                             /{item.phAm}/
                                         </li>
@@ -62,6 +74,10 @@ const WordList: React.FC<WordListProps> = (props) => {
                         </ul> : <Empty></Empty>}
                 </div>
             </Spin>
+            <audio ref={player}>
+                <source ref={source} src="" type="audio/mpeg" />
+                您的浏览器不支持 audio 元素。
+            </audio>
         </>
     );
 };
