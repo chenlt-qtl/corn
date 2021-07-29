@@ -54,22 +54,24 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                //与文章关联
-                ArticleWordRel articleWordRel = getRel(articleId, word.getId());
-                if (articleWordRel == null) {
-                    articleWordRel = new ArticleWordRel();
-                    articleWordRel.setArticleId(articleId);
-                    articleWordRel.setWordId(word.getId());
-                    awlist.add(articleWordRel);
-                }
-                //与用户关联
-                WordUser wordUser = wordUserService.getRel(word.getId());
-                if (wordUser == null) {
-                    wordUser = new WordUser();
-                    wordUser.setAddFrom(1);
-                    wordUser.setUser(sysUser.getUsername());
-                    wordUser.setWordId(word.getId());
-                    wulist.add(wordUser);
+                if(word != null) {
+                    //与文章关联
+                    ArticleWordRel articleWordRel = getRel(articleId, word.getId());
+                    if (articleWordRel == null) {
+                        articleWordRel = new ArticleWordRel();
+                        articleWordRel.setArticleId(articleId);
+                        articleWordRel.setWordId(word.getId());
+                        awlist.add(articleWordRel);
+                    }
+                    //与用户关联
+                    WordUser wordUser = wordUserService.getRel(word.getId());
+                    if (wordUser == null) {
+                        wordUser = new WordUser();
+                        wordUser.setAddFrom(1);
+                        wordUser.setUser(sysUser.getUsername());
+                        wordUser.setWordId(word.getId());
+                        wulist.add(wordUser);
+                    }
                 }
             }
             saveBatch(awlist);//批量新增与文章关联

@@ -173,7 +173,6 @@ public class WordController {
     public Result<WordVo> queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = true) String articleId) {
         Result<WordVo> result = new Result<WordVo>();
         try {
-
             WordVo wordVo = new WordVo(wordService.getWord(wordName));
             String wordId = wordVo.getId();
 
@@ -186,7 +185,8 @@ public class WordController {
             result.setSuccess(true);
         } catch (Exception e) {
             e.printStackTrace();
-            result.error500("未查到单词");
+            result.setSuccess(true);
+            result.setMessage("未查到单词");
         }
 
         return result;

@@ -40,12 +40,12 @@ const TopMenu: React.FC<{}> = (props) => {
     }
 
     const handleAdd = () => {
-        if (menuItem.length >= 10) {
-            message.error('最多只能有10个笔记本')
-        } else {
+        // if (menuItem.length >= 10) {
+        //     message.error('最多只能有10个笔记本')
+        // } else {
             setEditTopVisible(true);
             setTopNote({ name: '', id: guid() });
-        }
+        // }
     }
 
     const handleMenuSelect = (id: string, name: string) => {

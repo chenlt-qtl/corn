@@ -19,7 +19,7 @@ export interface WordDetailProps {
 
 const wordDetailModal: React.FC<WordDetailProps> = (props) => {
     const { wordName, articleId } = props.match ? props.match.params : props;
-    const [word, setWord] = useState<WordItem>({});
+    const [word, setWord] = useState<WordItem|null>({});
     const player = useRef();
     const source = useRef();
     const refs = [useRef(), useRef()];
@@ -36,6 +36,8 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                     setWord(res);
                     setRelWithUser(res.relWithUser);
                     setRelWithArticle(res.relWithArticle);
+                } else {
+                    setWord(null);
                 }
             })
         }
@@ -103,7 +105,7 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                 </Button>
             }>
             <Spin spinning={loading}>
-                <main className={styles.word}>
+                {word ? <main className={styles.word}>
                     <header className={styles.wordName}>{word.wordName}
                         <div className={styles.star}>
                             {relWithUser ?
@@ -153,10 +155,10 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                             </> : ''}
                     </section>
 
-                </main>
+                </main> : '未找到单词'}
             </Spin>
             <audio ref={player}>
-                <source ref={source} src={word.phAnMp3} type="audio/mpeg" />
+                <source ref={source} src="" type="audio/mpeg" />
                 您的浏览器不支持 audio 元素。
             </audio>
         </Modal>
