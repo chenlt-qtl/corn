@@ -57,6 +57,7 @@ public class IcibaSentence implements Serializable {
 
 	public String getOrig() {
 		try {
+			orig = orig.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
 			return URLDecoder.decode(orig, "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			return "";
