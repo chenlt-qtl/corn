@@ -26,8 +26,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
     const [single, setSingle] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(true);
 
-    const [total, setTotal] = useState<number>(0);
-    const [pageNo, setPageNo] = useState<number>(0);
+    const [pageNo, setPageNo] = useState<number>(1);
 
 
     useEffect(() => {
@@ -40,7 +39,6 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 setLoading(false)
                 if (res.success && res.result) {
                     setSentences(res.result.records);
-                    setTotal(res.result.total)
                     props.setSenteceNum(res.result.total)
                 }
             }
@@ -100,11 +98,11 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
 
     const transSentence = (content: string) => {
         const sentences = splipSentences([content]);
-        const result = sentences.length > 0 && sentences[0].allWords.map((word,index) => {
+        const result = sentences.length > 0 && sentences[0].allWords.map((word, index) => {
             const text = word.text;
             const isRelated = props.word.wordNames.includes(text.toLowerCase())
             if (word.isWord) {
-                return <span key={text+index} className={`${styles.words} ${isRelated ? styles.related : ''}`} onClick={() => onSearchWord(text)}>
+                return <span key={text + index} className={`${styles.words} ${isRelated ? styles.related : ''}`} onClick={() => onSearchWord(text)}>
                     {text}
                 </span>
             } else {
@@ -127,7 +125,13 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 className={styles.sentenceList}
                 itemLayout="vertical"
                 size="large"
-                pagination={false}
+                pagination={{
+                    className:styles.page,
+                    size:"small",
+                    onChange:(page = 1) => {
+                        setPageNo(page);
+                    }
+                }}
                 dataSource={sentences}
                 renderItem={(item: SentenceItem) => (
                     <List.Item className={styles.item}
@@ -139,10 +143,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                     </List.Item>
                 )}
             />
-            <Pagination className={styles.page} size="small" total={total} showSizeChanger={false}
-                onChange={(page = 1) => {
-                    setPageNo(page);
-                }} />
+
             {edit ? <SentenceEditModal articleId={articleId} sentence={sentence} single={single}
                 onCancel={(reload) => {
                     reload && getSentence();
