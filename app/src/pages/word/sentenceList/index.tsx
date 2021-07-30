@@ -27,6 +27,8 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
     const [loading, setLoading] = useState<boolean>(true);
 
     const [pageNo, setPageNo] = useState<number>(1);
+    const [total, setTotal] = useState<number>(0);
+
 
 
     useEffect(() => {
@@ -39,6 +41,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 setLoading(false)
                 if (res.success && res.result) {
                     setSentences(res.result.records);
+                    setTotal(res.result.total)
                     props.setSenteceNum(res.result.total)
                 }
             }
@@ -126,6 +129,8 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 itemLayout="vertical"
                 size="large"
                 pagination={{
+                    showSizeChanger:false,
+                    total,
                     className:styles.page,
                     size:"small",
                     onChange:(page = 1) => {
