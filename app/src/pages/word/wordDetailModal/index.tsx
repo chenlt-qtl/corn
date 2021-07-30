@@ -19,7 +19,7 @@ export interface WordDetailProps {
 
 const wordDetailModal: React.FC<WordDetailProps> = (props) => {
     const { wordName, articleId } = props.match ? props.match.params : props;
-    const [word, setWord] = useState<WordItem|null>({});
+    const [word, setWord] = useState<WordItem | null>({});
     const player = useRef();
     const source = useRef();
     const refs = [useRef(), useRef()];
@@ -94,7 +94,9 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
         })
     }
 
-    const loading = props.loading.effects["word/getWordByWordName"] || props.loading.effects["word/addWordUserRel"] || props.loading.effects["word/removeWordUserRel"] || false;
+    const loading = props.loading.effects["word/addArticleWordRel"] || props.loading.effects["word/removeArticleWordRel"] ||
+        props.loading.effects["word/getWordByWordName"] || props.loading.effects["word/addWordUserRel"] ||
+        props.loading.effects["word/removeWordUserRel"] || false;
     const reg = /^[\s]/;
     return (
         <Modal title="单词详情" width={660} visible={props.isModalVisible}
