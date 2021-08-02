@@ -1,5 +1,5 @@
 import { Reducer } from 'umi';
-import { queryNote } from '@/pages/note/service'
+import { queryNote } from '@/pages/note_app/service'
 
 
 export interface NoteState {

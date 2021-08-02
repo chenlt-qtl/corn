@@ -1,5 +1,5 @@
-import { queryOpenHistory, addOpenHistory } from '@/pages/note/service'
-import { NoteItem } from '@/pages/note/data.d';
+import { queryOpenHistory, addOpenHistory } from '@/pages/note_app/service'
+import { NoteItem } from '@/pages/note_app/data.d';
 import { Effect, Reducer } from 'umi';
 
 

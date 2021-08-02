@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 
 import { Modal, Form, Input, message } from 'antd';
-import { updateNoteTitle } from '@/pages/note/service'
-import { NoteItem } from '@/pages/note/data.d';
+import { updateNoteTitle } from '@/pages/note_app/service'
+import { NoteItem } from '@/pages/note_app/data.d';
 
 
 
