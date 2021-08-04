@@ -1,6 +1,6 @@
-import { queryFavorite, editFavorite } from '@/pages/note_app/service'
+import { queryFavorite, editFavorite } from '@/pages/note/service'
 import { Effect, Reducer } from 'umi';
-import { NoteItem } from '@/pages/note_app/data.d';
+import { NoteItem } from '@/pages/note/data.d';
 
 
 export interface NoteFavoriteState {

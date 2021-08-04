@@ -4,12 +4,12 @@
 
     <select id="listSon" resultType="org.jeecg.modules.note.entity.Note">
         SELECT n.*
-		   FROM  note_info n
-		   WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
-            <if test="parentId != null">
-               and n.parent_id = #{parentId,jdbcType=VARCHAR}
-            </if>
-		   order by n.name
+        FROM note_info n
+        WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
+        <if test="parentId != null">
+            and n.parent_id = #{parentId,jdbcType=VARCHAR}
+        </if>
+        order by n.name
     </select>
 
     <select id="listAllChildren" resultType="org.jeecg.modules.note.entity.Note">
@@ -18,7 +18,7 @@
             <![CDATA[ ,n.tag,n.source,n.create_time,n.create_by,
         n.update_time,n.update_by,n.status ]]>
         </if>
-        FROM  note_info n
+        FROM note_info n
         WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
         <if test="parentId != null">
             <![CDATA[ and n.parent_ids like CONCAT('%','${parentId}','%' ) ]]>
@@ -28,7 +28,7 @@
 
     <select id="getNameByIds" resultType="org.jeecg.modules.note.entity.Note">
         SELECT n.id,n.name
-        FROM  note_info n
+        FROM note_info n
         where id in
         <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
             <![CDATA[ #{id} ]]>
@@ -36,11 +36,33 @@
     </select>
     <select id="getByIds" resultType="org.jeecg.modules.note.model.NoteModel">
         SELECT *
-        FROM  note_info n
+        FROM note_info n
         where id in
         <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
             <![CDATA[ #{id} ]]>
         </foreach>
+    </select>
+
+    <select id="getNoteCount" resultType="int">
+        SELECT count(*)
+        FROM (
+        select a.id,a.name,b.text from note_info a join note_content b on a.content_id=b.id where
+        a.create_by=#{createBy}
+        <if test="searchStr != null">
+            and (a.name like concat("%",#{searchStr},"%") or b.text like concat("%",#{searchStr},"%"))
+        </if>
+        ) a
+    </select>
+
+
+    <select id="pageSearchNote" resultType="Map">
+        select a.id,a.name,a.parent_ids as parentIds,b.text from note_info a join note_content b on a.content_id=b.id
+        where
+        a.create_by=#{createBy}
+        <if test="searchStr != null">
+            and (a.name like concat("%",#{searchStr},"%") or b.text like concat("%",#{searchStr},"%"))
+        </if>
+        limit #{offset},#{pageSize}
     </select>
 
 </mapper>

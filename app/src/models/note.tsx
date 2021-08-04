@@ -1,5 +1,5 @@
-import { updateNoteTitle, queryTreeList, queryNoteById, updateNoteText, queryNote, deleteNote } from '@/pages/note_app/service'
-import { NoteItem, NoteNode } from '@/pages/note_app/data.d';
+import { updateNoteTitle, queryTreeList, queryNoteById, updateNoteText, queryNote, deleteNote } from '@/pages/note/service'
+import { NoteItem, NoteNode } from '@/pages/note/data.d';
 import { Effect, Reducer } from 'umi';
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useImperativeHandle } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Divider, Dropdown, Menu, Modal, notification } from 'antd';
 import { ExclamationCircleOutlined, LeftOutlined, RightOutlined, StarFilled, HistoryOutlined, DownOutlined, PlusOutlined } from '@ant-design/icons';
 import styles from './style.less';
@@ -16,11 +16,9 @@ const iconStyle = { 'fontSize': '10px' }
 
 const LeftMenu: React.FC = (props, ref) => {
 
-    const [menuHidden, setMenuHidden] = useState < boolean > (false);
+    const [menuHidden, setMenuHidden] = useState<boolean>(false);
 
-    const [activeMenu3Id, setActiveMenu3Id] = useState < string > ('');
-
-    const [closeMenus, setCloseMenus] = useState < string[] > ([]);
+    const [closeMenus, setCloseMenus] = useState<string[]>([]);
 
 
     useEffect(() => {
@@ -61,17 +59,18 @@ const LeftMenu: React.FC = (props, ref) => {
         if (level == 1) {
             props.dispatch({
                 type: 'noteMenu/refreshActiveMenu1Id',
-                payload: {id,title},
-            }),
-            setActiveMenu3Id('');
+                payload: id
+            })
         } else if (level == 2) {
             props.dispatch({
                 type: 'noteMenu/refreshActiveMenu2Id',
-                payload: {id,title},
+                payload: id
             })
-            setActiveMenu3Id('');
         } else {
-            setActiveMenu3Id(id);
+            props.dispatch({
+                type: 'noteMenu/refreshActiveMenu3Id',
+                payload: id,
+            })
         }
     }
 
@@ -211,7 +210,7 @@ const LeftMenu: React.FC = (props, ref) => {
                         {menu3Item.length > 0 ?
                             <div className={styles.menuContent}>
                                 <div className={styles.title}>{props.noteMenu.title3}</div>
-                                {getMenu(menu3Item, activeMenu3Id)}
+                                {getMenu(menu3Item, props.noteMenu.activeMenu3Id)}
                                 <div className={styles.button}>
                                     <Button block onClick={() => handleAddNote(props.noteMenu.activeMenu2Id)}>增加</Button>
                                 </div>

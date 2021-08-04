@@ -1,5 +1,7 @@
 package org.jeecg.modules.note.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -26,6 +28,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 笔记管理
@@ -121,6 +124,24 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         } catch (DataIntegrityViolationException e) {
             throw new CornException("笔记本目录最多只能60层!" + note.getParentIds());
         }
+    }
+
+    @Override
+    public IPage<Map> searchNote(String searchStr, int pageNo, int pageSize) {
+        IPage<Map> page = new Page<>();
+        if(StringUtils.isBlank(searchStr)){
+            page.setTotal(0l);
+            page.setRecords(new ArrayList<>());
+        }else {
+            int offset = pageNo > 0 ? (pageNo - 1) * pageSize : 0;
+            SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+            Integer count = noteMapper.getNoteCount(searchStr, sysUser.getUsername());
+            page.setTotal(count);
+
+            List<Map> list = noteMapper.pageSearchNote(searchStr, sysUser.getUsername(), pageSize, offset);
+            page.setRecords(list);
+        }
+        return page;
     }
 
     public void delete(String userName, String id) {

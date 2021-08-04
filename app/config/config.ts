@@ -89,7 +89,7 @@ export default defineConfig({
         {
           path: '/noteapp',
           name: 'noteapp',
-          component: './note_app',
+          component: './note',
         },
         {
           path: '/article',

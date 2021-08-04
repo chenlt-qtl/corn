@@ -1,5 +1,7 @@
 import { request } from 'umi';
 import { NoteItem } from './data.d';
+import { stringify } from 'qs';
+
 
 //树形数据结构
 export async function queryTreeList(id:string) {
@@ -12,6 +14,12 @@ export async function queryNoteById(id: string) {
 
 export async function queryNote(parentId: string) {
   return request('/api/note/listNote?parentId=' + parentId);
+}
+
+
+export async function searchNote(params) {
+
+  return request(`/api/note/searchNote?${stringify(params)}`);
 }
 
 export async function updateNoteTitle(params: NoteItem) {
@@ -82,7 +90,6 @@ export async function deleteNote(id: String) {
 }
 
 export async function uploadImg(img: String) {
-  console.log(234234);
   
   return request('/api/sys/common/uploadImg/note', {
     method: 'POST',

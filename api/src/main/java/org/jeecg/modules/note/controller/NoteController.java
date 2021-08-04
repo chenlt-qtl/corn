@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Title: Controller
@@ -65,6 +66,25 @@ public class NoteController {
         QueryWrapper<Note> queryWrapper = QueryGenerator.initQueryWrapper(note, req.getParameterMap());
         Page<Note> page = new Page<Note>(pageNo, pageSize);
         IPage<Note> pageList = noteService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
+
+
+    /**
+     * 分页列表查询
+     *
+     * @param searchStr
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @GetMapping(value = "/searchNote")
+    public Result<IPage<Map>> pageSearchNote(@RequestParam String searchStr, @RequestParam Integer pageNo, @RequestParam Integer pageSize) {
+        Result<IPage<Map>> result = new Result<IPage<Map>>();
+
+        IPage<Map> pageList = noteService.searchNote(searchStr, pageNo, pageSize);
         result.setSuccess(true);
         result.setResult(pageList);
         return result;
@@ -288,7 +308,7 @@ public class NoteController {
             result.error500("未找到对应实体");
         } else {
             NoteContent content = noteContentService.getById(note.getContentId());
-            NoteModel model = new NoteModel(note,content);
+            NoteModel model = new NoteModel(note, content);
 
             noteService.setParentNames(model);//设置父节点名称
             model.setText(UpLoadUtil.dbToReal(content.getText(), "md"));

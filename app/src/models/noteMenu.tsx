@@ -1,14 +1,16 @@
 import { Reducer } from 'umi';
-import { queryNote } from '@/pages/note_app/service'
+import { queryNote } from '@/pages/note/service'
 
 
 export interface NoteState {
+    topMenuItem: Object[],
     menu1Item: Object[],
     menu2Item: Object[],
     menu3Item: Object[],
     activeTopId: string,
     activeMenu1Id: string,
     activeMenu2Id: string,
+    activeMenu3Id: string,
     title1: string,
     title2: string,
     title3: string,
@@ -19,17 +21,19 @@ export interface NoteModelType {
     namespace: 'noteMenu';
     state: NoteState;
     effects: {
+        queryTopMenu: Effect;
         updateActiveTop: Effect;
         updateMenu1: Effect;
     }
     reducers: {
+        refreshTopMenu: Reducer<NoteState>;
         refreshMenu1: Reducer<NoteState>;
         refreshMenu2: Reducer<NoteState>;
         refreshMenu3: Reducer<NoteState>;
         refreshActiveTopId: Reducer<NoteState>;
         refreshActiveMenu1Id: Reducer<NoteState>;
         refreshActiveMenu2Id: Reducer<NoteState>;
-        refreshTitle1: Reducer<NoteState>;
+        refreshActiveMenu3Id: Reducer<NoteState>;
         refreshTitle2: Reducer<NoteState>;
         refreshTitle3: Reducer<NoteState>;
     };
@@ -38,31 +42,44 @@ export interface NoteModelType {
 const NoteModel: NoteModelType = {
     namespace: 'noteMenu',
     state: {
+        topMenuItem: [],
         menu1Item: [],
         menu2Item: [],
         menu3Item: [],
         activeTopId: '',
         activeMenu1Id: '',
         activeMenu2Id: '',
+        activeMenu3Id: '',
         title1: '',
         title2: '',
         title3: '',
     },
 
     effects: {
+        *queryTopMenu(_, { call, put }) {
+            let result = yield call(queryNote, '0');
+            if (result && result.success) {
+                const topMenu = result.result;
+                yield put({
+                    type: 'refreshTopMenu',
+                    payload: topMenu,
+                })
+                if (topMenu.length > 0) {
+                    yield put({
+                        type: 'refreshActiveTopId',
+                        payload: topMenu[0].id,
+                    })
+                }
+            }
+        },
         *updateActiveTop({ payload }, { call, put }) {
-            const { id, name } = payload;
             yield put({
                 type: 'updateMenu1',
-                payload: id,
+                payload: payload,
             })
             yield put({
                 type: 'refreshActiveTopId',
-                payload: id,
-            })
-            yield put({
-                type: 'refreshTitle1',
-                payload: name,
+                payload: payload,
             })
         },
         *updateMenu1({ payload }, { call, put }) {
@@ -78,6 +95,12 @@ const NoteModel: NoteModelType = {
         },
     },
     reducers: {
+        refreshTopMenu(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                topMenuItem: payload,
+            }
+        },
         refreshMenu1(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
@@ -97,32 +120,47 @@ const NoteModel: NoteModelType = {
             }
         },
         refreshActiveTopId(state: NoteState, { payload }): NoteState {
+            const { topMenuItem } = state;
+            const activeTopMenu = topMenuItem.filter(item => item.id == payload);
+            const title1 = activeTopMenu.length>0 ? activeTopMenu[0].name : '';
+
             return {
                 ...state,
                 activeTopId: payload,
                 activeMenu1Id: '',
                 activeMenu2Id: '',
+                activeMenu3Id: '',
+                title1
             }
         },
         refreshActiveMenu1Id(state: NoteState, { payload }): NoteState {
+            const { menu1Item } = state;
+            const note = menu1Item.filter(item => item.id == payload);
+            const title2 = note.length>0 ? note[0].name : '';
+
             return {
                 ...state,
-                activeMenu1Id: payload.id,
-                title2: payload.title,
+                activeMenu1Id: payload,
+                title2,
                 activeMenu2Id: '',
+                activeMenu3Id: '',
             }
         },
         refreshActiveMenu2Id(state: NoteState, { payload }): NoteState {
+            const { menu2Item } = state;
+            const note = menu2Item.filter(item => item.id == payload);
+            const title3 = note.length>0 ? note[0].name : '';
             return {
                 ...state,
-                activeMenu2Id: payload.id,
-                title3: payload.title,
+                activeMenu2Id: payload,
+                activeMenu3Id: '',
+                title3,
             }
         },
-        refreshTitle1(state: NoteState, { payload }): NoteState {
+        refreshActiveMenu3Id(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                title1: payload,
+                activeMenu3Id: payload,
             }
         },
         refreshTitle2(state: NoteState, { payload }): NoteState {
