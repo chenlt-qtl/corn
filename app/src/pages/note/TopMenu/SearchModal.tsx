@@ -31,8 +31,13 @@ const SearchModal: React.FC<SearchProps> = (props) => {
 
     const [loading, setLoading] = useState<boolean>(false);
 
+    const [moreLoading, setMoreLoading] = useState<boolean>(false);
+
     const onSearch = async (pageNo: number) => {
-        setLoading(true);
+        if (pageNo == 1) {
+            setLoading(true);
+        }
+        setMoreLoading(true);
         let result = await searchNote({ pageNo, pageSize, searchStr });
         if (result && result.success) {
             setTotal(result.result.total)
@@ -45,6 +50,7 @@ const SearchModal: React.FC<SearchProps> = (props) => {
             setTotal(0)
             setDataList([]);
         }
+        setMoreLoading(false)
         setLoading(false)
     }
 
@@ -107,27 +113,29 @@ const SearchModal: React.FC<SearchProps> = (props) => {
                     </div>
                 </div>
                 <Input prefix={<SearchOutlined className="site-form-item-icon" />} onChange={e => setSearchStr(e.target.value)} onPressEnter={() => onSearch(1)} onBlur={() => onSearch(1)} />
-                <div className={styles.searchList}>
-                    <InfiniteScroll
-                        initialLoad={false}
-                        pageStart={0}
-                        loadMore={loadMore}
-                        hasMore={!loading && dataList.length < total}
-                        useWindow={false}
-                    >
-                        <List
-                            size="small"
-                            dataSource={dataList}
-                            renderItem={(item: NoteItem) => <List.Item className={`${styles.listItem} ${item.id == note.id ? styles.select : ''}`} onClick={() => showNote(item)} key={item.id}>{item.name}</List.Item>}
+                <Spin spinning={loading}>
+                    <div className={styles.searchList}>
+                        <InfiniteScroll
+                            initialLoad={false}
+                            pageStart={0}
+                            loadMore={loadMore}
+                            hasMore={!moreLoading && dataList.length < total}
+                            useWindow={false}
                         >
-                            {loading && (dataList.length < total) && (
-                                <div className={styles.loading}>
-                                    <Spin />
-                                </div>
-                            )}
-                        </List>
-                    </InfiniteScroll>
-                </div>
+                            <List
+                                size="small"
+                                dataSource={dataList}
+                                renderItem={(item: NoteItem) => <List.Item className={`${styles.listItem} ${item.id == note.id ? styles.select : ''}`} onClick={() => showNote(item)} key={item.id}>{item.name}</List.Item>}
+                            >
+                                {moreLoading && (dataList.length < total) && (
+                                    <div className={styles.loading}>
+                                        <Spin />
+                                    </div>
+                                )}
+                            </List>
+                        </InfiniteScroll>
+                    </div>
+                </Spin>
                 <div className={styles.content}>
                     <MdEditor
                         style={{ border: 0 }}

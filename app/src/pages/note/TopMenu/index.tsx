@@ -14,7 +14,7 @@ const TopMenu: React.FC<{}> = (props) => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const [isSearchVisible, setIsSearchVisible] = useState(true);
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
 
     const [editTopVisible, setEditTopVisible] = useState(false);
 
