@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './md.less';
 import { connect } from 'umi';
-import { CloseOutlined,BarsOutlined } from '@ant-design/icons';
+import { CloseOutlined, BarsOutlined } from '@ant-design/icons';
 import { uploadImg } from '@/pages/note/service'
 
 import MdEditor, { Plugins } from 'react-markdown-editor-lite'
@@ -131,10 +131,10 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
                 {displayIndex == 0 ?
                     <div className={styles.view}>
-                        {showToc?<div className={styles.toc}>
-                            <div className={styles.title}><span>大纲</span><CloseOutlined onClick={()=>{setShowToc(false)}} /></div>
+                        {showToc ? <div className={styles.toc}>
+                            <div className={styles.title}><span>大纲</span><CloseOutlined onClick={() => { setShowToc(false) }} /></div>
                             {tocify && tocify.render()}
-                        </div>:<BarsOutlined onClick={()=>{setShowToc(true)}}/>}
+                        </div> : <BarsOutlined onClick={() => { setShowToc(true) }} />}
 
                         <div className={styles.text}>
                             <MdEditor

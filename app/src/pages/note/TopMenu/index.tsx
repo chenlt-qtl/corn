@@ -12,6 +12,8 @@ import SeachModal from './SearchModal';
 
 const TopMenu: React.FC<{}> = (props) => {
 
+    const [isMenuVisible, setIsMenuVisible] = useState(false);
+
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -45,6 +47,7 @@ const TopMenu: React.FC<{}> = (props) => {
             type: 'noteMenu/updateActiveTop',
             payload: id ,
         })
+        setIsMenuVisible(false)
     }
 
     const handleCancel = () => {
@@ -81,7 +84,7 @@ const TopMenu: React.FC<{}> = (props) => {
         return (
             <div className={styles.main}>
                 <div className={styles.icon}><SearchOutlined onClick={handleShowSearch} /></div>
-                <ul>
+                <ul onMouseEnter={()=>setIsMenuVisible(true)} onMouseLeave = {()=>setIsMenuVisible(false)}>
                     {topMenuItem.map(item => {
                         const isActive = item.id == activeTopId;
                         return <li key={item.id}
@@ -91,7 +94,7 @@ const TopMenu: React.FC<{}> = (props) => {
                             <div className={styles.shortLogo}>
                                 {item.name.substr(0, 1)}
                             </div>
-                            <div className={styles.label}>{item.name}</div>
+                            <div className={`${styles.label} ${isMenuVisible?styles.showLabel:""}`}>{item.name}</div>
                         </li>
                     })}
                 </ul>
