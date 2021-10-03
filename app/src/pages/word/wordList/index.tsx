@@ -1,22 +1,27 @@
-import React, { useEffect,useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
 import { Empty, Spin } from 'antd';
 import styles from './styles.less';
 import { WordItem } from '../data.d';
-import { PlayCircleOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { connect, WordState } from 'umi';
+import WordEditModal from './WordEditModal';
 
 
 
 export interface WordListProps {
     articleId: string
+    onSearchWord: (wordName: string) => void
 }
 
 
 const WordList: React.FC<WordListProps> = (props) => {
-    const { articleId } = props;
+    const { articleId, onSearchWord } = props;
 
     const player = useRef();
     const source = useRef();
+    const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
+
 
     useEffect(() => {
         getWords();
@@ -36,6 +41,10 @@ const WordList: React.FC<WordListProps> = (props) => {
     }
     const loading = props.loading.effects["word/getWordByArticle"];
 
+    const openEditModel = (item: WordItem, single: boolean) => {
+        setEditModalVisible(true);
+    }
+
     const play = (src: string | undefined) => {
         console.log(src);
         if (src) {
@@ -49,6 +58,9 @@ const WordList: React.FC<WordListProps> = (props) => {
         <>
             <div className={styles.module}>
                 <div className={styles.moduleTitle}>单词列表</div>
+                <div className={styles.toolbar}>
+                    <PlusCircleOutlined title='增加单词' onClick={() => { openEditModel({}, true) }} />
+                </div>
             </div>
             <Spin spinning={loading}>
                 <div className={styles.wordList}>
@@ -57,10 +69,10 @@ const WordList: React.FC<WordListProps> = (props) => {
                             {props.word.words.map((item: WordItem) => (
                                 <li key={item.id} className={styles.row}>
                                     <ul>
-                                        <li className={styles.wordName}>
+                                        <li className={styles.wordName} onClick={() => onSearchWord(item.wordName!)}>
                                             {item.wordName}
                                         </li>
-                                        <li className={styles.play}><PlayCircleOutlined onClick={() => { play(item.mp3) }}/></li>
+                                        <li className={styles.play}><PlayCircleOutlined onClick={() => { play(item.mp3) }} /></li>
                                         <li className={styles.phAm}>
                                             /{item.phAm}/
                                         </li>
@@ -78,6 +90,11 @@ const WordList: React.FC<WordListProps> = (props) => {
                 <source ref={source} src="" type="audio/mpeg" />
                 您的浏览器不支持 audio 元素。
             </audio>
+            <WordEditModal modalVisible={editModalVisible} articleId={articleId}
+                onCancel={(reload) => {
+                    reload && getWords();
+                    setEditModalVisible(false);
+                }}></WordEditModal>
         </>
     );
 };

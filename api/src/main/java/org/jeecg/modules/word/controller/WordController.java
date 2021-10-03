@@ -2,6 +2,7 @@ package org.jeecg.modules.word.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.model.WordVo;
@@ -170,7 +171,7 @@ public class WordController {
      * @return
      */
     @GetMapping(value = "/queryByWordName")
-    public Result<WordVo> queryByWordName(@RequestParam(name = "wordName", required = true) String wordName) {
+    public Result<WordVo> queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = false) String articleId) {
         Result<WordVo> result = new Result<WordVo>();
         try {
             WordVo wordVo = new WordVo(wordService.getWord(wordName));
@@ -178,8 +179,10 @@ public class WordController {
 
             wordVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
             wordVo.setSentences(sentenceService.getSentencesByWord(wordName));
-//            wordVo.setRelWithUser(wordUserService.getRel(wordId) != null);
-//            wordVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
+            wordVo.setRelWithUser(wordUserService.getRel(wordId) != null);
+            if(StringUtils.isNotBlank(articleId)) {
+                wordVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
+            }
 
             result.setResult(wordVo);
             result.setSuccess(true);

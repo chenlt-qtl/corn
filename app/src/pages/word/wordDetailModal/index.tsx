@@ -4,7 +4,7 @@ import styles from './styles.less';
 import { WordItem, IcibaSentenceItem, SentenceItem } from '../data';
 import { connect } from 'umi';
 import 'font-awesome/css/font-awesome.min.css';
-import { StarFilled, StarOutlined, ApiOutlined } from '@ant-design/icons';
+import { StarFilled, StarOutlined } from '@ant-design/icons';
 
 
 const { Link } = Anchor;
@@ -23,7 +23,6 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
     const player = useRef();
     const source = useRef();
     const refs = [useRef(), useRef()];
-    const [relWithUser, setRelWithUser] = useState<boolean | undefined>(false);
     const [relWithArticle, setRelWithArticle] = useState<boolean | undefined>(false);
 
     useEffect(() => {
@@ -34,7 +33,6 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
             }).then((res: WordItem) => {
                 if (res) {
                     setWord(res);
-                    setRelWithUser(res.relWithUser);
                     setRelWithArticle(res.relWithArticle);
                 } else {
                     setWord(null);
@@ -52,28 +50,6 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
         player.current!.play();
     }
 
-    const saveRel = async () => {
-        props.dispatch({
-            type: 'word/addWordUserRel',
-            payload: { wordId: word.id, articleId }
-        }).then((res) => {
-            if (res.success) {
-                setRelWithUser(true);
-            }
-        })
-    }
-
-    const removeRel = async () => {
-        props.dispatch({
-            type: 'word/removeWordUserRel',
-            payload: { wordId: word.id, articleId }
-        }).then((res) => {
-            if (res.success) {
-                setRelWithUser(false);
-            }
-        })
-    }
-
     const updateArticleWordRel = async () => {
         let type;
         if (relWithArticle) {
@@ -86,17 +62,13 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
             payload: { wordId: word.id, articleId }
         }).then((res) => {
             if (res.success) {
-                if (!relWithArticle) {
-                    setRelWithUser(true);
-                }
                 setRelWithArticle(!relWithArticle);
             }
         })
     }
 
     const loading = props.loading.effects["word/addArticleWordRel"] || props.loading.effects["word/removeArticleWordRel"] ||
-        props.loading.effects["word/getWordByWordName"] || props.loading.effects["word/addWordUserRel"] ||
-        props.loading.effects["word/removeWordUserRel"] || false;
+        props.loading.effects["word/getWordByWordName"] || false;
     const reg = /^[\s]/;
     return (
         <Modal title="单词详情" width={660} visible={props.isModalVisible}
@@ -110,11 +82,9 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                 {word ? <main className={styles.word}>
                     <header className={styles.wordName}>{word.wordName}
                         <div className={styles.star}>
-                            {relWithUser ?
-                                <StarFilled onClick={removeRel} className={styles.favorate} /> :
-                                <StarOutlined onClick={saveRel} className={styles.notFavorate} />}
-
-                            {articleId ? <ApiOutlined onClick={updateArticleWordRel} className={(relWithArticle && relWithUser) ? styles.favorate : styles.notFavorate} /> : ''}
+                            {relWithArticle ?
+                                <StarFilled onClick={updateArticleWordRel} className={styles.favorate} /> :
+                                <StarOutlined onClick={updateArticleWordRel} className={styles.notFavorate} />}
                         </div>
                     </header>
                     <section className={styles.phAm}>/{word.phAm}/<i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => { play(word.phAnMp3) }}></i></section>
