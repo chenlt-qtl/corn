@@ -18,7 +18,7 @@ public abstract class TreeModel<T>{
 
     private String parentId;
 
-    private boolean isLeaf;
+    private Boolean isLeaf;
 
     private T model;
 

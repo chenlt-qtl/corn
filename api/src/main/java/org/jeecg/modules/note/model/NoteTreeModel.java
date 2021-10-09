@@ -15,6 +15,7 @@ public class NoteTreeModel extends TreeModel<Note> {
         this.setTitle(note.getName());
         this.setName(note.getName());
         this.setParentId(note.getParentId());
+        this.setIsLeaf(note.getIsLeaf());
     }
 
     public String getParentIds() {

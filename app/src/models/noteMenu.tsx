@@ -1,6 +1,6 @@
 import { Reducer } from 'umi';
-import { queryNote } from '@/pages/note/service'
-
+import { queryNote, queryTreeList } from '@/pages/note/service'
+import { NoteNode } from '@/pages/note/data.d';
 
 export interface NoteState {
     topMenuItem: Object[],
@@ -14,6 +14,7 @@ export interface NoteState {
     title1: string,
     title2: string,
     title3: string,
+    treeData: NoteNode[];
 
 }
 
@@ -24,6 +25,7 @@ export interface NoteModelType {
         queryTopMenu: Effect;
         updateActiveTop: Effect;
         updateMenu1: Effect;
+        queryMenuTree: Effect;
     }
     reducers: {
         refreshTopMenu: Reducer<NoteState>;
@@ -36,6 +38,7 @@ export interface NoteModelType {
         refreshActiveMenu3Id: Reducer<NoteState>;
         refreshTitle2: Reducer<NoteState>;
         refreshTitle3: Reducer<NoteState>;
+        refreshTreeData: Reducer<NoteState>;
     };
 }
 
@@ -53,6 +56,7 @@ const NoteModel: NoteModelType = {
         title1: '',
         title2: '',
         title3: '',
+        treeData: [],
     },
 
     effects: {
@@ -70,6 +74,19 @@ const NoteModel: NoteModelType = {
                         payload: topMenu[0].id,
                     })
                 }
+            }
+        },
+        *queryMenuTree({ payload }, { call, put }) {
+            let result = yield call(queryTreeList, payload);
+            if (result) {
+                if (result.success) {
+                    // 成功
+                    yield put({
+                        type: 'refreshTreeData',
+                        payload: { data: result.result, activeTabId: payload }
+                    });
+                }
+                return result;
             }
         },
         *updateActiveTop({ payload }, { call, put }) {
@@ -122,7 +139,7 @@ const NoteModel: NoteModelType = {
         refreshActiveTopId(state: NoteState, { payload }): NoteState {
             const { topMenuItem } = state;
             const activeTopMenu = topMenuItem.filter(item => item.id == payload);
-            const title1 = activeTopMenu.length>0 ? activeTopMenu[0].name : '';
+            const title1 = activeTopMenu.length > 0 ? activeTopMenu[0].name : '';
 
             return {
                 ...state,
@@ -136,7 +153,7 @@ const NoteModel: NoteModelType = {
         refreshActiveMenu1Id(state: NoteState, { payload }): NoteState {
             const { menu1Item } = state;
             const note = menu1Item.filter(item => item.id == payload);
-            const title2 = note.length>0 ? note[0].name : '';
+            const title2 = note.length > 0 ? note[0].name : '';
 
             return {
                 ...state,
@@ -149,7 +166,7 @@ const NoteModel: NoteModelType = {
         refreshActiveMenu2Id(state: NoteState, { payload }): NoteState {
             const { menu2Item } = state;
             const note = menu2Item.filter(item => item.id == payload);
-            const title3 = note.length>0 ? note[0].name : '';
+            const title3 = note.length > 0 ? note[0].name : '';
             return {
                 ...state,
                 activeMenu2Id: payload,
@@ -173,6 +190,12 @@ const NoteModel: NoteModelType = {
             return {
                 ...state,
                 title3: payload,
+            }
+        },
+        refreshTreeData(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                treeData: payload.data,
             }
         },
     },

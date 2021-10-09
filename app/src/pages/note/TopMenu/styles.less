@@ -1,32 +1,4 @@
-.color0 {
-  background-color: #9b59b6;
-}
-
-.color1 {
-  background-color: #3498db;
-}
-
-.color2 {
-  background-color: #1abc9c;
-}
-
-.color3 {
-  background-color: #2ecc71;
-}
-
-.color4 {
-  background-color: #f1c40f;
-}
-
-.color5 {
-  background-color: #e67e22;
-}
-
-.color6 {
-  background-color: #e74c3c;
-}
-
-
+@mainHeight:calc(~"100vh-100px");
 .main {
   width   : 30px;
   position: relative;
@@ -200,4 +172,65 @@
   button {
     margin-left: 5px;
   }
+}
+
+
+/*************************10-4 新界面***********************/
+
+.treePanel {
+  width  : 180px;
+  height: @mainHeight;
+  padding: 5px;
+  overflow-y: auto;
+
+  .icon {
+    padding-right: 7px;
+  }
+
+  >div {
+    padding      : 10px 5px;
+    cursor       : pointer;
+    border-bottom: 1px solid #FDFBFB;
+
+    &:hover {
+      border-bottom: 1px solid #E9E9E9;
+    }
+  }
+}
+
+.noteTitle {
+  display        : flex;
+  justify-content: space-between;
+
+  >div {
+    display: inline-block;
+  }
+}
+
+.favorate {
+  color: #e74c3c;
+}
+
+.tree {
+  transition-duration: 5s;
+
+  :global {
+    .ant-tree {
+      background-color: #f9f9f9;
+    }
+  }
+
+  
+}
+
+.hidden {
+  opacity           : 0;
+  transition        : 0.5s ease;
+  // transition-delay  : 0.2s;
+}
+
+.visible {
+  opacity           : 1;
+  transition        : 0.5s ease;
+  // transition-delay  : 0.2s;
 }

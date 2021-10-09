@@ -44,6 +44,9 @@ public class Note implements Serializable {
 	/**from*/
 	@Excel(name = "source", width = 15)
 	private java.lang.String source;
+
+	@Excel(name = "isLeaf", width = 15)
+	private Boolean isLeaf;
 	/**createTime*/
 	@Excel(name = "createTime", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")

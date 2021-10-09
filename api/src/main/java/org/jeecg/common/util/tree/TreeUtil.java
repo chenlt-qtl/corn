@@ -1,7 +1,6 @@
 package org.jeecg.common.util.tree;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jeecg.modules.system.entity.SysDepart;
 import org.jeecg.modules.system.model.DepartIdModel;
 import org.jeecg.modules.system.model.SysDepartTreeModel;
 
@@ -79,10 +78,8 @@ public class TreeUtil {
             TreeModel model = treeList.get(i);
             if (model.getChildren().size() == 0) {
                 model.setChildren(null);
-                model.setLeaf(true);
             }else{
                 setEmptyChildrenAsNull(model.getChildren());
-                model.setLeaf(false);
             }
         }
     }
