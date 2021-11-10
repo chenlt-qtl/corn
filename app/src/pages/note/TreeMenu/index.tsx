@@ -90,6 +90,10 @@ const LeftMenu: React.FC = (props, ref) => {
         })
     }
 
+    const handleExpand = value =>{
+        setExpandedKeys(value);
+    }
+
     const openNote = (_, { node }) => {
 
         props.dispatch({
@@ -198,6 +202,7 @@ const LeftMenu: React.FC = (props, ref) => {
                             showIcon
                             expandedKeys={expandedKeys}
                             treeData={treeData}
+                            onExpand={handleExpand}
                             titleRender={node => {
                                 return <div className={styles.treeNode} onDrop={() => handleChangeParent(node.key)} onDragOver={(event) => {
                                     event.preventDefault();
