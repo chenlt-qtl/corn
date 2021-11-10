@@ -1,5 +1,6 @@
 package org.jeecg.modules.note.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,7 +24,7 @@ public class Note implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**id*/
-	@TableId
+	@TableId(type = IdType.UUID)
 	private java.lang.String id;
 	/**contentId*/
 	@Excel(name = "contentId", width = 32)

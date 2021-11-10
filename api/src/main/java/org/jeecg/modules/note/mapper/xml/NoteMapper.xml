@@ -56,13 +56,16 @@
 
 
     <select id="pageSearchNote" resultType="Map">
-        select a.id,a.name,a.parent_ids as parentIds,b.text from note_info a join note_content b on a.content_id=b.id
+        select a.id,a.name,a.parent_ids as parentIds,a.is_leaf as isLeaf from note_info a
         where
-        a.create_by=#{createBy}
+        a.create_by=#{createBy} and a.is_leaf =1
         <if test="searchStr != null">
-            and (a.name like concat("%",#{searchStr},"%") or b.text like concat("%",#{searchStr},"%"))
+            and (a.name like concat("%",#{searchStr},"%") or
+            exists (select 1 from note_content b where a.content_id=b.id and b.text like concat("%",#{searchStr},"%")))
+
         </if>
         limit #{offset},#{pageSize}
     </select>
+
 
 </mapper>

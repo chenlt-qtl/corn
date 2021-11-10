@@ -14,6 +14,7 @@ export interface NoteItem {
   createTime?: Date;
   createBy?: string;
   updateBy?: string;
+  isLeaf?:boolean;
 }
 
 export interface NoteNode {

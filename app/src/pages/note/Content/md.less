@@ -1,44 +1,49 @@
 .view {
-    border-top : 1px solid #e7e7e7;
-    display    : flex;
-    padding-top: 10px;
-    height     : calc(~"100vh - 98px");
+    display : flex;
+    height  : 100%;
+    overflow: hidden;
 
     .toc {
         .title {
-            display      : flex;
-            width        : 100%;
-            justify-content: space-between;
-            padding      : 5px;
-            font-weight  : 500;
-            border-bottom: 1px solid #e7e7e7;
-            >span{
+            width      : 100%;
+            text-align : right;
+            padding    : 5px 10px;
+            font-weight: 500;
+
+            >span {
                 line-height: 30px;
-                display: inline-block;
-                &:first-of-type{
-                    flex: 1;
+                display    : inline-block;
+
+                &:first-of-type {
+                    flex      : 1;
                     text-align: center;
                 }
-                &:last-of-type{
+
+                &:last-of-type {
                     cursor: pointer;
                 }
             }
-            
+
         }
 
         width           : 350px;
+        height          : 100%;
         background-color: #F9F9F9;
-        border-radius   : 4px;
-        border          :1px solid #e7e7e7;
+        border-right    :1px solid #e7e7e7;
+        overflow-y      : hidden;
+
+        &:hover {
+            overflow-y: auto;
+
+        }
 
     }
 }
 
-
 .text {
-    padding : 24px;
-    overflow: auto;
+    overflow: hidden;
     flex    : 1;
+    height  : calc(~"100vh - 198px");
 
     ul>li {
         list-style: disc outside none;
@@ -53,7 +58,7 @@
 
     }
 
-    ol>li{
+    ol>li {
         list-style: decimal outside none;
     }
 
@@ -61,6 +66,17 @@
         white-space : pre-wrap !important;
         word-wrap   : break-word !important;
         *white-space: normal !important;
+    }
+
+    :global {
+        .rc-md-editor {
+            height: 100%;
+            border: none;
+        }
+
+        .rc-md-editor .editor-container>.section>.section-container {
+            padding: 24px;
+        }
     }
 
 }

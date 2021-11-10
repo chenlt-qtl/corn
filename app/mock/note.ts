@@ -18,7 +18,7 @@ function upload(req: Request, res: Response) {
   return res.json(result);
 }
 
-function queryTreeList(req: Request, res: Response) {
+function queryTreeMenu(req: Request, res: Response) {
   const result = {"success":true,"message":"操作成功！","code":0,"result":[{"key":"4570376c35424df698193e8f8047b076","title":"任务","name":"任务","parentId":"45bea53a5e595cfacb9202e22b4f0896","model":null,"children":[{"key":"75055c45f60c434faa726da2aacc5c03","title":"任务","name":"任务","parentId":"4570376c35424df698193e8f8047b076","model":null,"children":[{"key":"087ce5972b5f49ee9f1593af73da5881","title":"20200304","name":"20200304","parentId":"75055c45f60c434faa726da2aacc5c03","model":null,"children":[],"parentIds":"0/45bea53a5e595cfacb9202e22b4f0896/4570376c35424df698193e8f8047b076/75055c45f60c434faa726da2aacc5c03","leaf":true}]}]}
 ],"timestamp":1606809966292};
   return res.json(result);
@@ -86,7 +86,7 @@ export default {
     res.send({"success":true,"message":"操作成功！","code":0,"result":[{"id":"113ce09e30264b0c6f63913860709cce","name":"2019（日志）","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":"日志","source":null,"createTime":"2019-06-27 17:53:34","createBy":"damu","updateTime":null,"updateBy":"damu"},{"id":"45bea53a5e595cfacb9202e22b4f0896","name":"corn","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":null,"source":null,"createTime":"2019-08-15 18:04:44","createBy":"damu","updateTime":null,"updateBy":"damu"},{"id":"89919705e098c77c9ef45245f1b44531","name":"hdt-web","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":"工作","source":null,"createTime":"2019-06-27 18:25:37","createBy":"damu","updateTime":null,"updateBy":"damu"},{"id":"c014f668f11b275aed9b74bcda0de41c","name":"pmp","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":null,"source":null,"createTime":"2019-08-13 17:38:36","createBy":"damu","updateTime":null,"updateBy":"damu"},{"id":"7a0c7bf2f43ce83a387cca49880abd3d","name":"前端","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":null,"source":null,"createTime":"2019-07-12 18:11:30","createBy":"damu","updateTime":null,"updateBy":"damu"},{"id":"bb67f9f7ea21c66cfaa5a72012d345b2","name":"后端","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":null,"source":null,"createTime":"2019-08-07 22:26:17","createBy":"damu","updateTime":null,"updateBy":"damu"},{"id":"9dc316cf19a4004a1fba19c5295acac9","name":"操作系统","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":null,"source":null,"createTime":"2019-08-21 19:25:12","createBy":"damu","updateTime":null,"updateBy":"damu"},{"id":"a9820a9d66825a03ef118f6bd4f4d68d","name":"数据库","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":null,"source":null,"createTime":"2019-09-05 18:24:53","createBy":"damu","updateTime":null,"updateBy":null},{"id":"59917681b1eda8d6e3f51875eabf7297","name":"生活","parentId":"0","parentIds":"0","text":"<p>&nbsp;</p>","tag":null,"source":null,"createTime":"2019-07-11 17:56:25","createBy":"damu","updateTime":null,"updateBy":"damu"}],"timestamp":1606808616195})
   },
   'GET /api/note/queryById':queryById,
-  'GET /api/note/queryTreeList':queryTreeList,
+  'GET /api/note/queryTreeMenu':queryTreeMenu,
   'POST /api/note/openHistory/add':addOpenHistory,
   'GET /api/note/openHistory/query': queryOpenHistory,
   'PUT /api/note/edit':editNote,

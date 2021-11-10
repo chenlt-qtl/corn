@@ -14,13 +14,13 @@ import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
 import org.jeecg.modules.note.service.INoteContentService;
 import org.jeecg.modules.note.service.INoteFavoriteService;
-import org.jeecg.modules.note.service.INoteOpenHistoryService;
 import org.jeecg.modules.note.service.INoteService;
 import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +41,6 @@ public class NoteController {
 
     @Autowired
     private INoteFavoriteService noteFavoriteService;
-
-    @Autowired
-    private INoteOpenHistoryService noteOpenHistoryService;
 
     @Autowired
     private INoteContentService noteContentService;
@@ -91,21 +88,24 @@ public class NoteController {
     }
 
     /**
-     * 查询笔记本(不分页)
+     * 查询笔记本
      *
-     * @param req
      * @return
      */
     @GetMapping(value = "/listNote")
-    public Result<List> queryNote(String parentId, HttpServletRequest req) {
-        Result<List> result = new Result<>();
+    public Result queryNote(String parentId) {
+        Result result = new Result<>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         try {
-            List list;
-            if (parentId.equals("favorate")) {//收藏夹
-                list = noteFavoriteService.queryNotes(sysUser.getUsername());
-            } else if (parentId.equals("open")) {//最近打开
-                list = noteOpenHistoryService.queryNotes();
+            List list = new ArrayList();
+            if (parentId.equals("fav")) {//收藏夹
+                List<NoteModel> notes = noteFavoriteService.queryNotes(sysUser.getUsername());
+
+                for(NoteModel note:notes){
+                    if(note.getIsLeaf()){
+                        list.add(note);
+                    }
+                }
             } else {
                 list = noteService.listNote(sysUser.getUsername(), parentId);
             }
@@ -117,12 +117,35 @@ public class NoteController {
         return result;
     }
 
-    @RequestMapping(value = "/queryTreeList", method = RequestMethod.GET)
-    public Result<List<NoteTreeModel>> queryTreeList(String parentId) {
+    /**
+     * 查询笔记本
+     *
+     * @return
+     */
+    @GetMapping(value = "/queryNewest")
+    public Result<IPage> queryNewest(Integer pageNo,Integer pageSize) {
+        Result<IPage> result = new Result<>();
+
+        if(pageNo==null){
+            pageNo = 0;
+        }
+        if(pageSize==null){
+            pageSize=20;
+        }
+        IPage<Note> page = noteService.getNewest(pageNo, pageSize);
+        result.setResult(page);
+
+        result.setSuccess(true);
+
+        return result;
+    }
+
+    @RequestMapping(value = "/queryTreeMenu", method = RequestMethod.GET)
+    public Result<List<NoteTreeModel>> queryTreeMenu(String parentId) {
         Result<List<NoteTreeModel>> result = new Result<>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         try {
-            List<NoteTreeModel> list = noteService.queryTreeList(sysUser.getUsername(), parentId);
+            List<NoteTreeModel> list = noteService.queryTreeMenu(sysUser.getUsername(), parentId);
             result.setResult(list);
             result.setSuccess(true);
         } catch (Exception e) {
@@ -193,7 +216,7 @@ public class NoteController {
         Note noteEntity = noteService.getById(note.getId());
         if (noteEntity == null) {//新增
             noteService.setParentIds(note);
-            noteService.saveNote(new NoteModel(note));
+            note = noteService.saveNote(new NoteModel(note));
 
         } else {
             noteService.setParentIds(note);
@@ -249,10 +272,14 @@ public class NoteController {
         if (noteEntity == null) {
             result.error500("未找到对应实体");
         } else {
-            noteEntity.setParentId(note.getParentId());
-            noteService.updateParent(noteEntity, noteEntity.getParentIds());
-            result.setResult(note);
-            result.success("修改成功!");
+            if(!noteEntity.getParentId().equals(note.getParentId()) && !note.getId().equals(note.getParentId())) {
+                noteEntity.setParentId(note.getParentId());
+                noteService.updateParent(noteEntity, noteEntity.getParentIds());
+                result.setResult(noteEntity);
+                result.success("修改成功!");
+            }else{
+                result.error500("父节点不合法");
+            }
         }
 
         return result;
@@ -308,31 +335,34 @@ public class NoteController {
             result.error500("未找到对应实体");
         } else {
             NoteContent content = noteContentService.getById(note.getContentId());
-            NoteModel model = new NoteModel(note, content);
+            NoteModel model = new NoteModel(note);
 
             noteService.setParentNames(model);//设置父节点名称
-            model.setText(UpLoadUtil.dbToReal(content.getText(), "md"));
+            if(content!=null) {
+                model.setText(UpLoadUtil.dbToReal(content.getText(), "md"));
+            }
+            model.setFav(noteFavoriteService.queryIfFavorite(id));
             result.setResult(model);
             result.setSuccess(true);
         }
         return result;
     }
 
-    /**
-     * 通过text查询
-     *
-     * @param text
-     * @param parentId
-     * @return
-     */
-    @GetMapping(value = "/queryByText")
-    public Result<List> queryByText(String text, String parentId) {
-        Result<List> result = new Result<List>();
-        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        List<Note> noteList = noteService.searchNote(sysUser.getUsername(), parentId, text);
-        result.setResult(noteList);
-        result.setSuccess(true);
-        return result;
-    }
+//    /**
+//     * 通过text查询
+//     *
+//     * @param text
+//     * @param parentId
+//     * @return
+//     */
+//    @GetMapping(value = "/queryByText")
+//    public Result<List> queryByText(String text, String parentId) {
+//        Result<List> result = new Result<List>();
+//        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+//        List<Note> noteList = noteService.searchNote(sysUser.getUsername(), parentId, text);
+//        result.setResult(noteList);
+//        result.setSuccess(true);
+//        return result;
+//    }
 
 }

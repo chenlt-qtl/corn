@@ -1,20 +1,16 @@
 import { Reducer } from 'umi';
-import { queryNote, queryTreeList } from '@/pages/note/service'
-import { NoteNode } from '@/pages/note/data.d';
+import { queryNote, queryTreeMenu, getNewest, searchNote } from '@/pages/note/service'
+import { NoteNode, NoteItem } from '@/pages/note/data.d';
 
 export interface NoteState {
-    topMenuItem: Object[],
-    menu1Item: Object[],
-    menu2Item: Object[],
-    menu3Item: Object[],
-    activeTopId: string,
-    activeMenu1Id: string,
-    activeMenu2Id: string,
-    activeMenu3Id: string,
-    title1: string,
-    title2: string,
-    title3: string,
+
+    listMenuItems: Object[],
+    listParentNote: NoteItem,
     treeData: NoteNode[];
+    hasMore: boolean;
+    pageNo: number;
+    pageSize: number;
+    activeMenuId: string;
 
 }
 
@@ -22,62 +18,37 @@ export interface NoteModelType {
     namespace: 'noteMenu';
     state: NoteState;
     effects: {
-        queryTopMenu: Effect;
-        updateActiveTop: Effect;
-        updateMenu1: Effect;
+        queryMenuItems: Effect;
         queryMenuTree: Effect;
+        queryListParentNote: Effect;
+        queryNewest: Effect;
+        searchNote: Effect;
     }
     reducers: {
-        refreshTopMenu: Reducer<NoteState>;
-        refreshMenu1: Reducer<NoteState>;
-        refreshMenu2: Reducer<NoteState>;
-        refreshMenu3: Reducer<NoteState>;
-        refreshActiveTopId: Reducer<NoteState>;
-        refreshActiveMenu1Id: Reducer<NoteState>;
-        refreshActiveMenu2Id: Reducer<NoteState>;
-        refreshActiveMenu3Id: Reducer<NoteState>;
-        refreshTitle2: Reducer<NoteState>;
-        refreshTitle3: Reducer<NoteState>;
+        refreshListMenu: Reducer<NoteState>;
+        refreshListParentNote: Reducer<NoteState>;
         refreshTreeData: Reducer<NoteState>;
+        refreshPageData: Reducer<NoteState>;
+        refreshPageInfo: Reducer<NoteState>;
+        refreshActiveMenuId: Reducer<NoteState>;
     };
 }
 
 const NoteModel: NoteModelType = {
     namespace: 'noteMenu',
     state: {
-        topMenuItem: [],
-        menu1Item: [],
-        menu2Item: [],
-        menu3Item: [],
-        activeTopId: '',
-        activeMenu1Id: '',
-        activeMenu2Id: '',
-        activeMenu3Id: '',
-        title1: '',
-        title2: '',
-        title3: '',
+        listMenuItems: [],
+        listParentNote: {},
         treeData: [],
+        hasMore: true,
+        pageNo: 0,
+        pageSize: 20,
+        activeMenuId: "",
     },
 
     effects: {
-        *queryTopMenu(_, { call, put }) {
-            let result = yield call(queryNote, '0');
-            if (result && result.success) {
-                const topMenu = result.result;
-                yield put({
-                    type: 'refreshTopMenu',
-                    payload: topMenu,
-                })
-                if (topMenu.length > 0) {
-                    yield put({
-                        type: 'refreshActiveTopId',
-                        payload: topMenu[0].id,
-                    })
-                }
-            }
-        },
         *queryMenuTree({ payload }, { call, put }) {
-            let result = yield call(queryTreeList, payload);
+            let result = yield call(queryTreeMenu, payload);
             if (result) {
                 if (result.success) {
                     // 成功
@@ -89,113 +60,109 @@ const NoteModel: NoteModelType = {
                 return result;
             }
         },
-        *updateActiveTop({ payload }, { call, put }) {
-            yield put({
-                type: 'updateMenu1',
-                payload: payload,
-            })
-            yield put({
-                type: 'refreshActiveTopId',
-                payload: payload,
-            })
-        },
-        *updateMenu1({ payload }, { call, put }) {
+
+        *queryMenuItems({ payload }, { call, put }) {
+
+            console.log(payload);
+
             let result = yield call(queryNote, payload);
             if (result) {
                 if (result.success) {
                     yield put({
-                        type: 'refreshMenu1',
+                        type: 'refreshListMenu',
+                        payload: result.result.sort((a, b) => a.isLeaf - b.isLeaf),
+                    })
+                }
+            }
+        },
+        *queryNewest({ payload }, { call, put }) {
+
+            console.log(payload);
+            
+            let result = yield call(getNewest, payload.pageNo, payload.pageSize);
+
+            if (result) {
+                if (result.success) {
+                    yield put({
+                        type: 'refreshPageData',
+                        payload: { ...payload, ...result },
+                    })
+                }
+            }
+        },
+        *queryListParentNote({ payload }, { call, put }) {
+
+            let result = yield call(queryNoteById, payload);
+            if (result) {
+                if (result.success) {
+                    yield put({
+                        type: 'refreshListParentNote',
                         payload: result.result,
                     })
                 }
             }
         },
+        *searchNote({ payload }, { call, put }) {
+
+            let result = yield call(searchNote, payload);
+
+            if (result) {
+                yield put({
+                    type: "refreshPageData",
+                    payload: { ...result, ...payload }
+                });
+            }
+        },
     },
     reducers: {
-        refreshTopMenu(state: NoteState, { payload }): NoteState {
+        refreshListMenu(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                topMenuItem: payload,
+                listMenuItems: payload
             }
         },
-        refreshMenu1(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                menu1Item: payload,
-            }
-        },
-        refreshMenu2(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                menu2Item: payload,
-            }
-        },
-        refreshMenu3(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                menu3Item: payload,
-            }
-        },
-        refreshActiveTopId(state: NoteState, { payload }): NoteState {
-            const { topMenuItem } = state;
-            const activeTopMenu = topMenuItem.filter(item => item.id == payload);
-            const title1 = activeTopMenu.length > 0 ? activeTopMenu[0].name : '';
+        refreshListParentNote(state: NoteState, { payload }): NoteState {
 
-            return {
-                ...state,
-                activeTopId: payload,
-                activeMenu1Id: '',
-                activeMenu2Id: '',
-                activeMenu3Id: '',
-                title1
-            }
-        },
-        refreshActiveMenu1Id(state: NoteState, { payload }): NoteState {
-            const { menu1Item } = state;
-            const note = menu1Item.filter(item => item.id == payload);
-            const title2 = note.length > 0 ? note[0].name : '';
+            console.log("refreshListParentNote", payload);
 
+            const note = payload || { id: 0, name: '所有笔记' };
             return {
                 ...state,
-                activeMenu1Id: payload,
-                title2,
-                activeMenu2Id: '',
-                activeMenu3Id: '',
+                listParentNote: note,
             }
         },
-        refreshActiveMenu2Id(state: NoteState, { payload }): NoteState {
-            const { menu2Item } = state;
-            const note = menu2Item.filter(item => item.id == payload);
-            const title3 = note.length > 0 ? note[0].name : '';
-            return {
-                ...state,
-                activeMenu2Id: payload,
-                activeMenu3Id: '',
-                title3,
-            }
-        },
-        refreshActiveMenu3Id(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                activeMenu3Id: payload,
-            }
-        },
-        refreshTitle2(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                title2: payload,
-            }
-        },
-        refreshTitle3(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                title3: payload,
-            }
-        },
+
         refreshTreeData(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
                 treeData: payload.data,
+            }
+        },
+        refreshPageData(state: NoteState, { payload }): NoteState {
+            const { result } = payload;
+            const records = payload.result.records;
+            const listMenuItems = payload.pageNo == 1 ? records : [...state.listMenuItems, ...records]
+            console.log(result["total"] - (state.pageNo + 1) * state.pageSize > 0);
+
+            return {
+                ...state,
+                hasMore: result["total"] - (state.pageNo + 1) * state.pageSize > 0,
+                listMenuItems,
+                pageNo: payload.pageNo,
+                pageSize: payload.pageSize
+            }
+        },
+        refreshPageInfo(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                pageNo: payload.pageNo,
+                pageSize: payload.pageSize
+            }
+        },
+        refreshActiveMenuId(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                activeMenuId: payload
             }
         },
     },

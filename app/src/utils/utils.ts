@@ -23,18 +23,6 @@ export const isAntDesignProOrDev = (): boolean => {
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
-export const getLevel = (parentIds: string) => {
-  if (parentIds) {
-    const idArr = parentIds.split('/').length;
-    const level = idArr - 1;
-    if (level > 0) {
-      return level;
-    }
-  }
-  console.log('数据有误,请联系管理员');
-}
-
-
 export const guid = () => {
   function S4() {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -42,4 +30,13 @@ export const guid = () => {
 
   const time = String(new Date().getTime());
   return time.substring(time.length - 8) + S4() + S4() + S4() + S4() + S4() + S4();
+}
+
+export const isNormalNoteId = (id: string) => {
+  if (id) {
+    if (id != "search" && id != "fav" && id != "newest") {
+      return true
+    }
+  }
+  return false
 }

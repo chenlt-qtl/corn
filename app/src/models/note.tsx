@@ -1,7 +1,7 @@
-import { updateNoteTitle, queryTreeList, queryNoteById, updateNoteText, queryNote, deleteNote } from '@/pages/note/service'
+import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote } from '@/pages/note/service'
 import { NoteItem, NoteNode } from '@/pages/note/data.d';
 import { Effect, Reducer } from 'umi';
-
+import { isNormalNoteId } from '@/utils/utils';
 
 //根据ID查找节点
 function findNodeById(tree: NoteNode[], id: string) {
@@ -19,30 +19,25 @@ function findNodeById(tree: NoteNode[], id: string) {
 }
 
 export interface NoteState {
-    activeTabId: string;
-    activeNoteId: string;
-    showNote: NoteItem;
-    treeData: NoteNode[];
-    selectedKeys: string[];
+    openedNote: NoteItem;
+    openedNotes: NoteItem[];
 }
 
 export interface NoteModelType {
     namespace: 'note';
     state: NoteState;
     effects: {
-        queryTabTree: Effect;
-        queryNote: Effect;
-        queryChildren: Effect;
+        openNote: Effect;
+        closeNote: Effect;
         updateNoteTitle: Effect;
         updateNoteText: Effect;
         deleteNote: Effect;
+        updateFav: Effect;
+        updateParent: Effect;
     };
     reducers: {
-        refreshTreeData: Reducer<NoteState>;
-        refreshActiveNoteId: Reducer<NoteState>;
-        refreshShowNote: Reducer<NoteState>;
-        refreshTreeNote: Reducer<NoteState>;
-        refreshSelectedKeys: Reducer<NoteState>;
+        refreshOpenedNote: Reducer<NoteState>;
+        refreshOpenedNotes: Reducer<NoteState>;
     };
 }
 
@@ -50,166 +45,252 @@ const NoteModel: NoteModelType = {
     namespace: 'note',
 
     state: {
-        activeTabId: '',
-        activeNoteId: '',
-        showNote: {},
-        treeData: [],
-        selectedKeys: [],
+        openedNote: {},
+        openedNotes: [],
     },
 
     effects: {
-        *queryTabTree({ payload }, { call, put }) {
-            let result = yield call(queryTreeList, payload);
-            if (result) {
-                if (result.success) {
-                    // 成功
-                    yield put({
-                        type: 'refreshTreeData',
-                        payload: { data: result.result, activeTabId: payload }
-                    });
-                }
-                return result;
-            }
-        },
-        *queryNote({ payload }, { call, put, select }) {
-            const openedNotes = yield select(state => state.openNotes.openedNotes);
+
+        *openNote({ payload }, { call, put, select }) {
+
+            const openedNotes = yield select(state => state.note.openedNotes);
+            const listParentNote = yield select(state => state.noteMenu.listParentNote);
+            console.log("openedNotes", openedNotes);
+            console.log("payload", payload);
+
             let note = openedNotes.find(item => {
                 return item.id === payload;
             });
-            if (note) {
-                yield put({
-                    type: 'refreshShowNote',
-                    payload: note
-                });
-            } else {
+
+            console.log("note", note);
+
+
+            if (!note) {
                 let result = yield call(queryNoteById, payload);
                 if (result) {
                     if (result.success) {
                         note = result.result;
                         // 成功
                         yield put({
-                            type: 'refreshShowNote',
-                            payload: note
-                        });
-                        yield put({
-                            type: 'openNotes/updateOpenNotes',
+                            type: 'refreshOpenedNotes',
                             payload: [note, ...openedNotes]
-                        });
+                        })
+
                     }
                 }
             }
-            return note;
+
+            if (note.parentId != listParentNote.id && isNormalNoteId(listParentNote.id)) {
+                let parent = yield call(queryNoteById, note.parentId);
+
+                if (parent) {
+                    yield put({
+                        type: 'noteMenu/refreshListParentNote',
+                        payload: parent.result,
+                    })
+                }
+            }
+
+            yield put({
+                type: 'refreshOpenedNote',
+                payload: note,
+            })
         },
-        *queryChildren({ payload }, { call, put }) {
-            let result = yield call(queryNote, payload);
-            return result;
+        *closeNote({ payload }, { call, put, select }) {
+
+            const openedNotes = yield select(state => state.note.openedNotes);
+            const openedNote = yield select(state => state.note.openedNote);
+            let notes = openedNotes.filter(note => note.id !== payload);
+
+            yield put({
+                type: 'refreshOpenedNotes',
+                payload: [...notes]
+            })
+            if (openedNote.id == payload) {
+                yield put({
+                    type: 'refreshOpenedNote',
+                    payload: notes[0] || {},
+                })
+            }
         },
         *updateNoteTitle({ payload }, { call, put, select }) {
             console.log('updateNoteTitle');
-            let type;
-            const activeMenu1Id = yield select(state => state.noteMenu.activeMenu1Id);
-            const activeMenu2Id = yield select(state => state.noteMenu.activeMenu2Id);
+            const listParentNote = yield select(state => state.noteMenu.listParentNote);
+            const openedNotes = yield select(state => state.note.openedNotes);
+            const openedNote = yield select(state => state.note.openedNote);
+
             let result = yield call(updateNoteTitle, payload);
             if (result) {
-                if (payload.id == activeMenu1Id) {
-                    type = 'noteMenu/refreshTitle2'
-                } else if (payload.id == activeMenu2Id) {
-                    type = 'noteMenu/refreshTitle3'
-                }
-                if (type) {
+
+                if (result.result.id == listParentNote.id) {
                     yield put({
-                        type,
-                        payload: payload.name
+                        type: "noteMenu/refreshListParentNote",
+                        payload: result.result
                     });
                 }
+
+                if (result.result.parentId == listParentNote.id || result.result.isLeaf) {
+                    //更新list菜单
+                    yield put({
+                        type: "noteMenu/queryMenuItems",
+                        payload: listParentNote.id
+                    });
+                }
+
+                if (result.result.isLeaf) {
+                    //更新tab数据
+                    yield put({
+                        type: "refreshOpenedNotes",
+                        payload: openedNotes.map(item => {
+                            if (item.id == "new" && !payload.id) {
+                                return result.result;
+                            }
+                            if (item.id == payload.id) {
+                                item.name = payload.name
+                            }
+                            return item;
+                        }
+                        )
+                    });
+
+                    //更新已打开
+                    if (openedNote.id == "new") {
+                        yield put({
+                            type: "refreshOpenedNote",
+                            payload: result.result
+                        })
+                    }
+                }
+
                 return result;
             }
         },
-        *updateNoteText({ payload }, { call }) {
+        *updateNoteText({ payload }, { call, put, select }) {
             console.log('updateNoteText');
+            const openedNotes = yield select(state => state.note.openedNotes);
             let result = yield call(updateNoteText, payload);
             if (result) {
+                //更新tab数据
+                yield put({
+                    type: "refreshOpenedNotes",
+                    payload: openedNotes.map(item => {
+                        if (item.id == payload.id) {
+                            item.text = payload.text
+                        }
+                        return item;
+                    }
+                    )
+                });
                 return result;
             }
         },
         *deleteNote({ payload }, { call, put, select }) {
-            let result = yield call(deleteNote, payload);
+            const { id, parentId, isLeaf, parentIds } = payload;
+            const openedNotes = yield select(state => state.note.openedNotes);
+            const openedNote = yield select(state => state.note.openedNote);
+            const listParentNote = yield select(state => state.noteMenu.listParentNote);
+            let result = yield call(deleteNote, id);
             if (result) {
-                if (result.success) {
-                    const activeTabId = yield select(state => state.note.activeTabId);
-                    console.log(activeTabId);
-                    // 成功
+
+                let newOpenedNotes = [...openedNotes];
+                if (isLeaf) {
+                    newOpenedNotes = newOpenedNotes.filter(note => note.id != id);
+                } else {
+                    //文件夹
+                    //刷新树
                     yield put({
-                        type: 'queryTabTree',
-                        payload: activeTabId
+                        type: "noteMenu/queryMenuTree",
+                        payload: 0
                     });
+
+                    //过滤tab
+                    const reg = new RegExp("^" + parentIds + "/" + id)
+
+                    newOpenedNotes = newOpenedNotes.filter(note => !reg.test(note.parentIds));
+                    if (id == listParentNote.id) {//本人是list的根节点的话 跳到所有文件夹
+                        yield put({
+                            type: "noteMenu/refreshListParentNote",
+                        });
+                    }
+
+                }
+
+                if (parentId == listParentNote.id) {
+
                     yield put({
-                        type: 'refreshShowNote',
-                        payload: {}
+                        type: "noteMenu/queryMenuItems",
+                        payload: listParentNote.id
                     });
                 }
+
+                if (newOpenedNotes.length != openedNotes.length) {
+                    yield put({
+                        type: "refreshOpenedNotes",
+                        payload: newOpenedNotes
+                    });
+                }
+                if (openedNote.id == id) {
+                    yield put({
+                        type: "refreshOpenedNote",
+                        payload: newOpenedNotes[0]
+                    });
+                }
+
+
+                return result;
             }
-            return result;
         },
+        *updateParent({ payload }, { call, put, select }) {
+            const { id, parentId } = payload;
+            const openedNotes = yield select(state => state.note.openedNotes);
+            const openedNote = yield select(state => state.note.openedNote);
+            const listParentNote = yield select(state => state.noteMenu.listParentNote);
+            let result = yield call(updateParent, id, parentId);
+            if (result) {
+                const note = result.result;
+                console.log(note);
+                //文件夹
+                if (!note.isLeaf) {
+                    yield put({
+                        type: "noteMenu/queryMenuTree",
+                        payload: 0
+                    });
+                } else {//文件
+                    if (openedNote.id == id) {
+                        yield put({
+                            type: "refreshOpenedNote",
+                            payload: openedNote
+                        });
+
+                    }
+                    yield put({
+                        type: "refreshOpenedNotes",
+                        payload: openedNotes.map(item => item.id == id ? note : item)
+                    });
+
+                }
+                yield put({
+                    type: "noteMenu/refreshListParentNote",
+                    payload: { ...listParentNote }
+                });
+            }
+        }
     },
     reducers: {
-        refreshTreeData(state: NoteState, { payload }): NoteState {
+        refreshOpenedNote(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                activeTabId: payload.activeTabId,
-                treeData: payload.data,
+                openedNote: payload,
             }
         },
-        refreshActiveNoteId(state: NoteState, { payload }): NoteState {
+        refreshOpenedNotes(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                activeNoteId: payload,
+                openedNotes: payload
             }
         },
-        refreshShowNote(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                showNote: payload,
-                selectedKeys: [payload.id],
-                activeNoteId: payload.id,
-            }
-        },
-        refreshTreeNote(state: NoteState, { payload }): NoteState {
 
-            const treeData = [...state.treeData];
-            const noteNode = findNodeById(treeData, payload.id);
-            if (noteNode) {
-                noteNode.title = payload.name;
-                noteNode.name = payload.name;
-            } else {
-                const treeNode: NoteNode = {
-                    key: payload.id,
-                    parentIds: payload.parentIds,
-                    title: payload.name,
-                    name: payload.name,
-                    parentId: payload.parentId,
-                    children: []
-                }
-                if (payload.parentId === state.activeTabId) {
-                    treeData.push(treeNode);
-                } else {
-                    const parent = findNodeById(treeData, payload.parentId);
-                    if (parent) {
-                        parent.children.push(treeNode);
-                    }
-                }
-            }
-            return {
-                ...state,
-                treeData,
-            }
-        },
-        refreshSelectedKeys(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                selectedKeys: [...payload],
-            }
-        },
+
     },
 };
 

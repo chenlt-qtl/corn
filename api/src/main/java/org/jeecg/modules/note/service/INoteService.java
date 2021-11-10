@@ -25,7 +25,7 @@ public interface INoteService extends IService<Note> {
 
     List<Note> getNameByIds(String[] ids);
 
-    List<NoteTreeModel> queryTreeList(String createBy, String parentId);
+    List<NoteTreeModel> queryTreeMenu(String createBy, String parentId);
 
     void updateParent(Note note, String oldParents);
 
@@ -37,7 +37,9 @@ public interface INoteService extends IService<Note> {
 
     boolean updateText(NoteModel note, String oldText);
 
-    boolean saveNote(NoteModel note);
+    Note saveNote(NoteModel note);
 
     IPage<Map> searchNote(String searchStr, int pageNo, int pageSize);
+
+    IPage<Note> getNewest(int pageNo, int pageSize);
 }

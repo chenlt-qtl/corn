@@ -1,47 +1,22 @@
 package org.jeecg.modules.note.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.note.entity.Note;
-import org.jeecg.modules.note.entity.NoteDelete;
 import org.jeecg.modules.note.entity.NoteFavorite;
 import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.service.INoteFavoriteService;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-
-import org.jeecg.modules.note.service.INoteService;
 import org.jeecg.modules.system.entity.SysUser;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
-import org.jeecgframework.poi.excel.def.NormalExcelConstants;
-import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
-import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
-import com.alibaba.fastjson.JSON;
 
- /**
+import javax.websocket.server.PathParam;
+import java.util.Arrays;
+import java.util.List;
+
+/**
  * @Title: Controller
  * @Description: 收藏夹
  * @author： jeecg-boot
@@ -55,8 +30,6 @@ public class NoteFavoriteController {
 	@Autowired
 	private INoteFavoriteService noteFavoriteService;
 
-	 @Autowired
-	 private INoteService noteService;
 	/**
 	  *  编辑
 	 * @param noteFavorite
@@ -69,6 +42,15 @@ public class NoteFavoriteController {
 		result.setSuccess(true);
 		return result;
 	}
+
+	 @PutMapping(value = "/edit/{noteId}")
+	 public Result editOne(@PathVariable("noteId") String id,@RequestParam Boolean isFav) {
+
+		 Result result = new Result();
+		 noteFavoriteService.editOne(id,isFav);
+		 result.setSuccess(true);
+		 return result;
+	 }
 	
 	/**
 	  *   通过id删除

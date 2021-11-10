@@ -60,11 +60,12 @@ const MarkDownIt = React.forwardRef((props, ref) => {
     const [htmlStr, setHtmlStr] = useState<string>("");
 
     useEffect(() => {
-        const text = props.note.showNote.text || "";
+        const text = props.note.openedNote.text || "";
+        
         setValue(text);
         renderHTML(text);
         setShowToc(true);
-    }, [props.note.showNote])
+    }, [props.note.openedNote])
 
     const handleEditorChange = ({ html, text }) => {
         setValue(text);
@@ -89,7 +90,6 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                 return new Blob([u8arr], { type: mime })
             }
             const blob = convertBase64UrlToBlob(reader.result)
-            console.log(blob);
 
             let result = await uploadImg(reader.result)
             if (result.success) {
@@ -113,6 +113,7 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
     const render = function () {
         const { displayIndex } = props;
+        
         return (
             <>
 
@@ -120,7 +121,7 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                     <div className={styles.text} style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
                         <MdEditor
                             value={value}
-                            style={{ height: "600px" }}
+                            // style={{ height: "600px" }}
                             renderHTML={renderHTML}
                             onChange={handleEditorChange}
                             // plugins={plugins}
@@ -132,14 +133,13 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                 {displayIndex == 0 ?
                     <div className={styles.view}>
                         {showToc ? <div className={styles.toc}>
-                            <div className={styles.title}><span>大纲</span><CloseOutlined onClick={() => { setShowToc(false) }} /></div>
+                            <div className={styles.title}><CloseOutlined onClick={() => { setShowToc(false) }} /></div>
                             {tocify && tocify.render()}
-                        </div> : <BarsOutlined onClick={() => { setShowToc(true) }} />}
+                        </div> : <BarsOutlined style={{margin:"10px"}}onClick={() => { setShowToc(true) }} />}
 
                         <div className={styles.text}>
                             <MdEditor
                                 value={value}
-                                style={{ border: 0 }}
                                 renderHTML={() => htmlStr}
                                 config={{ view: { menu: false, md: false } }}
                                 readOnly={true}

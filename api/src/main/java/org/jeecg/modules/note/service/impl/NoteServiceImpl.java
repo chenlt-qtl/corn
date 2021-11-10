@@ -1,5 +1,6 @@
 package org.jeecg.modules.note.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description: 笔记管理
@@ -76,9 +74,17 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public List<NoteTreeModel> queryTreeList(String createBy, String parentId) {
+    public List<NoteTreeModel> queryTreeMenu(String createBy, String parentId) {
         String rootId = parentId;
-        List<Note> list = noteMapper.listAllChildren(createBy, parentId, null, false);
+
+        QueryWrapper<Note> queryWrapper = new QueryWrapper();
+        queryWrapper.select("id","name","parent_id","parent_ids");
+        queryWrapper.eq("create_by", getUsername());
+        queryWrapper.eq("is_leaf",0);
+        queryWrapper.orderByAsc("name");
+
+        List<Note> list = list(queryWrapper);
+
         List<NoteTreeModel> treeList = new ArrayList<>();
         for (Note note : list) {
             NoteTreeModel model = new NoteTreeModel(note);
@@ -88,7 +94,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             treeList.add(model);
         }
         // 调用wrapTreeDataToTreeList方法生成树状数据
-        return TreeUtil.wrapTreeDataToTreeList(treeList, rootId);
+        return TreeUtil.wrapTreeDataToTreeList(treeList, rootId,false);
     }
 
     @Transactional
@@ -98,8 +104,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         note.setUpdateBy(null);
         note.setUpdateTime(null);
         updateById(note);
-        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        List<Note> list = noteMapper.listAllChildren(sysUser.getUsername(), note.getId(), null, true);//子笔记
+        List<Note> list = noteMapper.listAllChildren(getUsername(), note.getId(), null, true);//子笔记
         for (Note child : list) {
             child.setParentIds(child.getParentIds().replace(oldParents, note.getParentIds()));
             updateById(child);
@@ -115,12 +120,16 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     }
 
-    public boolean saveNote(NoteModel note) {
+    public Note saveNote(NoteModel note) {
         try {
-            note.setText(UpLoadUtil.parseText(uploadpath, note.getText(), ""));
-            NoteContent content = noteContentService.addContent(note);
-            note.setContentId(content.getId());
-            return save(note.getNote());
+            if(note.getIsLeaf()) {
+                note.setText(UpLoadUtil.parseText(uploadpath, note.getText(), ""));
+                NoteContent content = noteContentService.addContent(note);
+                note.setContentId(content.getId());
+            }
+            Note obj = note.getNote();
+            save(obj);
+            return obj;
         } catch (DataIntegrityViolationException e) {
             throw new CornException("笔记本目录最多只能60层!" + note.getParentIds());
         }
@@ -134,11 +143,10 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             page.setRecords(new ArrayList<>());
         }else {
             int offset = pageNo > 0 ? (pageNo - 1) * pageSize : 0;
-            SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-            Integer count = noteMapper.getNoteCount(searchStr, sysUser.getUsername());
+            Integer count = noteMapper.getNoteCount(searchStr, getUsername());
             page.setTotal(count);
 
-            List<Map> list = noteMapper.pageSearchNote(searchStr, sysUser.getUsername(), pageSize, offset);
+            List<Map> list = noteMapper.pageSearchNote(searchStr, getUsername(), pageSize, offset);
             page.setRecords(list);
         }
         return page;
@@ -194,5 +202,22 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             }
         }
         note.setParents(parents);
+    }
+
+    @Override
+    public IPage<Note> getNewest(int pageNo, int pageSize) {
+
+        QueryWrapper<Note> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("create_by", getUsername());
+        queryWrapper.eq("is_leaf",1);
+        queryWrapper.orderByDesc("update_time");
+
+        Page<Note> page = new Page<Note>(pageNo, pageSize);
+        return page(page, queryWrapper);
+    }
+
+    private String getUsername(){
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        return sysUser.getUsername();
     }
 }

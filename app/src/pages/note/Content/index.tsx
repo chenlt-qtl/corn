@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { Modal, Input } from 'antd';
-import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined,EyeOutlined,EditOutlined } from '@ant-design/icons';
+import { Tabs, Input, Button, Divider, Spin } from 'antd';
+import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled } from '@ant-design/icons';
 import styles from './index.less';
 import { connect } from 'umi';
-import { getLevel, guid } from '@/utils/utils'
+import { guid } from '@/utils/utils'
 import MarkDownIt from './MarkDownIt'
 
-const { TextArea } = Input;
+const { TabPane } = Tabs;
 
 let statusIcons = {
     '0': <CheckCircleTwoTone twoToneColor="#52c41a" />,
@@ -18,12 +18,15 @@ const group = 'group';
 const Content = React.forwardRef((props, ref) => {
 
     const titleInput = useRef();
-    const [code, setCode] = useState<string>('');
-    const [saveStatus, setSaveStatus] = useState<Number>(null);//0:已保存 1:未保存 2:正在保存
-    const [title, setTitle] = useState<string>('');
-    const [codeVisible, setCodeVisible] = useState<boolean>(false);
+    const [saveStatus, setSaveStatus] = useState<Number>(0);//0:已保存 1:未保存 2:正在保存
     const [displayIndex, setDisplayIndex] = useState<number>(-1);
 
+    const [title, setTitle] = useState<String>("");
+
+    useEffect(() => {
+        setDisplayIndex(0)
+        setTitle(props.note.openedNote.name)
+    }, [props.note.openedNote])
 
     useImperativeHandle(ref, () => ({
         handleAddNote: (parentId: string) => {
@@ -32,7 +35,6 @@ const Content = React.forwardRef((props, ref) => {
             setSaveStatus(1)
             const note = { name: '新文档', parentId, id };
             setTitle('新文档');
-            // content.current.innerHTML = '';
             props.dispatch({
                 type: 'note/refreshShowNote',
                 payload: note,
@@ -40,14 +42,6 @@ const Content = React.forwardRef((props, ref) => {
         }
     }));
 
-    const handleUpdateCode = () => {
-        // content.current.innerHTML = code;
-        setCodeVisible(false);
-    }
-
-    const handleCodeChange = ({ target: { value } }) => {
-        setCode(value)
-    }
 
     const handleChange = e => {
         setSaveStatus(1)
@@ -58,16 +52,39 @@ const Content = React.forwardRef((props, ref) => {
         setSaveStatus(1)
     }
 
-    useEffect(() => {
-        handleShowNote(props.note.showNote)
-    }, [props.note.showNote])
 
-    const handleShowNote = (note) => {
-        console.log('handleShowNote');
-        setTitle(note.name);
-        // content.current.innerHTML = note.text || '';
-        setDisplayIndex(0)
-        setSaveStatus(0)
+    const handleActiveNote = (id) => {
+
+        const { openedNote } = props.note;
+        if (openedNote.id != id) {
+            props.dispatch({
+                type: 'note/openNote',
+                payload: id,
+            })
+
+            setDisplayIndex(0)
+            setSaveStatus(0)
+        }
+    }
+
+    const closeNotes = (allClose: boolean) => {
+        const openedNotes = [];
+        const { openedNote } = props.note;
+        if (!allClose) {
+
+            if (openedNote && openedNote.name) {
+                openedNotes.push(props.note.openedNote)
+            }
+        } else {
+            props.dispatch({
+                type: 'note/refreshOpenedNote',
+                payload: {},
+            })
+        }
+        props.dispatch({
+            type: 'note/refreshOpenedNotes',
+            payload: openedNotes,
+        })
     }
 
     const saveNote = (type: string, text: string) => {
@@ -75,46 +92,32 @@ const Content = React.forwardRef((props, ref) => {
             return;
         }
 
-        let noteToSave = { ...props.note.showNote }
+        let noteToSave = { ...props.note.openedNote }
 
-        if (noteToSave.id) {
 
-            setSaveStatus(2)
-            noteToSave.name = title
+        setSaveStatus(2)
+        noteToSave.name = title
 
-            let method
-            if (type == 'title') {
-                method = 'note/updateNoteTitle'
-            } else {
-                method = 'note/updateNoteText'
-                noteToSave.text = text
-            }
-
-            props.dispatch({
-                type: method,
-                payload: noteToSave
-            }).then((res) => {
-                if (res) {
-                    if (noteToSave.createTime) {//修改
-                        if (type == 'title') {//标题修改了才刷新菜单
-                            props.refreshMenu(getLevel(noteToSave.parentIds));
-                        }
-                    } else {
-                        const { result: newNote } = res;
-                        noteToSave = newNote;
-                        props.refreshMenu(getLevel(newNote.parentIds));
-                    }
-                    props.dispatch({
-                        type: 'openNotes/updateOpenNote',
-                        payload: noteToSave
-                    })
-
-                    if (props.note.activeNoteId == noteToSave.id) {
-                        setSaveStatus(0)
-                    }
-                }
-            })
+        let method
+        if (type == 'title') {
+            method = 'note/updateNoteTitle'
+        } else {
+            method = 'note/updateNoteText'
+            noteToSave.text = text
         }
+
+
+        props.dispatch({
+            type: method,
+            payload: { ...noteToSave, id: noteToSave.id == "new" ? null : noteToSave.id }
+        }).then((res) => {
+            if (res) {
+                if (props.note.openedNote.id == noteToSave.id) {
+                    setSaveStatus(0)
+                }
+            }
+        })
+
 
     }
 
@@ -127,68 +130,68 @@ const Content = React.forwardRef((props, ref) => {
 
     }
 
+    const handleRemoveTab = id => {
+
+        props.dispatch({
+            type: 'note/closeNote',
+            payload: id,
+        })
+
+        setDisplayIndex(0)
+        setSaveStatus(0)
+    }
+
+    const handleChangeFav = () => {
+        const { openedNote } = props.note;
+        props.dispatch({
+            type: 'noteFavorite/editOne',
+            payload: { noteId: openedNote.id, isFav: !openedNote.fav },
+        })
+    }
 
     const render = function () {
+        const { openedNote = {}, openedNotes } = props.note;
+        const loading = props.loading.effects["noteFavorite/editOne"] || props.loading.effects["note/openNote"] || false;
         return (
-            <>
-                {/* <div className={styles.toolbar} onBlur={e => handleBlur(e, 'content')}>
-                    <div className={styles.buttons}>
-                        <a group={group} onClick={showCode} href='#'>code</a>
-                        <a group={group} onClick={() => execCommand('bold')} href='#'><b>Bold</b></a>
-                        <a group={group} onClick={() => execCommand('italic')} href='#'><em>Italic</em></a>
-                        <a group={group} onClick={() => execCommand('underline')} href='#'><u><b>U</b></u></a>
-                        <a group={group} className={styles.yellow}
-                            onClick={() => {
-                                execCommand('backColor', '#FFEB9C')
-                                execCommand('foreColor', '#9C6500')
-                            }} href='#'>突出</a>
-                        <a group={group} className={styles.green}
-                            onClick={() => {
-                                execCommand('backColor', '#C6EFCE')
-                                execCommand('foreColor', '#006100')
-                            }} href='#'>优秀</a>
-                        <a group={group} className={styles.warning}
-                            onClick={() => {
-                                execCommand('backColor', '#FFC7CE')
-                                execCommand('foreColor', '#9C0006')
-                            }} href='#'>警告</a>
-                        <a group={group} onClick={() => execCommand('removeFormat')} href='#'><b>去除格式</b></a>
-                        <a group={group} onClick={() => execCommand('insertHorizontalRule')} href='#'><b>水平线</b></a>
-                        <a group={group} onClick={() => execCommand('insertHTML', '&nbsp;&nbsp;&nbsp;-&nbsp;')} href='#'><b>*</b></a>
-                        <a group={group} onClick={() => execCommand('indent')} href='#'><b>{'Tab'}</b></a>
-                        <a group={group} onClick={() => execCommand('fontname', 'Microsoft YaHei')} href='#'><span style={{ fontFamily: 'Microsoft YaHei' }}>雅黑</span></a>
-                        <a group={group} onClick={() => execCommand('fontname', 'SimHei')} href='#'><span style={{ fontFamily: 'SimHei' }}>黑体</span></a>
-                        <a group={group} onClick={() => execCommand('fontname', 'SimSun')} href='#'><span style={{ fontFamily: 'SimSun' }}>宋体</span></a>
-                        <a group={group} onClick={() => execCommand('fontname', 'Courier New')} href='#'><div style={{ display: 'inline-block', fontFamily: 'Courier New' }}>Font</div></a>
-                        <a group={group} onClick={() => execCommand('fontname', 'Comic Sans MS')} href='#'><div style={{ display: 'inline-block', fontFamily: 'Comic Sans MS' }}>Font</div></a>
-                    </div>
-                    <div className={styles.status}>
-                        {statusIcons[saveStatus]}
-                    </div>
+            <div className={styles.main}>
+                <div className={styles.top}>
+                    <div className={styles.block}></div>
+                    <div className={styles.tab}>
+                        <Tabs
+                            hideAdd
+                            onTabClick={handleActiveNote}
+                            activeKey={openedNote.id}
+                            type="editable-card"
+                            onEdit={handleRemoveTab}
+                            tabBarExtraContent={<>
+                                <Button onClick={() => { closeNotes(false) }} type="link">关闭其他</Button>
+                                <Divider type="vertical" />
+                                <Button onClick={() => { closeNotes(true) }} type="link">关闭所有</Button>
+                            </>}
+                        >
+                            {openedNotes.map(pane => (
+                                <TabPane tab={pane.name} key={pane.id}>
+                                </TabPane>
+                            ))}
+                        </Tabs>
 
-                </div> */}
-                <div className={styles.main}>
-                    {props.children}
-                    <div className={styles.content}>
-                        <div className={styles.buttons}> {displayIndex == 0 ? <EditOutlined onClick={() => setDisplayIndex(1)} /> :
+                    </div>
+                    <div className={styles.block}></div>
+                </div>
+
+                <Spin spinning={loading}>
+                    <div className={styles.title}>
+                        <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
+                        {openedNote.id ? <div className={styles.buttons}>{openedNote.fav ? <StarFilled className={styles.fav} onClick={handleChangeFav} /> : <StarOutlined onClick={handleChangeFav} />}{displayIndex == 0 ? <EditOutlined onClick={() => setDisplayIndex(1)} /> :
                             <EyeOutlined onClick={() => {
                                 setDisplayIndex(0)
-                            }} />}{statusIcons[saveStatus]}</div>
-                        <div className={styles.title}><Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input></div>
-                        <MarkDownIt handleChange={handleChange} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDownIt>
-
+                            }} />}{statusIcons[saveStatus]}</div> : ""}
                     </div>
+                </Spin>
+                <div className={styles.content}>
+                    <MarkDownIt handleChange={handleChange} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDownIt>
                 </div>
-                <Modal
-                    visible={codeVisible}
-                    onOk={handleUpdateCode}
-                    onCancel={() => setCodeVisible(false)}
-                >
-                    <div style={{ marginBottom: '10px' }}>Source code</div>
-                    <TextArea value={code} rows={10} onChange={handleCodeChange} />
-
-                </Modal>
-            </>
+            </div>
         );
     };
     return render();

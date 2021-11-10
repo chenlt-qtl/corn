@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,6 +46,46 @@ public class NoteFavoriteServiceImpl extends ServiceImpl<NoteFavoriteMapper, Not
     }
 
     @Override
+    public void editOne(String noteId, Boolean isFav){
+
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("create_by",sysUser.getUsername());
+
+        NoteFavorite noteFavorite = this.getOne(queryWrapper);
+
+        if(noteFavorite == null){
+            noteFavorite = new NoteFavorite();
+            if(isFav){
+                noteFavorite.setNoteIds(noteId);
+            }
+        }else {
+            String noteIds = noteFavorite.getNoteIds();
+            List<String> idList = new ArrayList<>(Arrays.asList(noteIds.split(",")));
+            if(isFav){
+                if(!noteIds.contains(noteId)){
+                    idList.add(noteId);
+                }
+                noteFavorite.setNoteIds(StringUtils.join(idList,","));
+            }else{//删除收藏
+
+                if(noteIds.contains(noteId)){
+                    List<String> newIds = new ArrayList<>();
+                    for(String id:idList){
+                        if(!id.equals(noteId)){
+                            newIds.add(id);
+                        }
+                    }
+                    noteFavorite.setNoteIds(StringUtils.join(newIds,","));
+                }
+            }
+
+        }
+
+        this.saveOrUpdate(noteFavorite);
+    }
+
+    @Override
     public List<NoteModel> queryNotes(String username) {
         QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
         queryWrapper.eq("create_by",username);
@@ -57,5 +98,25 @@ public class NoteFavoriteServiceImpl extends ServiceImpl<NoteFavoriteMapper, Not
             }
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * 查询是否收藏
+     * @param noteId
+     * @return
+     */
+    @Override
+    public boolean queryIfFavorite(String noteId) {
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("create_by",sysUser.getUsername());
+        NoteFavorite noteFavorite = getOne(queryWrapper);
+        if(noteFavorite != null && StringUtils.isNotBlank(noteId)){
+            String noteIds = noteFavorite.getNoteIds();
+            if(StringUtils.isNotBlank(noteIds)){
+                return noteIds.contains(noteId);
+            }
+        }
+        return false;
     }
 }

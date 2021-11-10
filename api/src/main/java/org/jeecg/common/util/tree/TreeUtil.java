@@ -15,7 +15,7 @@ public class TreeUtil {
      * queryTreeList的子方法 ====1=====
      * 该方法设置TreeModel的children
      */
-    public static List wrapTreeDataToTreeList(List<? extends TreeModel> list,String parentId) {
+    public static List wrapTreeDataToTreeList(List<? extends TreeModel> list,String parentId,boolean setIsLeaf) {
         Map<String,TreeModel> allMap = new HashMap<>();
         List<TreeModel> result = new ArrayList<>();
         for(TreeModel model:list){
@@ -25,7 +25,9 @@ public class TreeUtil {
             }
         }
         findChildren(list, allMap);
-        setEmptyChildrenAsNull(list);
+        if(setIsLeaf) {
+            setEmptyChildrenAsNull(list);
+        }
         return result;
     }
 

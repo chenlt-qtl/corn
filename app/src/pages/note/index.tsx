@@ -1,65 +1,53 @@
 import React, { useRef } from 'react';
 import { Spin } from 'antd';
 import { connect } from 'umi';
-import LeftMenu from './LeftMenu'
+import style from './style.less';
+
+import TreeMenu from './TreeMenu'
+import ListMenu from './ListMenu'
 import Content from './Content'
+import { NoteItem } from './data';
 
 
-
+let dragNote;
 
 const NoteList: React.FC<{}> = (props) => {
 
-  const content = useRef()
-
-  /**
-   * level 1:一级  2:二级  3 4:三级 
-   */
-  const refreshMenu = (level: number) => {
-    let method = 'note/queryChildren';
-    let id;
-
-    if (level == 1) {
-      id = props.noteMenu.activeTopId
-    } else if (level == 2) {
-      id = props.noteMenu.activeMenu1Id
+  const handleNoteClick = (note: NoteItem) => {
+    if (note.isLeaf) {
+      const { openedNote } = props.note;
+      if (openedNote.id != note.id) {
+        props.dispatch({
+          type: 'note/openNote',
+          payload: note.id,
+        })
+      }
     } else {
-      level = 3;
-      method = 'note/queryTabTree'
-      id = props.noteMenu.activeMenu2Id
+      const { listParentNote } = props.noteMenu;
+      if (listParentNote.id != note.id) {
+        props.dispatch({
+          type: 'noteMenu/refreshListParentNote',
+          payload: note
+        })
+      }
     }
-    if (id) {
-      props.dispatch({
-        type: method,
-        payload: id,
-      }).then((res) => {
-        if (res) {
-          const { result } = res;
-          props.dispatch({
-            type: `noteMenu/refreshMenu${level}`,
-            payload: result,
-          })
-        }
-      });
-    } else {
-      props.dispatch({
-        type: `noteMenu/refreshMenu${level}`,
-        payload: [],
-      })
-    }
-  }
-
-  const handleAddNote = (pid: string) => {
-    content.current.handleAddNote(pid)
   }
 
   const render = function () {
-    const loading = props.loading.effects["note/queryNote"] || props.loading.effects["note/deleteNote"]
+    const loading = props.loading.effects["note/queryNote"] || props.loading.effects["note/deleteNote"] || props.loading.effects["note/updateNoteTitle"]
       || props.loading.effects["note/queryTabTree"] || props.loading.effects["note/queryChildren"] || false;
     return (
       <Spin spinning={loading}>
-        <Content ref={content} refreshMenu={refreshMenu}>
-          <LeftMenu refreshMenu={refreshMenu} onAddNote={handleAddNote}></LeftMenu>
-        </Content>
+        <div className={style.main}>
+          <TreeMenu onNoteClick={handleNoteClick} getDragNote={()=>dragNote}></TreeMenu>
+          <div className={style.body}>
+            <div className={style.listMenu}><ListMenu onNoteClick={handleNoteClick} setDragNote={(note: NoteItem) => dragNote = note}></ListMenu> </div>
+            <div className={style.divider}></div>
+            <div className={style.content}><Content></Content></div>
+
+          </div>
+        </div>
+
       </Spin >
     );
   };

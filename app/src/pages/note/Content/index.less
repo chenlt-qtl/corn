@@ -1,77 +1,139 @@
 .toolbar {
-  display: flex;
+  display        : flex;
   justify-content: space-between;
-  width: 100%;
-  border-bottom: 1px solid #e7e7e7;
-  padding-bottom: 5px;
+  width          : 100%;
+  border-bottom  : 1px solid #e7e7e7;
+  padding-bottom : 5px;
 
   .buttons {
-    display: flex;
-    flex: 1;
+    display        : flex;
+    flex           : 1;
     justify-content: center;
   }
 
   .status {
-    margin: 5px;
+    margin : 5px;
     padding: 2px 5px;
   }
 
   .yellow {
     background-color: #FFEB9C;
-    color: #9C6500;
+    color           : #9C6500;
   }
 
   .warning {
     background-color: #FFC7CE;
-    color: #9C0006;
+    color           : #9C0006;
   }
 
   .green {
     background-color: #C6EFCE;
-    color: #006100;
+    color           : #006100;
   }
 
   a {
-    display: inline-block;
-    margin: 5px;
-    padding: 2px 5px;
-    text-align: center;
+    display      : inline-block;
+    margin       : 5px;
+    padding      : 2px 5px;
+    text-align   : center;
     border-radius: 4px;
   }
 }
 
-.main {
-  display: flex;
-  height: calc(~"100vh - 98px");
-}
 
-.content {
+
+.content1 {
   background-color: #fff;
-  flex: 1;
-  border-left: 1px solid #e7e7e7;
-  padding: 20px 50px;
-  border: 1px solid #e7e7e7;
-  border-radius: 4px;
-  box-shadow: 0 0 0 2px rgba(205, 205, 205, 0.1);
-  box-shadow: -5px 0px 5px -3px #e7e7e7;
-  height: 100%;
-  overflow: auto;
+  flex            : 1;
+  border-left     : 1px solid #e7e7e7;
+  padding         : 20px 50px;
+  border          : 1px solid #e7e7e7;
+  border-radius   : 4px;
+  box-shadow      : 0 0 0 2px rgba(205, 205, 205, 0.1);
+  box-shadow      : -5px 0px 5px -3px #e7e7e7;
+  height          : 100%;
+  overflow        : auto;
 
   &:focus {
-    border: 1px solid #55d987;
+    border            : 1px solid #55d987;
     border-right-width: 1px !important;
-    outline: 0;
-    box-shadow: 0 0 0 2px rgb(46 204 113 / 20%);
+    outline           : 0;
+    box-shadow        : 0 0 0 2px rgb(46 204 113 / 20%);
+  }
+
+
+
+}
+
+
+.buttons {
+  padding   : 5px 24px;
+  text-align: right;
+
+  span {
+    padding-left: 15px;
+  }
+}
+
+
+// 新
+.main {
+  height        : 100%;
+  display       : flex;
+  flex-direction: column;
+
+  .top {
+    padding-top: 5px;
+    display    : flex;
+    align-items: flex-end;
+
+    .tab {
+      flex: 1;
+      height: 50px;
+      width: 500px;
+      :global {
+
+        .ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-tab,
+        .ant-tabs-card.ant-tabs-top>div>.ant-tabs-nav .ant-tabs-tab {
+          border-radius: 4px 4px 0 0;
+        }
+
+        .ant-tabs-card>.ant-tabs-nav .ant-tabs-tab,
+        .ant-tabs-card>div>.ant-tabs-nav .ant-tabs-tab {
+          padding: 5px 10px;
+        }
+        .ant-tabs-tab-btn{
+          max-width: 100px;
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .block {
+      width        : 5px;
+      height       : 10px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #f0f0f0
+    }
   }
 
   .title {
-    display: flex;
-    border-bottom: 1px solid #e7e7e7;
-    padding: 7px;
+    display      : flex;
+    align-items  : baseline;
+    border-bottom: 1px solid #f0f0f0;
+    padding      : 5px 16px;
+
+    .buttons {
+      display        : flex;
+      flex           : 1;
+      justify-content: center;
+    }
 
     >input {
-      border: none;
-      font-size: 18px;
+      border     : none;
+      font-size  : 16px;
       font-weight: bold;
 
       &:focus {
@@ -84,13 +146,16 @@
     }
   }
 
+  .content {
+    flex: 1;
+    div{
+      overflow-wrap:break-word;
+      word-break: break-word;
+      word-wrap: break-word;
+    }
+  }
 }
 
-
-.buttons{
-  padding: 5px 24px;
-  text-align: right;
-  span{
-    padding-left: 15px;
-  }
+.fav{
+  color: #e74c3c;
 }

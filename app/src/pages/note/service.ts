@@ -4,8 +4,8 @@ import { stringify } from 'qs';
 
 
 //树形数据结构
-export async function queryTreeList(id:string) {
-  return request('/api/note/queryTreeList?parentId='+id);
+export async function queryTreeMenu(id: string) {
+  return request('/api/note/queryTreeMenu?parentId=' + id);
 }
 
 export async function queryNoteById(id: string) {
@@ -20,6 +20,10 @@ export async function queryNote(parentId: string) {
 export async function searchNote(params) {
 
   return request(`/api/note/searchNote?${stringify(params)}`);
+}
+
+export async function getNewest(pageNo: number, pageSize: number) {
+  return request('/api/note/queryNewest?pageNo=' + pageNo + "&pageSize=" + pageSize);
 }
 
 export async function updateNoteTitle(params: NoteItem) {
@@ -70,7 +74,7 @@ export async function queryFavorite() {
   return request('/api/note/noteFavorite/queryNotes');
 }
 
-export async function editFavorite(noteIds: String) {
+export async function editAllFav(noteIds: String) {
   return request('/api/note/noteFavorite/edit', {
     method: 'PUT',
     data: {
@@ -80,8 +84,17 @@ export async function editFavorite(noteIds: String) {
   });
 }
 
+export async function editOneFav({ noteId, isFav }) {
+  return request('/api/note/noteFavorite/edit/' + noteId + "?isFav=" + isFav, {
+    method: 'PUT',
+    data: {
+      method: 'put',
+    },
+  });
+}
+
 export async function deleteNote(id: String) {
-  return request('/api/note/delete?id='+id, {
+  return request('/api/note/delete?id=' + id, {
     method: 'DELETE',
     data: {
       method: 'delete',
@@ -90,11 +103,23 @@ export async function deleteNote(id: String) {
 }
 
 export async function uploadImg(img: String) {
-  
+
   return request('/api/sys/common/uploadImg/note', {
     method: 'POST',
     data: {
-      file:img,
+      file: img,
     },
+  });
+}
+
+
+export async function updateParent(noteId: string, parentId: string) {
+
+  return request('/api/note/updateParent', {
+    method: 'PUT',
+    data: {
+      id: noteId,
+      parentId
+    }
   });
 }

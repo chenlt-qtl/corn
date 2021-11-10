@@ -1,0 +1,35 @@
+@topHeight: 85px;
+
+.main {
+    height       :calc(~"100vh - @{topHeight}");
+    width        : 100%;
+    border-bottom: 1px dotted #cdcdcd;
+    display      : flex;
+
+    .body {
+        flex            : 1;
+        border          : 1px dotted rgba(205, 205, 205, 0.2);
+        margin          : 10px;
+        border-radius   : 5px;
+        background-color: #fff;
+        box-shadow      : 0 0 3px 3px rgba(205, 205, 205, 0.2);
+        display         : flex;
+
+       
+
+        .listMenu {
+            width       : 235px;
+            height      : 100%;
+        }
+
+        .divider{
+            width: 1px;
+            height: 100%;
+            border-right: 1px solid rgba(205, 205, 205, 0.5); 
+        }
+
+        .content {
+            flex: 1;
+        }
+    }
+}

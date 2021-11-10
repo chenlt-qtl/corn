@@ -13,13 +13,16 @@ public class NoteModel extends Note {
 
     private java.lang.String parents;
     private java.lang.String text;
+    private boolean isFav;
 
     public NoteModel(){
 
     }
     public NoteModel(Note note, NoteContent content){
         BeanUtils.copyProperties(note,this);
-        this.setText(content.getText());
+        if(content!=null) {
+            this.setText(content.getText());
+        }
     }
 
     public NoteModel(Note note){
