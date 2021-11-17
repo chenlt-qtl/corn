@@ -265,7 +265,7 @@ const NoteModel: NoteModelType = {
                     }
                     yield put({
                         type: "refreshOpenedNotes",
-                        payload: openedNotes.map(item => item.id == id ? note : item)
+                        payload: openedNotes.map(item => item.id == id ? { ...item, ...note } : item)
                     });
 
                 }
