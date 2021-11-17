@@ -10,7 +10,7 @@ import 'react-markdown-editor-lite/lib/index.css';
 
 import marked from 'marked'
 import hljs from "highlight.js";
-import 'highlight.js/styles/monokai-sublime.css';
+import 'highlight.js/styles/a11y-light.css';
 import Tocify from './Tocify';
 
 let tocify = new Tocify();
