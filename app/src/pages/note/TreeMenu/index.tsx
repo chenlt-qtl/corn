@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Tree, Spin, Modal, notification, Menu, Dropdown, Input, Form } from 'antd';
-import { ClockCircleOutlined, StarFilled, PlusOutlined, CaretDownOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, FileMarkdownOutlined, EditOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, StarFilled, PlusOutlined, CaretDownOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, FileMarkdownOutlined, EditOutlined, FolderOpenOutlined, BookOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { isNormalNoteId } from '@/utils/utils';
@@ -90,7 +90,7 @@ const LeftMenu: React.FC = (props, ref) => {
         })
     }
 
-    const handleExpand = value =>{
+    const handleExpand = value => {
         setExpandedKeys(value);
     }
 
@@ -199,14 +199,24 @@ const LeftMenu: React.FC = (props, ref) => {
                             selectedKeys={selectedKeys}
                             blockNode={true}
                             multiple
-                            showIcon
+                            showIcon={false}
                             expandedKeys={expandedKeys}
                             treeData={treeData}
                             onExpand={handleExpand}
                             titleRender={node => {
+                                let icon;
+                                if (node.parentId == 0) {
+                                    icon = <BookOutlined />;
+                                } else {
+                                    if (expandedKeys.includes(node.key)) {
+                                        icon = <FolderOpenOutlined />;
+                                    } else {
+                                        icon = <FolderOutlined />;
+                                    }
+                                }
                                 return <div className={styles.treeNode} onDrop={() => handleChangeParent(node.key)} onDragOver={(event) => {
                                     event.preventDefault();
-                                }}><div className={styles.title}>{node.title}</div>
+                                }}><div className={styles.title}>{icon}{node.title}</div>
                                     <div className="noteTreeMenu" onClick={e => {
                                         e.preventDefault();
                                         e.stopPropagation();
