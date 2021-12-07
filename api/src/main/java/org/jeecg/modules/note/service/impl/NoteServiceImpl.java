@@ -17,6 +17,7 @@ import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
 import org.jeecg.modules.note.service.INoteContentService;
 import org.jeecg.modules.note.service.INoteDeleteService;
+import org.jeecg.modules.note.service.INoteHistoryService;
 import org.jeecg.modules.note.service.INoteService;
 import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Autowired
     private INoteContentService noteContentService;
+
+    @Autowired
+    private INoteHistoryService noteHistoryService;
 
     @Override
     public List<Note> listNote(String createBy, String parentId) {
@@ -112,11 +116,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
 
-    public boolean updateText(NoteModel note, String oldNote) {
-        note.setText(UpLoadUtil.parseText(uploadpath, note.getText(), oldNote));
-        NoteContent content = noteContentService.addContent(note);
-        note.setContentId(content.getId());
-        return updateById(note);
+    public boolean updateText(NoteModel note, NoteContent content) {
+        content.setText(UpLoadUtil.parseText(uploadpath, note.getText(), content.getText()));
+        noteContentService.saveOrUpdate(content);
+        noteHistoryService.addHistory(note);
+        return saveOrUpdate(note.getNote());
 
     }
 

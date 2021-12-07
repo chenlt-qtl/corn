@@ -45,29 +45,6 @@ public class NoteController {
     @Autowired
     private INoteContentService noteContentService;
 
-    /**
-     * 分页列表查询
-     *
-     * @param note
-     * @param pageNo
-     * @param pageSize
-     * @param req
-     * @return
-     */
-    @GetMapping(value = "/list")
-    public Result<IPage<Note>> queryPageList(Note note,
-                                             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                             HttpServletRequest req) {
-        Result<IPage<Note>> result = new Result<IPage<Note>>();
-        QueryWrapper<Note> queryWrapper = QueryGenerator.initQueryWrapper(note, req.getParameterMap());
-        Page<Note> page = new Page<Note>(pageNo, pageSize);
-        IPage<Note> pageList = noteService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
-    }
-
 
     /**
      * 分页列表查询
@@ -245,9 +222,7 @@ public class NoteController {
         } else {
             NoteContent content = noteContentService.getById(noteEntity.getContentId());
             noteService.setParentIds(note);
-            note.setUpdateBy(null);
-            note.setUpdateTime(null);
-            boolean ok = noteService.updateText(note, content.getText());
+            boolean ok = noteService.updateText(note, content);
             note.setText(UpLoadUtil.dbToReal(note.getText(), "html"));
             if (ok) {
                 noteService.setParentNames(note);
@@ -298,24 +273,6 @@ public class NoteController {
 
         noteService.delete(sysUser.getUsername(), id);
         result.success("删除成功!");
-        return result;
-    }
-
-    /**
-     * 批量删除
-     *
-     * @param ids
-     * @return
-     */
-    @DeleteMapping(value = "/deleteBatch")
-    public Result<Note> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
-        Result<Note> result = new Result<Note>();
-        if (ids == null || "".equals(ids.trim())) {
-            result.error500("参数不识别！");
-        } else {
-            this.noteService.removeByIds(Arrays.asList(ids.split(",")));
-            result.success("删除成功!");
-        }
         return result;
     }
 

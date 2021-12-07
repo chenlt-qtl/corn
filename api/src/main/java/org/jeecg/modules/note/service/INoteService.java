@@ -3,6 +3,7 @@ package org.jeecg.modules.note.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.note.entity.Note;
+import org.jeecg.modules.note.entity.NoteContent;
 import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
 
@@ -35,7 +36,7 @@ public interface INoteService extends IService<Note> {
 
     void setParentNames(NoteModel note);
 
-    boolean updateText(NoteModel note, String oldText);
+    boolean updateText(NoteModel note, NoteContent content);
 
     Note saveNote(NoteModel note);
 

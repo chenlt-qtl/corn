@@ -21,7 +21,6 @@ public class NoteContentServiceImpl extends ServiceImpl<NoteContentMapper, NoteC
     public NoteContent addContent(NoteModel model) {
         NoteContent content = new NoteContent();
         content.setText(model.getText());
-        content.setNoteId(model.getId());
         this.save(content);
         return content;
     }
