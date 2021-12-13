@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Tree, Spin, Modal, notification, Menu, Dropdown, Input, Form } from 'antd';
-import { ClockCircleOutlined, StarFilled, PlusOutlined, CaretDownOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, FileMarkdownOutlined, EditOutlined, FolderOpenOutlined, BookOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, StarFilled, PlusOutlined, CaretDownOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, FileMarkdownOutlined, EditOutlined, FolderOpenOutlined, FolderFilled, FolderOpenFilled } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { isNormalNoteId } from '@/utils/utils';
@@ -205,15 +205,25 @@ const LeftMenu: React.FC = (props, ref) => {
                             onExpand={handleExpand}
                             titleRender={node => {
                                 let icon;
-                                if (node.parentId == 0) {
-                                    icon = <BookOutlined />;
-                                } else {
-                                    if (expandedKeys.includes(node.key)) {
+                                const style = { color: 'rgba(0, 0, 0, 0.5)' };
+
+                                if (expandedKeys.includes(node.key)) {
+
+                                    if (node.parentId == 0) {
+                                        icon = <FolderOpenFilled style={style} />;
+
+                                    } else {
                                         icon = <FolderOpenOutlined />;
+                                    }
+                                } else {
+                                    if (node.parentId == 0) {
+                                        icon = <FolderFilled style={style} />;
+                                        
                                     } else {
                                         icon = <FolderOutlined />;
                                     }
                                 }
+
                                 return <div className={styles.treeNode} onDrop={() => handleChangeParent(node.key)} onDragOver={(event) => {
                                     event.preventDefault();
                                 }}><div className={styles.title}>{icon}{node.title}</div>
