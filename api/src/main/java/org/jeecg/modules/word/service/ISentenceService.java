@@ -11,12 +11,12 @@ import java.util.Map;
 /**
  * @Description: word_sentence
  * @author： jeecg-boot
- * @date：   2019-08-22
+ * @date： 2019-08-22
  * @version： V1.0
  */
 public interface ISentenceService extends IService<Sentence> {
 
-    void saveSentences(String articleId, List<SentenceVo> sentences);
+    void saveSentences(String articleId, int type, List<SentenceVo> sentences);
 
     List<Sentence> getSentencesByWord(@Param("wordName") String wordName);
 }

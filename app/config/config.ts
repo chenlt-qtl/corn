@@ -115,6 +115,18 @@ export default defineConfig({
           icon: 'smile',
           component: './article/splicMp3',
         },
+        {
+          path: '/wordChinese',
+          name: 'wordChineseList',
+          component: './wordChinese/articleList',
+        },
+        {
+          path: '/wordChinese/:id',
+          name: '文章明细',
+          layout: false,
+          icon: 'smile',
+          component: './wordChinese/articleDetail',
+        },
         // {
         //   path: '/word/:wordName',
         //   name: 'wordDetail',
@@ -122,6 +134,11 @@ export default defineConfig({
         //   icon: 'smile',
         //   component: './article/WordDetail',
         // },
+        {
+          path: '/game',
+          name: 'game',
+          component: './game/gameList',
+        },
       ],
     },
     {

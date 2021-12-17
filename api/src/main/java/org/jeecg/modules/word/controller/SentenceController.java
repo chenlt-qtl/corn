@@ -39,7 +39,7 @@ public class SentenceController {
      */
     @GetMapping(value = "/listByArticle")
     public Result<IPage<Sentence>> queryByArticle(String articleId, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+                                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         Result<IPage<Sentence>> result = new Result<IPage<Sentence>>();
         QueryWrapper<Sentence> queryWrapper = new QueryWrapper<Sentence>();
         queryWrapper.eq("article_id", articleId);
@@ -121,8 +121,8 @@ public class SentenceController {
 
     @PostMapping("/save")
     public Result saveSentence(@RequestBody ArticalVo articleVo) {
-        sentenceService.saveSentences(articleVo.getId(), articleVo.getSentences());
-        articleWordRelService.saveRels(articleVo.getId(),articleVo.getAddWordNames(),articleVo.getRemoveWordNames());//保存文章与单词的关联
+        sentenceService.saveSentences(articleVo.getId(), articleVo.getType(), articleVo.getSentences());
+        articleWordRelService.saveRels(articleVo.getId(),articleVo.getType(), articleVo.getAddWordNames(), articleVo.getRemoveWordNames());//保存文章与单词的关联
         Result<Article> result = new Result();
         result.setSuccess(true);
         return result;

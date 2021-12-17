@@ -68,6 +68,9 @@ public class ArticleController {
         if (article.getTitle() != null) {
             queryWrapper.like("title", article.getTitle());
         }
+        if (article.getType() != null) {
+            queryWrapper.eq("type", article.getType());
+        }
         Page<Article> page = new Page<Article>(pageNo, pageSize);
         IPage<Article> pageList = articleService.page(page, queryWrapper);
         for (Article a : pageList.getRecords()) {

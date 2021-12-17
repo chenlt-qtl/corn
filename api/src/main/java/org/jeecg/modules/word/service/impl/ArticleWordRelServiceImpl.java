@@ -6,9 +6,11 @@ import org.apache.shiro.SecurityUtils;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.word.entity.ArticleWordRel;
 import org.jeecg.modules.word.entity.Word;
+import org.jeecg.modules.word.entity.WordChinese;
 import org.jeecg.modules.word.entity.WordUser;
 import org.jeecg.modules.word.mapper.ArticleWordRelMapper;
 import org.jeecg.modules.word.service.IArticleWordRelService;
+import org.jeecg.modules.word.service.IWordChineseService;
 import org.jeecg.modules.word.service.IWordService;
 import org.jeecg.modules.word.service.IWordUserService;
 import org.springframework.stereotype.Service;
@@ -37,8 +39,11 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     @Resource
     private IWordService wordService;
 
+    @Resource
+    private IWordChineseService wordChineseService;
+
     @Override
-    public void saveRels(String articleId, String[] addWordNames, String[] removeWordNames) {
+    public void saveRels(String articleId,int type, String[] addWordNames, String[] removeWordNames) {
         if (removeWordNames.length > 0) {
             removeRelByArticle(articleId, removeWordNames);//删除与文章、用户的关联
         }
@@ -48,28 +53,34 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
             SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 
             for (String wordName : addWordNames) {
-                Word word = null;
+                String wordId = null;
                 try {
-                    word = wordService.getWord(wordName);
+                    if(type == 0) {
+                        Word word = wordService.getWord(wordName);
+                        wordId = word.getId();
+                    }else{
+                        WordChinese wordChinese = wordChineseService.getWord(wordName);
+                        wordId = wordChinese.getId();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if(word != null) {
+                if(wordId != null) {
                     //与文章关联
-                    ArticleWordRel articleWordRel = getRel(articleId, word.getId());
+                    ArticleWordRel articleWordRel = getRel(articleId, wordId);
                     if (articleWordRel == null) {
                         articleWordRel = new ArticleWordRel();
                         articleWordRel.setArticleId(articleId);
-                        articleWordRel.setWordId(word.getId());
+                        articleWordRel.setWordId(wordId);
                         awlist.add(articleWordRel);
                     }
                     //与用户关联
-                    WordUser wordUser = wordUserService.getRel(word.getId());
+                    WordUser wordUser = wordUserService.getRel(wordId);
                     if (wordUser == null) {
                         wordUser = new WordUser();
                         wordUser.setAddFrom(1);
                         wordUser.setUser(sysUser.getUsername());
-                        wordUser.setWordId(word.getId());
+                        wordUser.setWordId(wordId);
                         wulist.add(wordUser);
                     }
                 }
@@ -85,19 +96,21 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
 
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 
+        ArticleWordRel rel = getRel(articleId, wordId);
+        if(rel==null) {
 
-        ArticleWordRel articleWordRel = new ArticleWordRel();
-        articleWordRel.setArticleId(articleId);
-        articleWordRel.setWordId(wordId);
-        save(articleWordRel);
+            ArticleWordRel articleWordRel = new ArticleWordRel();
+            articleWordRel.setArticleId(articleId);
+            articleWordRel.setWordId(wordId);
+            save(articleWordRel);
 
-        WordUser wordUser = new WordUser();
-        wordUser.setAddFrom(1);
-        wordUser.setUser(sysUser.getUsername());
-        wordUser.setWordId(wordId);
+            WordUser wordUser = new WordUser();
+            wordUser.setAddFrom(1);
+            wordUser.setUser(sysUser.getUsername());
+            wordUser.setWordId(wordId);
 
-        wordUserService.save(wordUser);
-
+            wordUserService.save(wordUser);
+        }
     }
 
     @Override

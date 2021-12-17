@@ -31,7 +31,7 @@ export default function GlobalHeader({ children, location, route, history, match
         setActiveUrl(location.pathname);
     }, [location])
 
-    const menus = [{ url: '/noteapp', text: '笔记' }, { url: '/article', text: '英语' }, { url: '/word', text: '新英语' }, { url: '/splicMp3', text: '切割' }];
+    const menus = [{ url: '/noteapp', text: '笔记' }, { url: '/article', text: '英语' }, { url: '/word', text: '新英语' },{ url: '/game', text: '游戏' },   { url: '/wordChinese', text: '语文天地' },{ url: '/splicMp3', text: '切割' }];
 
     const logout = ()=>{
         setInitialState({ ...initialState, currentUser: undefined });
