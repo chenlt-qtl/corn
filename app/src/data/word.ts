@@ -60,6 +60,22 @@ export interface WordItem {
     updateBy?: string;
   }
 
+  export interface WordCnItem {
+    id?: string;
+    wordName?: string;
+    pinYin?: string;
+    biHuaShu?: number;
+    buShou?: string;
+    jieGou?: string;
+    biShun?: string;
+    acceptation?:string;
+    status?: number;
+    updateTime?: Date;
+    createTime?: Date;
+    createBy?: string;
+    updateBy?: string;
+  }
+
   interface WordUserItem {
     wordId:string;
     user:string;

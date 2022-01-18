@@ -42,7 +42,6 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
     }, [wordName])
 
     const play = (src: string | undefined) => {
-        console.log(src);
         if (src) {
             source.current.src = src;
         }

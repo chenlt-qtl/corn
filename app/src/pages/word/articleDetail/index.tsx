@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getArticle } from '../service';
+import { getArticle } from '@/services/article';
 import { Modal, Button, Popconfirm } from 'antd';
 import styles from './styles.less';
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -51,7 +51,6 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
     }
 
     const play = (src: string) => {
-        console.log(src);
         if (src) {
             source.current.src = src;
             player.current!.load();

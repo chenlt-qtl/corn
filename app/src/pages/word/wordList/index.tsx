@@ -46,7 +46,6 @@ const WordList: React.FC<WordListProps> = (props) => {
     }
 
     const play = (src: string | undefined) => {
-        console.log(src);
         if (src) {
             source.current.src = src;
         }

@@ -1,0 +1,70 @@
+.container {
+  height: 100%;
+  background: linear-gradient(#99f, #f99);
+}
+.container * {
+  padding: 0;
+  margin: 0;
+}
+.container .navbar {
+  background-color: #fff;
+  border-radius: 50px;
+  padding: 20px;
+  position: relative;
+}
+.container .navbar input {
+  width: 40px;
+  height: 40px;
+  opacity: 0;
+}
+.container .navbar input:checked ~ ul {
+  width: 350px;
+}
+.container .navbar input:checked ~ span:nth-child(2) {
+  background-color: #fb7299;
+  top: calc(50% - 2px);
+  transform: rotate(-45deg);
+  transition: top 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.container .navbar input:checked ~ span:nth-child(3) {
+  background-color: #fb7299;
+  top: calc(50% - 2px);
+  transform: rotate(45deg);
+  transition: transform 0.3s ease-in-out, top 0.3s ease-in-out;
+}
+.container .navbar span {
+  position: absolute;
+  left: 25px;
+  width: 30px;
+  height: 4px;
+  background-color: #999;
+  border-radius: 15px;
+  top: calc(50% - 10px);
+  pointer-events: none;
+}
+.container .navbar span:nth-child(3) {
+  top: calc(50% + 6px);
+}
+.container .navbar ul {
+  width: 0;
+  overflow: hidden;
+  transition: 0.5s;
+}
+.container .navbar ul li {
+  margin: 0 15px;
+}
+.container .navbar ul li a {
+  color: #333;
+  font-size: 20px;
+  font-weight: 700;
+}
+.container .navbar ul li a:hover {
+  color: #fb7299;
+}
+.container,
+.navbar,
+.navbar ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

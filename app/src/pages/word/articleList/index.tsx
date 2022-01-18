@@ -3,7 +3,7 @@ import { List, Button, Input, Popconfirm } from 'antd';
 import { Link } from 'umi';
 import React, { useState, useEffect, useRef } from 'react';
 import { ArticleItem } from '../data';
-import { getArticleList, removeArticle } from '../service';
+import { getArticleList, removeArticle } from '@/services/article';
 import styles from './styles.less'
 import ArticleEditModal from '../articleEditModal'
 
@@ -21,7 +21,7 @@ const ArticleList: React.FC<{}> = () => {
     }, [])
 
     const getTableData = () => {
-        getArticleList().then(res => {
+        getArticleList({type:0}).then(res => {
             if (res) {
                 setListData(res.result.records);
                 setTotal(res.result.total);
@@ -71,7 +71,6 @@ const ArticleList: React.FC<{}> = () => {
                     size="large"
                     pagination={{
                         onChange: page => {
-                            console.log(page);
                         },
                         pageSize: 5,
                         total

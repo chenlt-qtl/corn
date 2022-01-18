@@ -1,4 +1,4 @@
-import { request } from 'umi';
+import request from '@/utils/request';
 
 export interface LoginParamsType {
   username: string;
@@ -7,7 +7,7 @@ export interface LoginParamsType {
 }
 
 export async function accountLogin(params: LoginParamsType) {
-  return request<API.LoginStateType>('/api/sys/login', {
+  return request('/api/sys/login', {
     method: 'POST',
     data: params,
   });

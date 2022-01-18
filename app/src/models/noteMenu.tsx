@@ -63,8 +63,6 @@ const NoteModel: NoteModelType = {
 
         *queryMenuItems({ payload }, { call, put }) {
 
-            console.log(payload);
-
             let result = yield call(queryNote, payload);
             if (result) {
                 if (result.success) {
@@ -76,8 +74,6 @@ const NoteModel: NoteModelType = {
             }
         },
         *queryNewest({ payload }, { call, put }) {
-
-            console.log(payload);
             
             let result = yield call(getNewest, payload.pageNo, payload.pageSize);
 
@@ -123,8 +119,6 @@ const NoteModel: NoteModelType = {
         },
         refreshListParentNote(state: NoteState, { payload }): NoteState {
 
-            console.log("refreshListParentNote", payload);
-
             const note = payload || { id: 0, name: '所有笔记' };
             return {
                 ...state,
@@ -142,7 +136,6 @@ const NoteModel: NoteModelType = {
             const { result } = payload;
             const records = payload.result.records;
             const listMenuItems = payload.pageNo == 1 ? records : [...state.listMenuItems, ...records]
-            console.log(result["total"] - (state.pageNo + 1) * state.pageSize > 0);
 
             return {
                 ...state,

@@ -11,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IGameWordRelService extends IService<GameWordRel> {
 
+    public String addRelByArticle(String gameId,String[] articleIds) throws Exception;
 }

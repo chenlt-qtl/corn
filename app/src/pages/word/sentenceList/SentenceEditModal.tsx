@@ -1,11 +1,11 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { Form, Input, Modal, Steps, Button, Spin } from 'antd';
 import styles from './styles.less';
-import { SentenceItem, ArticleItem } from '../data';
-import { saveSentence } from '../service';
+import { SentenceItem, ArticleItem } from '@/data/word';
+import { saveSentence } from '@/services/article';
 import ImgUpload from '../components/ImgUpload'
 import Mp3Upload from '../components/Mp3Upload'
-import { brReg, DisplaySentence, splipSentences } from '../utils'
+import { brReg, DisplaySentence, splipSentences } from '@/utils/wordUtils'
 import { connect, WordState } from 'umi';
 
 const { TextArea } = Input;
@@ -55,10 +55,10 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
 
         if (currentStep === 0) {
             setCurrentStep(currentStep + 1);
-            setSentences(splipSentences(formValue.content.split(brReg)));
+            setSentences(splipSentences(formValue.content.split(brReg), 0));
         } else {//提交 
             setLoading(true);
-            const article: ArticleItem = { id: articleId };
+            const article: ArticleItem = { id: articleId, type: 0 };
             article.sentences = sentences.map(sentence => {
                 return {
                     ...sentence,

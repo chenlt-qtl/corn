@@ -21,6 +21,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.util.EntityUtils;
+import org.jeecg.common.exception.CornException;
 import org.jeecg.modules.word.entity.WordChinese;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class ChineseWordUtils {
      */
     private static WordChinese parse(String text, String wordName) throws Exception {
         logger.info("===========API查询结果 "+wordName+" : "+text," ============");
-        WordChinese wordChinese = new WordChinese();
+        WordChinese wordChinese = null;
         JSONObject jsonObject = JSON.parseObject(text);
         if (jsonObject.getInteger("status") == 0) {
             wordChinese.setWordName(wordName);
@@ -82,6 +83,8 @@ public class ChineseWordUtils {
                 acceptation += String.format("%s|%s||",explain.getString("pinyin"),explain.getString("content"));
             }
             wordChinese.setAcceptation(acceptation);
+        }else {
+            throw new CornException(jsonObject.getString("msg"));
         }
 
         return wordChinese;

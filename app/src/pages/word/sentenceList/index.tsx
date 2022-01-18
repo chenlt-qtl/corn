@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getSentenceByArticle, removeSentence } from '../service';
-import { List, Popconfirm, Spin, message, Pagination } from 'antd';
+import { getSentenceByArticle, removeSentence } from '@/services/article';
+import { List, Popconfirm, Spin, message } from 'antd';
 import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
-import { SentenceItem } from '../data.d';
+import { SentenceItem } from '@/data/word';
 import SentenceEditModal from './SentenceEditModal';
-import { splipSentences } from '../utils'
+import { splipSentences } from '@/utils/wordUtils'
 import { connect, WordState } from 'umi';
 
 

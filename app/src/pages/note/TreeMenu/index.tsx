@@ -30,7 +30,6 @@ const LeftMenu: React.FC = (props, ref) => {
 
     useEffect(() => {
         const { listParentNote } = props.noteMenu;
-        console.log("listParentNote", listParentNote);
 
         if (listParentNote.parentIds) {
             const expandedKeys = (listParentNote.parentIds || "").split("/")
@@ -69,7 +68,6 @@ const LeftMenu: React.FC = (props, ref) => {
     );
 
     const handleSaveFold = async () => {
-        console.log(fold);
 
         const { foldName } = await form.validateFields();
 

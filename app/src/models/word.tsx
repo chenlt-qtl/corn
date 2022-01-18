@@ -1,5 +1,7 @@
-import { getWordByArticle, queryByWordName, removeArticle, addWordUserRel, removeWordUserRel,addArticleWordRel,removeArticleWordRel } from '@/pages/word/service'
-import { WordItem } from '@/pages/article/data.d';
+import { getWordByArticle, queryByWordName } from '@/pages/word/service'
+import {addWordUserRel, removeWordUserRel, addArticleWordRel, removeArticleWordRel} from "@/services/article"
+
+import { WordItem } from '@/data/word';
 import { Effect, Reducer } from 'umi';
 
 
@@ -16,7 +18,6 @@ export interface WordModelType {
         getWordByArticle: Effect;
         getWordByWordName: Effect;
         getSentenceByWord: Effect;
-        removeArticle: Effect;
         addWordUserRel: Effect;
         removeWordUserRel: Effect;
         addArticleWordRel: Effect;
@@ -69,13 +70,6 @@ const WordModel: WordModelType = {
                 }
 
             }
-        },
-        *removeArticle({ payload }, { call }) {
-            let result = yield call(removeArticle, payload);
-            if (result) {
-                return result;
-            }
-
         },
         *addWordUserRel({ payload }, { call, put }) {
             let result = yield call(addWordUserRel, payload.wordId);

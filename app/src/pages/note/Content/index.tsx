@@ -30,7 +30,6 @@ const Content = React.forwardRef((props, ref) => {
 
     useImperativeHandle(ref, () => ({
         handleAddNote: (parentId: string) => {
-            console.log('handleAddNote');
             const id = guid();
             setSaveStatus(1)
             const note = { name: '新文档', parentId, id };

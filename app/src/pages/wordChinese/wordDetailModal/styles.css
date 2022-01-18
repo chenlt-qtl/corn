@@ -1,0 +1,43 @@
+.word {
+  padding: 10px;
+  margin-bottom: 100px;
+}
+.word section {
+  padding-top: 0.625rem;
+  border-top: 1px solid #fff;
+}
+.wordName {
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 30px;
+}
+.wordName .star {
+  width: 50px;
+  text-align: center;
+  line-height: 2rem;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
+}
+.wordName .favorate {
+  color: #e74c3c;
+}
+.wordName .notFavorate {
+  color: #bbb;
+}
+.wordName .notFavorate:hover {
+  color: #e74c3c;
+}
+.detal {
+  display: flex;
+  flex-direction: column;
+}
+.detal div {
+  display: flex;
+}
+.detal .col-3 {
+  width: 33%;
+}
+.detal .col-12 {
+  width: 100%;
+}

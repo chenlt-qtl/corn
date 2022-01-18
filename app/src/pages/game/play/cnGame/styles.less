@@ -1,0 +1,42 @@
+.content{
+    margin: -24px;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    .page{
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    header{
+        height: 100px;
+        width: 100%;
+        background-color: #ddd;
+        position: relative;
+        .background{
+            height: 90px;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            section{
+                padding: 7px 14px;
+                border-radius: 20px;
+                border:1px solid #ccc;
+            }
+
+        }
+        .center{
+            position: absolute;
+            top: 0;
+            left:50%;
+            width: 100px;
+            height: 100px;
+            transform: translateX(-50%);
+            background-color: #666;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

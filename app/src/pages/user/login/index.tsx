@@ -57,7 +57,6 @@ const Login: React.FC<{}> = () => {
       // 登录
       const msg = await accountLogin({ ...values });
       if (msg.success) {
-        message.success('登陆成功！');
         replaceGoto();
 
         const token = msg.result!.token;

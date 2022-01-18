@@ -17,6 +17,7 @@ const WordEditModal: React.FC<WordProps> = (props) => {
     const [wordName, setWordName] = useState<string>("");
     const [word, setWord] = useState<object>({});
     const [disableAdd, setDisableAdd] = useState<boolean>(true);
+    const [disableSearch, setDisableSearch] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
 
 
@@ -34,6 +35,7 @@ const WordEditModal: React.FC<WordProps> = (props) => {
                 type: 'word/addArticleWordRel',
                 payload: { wordId: word.id, articleId }
             }).then((res) => {
+                setLoading(false);
                 if (res.success) {
                     message.success('添加成功');
                     handleCancel(true);
@@ -48,6 +50,11 @@ const WordEditModal: React.FC<WordProps> = (props) => {
     const handleChange = e => {
         setWordName(e.target.value);
         setDisableAdd(true);
+        if(e.target.value){
+            setDisableSearch(false);
+        }else{
+            setDisableSearch(true);
+        }
     }
 
     const handleSearch = e => {
@@ -77,6 +84,9 @@ const WordEditModal: React.FC<WordProps> = (props) => {
             onCancel={() => handleCancel(false)}
             style={{ top: 20 }}
             footer={<>
+                <Button onClick={handleSumbit} disabled={disableSearch}>
+                    查询
+                </Button>
                 <Button type="primary" onClick={handleSumbit} disabled={disableAdd}>
                     增加
                 </Button>

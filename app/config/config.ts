@@ -17,9 +17,7 @@ export default defineConfig({
     siderWidth: 208,
   },
   locale: {
-    // default zh-CN
     default: 'zh-CN',
-    // default true, when it is true, will use `navigator.language` overwrite default
     antd: true,
     baseNavigator: true,
   },
@@ -29,7 +27,6 @@ export default defineConfig({
   targets: {
     ie: 11,
   },
-  // umi routes: https://umijs.org/docs/routing
   routes: [
     {
       path: '/user',
@@ -82,19 +79,20 @@ export default defineConfig({
       redirect: '/noteapp',
     },
     {
+      path: '/play/cn/:id',
+      name: 'level',
+      layout: false,
+      component: './game/play/cnGame',
+    },
+    {
       path: '/',
       component: '@/layouts/GlobalHeader',
-      layout:false,
+      layout: false,
       routes: [
         {
           path: '/noteapp',
           name: 'noteapp',
           component: './note',
-        },
-        {
-          path: '/article',
-          name: 'articleList',
-          component: './article/articleList',
         },
         {
           path: '/word',
@@ -113,7 +111,7 @@ export default defineConfig({
           name: 'splicMp3',
           layout: false,
           icon: 'smile',
-          component: './article/splicMp3',
+          component: './splicMp3',
         },
         {
           path: '/wordChinese',
@@ -139,6 +137,23 @@ export default defineConfig({
           name: 'game',
           component: './game/gameList',
         },
+        {
+          path: '/play/list',
+          name: 'playList',
+          component: './game/play/list',
+        }
+        ,
+        {
+          path: '/play/:id',
+          name: 'playLevels',
+          component: './game/play/levelList',
+        }
+        ,
+        {
+          path: '/exam',
+          name: 'exam',
+          component: './exam',
+        }
       ],
     },
     {

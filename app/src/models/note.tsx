@@ -55,15 +55,10 @@ const NoteModel: NoteModelType = {
 
             const openedNotes = yield select(state => state.note.openedNotes);
             const listParentNote = yield select(state => state.noteMenu.listParentNote);
-            console.log("openedNotes", openedNotes);
-            console.log("payload", payload);
 
             let note = openedNotes.find(item => {
                 return item.id === payload;
             });
-
-            console.log("note", note);
-
 
             if (!note) {
                 let result = yield call(queryNoteById, payload);
@@ -114,7 +109,6 @@ const NoteModel: NoteModelType = {
             }
         },
         *updateNoteTitle({ payload }, { call, put, select }) {
-            console.log('updateNoteTitle');
             const listParentNote = yield select(state => state.noteMenu.listParentNote);
             const openedNotes = yield select(state => state.note.openedNotes);
             const openedNote = yield select(state => state.note.openedNote);
@@ -166,7 +160,6 @@ const NoteModel: NoteModelType = {
             }
         },
         *updateNoteText({ payload }, { call, put, select }) {
-            console.log('updateNoteText');
             const openedNotes = yield select(state => state.note.openedNotes);
             let result = yield call(updateNoteText, payload);
             if (result) {
@@ -248,7 +241,6 @@ const NoteModel: NoteModelType = {
             let result = yield call(updateParent, id, parentId);
             if (result) {
                 const note = result.result;
-                console.log(note);
                 //文件夹
                 if (!note.isLeaf) {
                     yield put({

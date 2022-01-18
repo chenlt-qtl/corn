@@ -10,3 +10,9 @@ export interface GameItem {
     addWordNames?: String[];
     removeWordNames?: String[];
 }
+
+export interface WordListParam {
+    gameId?: string;
+    pageNo?:number;
+    pageSize?: number;
+}

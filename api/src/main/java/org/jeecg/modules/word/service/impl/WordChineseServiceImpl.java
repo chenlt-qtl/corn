@@ -2,6 +2,7 @@ package org.jeecg.modules.word.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.jeecg.common.exception.CornException;
 import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.entity.WordChinese;
 import org.jeecg.modules.word.mapper.WordChineseMapper;
@@ -29,7 +30,7 @@ public class WordChineseServiceImpl extends ServiceImpl<WordChineseMapper, WordC
 
 
     @Override
-    public WordChinese getWord(String wordName) throws Exception {
+    public WordChinese getWord(String wordName) {
         List<WordChinese> list = wordChineseMapper.selectByMap(new HashMap() {{
             this.put("word_name", wordName);
         }});
@@ -37,7 +38,11 @@ public class WordChineseServiceImpl extends ServiceImpl<WordChineseMapper, WordC
         if (!list.isEmpty()) {
             wordChinese = list.get(0);//已存在数据库中
         } else {//查API
-           wordChinese = ChineseWordUtils.getWordFromApi(wordName);
+            try {
+                wordChinese = ChineseWordUtils.getWordFromApi(wordName);
+            } catch (Exception e) {
+                throw new CornException("查询新华字典API失败");
+            }
             if (wordChinese != null) {
                 save(wordChinese);
             }
@@ -57,11 +62,9 @@ public class WordChineseServiceImpl extends ServiceImpl<WordChineseMapper, WordC
     public void saveWord(SentenceVo sentenceVo) {
         if (sentenceVo.getWords() != null && !sentenceVo.getWords().isEmpty()) {
             for (Word wordVo : sentenceVo.getWords()) {
-                try {
+
                     getWord(wordVo.getWordName().toLowerCase());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
             }
         }
     }

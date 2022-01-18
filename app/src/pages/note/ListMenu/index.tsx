@@ -16,8 +16,6 @@ const ListMenu: React.FC = (props, ref) => {
 
         const parentId = props.noteMenu.listParentNote.id;
 
-        console.log("searchStr", searchStr);
-
         const pageNo = 1, pageSize = 5;
 
         if (parentId != undefined) {
@@ -140,8 +138,6 @@ const ListMenu: React.FC = (props, ref) => {
 
     const loadMore = () => {
         const { pageNo, pageSize } = props.noteMenu;
-        console.log(pageNo);
-
         let type = `noteMenu/queryNewest`;
         if (props.noteMenu.listParentNote.id == "search") {
             type = "noteMenu/searchNote";

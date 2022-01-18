@@ -1,15 +1,21 @@
 package org.jeecg.modules.word.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.modules.game.entity.Game;
+import org.jeecg.modules.game.entity.GameWordRel;
 import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.model.WordVo;
 import org.jeecg.modules.word.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +68,64 @@ public class WordController {
         return result;
     }
 
+    /**
+     * 根据game分页列表查询
+     *
+     * @param gameId
+     * @param pageNo
+     * @param pageSize
+     * @param req
+     * @return
+     */
+    @GetMapping(value = "/listByGame")
+    public Result<IPage<Word>> listByGame(@PathVariable String gameId,
+                                                  @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                                  HttpServletRequest req) {
+        Result<IPage<Word>> result = new Result<IPage<Word>>();
+        if (StringUtils.isBlank(gameId)) {
+            result.error500("Game id 是必填项！");
+        }
+
+        Word word = new Word();
+        QueryWrapper<Word> queryWrapper = QueryGenerator.initQueryWrapper(word, req.getParameterMap());
+        queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId);
+        Page<Word> page = new Page<Word>(pageNo, pageSize);
+        IPage<Word> pageList = wordService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
+
+    /**
+     * 根据game分页列表查询
+     *
+     * @param gameId
+     * @param pageNo
+     * @param pageSize
+     * @param req
+     * @return
+     */
+    @GetMapping(value = "/listByGameLevel/{gameId}")
+    public Result<IPage<Word>> listByGameLevel(@PathVariable String gameId,
+                                          @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                          @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
+                                          HttpServletRequest req) {
+        Result<IPage<Word>> result = new Result<IPage<Word>>();
+        if (StringUtils.isBlank(gameId)) {
+            result.error500("Game id 是必填项！");
+        }
+
+        Word word = new Word();
+        QueryWrapper<Word> queryWrapper = QueryGenerator.initQueryWrapper(word, req.getParameterMap());
+        queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId+"' and level = 0");
+        queryWrapper.orderByAsc("rand()");
+        Page<Word> page = new Page<Word>(pageNo, pageSize);
+        IPage<Word> pageList = wordService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
     /**
      * 添加
      *
@@ -180,7 +244,7 @@ public class WordController {
             wordVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
             wordVo.setSentences(sentenceService.getSentencesByWord(wordName));
             wordVo.setRelWithUser(wordUserService.getRel(wordId) != null);
-            if(StringUtils.isNotBlank(articleId)) {
+            if (StringUtils.isNotBlank(articleId)) {
                 wordVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
             }
 

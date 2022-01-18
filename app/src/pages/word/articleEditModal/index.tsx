@@ -2,7 +2,7 @@ import React, { useState, useImperativeHandle } from 'react';
 
 import { Modal, Form, Input, message } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { addArticle, updateArticle } from '../service';
+import { addArticle, updateArticle } from '@/services/article';
 import { ArticleItem } from '../data'
 import ImgUpload from '../components/ImgUpload'
 import Mp3Upload from '../components/Mp3Upload'
@@ -33,6 +33,7 @@ const ArticleEditModal = React.forwardRef((props: EditModalProps, ref) => {
         let value = await form.validateFields();
         value.picture = picture;
         value.mp3 = mp3;
+        value.type = 0;
 
         let result;
         if (article.id) {
