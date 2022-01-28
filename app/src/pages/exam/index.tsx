@@ -10,9 +10,9 @@ import Exam6 from './components/Exam6'
 import Exam7 from './components/Exam7'
 import Exam8 from './components/Exam8'
 import Exam9 from './components/Exam9'
-
+import Keyboard from './components/keyboard'
 const ExamList: React.FC<{}> = () => {
-    const [activeKey, setActiveKey] = useState<number>(9);
+    const [activeKey, setActiveKey] = useState<number>(10);
 
     const getComponent = () => {
         let component = <></>;
@@ -44,6 +44,9 @@ const ExamList: React.FC<{}> = () => {
             case 9:
                 component = <Exam9></Exam9>
                 break;
+            case 10:
+                component = <Keyboard></Keyboard>
+                break;
             default:
                 break;
         }
@@ -63,6 +66,7 @@ const ExamList: React.FC<{}> = () => {
                     <li onClick={() => setActiveKey(6)}>播放器</li>
                     <li onClick={() => setActiveKey(8)}>伸缩菜单</li>
                     <li onClick={() => setActiveKey(9)}>全屏菜单</li>
+                    <li onClick={() => setActiveKey(10)}>键盘</li>
                 </ul>
             </nav>
             <div className={styles.content}>

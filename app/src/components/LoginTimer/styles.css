@@ -1,0 +1,29 @@
+.container {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+}
+.container .title {
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.container .title i {
+  color: #faad14;
+  font-size: 22px;
+  margin-right: 16px;
+}
+.container .content {
+  margin-left: 38px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+}
+.container .footer {
+  margin-top: 24px;
+  text-align: right;
+}
+.container .footer button + button {
+  margin-left: 8px;
+}
