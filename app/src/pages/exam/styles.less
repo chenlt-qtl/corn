@@ -9,18 +9,27 @@
 }
 
 .menu {
-    padding     : 30px;
+    // padding     : 30px;
     width       : 200px;
     border-right: 1px dotted #cdcdcd;
-    ul>li{
-        padding: 5px;
-        cursor: pointer;
+
+    ul>li {
+        padding    : 10px 30px;
+        cursor     : pointer;
         text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
     }
-    ul{
-        :hover{
-            color: #777;
+
+    ul {
+        padding: 0;
+        max-resolution: 0;
+        :hover {
+            color           : #fff;
+            background-color: #ccc;
         }
+    }
+
+    .active {
+        background-color: #cdcdcd;
     }
 }
 
@@ -30,8 +39,8 @@
     border       : 1px dotted #cdcdcd;
     border-radius: 10px;
     box-shadow   : 5px 5px 10px rgba(0, 0, 0, 0.2),
-    -5px -5px 10px rgba(255, 255, 255, 0.1),
-    inset 5px 5px 10px rgba(255, 255, 255, 0.1),
-    inset -5px -5px 10px rgba(255, 255, 255, 0.1);
+        -5px -5px 10px rgba(255, 255, 255, 0.1),
+        inset 5px 5px 10px rgba(255, 255, 255, 0.1),
+        inset -5px -5px 10px rgba(255, 255, 255, 0.1);
     overflow: auto;
 }

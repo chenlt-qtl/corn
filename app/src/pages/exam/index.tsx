@@ -11,66 +11,42 @@ import Exam7 from './components/Exam7'
 import Exam8 from './components/Exam8'
 import Exam9 from './components/Exam9'
 import Keyboard from './components/keyboard'
+import Menu from './components/menu'
+import Card from './components/card'
+import Button3D from './components/button3D';
 const ExamList: React.FC<{}> = () => {
-    const [activeKey, setActiveKey] = useState<number>(10);
+    const [activeKey, setActiveKey] = useState<number>(13);
 
-    const getComponent = () => {
-        let component = <></>;
-        switch (activeKey) {
-            case 1:
-                component = <Christmas></Christmas>
-                break;
-            case 2:
-                component = <Exam2></Exam2>
-                break;
-            case 3:
-                component = <Exam3></Exam3>
-                break;
-            case 4:
-                component = <Exam4></Exam4>
-                break;
-            case 5:
-                component = <Exam5></Exam5>
-                break;
-            case 6:
-                component = <Exam6></Exam6>
-                break;
-            case 7:
-                component = <Exam7></Exam7>
-                break;
-            case 8:
-                component = <Exam8></Exam8>
-                break;
-            case 9:
-                component = <Exam9></Exam9>
-                break;
-            case 10:
-                component = <Keyboard></Keyboard>
-                break;
-            default:
-                break;
-        }
-        return component;
-    }
+
+    const items = [
+        { id: 1, name: "圣诞树", component: <Christmas></Christmas> },
+        { id: 2, name: "拟态界面", component: <Exam2></Exam2> },
+        { id: 3, name: "拟态组件1", component: <Exam3></Exam3> },
+        { id: 4, name: "拟态组件2", component: <Exam7></Exam7> },
+        { id: 5, name: "tabs", component: <Exam4></Exam4> },
+        { id: 6, name: "Form", component: <Exam5></Exam5> },
+        { id: 7, name: "播放器", component: <Exam6></Exam6> },
+        { id: 8, name: "伸缩菜单", component: <Exam8></Exam8> },
+        { id: 9, name: "全屏菜单", component: <Exam9></Exam9> },
+        { id: 10, name: "键盘", component: <Keyboard></Keyboard> },
+        { id: 11, name: "圆形菜单", component: <Menu></Menu> },
+        { id: 12, name: "卡片翻动效果", component: <Card></Card> },
+        { id: 13, name: "3D按钮", component: <Button3D></Button3D> },
+    ];
+
+
 
     return (
         <main className={styles.main}>
             <nav className={styles.menu}>
                 <ul>
-                    <li onClick={() => setActiveKey(1)}>圣诞树</li>
-                    <li onClick={() => setActiveKey(2)}>拟态界面</li>
-                    <li onClick={() => setActiveKey(3)}>拟态组件1</li>
-                    <li onClick={() => setActiveKey(7)}>拟态组件2</li>
-                    <li onClick={() => setActiveKey(4)}>tabs</li>
-                    <li onClick={() => setActiveKey(5)}>Form</li>
-                    <li onClick={() => setActiveKey(6)}>播放器</li>
-                    <li onClick={() => setActiveKey(8)}>伸缩菜单</li>
-                    <li onClick={() => setActiveKey(9)}>全屏菜单</li>
-                    <li onClick={() => setActiveKey(10)}>键盘</li>
+                    {items.map(item =>
+                        <li className={item.id == activeKey ? styles.active : ""} key={item.id} onClick={() => setActiveKey(item.id)}>{item.name}</li>
+                    )}
                 </ul>
             </nav>
             <div className={styles.content}>
-                {getComponent()}
+                {items.filter(item=>item.id==activeKey)[0].component}
             </div>
         </main>
     );

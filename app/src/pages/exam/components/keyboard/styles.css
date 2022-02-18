@@ -6,8 +6,9 @@
   align-content: center;
   background: #232323;
   flex-wrap: wrap;
+  padding: 20px;
 }
-span {
+.container span {
   display: inline-block;
   width: 80px;
   height: 80px;
@@ -19,10 +20,10 @@ span {
   overflow: hidden;
   position: relative;
 }
-span:last-child {
+.container span:last-child {
   width: 100%;
 }
-span::before {
+.container span::before {
   content: "";
   position: absolute;
   top: 3px;
@@ -36,7 +37,7 @@ span::before {
   border-bottom: 1px solid #0004;
   border-top: 1px solid #0009;
 }
-span i {
+.container span i {
   position: relative;
   color: #fff;
   text-transform: uppercase;

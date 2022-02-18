@@ -1,0 +1,107 @@
+.container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  padding: 20px;
+  text-align: center;
+  background-color: #000;
+}
+.container .icons {
+  display: flex;
+}
+.container .icons a {
+  margin: 0 25px;
+  position: relative;
+}
+.container .icons a .layer {
+  width: 55px;
+  height: 55px;
+}
+.container .icons a .layer span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #000;
+  font-size: 30px;
+  line-height: 55px;
+  transition: all 0.3s;
+}
+.container .icons a .text {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: bottom 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+.container .icons a:hover .layer {
+  transform: rotate(-35deg) skew(20deg);
+}
+.container .icons a:hover .layer span:nth-child(1) {
+  opacity: 0.2;
+}
+.container .icons a:hover .layer span:nth-child(2) {
+  opacity: 0.4;
+  transform: translate(5px, -5px);
+}
+.container .icons a:hover .layer span:nth-child(3) {
+  opacity: 0.6;
+  transform: translate(10px, -10px);
+}
+.container .icons a:hover .layer span:nth-child(4) {
+  opacity: 0.8;
+  transform: translate(15px, -15px);
+}
+.container .icons a:hover .layer span:nth-child(5) {
+  opacity: 1;
+  transform: translate(20px, -20px);
+}
+.container .icons a:hover .text {
+  bottom: -35px;
+  opacity: 1;
+}
+.container .icons a:nth-child(1) .text,
+.container .icons a:nth-child(1) .layer span {
+  color: #4267B2;
+  border-color: #4267B2;
+}
+.container .icons a:nth-child(1) .layer span {
+  box-shadow: -1px 1px 3px #4267b2;
+}
+.container .icons a:nth-child(2) .text,
+.container .icons a:nth-child(2) .layer span {
+  color: #1da1f2;
+  border-color: #1da1f2;
+}
+.container .icons a:nth-child(2) .layer span {
+  box-shadow: -1px 1px 3px #1da1f2;
+}
+.container .icons a:nth-child(3) .text,
+.container .icons a:nth-child(3) .layer span {
+  color: #e1306c;
+  border-color: #e1306c;
+}
+.container .icons a:nth-child(3) .layer span {
+  box-shadow: -1px 1px 3px #e1306c;
+}
+.container .icons a:nth-child(4) .text,
+.container .icons a:nth-child(4) .layer span {
+  color: #2867b2;
+  border-color: #2867b2;
+}
+.container .icons a:nth-child(4) .layer span {
+  box-shadow: -1px 1px 3px #2867b2;
+}
+.container .icons a:nth-child(5) .text,
+.container .icons a:nth-child(5) .layer span {
+  color: #ff0000;
+  border-color: #ff0000;
+}
+.container .icons a:nth-child(5) .layer span {
+  box-shadow: -1px 1px 3px #ff0000;
+}
