@@ -69,6 +69,7 @@ export interface WordItem {
     jieGou?: string;
     biShun?: string;
     acceptation?:string;
+    shortAcce?:string;
     status?: number;
     updateTime?: Date;
     createTime?: Date;

@@ -1,42 +1,268 @@
-.content{
-    margin: -24px;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    .page{
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    header{
-        height: 100px;
-        width: 100%;
-        background-color: #ddd;
-        position: relative;
-        .background{
-            height: 90px;
-            background-color: #fff;
+.outer {
+    margin       : -24px;
+    width        : 100vw;
+    height       : 100vh;
+    overflow     : hidden;
+    // background: linear-gradient(180deg, #fd746c, #ff9068);
+    color        : #fff;
+
+    .main {
+        height        : 100%;
+        max-width     : 500px;
+        margin        : 0 auto;
+        display       : flex;
+        flex-direction: column;
+
+        header {
+            padding: 20px;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            section{
-                padding: 7px 14px;
-                border-radius: 20px;
-                border:1px solid #ccc;
+
+            .time {
+                position     : relative;
+                flex         : 1;
+                height       : 16px;
+                border-radius: 8px;
+                box-shadow   :
+                    2px 2px 9px rgba(0, 0, 0, 0.05),
+                    -2px -2px 9px rgba(255, 255, 255, 0.5),
+                    inset 4px 4px 4px rgba(0, 0, 0, 0.05),
+                    inset -4px -4px 4px rgba(255, 255, 255, 0.5);
+                margin-bottom: 56px;
+
+                .bar {
+                    height          : 12px;
+                    position        : absolute;
+                    left            : 2px;
+                    top             : 2px;
+                    border-radius   : 6px;
+                    background-color: #55E6C1;
+                    box-shadow      :
+                        2px 2px 2px rgba(0, 0, 0, 0.05),
+                        -2px -2px 2px rgba(255, 255, 255, 0.5),
+                        inset 3px 3px 3px rgba(255, 255, 255, 0.5),
+                        inset -3px -3px 3px rgba(0, 0, 0, 0.05);
+
+                }
+
+                >span {
+                    position : absolute;
+                    font-size: 22px;
+                    z-index  : 1;
+                    top      : -18px;
+
+                    img {
+                        width : 20px;
+                        height: 20px;
+                    }
+
+                    img:last-of-type {
+                        position : absolute;
+                        top      : 13px;
+                        left     : 0;
+                        z-index  : -1;
+                        transform: scale(1.1);
+                    }
+                }
+
+                .start1 {
+                    left: 50%;
+                }
+
+                .start2 {
+                    left: 80%;
+
+                }
+
+                .start3 {
+                    left: 90%;
+                }
+
+
             }
 
+            .info {
+                display       : flex;
+                flex-direction: column;
+                padding       : 24px;
+                text-align    : center;
+                flex          : 1;
+                margin        : 10px;
+                align-content : space-between;
+
+                >span {
+                    flex: 1;
+                }
+
+                span:first-of-type {
+                    font-size: 16px;
+                }
+
+                span:last-of-type {
+                    font-size: 36px;
+                }
+            }
+
+            .process {
+                width          : 120px;
+                height         : 120px;
+                margin         : 10px;
+                display        : flex;
+                justify-content: center;
+                align-items    : center;
+                position       : relative;
+                color          : #777;
+
+                >div {
+                    position : absolute;
+                    top      : 50%;
+                    left     : 50%;
+                    transform: translate(-50%, -50%);
+                }
+
+
+                .circle {
+                    width           : 70%;
+                    height          : 70%;
+                    border-radius   : 50%;
+                    background-color: #e3e6ec;
+                    display         : flex;
+                    justify-content : center;
+                    align-items     : baseline;
+                    text-align      : center;
+                    background-image: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0) 100%);
+                    box-shadow      : -5px -5px 5px 0 rgba(255, 255, 255, 0.25),
+                        5px 5px 5px 0 rgba(0, 0, 0, 0.25), inset 1px 1px 0 0 rgba(255, 255, 255, 0.25);
+
+                    line-height: 82px;
+
+                    span {
+                        font-size: 10px;
+                    }
+
+                    .num {
+                        font-size: 36px;
+
+                    }
+                }
+
+                .pecent {
+                    width : 100%;
+                    height: 100%;
+
+                }
+
+                .start1 {
+                    position : absolute;
+                    top      : 90px;
+                    left     : 105px;
+                    font-size: 22px;
+                }
+
+                .start2 {
+                    position : absolute;
+                    top      : 106px;
+                    left     : 31px;
+                    font-size: 22px;
+                }
+
+                .start3 {
+                    position : absolute;
+                    top      : 61px;
+                    left     : 4px;
+                    font-size: 22px;
+                }
+            }
         }
-        .center{
-            position: absolute;
-            top: 0;
-            left:50%;
-            width: 100px;
-            height: 100px;
-            transform: translateX(-50%);
-            background-color: #666;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+
+        .content {
+            display                : flex;
+            flex-direction         : column;
+            flex                   : 1;
+            color                  : rgba(0, 0, 0, 0.6);
+            font-weight            : bold;
+            background             : linear-gradient(#ECE9E6, #fff);
+            border-top-left-radius : 50px;
+            border-top-right-radius: 50px;
+            padding                : 50px;
+            box-shadow             : 3px 3px 10px rgba(0, 0, 0, 0.1),
+                -3px -3px 10px rgba(255, 255, 255, 0.1),
+                inset -1px -1px 10px rgba(0, 0, 0, 0.1),
+                inset 1px 1px 10px rgba(255, 255, 255, 0.1);
+
+
+            .wordName {
+                font-size          : 40px;
+                background-image   : url('/bg/3.jpg');
+                background-size    : 60px 60px;
+                background-repeat  : no-repeat;
+                background-position: center;
+                text-align         : center;
+            }
+
+            .question {
+                text-align : center;
+                padding-top: 20px;
+                font-size  : 20px;
+            }
+
+            .unQuanswer {
+                li {
+                    &:hover {
+                        background-color: #b8e994;
+                        color           : #fff;
+                    }
+                }
+            }
+
+            .answer {
+                font-size      : 20px;
+                flex           : 1;
+                padding        : 0;
+                padding-top    : 20px;
+                display        : flex;
+                flex-direction : column;
+                justify-content: center;
+                align-items    : center;
+
+                li {
+                    border          : 2px solid #b8e994;
+                    border-radius   : 10px;
+                    line-height     : 1.8em;
+                    margin          : 20px;
+                    transition      : all .3s;
+                    cursor          : pointer;
+                    background-color: #fff;
+                    width           : 100%;
+
+                    // text-overflow   : ellipsis;
+                    // white-space     : nowrap;
+                    span {
+                        margin    : 1em 2em;
+                        display   : block;
+                        overflow  : hidden;
+                        max-height: 8em;
+                    }
+                }
+
+                .right {
+                    color           : #fff;
+                    background-color: #b8e994;
+                }
+
+                .wrong {
+                    background-color: #ff7979;
+                    color           : #fff;
+                    border-color    : #ff7979;
+                }
+            }
+
+            .text {
+                padding-left: 15px;
+                line-height : 16px;
+                text-align  : center;
+                color       : rgba(0, 0, 0, 0.3);
+            }
         }
     }
+
 }

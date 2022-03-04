@@ -1,4 +1,4 @@
-import { queryFavorite, editAllFav, editOneFav, queryNoteById } from '@/pages/note/service'
+import { editAllFav, editOneFav, queryNoteById } from '@/pages/note/service'
 import { Effect, Reducer } from 'umi';
 import { NoteItem } from '@/pages/note/data.d';
 
@@ -12,8 +12,7 @@ export interface NoteFavoriteModelType {
     namespace: 'noteFavorite';
     state: NoteFavoriteState;
     effects: {
-        query: Effect;
-        edit: Effect;
+        // edit: Effect;
         editOne: Effect;
     };
     reducers: {
@@ -29,33 +28,19 @@ const noteFavoriteModel: NoteFavoriteModelType = {
         notes: [],
         noteIds: [],
     },
-
     effects: {
-        *query(_, { call, put }) {
-            let result = yield call(queryFavorite);
-            if (result) {
-                if (result.success && result.result) {
-                    // 成功
-                    yield put({
-                        type: 'refreshNoteFavorite',
-                        payload: result.result
-                    });
-                }
-                return result;
-            }
-        },
-        *edit({ payload }, { call, put }) {
-            yield put({//先修改id数据
-                type: 'refreshNoteIds', payload
-            });
-            let result = yield call(editAllFav, payload.join(','));//修改数据库
-            if (result && result.success) {//刷新收藏夹数据
-                yield put({
-                    type: 'query'
-                });
-            }
-            return result;
-        },
+        // *edit({ payload }, { call, put }) {
+        //     yield put({//先修改id数据
+        //         type: 'refreshNoteIds', payload
+        //     });
+        //     let result = yield call(editAllFav, payload.join(','));//修改数据库
+        //     if (result && result.success) {//刷新收藏夹数据
+        //         yield put({
+        //             type: 'query'
+        //         });
+        //     }
+        //     return result;
+        // },
         *editOne({ payload }, { call, put, select }) {
 
             let result = yield call(editOneFav, payload);
@@ -71,7 +56,7 @@ const noteFavoriteModel: NoteFavoriteModelType = {
                         // 成功
                         yield put({
                             type: 'note/refreshOpenedNotes',
-                            payload: openedNotes.map(item=>item.id==payload.noteId?note:item)
+                            payload: openedNotes.map(item => item.id == payload.noteId ? note : item)
                         })
 
                         yield put({
@@ -86,10 +71,10 @@ const noteFavoriteModel: NoteFavoriteModelType = {
                 //更新收藏夹
                 const listParentNote = yield select(state => state.noteMenu.listParentNote);
 
-                if(listParentNote.id=="fav"){
+                if (listParentNote.id == "fav") {
                     yield put({
                         type: 'noteMenu/refreshListParentNote',
-                        payload: {...listParentNote}
+                        payload: { ...listParentNote }
                     });
 
                 }

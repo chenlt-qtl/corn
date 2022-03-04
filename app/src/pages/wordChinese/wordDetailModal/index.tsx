@@ -72,6 +72,27 @@ const wordDetailModal: React.FC<WordDetailProps> = (props) => {
                         </div>
                     </header>
                     <section className={styles.detail}>
+                        <div className={styles.item}>
+                            <div className={styles.label}>拼音</div><div className={styles.value}>{word.pinYin}</div>
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>部首</div><div className={styles.value}>{word.buShou}</div>
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>笔画数</div><div className={styles.value}>{word.biHuaShu}</div>
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>结构</div><div className={styles.value}>{word.jieGou}</div>
+                        </div>
+                        <div className={styles["big-item"]}>
+                            <div className={styles.label}>笔顺</div><div className={styles.value}>{word.biShun}</div>
+                        </div>
+                        <div className={styles["big-item"]}>
+                            <div className={styles.label}>五笔</div><div className={styles.value}>{word.wubi}</div>
+                        </div>
+                        <div className={styles["big-item"]}>
+                            <div className={styles.label}>英语</div><div className={styles.value}>{word.english}</div>
+                        </div>
 
                     </section>
                     <section className={styles.acceptation}>

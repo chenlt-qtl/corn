@@ -1,4 +1,5 @@
 import request from '@/utils/request';
+import { encryption } from '@/utils/utils'
 
 export interface LoginParamsType {
   username: string;
@@ -7,9 +8,14 @@ export interface LoginParamsType {
 }
 
 export async function accountLogin(params: LoginParamsType) {
+
   return request('/api/sys/login', {
     method: 'POST',
-    data: params,
+    data: {
+      username: encryption(params.username),
+      password: encryption(params.password),
+      captcha: params.captcha
+    }
   });
 }
 

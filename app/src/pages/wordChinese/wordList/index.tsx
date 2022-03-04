@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Empty, Spin } from 'antd';
+import { Empty, Spin, Modal, Button } from 'antd';
 import styles from './styles.less';
-import { WordItem } from '../data';
+import { WordCnItem } from '@/data/word';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 import WordEditModal from './WordEditModal';
+import { editWord } from '../service'
+import TextArea from 'antd/lib/input/TextArea';
+
 
 
 
@@ -21,7 +24,10 @@ const WordList: React.FC<WordListProps> = (props) => {
     const player = useRef();
     const source = useRef();
     const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-
+    const [edidAcceVisible, setEditAcceVisible] = useState<boolean>(false);
+    const [disableEdit, setDisableEdit] = useState<boolean>(false);
+    const [word, setWord] = useState<WordCnItem>({});
+    const [shortAcce, setShortAcce] = useState<string>("");
 
     useEffect(() => {
         getWords();
@@ -41,8 +47,17 @@ const WordList: React.FC<WordListProps> = (props) => {
     }
     const loading = props.loading.effects["wordChinese/getWordByArticle"];
 
-    const openEditModel = (item: WordItem, single: boolean) => {
+    const openEditModel = (item: WordCnItem, single: boolean) => {
         setEditModalVisible(true);
+    }
+
+    const handleSumbit = async () => {
+        setDisableEdit(true)
+        word["shortAcce"] = shortAcce;
+        const res = await editWord(word);
+        console.log(res);
+        setDisableEdit(false)
+        setEditAcceVisible(false)
     }
 
     return (
@@ -57,7 +72,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                 <div className={styles.wordList}>
                     {props.wordChinese.words.length > 0 ?
                         <ul>
-                            {props.wordChinese.words.map((item: WordItem) => (
+                            {props.wordChinese.words.map((item: WordCnItem) => (
                                 <li key={item.id} className={styles.row}>
                                     <ul>
                                         <li className={styles.wordName} onClick={() => onSearchWord(item.wordName!)}>
@@ -66,8 +81,12 @@ const WordList: React.FC<WordListProps> = (props) => {
                                         <li className={styles.phAm}>
                                             {item.pinYin}
                                         </li>
-                                        <li className={styles.acceptation}>
-                                            {item.acceptation?.split("|").join(" ")}
+                                        <li className={styles.acceptation} onClick={() => {
+                                            setWord(item);
+                                            setShortAcce(item.shortAcce?item.shortAcce:item.acceptation);
+                                            setEditAcceVisible(true)
+                                        }}>
+                                            {item.shortAcce ? item.shortAcce : item.acceptation?.split("|").join(" ")}
                                         </li>
                                     </ul>
                                 </li>
@@ -85,6 +104,20 @@ const WordList: React.FC<WordListProps> = (props) => {
                     reload && getWords();
                     setEditModalVisible(false);
                 }}></WordEditModal>
+
+            <Modal
+                closable={false}
+                visible={edidAcceVisible}
+                style={{ top: 20 }}
+                footer={<>
+                    <Button type="primary" onClick={handleSumbit} disabled={disableEdit}>
+                        保存
+                    </Button>
+                    <Button onClick={() => setEditAcceVisible(false)}>取消</Button>
+                </>}
+            >
+                <TextArea rows={10} value={shortAcce} onChange={e=>setShortAcce(e.currentTarget.value)}></TextArea>
+            </Modal>
         </>
     );
 };

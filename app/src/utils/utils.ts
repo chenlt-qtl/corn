@@ -29,7 +29,7 @@ export const guid = () => {
   }
 
   const time = String(new Date().getTime());
-  return time.substring(time.length - 8) + S4() + S4() + S4() + S4() + S4() + S4();
+  return S4() + S4() + S4() + S4() + S4() + S4() + time.substring(time.length - 8);
 }
 
 export const isNormalNoteId = (id: string) => {
@@ -39,4 +39,50 @@ export const isNormalNoteId = (id: string) => {
     }
   }
   return false
+}
+
+/**
+ * 加密
+ * @param str 
+ * @returns 
+ */
+export const encryption = (str: string = "") => {
+  var encStr = encodeURIComponent(str);
+  encStr = btoa(encStr);
+
+  return addRandomStr(encStr);
+}
+
+
+export const decrypt = (str: string = "") => {
+  var decStr = atob(removeRandomStr(str));
+  decStr = decodeURIComponent(decStr);
+  return decStr;
+}
+
+
+
+const addRandomStr = (text: string) => {
+  if (text) {
+    const length = Math.ceil(Math.random() * 4 + 5);
+    const randomStr = guid();
+    console.log(randomStr);
+    
+    console.log("uid" + randomStr.substr(0, length));
+
+
+    const start = randomStr.substr(0, length);
+    const end = randomStr.substr(-length);
+
+    return start + text + end + length;
+  }
+  return "";
+}
+
+const removeRandomStr = (text: string) => {
+  if (text) {
+    const length = Number(text.substring(text.length - 1));
+    return text.substring(length, text.length - length - 1);
+  }
+  return "";
 }

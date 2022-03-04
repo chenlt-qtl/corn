@@ -1,22 +1,7 @@
 import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote } from '@/pages/note/service'
-import { NoteItem, NoteNode } from '@/pages/note/data.d';
+import { NoteItem } from '@/pages/note/data.d';
 import { Effect, Reducer } from 'umi';
 import { isNormalNoteId } from '@/utils/utils';
-
-//根据ID查找节点
-function findNodeById(tree: NoteNode[], id: string) {
-    for (let item of tree) {
-        if (item.key === id) {
-            return item;
-        }
-        if (item.children && item.children.length > 0) {
-            const node = findNodeById(item.children, id);
-            if (node) {
-                return node;
-            }
-        }
-    }
-}
 
 export interface NoteState {
     openedNote: NoteItem;
@@ -54,6 +39,10 @@ const NoteModel: NoteModelType = {
         *openNote({ payload }, { call, put, select }) {
 
             const openedNotes = yield select(state => state.note.openedNotes);
+
+            console.log("正常",openedNotes);
+            
+
             const listParentNote = yield select(state => state.noteMenu.listParentNote);
 
             let note = openedNotes.find(item => {
@@ -65,6 +54,8 @@ const NoteModel: NoteModelType = {
                 if (result) {
                     if (result.success) {
                         note = result.result;
+                        console.log("加密",note);
+                        
                         // 成功
                         yield put({
                             type: 'refreshOpenedNotes',
@@ -86,6 +77,8 @@ const NoteModel: NoteModelType = {
                 }
             }
 
+            console.log(note);
+
             yield put({
                 type: 'refreshOpenedNote',
                 payload: note,
@@ -101,6 +94,8 @@ const NoteModel: NoteModelType = {
                 type: 'refreshOpenedNotes',
                 payload: [...notes]
             })
+            console.log(notes[0]);
+
             if (openedNote.id == payload) {
                 yield put({
                     type: 'refreshOpenedNote',
@@ -146,6 +141,9 @@ const NoteModel: NoteModelType = {
                         }
                         )
                     });
+
+                    console.log(result.result);
+
 
                     //更新已打开
                     if (openedNote.id == "new") {
@@ -222,6 +220,8 @@ const NoteModel: NoteModelType = {
                         payload: newOpenedNotes
                     });
                 }
+                console.log(newOpenedNotes[0]);
+
                 if (openedNote.id == id) {
                     yield put({
                         type: "refreshOpenedNote",
@@ -237,6 +237,8 @@ const NoteModel: NoteModelType = {
             const { id, parentId } = payload;
             const openedNotes = yield select(state => state.note.openedNotes);
             const openedNote = yield select(state => state.note.openedNote);
+            console.log(openedNote);
+
             const listParentNote = yield select(state => state.noteMenu.listParentNote);
             let result = yield call(updateParent, id, parentId);
             if (result) {
@@ -248,6 +250,7 @@ const NoteModel: NoteModelType = {
                         payload: 0
                     });
                 } else {//文件
+
                     if (openedNote.id == id) {
                         yield put({
                             type: "refreshOpenedNote",
@@ -287,3 +290,5 @@ const NoteModel: NoteModelType = {
 };
 
 export default NoteModel;
+
+

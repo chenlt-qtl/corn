@@ -58,3 +58,7 @@ export async function getEnWordByGameLevel(gameId:string) {
 export async function getCnWordByGameLevel(gameId:string) {
     return request('/api/wordChinese/listByGameLevel/'+gameId);
 }
+
+export async function getRandWord() {
+    return request('/api/wordChinese/listRand/');
+}
