@@ -55,7 +55,6 @@ const WordList: React.FC<WordListProps> = (props) => {
         setDisableEdit(true)
         word["shortAcce"] = shortAcce;
         const res = await editWord(word);
-        console.log(res);
         setDisableEdit(false)
         setEditAcceVisible(false)
     }

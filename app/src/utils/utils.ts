@@ -66,10 +66,6 @@ const addRandomStr = (text: string) => {
   if (text) {
     const length = Math.ceil(Math.random() * 4 + 5);
     const randomStr = guid();
-    console.log(randomStr);
-    
-    console.log("uid" + randomStr.substr(0, length));
-
 
     const start = randomStr.substr(0, length);
     const end = randomStr.substr(-length);

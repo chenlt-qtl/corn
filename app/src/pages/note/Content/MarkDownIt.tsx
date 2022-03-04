@@ -56,7 +56,7 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 
 const MarkDownIt = React.forwardRef((props, ref) => {
     const [value, setValue] = useState<string>("");
-    const [showToc, setShowToc] = useState<boolean>(true);
+    const [showToc, setShowToc] = useState<boolean>(false);
     const [htmlStr, setHtmlStr] = useState<string>("");
 
     useEffect(() => {
@@ -64,7 +64,7 @@ const MarkDownIt = React.forwardRef((props, ref) => {
         
         setValue(text);
         renderHTML(text);
-        setShowToc(true);
+        setShowToc(false);
     }, [props.note.openedNote])
 
     const handleEditorChange = ({ html, text }) => {

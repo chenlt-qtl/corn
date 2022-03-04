@@ -98,9 +98,9 @@ const LeftMenu: React.FC = (props, ref) => {
             type: 'noteMenu/refreshActiveMenuId',
             payload: "all",
         })
-        const { key, title, isLeaf, parentIds } = node;
+        const { key, title, isLeaf, parentIds, parentId } = node;
 
-        props.onNoteClick({ id: key, name: title, parentIds, isLeaf })
+        props.onNoteClick({ id: key, name: title, parentIds, isLeaf, parentId })
     }
 
 
@@ -216,7 +216,7 @@ const LeftMenu: React.FC = (props, ref) => {
                                 } else {
                                     if (node.parentId == 0) {
                                         icon = <FolderFilled style={style} />;
-                                        
+
                                     } else {
                                         icon = <FolderOutlined />;
                                     }

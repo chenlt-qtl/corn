@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Dropdown, Menu, Modal, notification, Button, Spin, Input } from 'antd';
-import { ExclamationCircleOutlined, SearchOutlined, SwapLeftOutlined, UnorderedListOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, SearchOutlined, SwapLeftOutlined, UnorderedListOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { queryNoteById } from '@/pages/note/service'
@@ -117,23 +117,22 @@ const ListMenu: React.FC = (props, ref) => {
         return { ...note, id, title }
     }
 
-    const goBack = async () => {
+    const goBack = async (home: boolean = false) => {
 
+        let listParentNote;
         const parentId = props.noteMenu.listParentNote.parentId;
-        if (parentId) {
+        
 
-            let listParentNote;
-            if (String(parentId) != "0") {
-                const res = await queryNoteById(parentId);
-
-                listParentNote = res.result;
-
-            }
-            props.dispatch({
-                type: `noteMenu/refreshListParentNote`,
-                payload: listParentNote,
-            })
+        if (!home && parentId != 0) {
+            const res = await queryNoteById(parentId);
+            listParentNote = res.result;
         }
+
+        props.dispatch({
+            type: `noteMenu/refreshListParentNote`,
+            payload: listParentNote,
+        })
+
     }
 
     const loadMore = () => {
@@ -177,10 +176,14 @@ const ListMenu: React.FC = (props, ref) => {
                         <Input className={styles.search} value={searchInputStr} onChange={e => setSearchInputStr(e.currentTarget.value)} onPressEnter={handleSearch} suffix={<SearchOutlined />}></Input>
                     </div>
                     <div className={styles.toolbar}>
-                        <div className={buttonDisable ? styles.buttonDisable : styles.buttonAble} onClick={goBack}><SwapLeftOutlined /></div>
-                        <div className={styles.title}>{listParentNote.name || "所有笔记"}</div>
-                        <div className={styles.buttonAble}><Dropdown overlay={sortMenu} trigger={['click']}><UnorderedListOutlined /></Dropdown></div>
-
+                        <div className={styles.btn}>
+                            {buttonDisable ? <div></div> : <div onClick={() => goBack()}><SwapLeftOutlined /></div>}
+                            {buttonDisable ? <div></div> : <div onClick={() => goBack(true)}><HomeOutlined /></div>}
+                            <div><Dropdown overlay={sortMenu} trigger={['click']}><UnorderedListOutlined /></Dropdown></div>
+                        </div>
+                        <div className={styles.title}>
+                            <span>{listParentNote.name || "所有笔记"}</span>
+                        </div>
                     </div>
                     <div className={styles.list}>
                         <ul> {listMenuItems.map(item => {

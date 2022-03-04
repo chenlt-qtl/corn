@@ -38,10 +38,7 @@ const NoteModel: NoteModelType = {
 
         *openNote({ payload }, { call, put, select }) {
 
-            const openedNotes = yield select(state => state.note.openedNotes);
-
-            console.log("正常",openedNotes);
-            
+            const openedNotes = yield select(state => state.note.openedNotes);            
 
             const listParentNote = yield select(state => state.noteMenu.listParentNote);
 
@@ -54,7 +51,6 @@ const NoteModel: NoteModelType = {
                 if (result) {
                     if (result.success) {
                         note = result.result;
-                        console.log("加密",note);
                         
                         // 成功
                         yield put({
@@ -77,8 +73,6 @@ const NoteModel: NoteModelType = {
                 }
             }
 
-            console.log(note);
-
             yield put({
                 type: 'refreshOpenedNote',
                 payload: note,
@@ -94,7 +88,6 @@ const NoteModel: NoteModelType = {
                 type: 'refreshOpenedNotes',
                 payload: [...notes]
             })
-            console.log(notes[0]);
 
             if (openedNote.id == payload) {
                 yield put({
@@ -141,8 +134,6 @@ const NoteModel: NoteModelType = {
                         }
                         )
                     });
-
-                    console.log(result.result);
 
 
                     //更新已打开
@@ -220,7 +211,6 @@ const NoteModel: NoteModelType = {
                         payload: newOpenedNotes
                     });
                 }
-                console.log(newOpenedNotes[0]);
 
                 if (openedNote.id == id) {
                     yield put({
@@ -237,7 +227,6 @@ const NoteModel: NoteModelType = {
             const { id, parentId } = payload;
             const openedNotes = yield select(state => state.note.openedNotes);
             const openedNote = yield select(state => state.note.openedNote);
-            console.log(openedNote);
 
             const listParentNote = yield select(state => state.noteMenu.listParentNote);
             let result = yield call(updateParent, id, parentId);

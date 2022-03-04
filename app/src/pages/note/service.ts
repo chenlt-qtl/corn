@@ -152,8 +152,6 @@ export async function updateParent(noteId: string, parentId: string) {
       parentId
     }
   }).then(res => {
-
-    console.log(res);
     
     if (res) {
       res.result = decryptNote(res.result)

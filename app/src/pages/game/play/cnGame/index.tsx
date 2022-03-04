@@ -106,10 +106,8 @@ const CnGame: React.FC<{}> = (props) => {
                 } else {
                     while (true) {
                         const randWord = list.splice(Math.floor(Math.random() * list.length), 1);
-                        console.log(list.length);
 
                         if (randWord && randWord[0].wordName != item.wordName) {
-                            console.log(randWord);
 
                             answers.push(getAcceptation(randWord[0]))
                             break;
