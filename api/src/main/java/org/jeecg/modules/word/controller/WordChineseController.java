@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.modules.word.entity.Word;
 import org.jeecg.modules.word.entity.WordChinese;
 import org.jeecg.modules.word.model.WordChineseVo;
 import org.jeecg.modules.word.service.IArticleWordRelService;
@@ -125,6 +124,26 @@ public class WordChineseController {
         return result;
     }
 
+    /**
+     * 获取随机数量的字
+     * @param size
+     * @param req
+     * @return
+     */
+    @GetMapping(value = "/listRand")
+    public Result<List<WordChinese>> getRandWord(@RequestParam(name = "size", defaultValue = "5") Integer size,
+                                                      HttpServletRequest req) {
+        Result<List<WordChinese>> result = new Result();
+
+
+        QueryWrapper<WordChinese> queryWrapper = QueryGenerator.initQueryWrapper(new WordChinese(), req.getParameterMap());
+        queryWrapper.orderByAsc("rand()");
+        Page<WordChinese> page = new Page(0, size);
+        IPage<WordChinese> pageList = wordChineseService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList.getRecords());
+        return result;
+    }
 
     /**
      * 添加

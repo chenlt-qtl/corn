@@ -21,7 +21,7 @@ public interface NoteMapper extends BaseMapper<Note> {
      * @param parentId
      * @return
      */
-    public List<Note> listSon(@Param("createBy") String createBy,@Param("parentId") String parentId);
+    public List<NoteModel> listSon(@Param("createBy") String createBy,@Param("parentId") String parentId);
 
     /**
      * 查询所有 包括自己

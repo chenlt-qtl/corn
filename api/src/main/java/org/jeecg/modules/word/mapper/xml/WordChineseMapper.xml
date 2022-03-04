@@ -8,7 +8,7 @@
                      b.article_id,
                      a.word_name as wordName,
                      a.pin_yin     as pinYin,
-                     a.acceptation
+                     a.acceptation,a.short_acce as shortAcce
               from word_chinese a
                        join
                    word_article_word_rel b on a.id = b.word_id

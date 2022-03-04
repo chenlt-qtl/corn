@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public interface INoteService extends IService<Note> {
 
-    List<Note> listNote(String createBy, String parentId);
+    List<NoteModel> listNote(String createBy, String parentId);
 
     List<Note> searchNote(String createBy, String parentId, String text);
 

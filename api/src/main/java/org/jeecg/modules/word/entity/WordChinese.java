@@ -49,6 +49,7 @@ public class WordChinese implements Serializable {
 	@Excel(name = "english", width = 15)
 	private java.lang.String english;
 	private java.lang.String acceptation;
+	private java.lang.String shortAcce;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.String status;

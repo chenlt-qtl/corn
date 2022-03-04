@@ -8,6 +8,7 @@ import org.apache.shiro.subject.Subject;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.api.ISysBaseAPI;
+import org.jeecg.common.util.BtoaEncode;
 import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.common.util.RedisUtil;
 import org.jeecg.modules.shiro.authc.util.JwtUtil;
@@ -51,8 +52,8 @@ public class LoginController {
 	@ApiOperation("登录接口")
 	public Result<JSONObject> login(@RequestBody SysLoginModel sysLoginModel) {
 		Result<JSONObject> result = new Result<JSONObject>();
-		String username = sysLoginModel.getUsername();
-		String password = sysLoginModel.getPassword();
+		String username = BtoaEncode.decrypt(sysLoginModel.getUsername());
+		String password = BtoaEncode.decrypt(sysLoginModel.getPassword());
 		SysUser sysUser = sysUserService.getUserByName(username);
 		if(sysUser==null) {
 			result.error500("该用户不存在");

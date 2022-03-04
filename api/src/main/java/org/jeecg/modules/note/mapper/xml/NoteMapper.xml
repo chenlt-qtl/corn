@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.note.mapper.NoteMapper">
 
-    <select id="listSon" resultType="org.jeecg.modules.note.entity.Note">
+    <select id="listSon" resultType="org.jeecg.modules.note.model.NoteModel">
         SELECT n.*
         FROM note_info n
         WHERE n.create_by = #{createBy,jdbcType=VARCHAR}

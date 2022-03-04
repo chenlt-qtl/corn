@@ -1,12 +1,10 @@
 package org.jeecg.modules.note.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.BtoaEncode;
 import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.entity.NoteContent;
@@ -19,9 +17,7 @@ import org.jeecg.modules.system.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +55,11 @@ public class NoteController {
         Result<IPage<Map>> result = new Result<IPage<Map>>();
 
         IPage<Map> pageList = noteService.searchNote(searchStr, pageNo, pageSize);
+        for (Map map : pageList.getRecords()) {
+            if (map.get("name") != null) {
+                map.put("name", BtoaEncode.encryption((map.get("name").toString())));//加密
+            }
+        }
         result.setSuccess(true);
         result.setResult(pageList);
         return result;
@@ -74,17 +75,21 @@ public class NoteController {
         Result result = new Result<>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         try {
-            List list = new ArrayList();
+            List<NoteModel> list = new ArrayList();
             if (parentId.equals("fav")) {//收藏夹
                 List<NoteModel> notes = noteFavoriteService.queryNotes(sysUser.getUsername());
 
-                for(NoteModel note:notes){
-                    if(note.getIsLeaf()){
+                for (NoteModel note : notes) {
+                    if (note.getIsLeaf()) {
                         list.add(note);
                     }
                 }
             } else {
                 list = noteService.listNote(sysUser.getUsername(), parentId);
+            }
+
+            for (NoteModel note : list) {
+                note.encryption();
             }
             result.setResult(list);
             result.setSuccess(true);
@@ -100,16 +105,20 @@ public class NoteController {
      * @return
      */
     @GetMapping(value = "/queryNewest")
-    public Result<IPage> queryNewest(Integer pageNo,Integer pageSize) {
+    public Result<IPage> queryNewest(Integer pageNo, Integer pageSize) {
         Result<IPage> result = new Result<>();
 
-        if(pageNo==null){
+        if (pageNo == null) {
             pageNo = 0;
         }
-        if(pageSize==null){
-            pageSize=20;
+        if (pageSize == null) {
+            pageSize = 20;
         }
         IPage<Note> page = noteService.getNewest(pageNo, pageSize);
+
+        for (Note note : page.getRecords()) {
+            note.setName(BtoaEncode.encryption(note.getName()));
+        }
         result.setResult(page);
 
         result.setSuccess(true);
@@ -189,6 +198,8 @@ public class NoteController {
      */
     @PostMapping(value = "/updateTitle")
     public Result<Note> updateTitle(@RequestBody Note note) {
+        note.setName(BtoaEncode.decrypt(note.getName()));
+
         Result<Note> result = new Result<Note>();
         Note noteEntity = noteService.getById(note.getId());
         if (noteEntity == null) {//新增
@@ -201,6 +212,7 @@ public class NoteController {
             note.setUpdateTime(null);
             boolean ok = noteService.updateById(note);
         }
+        note.setName(BtoaEncode.encryption(note.getName()));
         result.setResult(note);
         result.success("保存成功!");
         return result;
@@ -214,6 +226,8 @@ public class NoteController {
      */
     @PostMapping(value = "/updateText")
     public Result<NoteModel> updateText(@RequestBody NoteModel note) {
+        note.decrypt();
+
         Result<NoteModel> result = new Result<NoteModel>();
         Note noteEntity = noteService.getById(note.getId());
         if (noteEntity == null) {//新增
@@ -228,6 +242,7 @@ public class NoteController {
                 noteService.setParentNames(note);
             }
         }
+        note.encryption();
         result.setResult(note);
         result.success("保存成功!");
 
@@ -247,12 +262,13 @@ public class NoteController {
         if (noteEntity == null) {
             result.error500("未找到对应实体");
         } else {
-            if(!noteEntity.getParentId().equals(note.getParentId()) && !note.getId().equals(note.getParentId())) {
+            if (!noteEntity.getParentId().equals(note.getParentId()) && !note.getId().equals(note.getParentId())) {
                 noteEntity.setParentId(note.getParentId());
                 noteService.updateParent(noteEntity, noteEntity.getParentIds());
+                noteEntity.setName(BtoaEncode.encryption(noteEntity.getName()));
                 result.setResult(noteEntity);
                 result.success("修改成功!");
-            }else{
+            } else {
                 result.error500("父节点不合法");
             }
         }
@@ -295,10 +311,11 @@ public class NoteController {
             NoteModel model = new NoteModel(note);
 
             noteService.setParentNames(model);//设置父节点名称
-            if(content!=null) {
+            if (content != null) {
                 model.setText(UpLoadUtil.dbToReal(content.getText(), "md"));
             }
             model.setFav(noteFavoriteService.queryIfFavorite(id));
+            model.encryption();
             result.setResult(model);
             result.setSuccess(true);
         }

@@ -1,5 +1,6 @@
 package org.jeecg.modules.note.model;
 
+import org.jeecg.common.util.BtoaEncode;
 import org.jeecg.common.util.tree.TreeModel;
 import org.jeecg.modules.note.entity.Note;
 
@@ -24,5 +25,16 @@ public class NoteTreeModel extends TreeModel<Note> {
 
     public void setParentIds(String parentIds) {
         this.parentIds = parentIds;
+    }
+
+
+    public void decrypt() {
+        this.setTitle(BtoaEncode.decrypt(this.getTitle()));
+        this.setName(BtoaEncode.decrypt(this.getName()));
+    }
+
+    public void encryption() {
+        this.setTitle(BtoaEncode.encryption(this.getTitle()));
+        this.setName(BtoaEncode.encryption(this.getName()));
     }
 }

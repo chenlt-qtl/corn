@@ -54,7 +54,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     private INoteHistoryService noteHistoryService;
 
     @Override
-    public List<Note> listNote(String createBy, String parentId) {
+    public List<NoteModel> listNote(String createBy, String parentId) {
         return noteMapper.listSon(createBy, parentId);
     }
 
@@ -92,6 +92,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         List<NoteTreeModel> treeList = new ArrayList<>();
         for (Note note : list) {
             NoteTreeModel model = new NoteTreeModel(note);
+            model.encryption();//加密
             if (parentId.equals(model.getKey())) {
                 rootId = model.getParentId();
             }
@@ -120,7 +121,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         content.setText(UpLoadUtil.parseText(uploadpath, note.getText(), content.getText()));
         noteContentService.saveOrUpdate(content);
         noteHistoryService.addHistory(note);
-        return saveOrUpdate(note.getNote());
+        return saveOrUpdate(note.toNote());
 
     }
 
@@ -131,7 +132,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
                 NoteContent content = noteContentService.addContent(note);
                 note.setContentId(content.getId());
             }
-            Note obj = note.getNote();
+            Note obj = note.toNote();
             save(obj);
             return obj;
         } catch (DataIntegrityViolationException e) {

@@ -41,6 +41,7 @@ public class WordChineseServiceImpl extends ServiceImpl<WordChineseMapper, WordC
             try {
                 wordChinese = ChineseWordUtils.getWordFromApi(wordName);
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new CornException("查询新华字典API失败");
             }
             if (wordChinese != null) {

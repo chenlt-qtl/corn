@@ -63,7 +63,7 @@ public class ChineseWordUtils {
      */
     private static WordChinese parse(String text, String wordName) throws Exception {
         logger.info("===========API查询结果 "+wordName+" : "+text," ============");
-        WordChinese wordChinese = null;
+        WordChinese wordChinese = new WordChinese();
         JSONObject jsonObject = JSON.parseObject(text);
         if (jsonObject.getInteger("status") == 0) {
             wordChinese.setWordName(wordName);
