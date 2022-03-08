@@ -70,9 +70,14 @@ export async function updateNoteTitle(params: NoteItem) {
   return request('/api/note/updateTitle', {
     method: 'POST',
     data: {
-      ...encryptionNote(params),
+      ...encryptionNote({ ...params }),
       method: 'post',
     },
+  }).then(res => {
+    if (res) {
+      res.result = decryptNote(res.result);
+    }
+    return res;
   });
 }
 
@@ -152,7 +157,7 @@ export async function updateParent(noteId: string, parentId: string) {
       parentId
     }
   }).then(res => {
-    
+
     if (res) {
       res.result = decryptNote(res.result)
     }
