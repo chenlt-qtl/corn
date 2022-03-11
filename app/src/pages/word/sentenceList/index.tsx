@@ -5,13 +5,14 @@ import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
 import { SentenceItem } from '@/data/word';
 import SentenceEditModal from './SentenceEditModal';
-import { splipSentences } from '@/utils/wordUtils'
+import { splipSentences,timeIntervalReg as reg } from '@/utils/wordUtils'
 import { connect, WordState } from 'umi';
 
 
 
 export interface SentenceListProps {
     articleId: string
+    articleMp3: string
     onSearchWord: (wordName: string) => void
     play: (mp3: string) => void
     edit: boolean
@@ -19,7 +20,7 @@ export interface SentenceListProps {
 
 
 const SentenceList: React.FC<SentenceListProps> = (props) => {
-    const { articleId, play, onSearchWord, edit = false } = props;
+    const { articleId, articleMp3, play, onSearchWord, edit = false } = props;
     const [sentences, setSentences] = useState<SentenceItem[]>([]);
     const [sentence, setSentence] = useState<SentenceItem>({});
     const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
@@ -99,8 +100,39 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
         return actions;
     }
 
-    const transSentence = (content: string) => {
-        const sentences = splipSentences([content]);
+    const hasMp3 = (sentence: SentenceItem) => {
+        if (sentence.mp3) {
+            return true;
+        }
+
+        if (articleMp3 && reg.test(sentence.content!)) {
+            return true;
+        }
+        return false;
+
+    }
+
+    const playMp3 = (sentence: SentenceItem) => {
+        if (sentence.mp3) {
+            play(sentence.mp3)
+        } else {
+            
+            const matcher = sentence.content.match(reg);
+            
+            const [,,startMin,startSecond,,endMin,endSecond] = [...matcher];
+            console.log(startMin,startSecond,endMin,endSecond);
+            
+            
+            const startTime = Number.parseInt(startMin)*60+ Number.parseFloat(startSecond);
+            const endTime = Number.parseInt(endMin)*60+ Number.parseFloat(endSecond);
+            
+            play(articleMp3,startTime,endTime-startTime);
+            
+        }
+    }
+
+    const transSentence = (content: string) => {        
+        const sentences = splipSentences([content.replace(reg,"")]);
         const result = sentences.length > 0 && sentences[0].allWords.map((word, index) => {
             const text = word.text;
             const isRelated = props.word.wordNames.includes(text.toLowerCase())
@@ -129,11 +161,11 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 itemLayout="vertical"
                 size="large"
                 pagination={{
-                    showSizeChanger:false,
+                    showSizeChanger: false,
                     total,
-                    className:styles.page,
-                    size:"small",
-                    onChange:(page = 1) => {
+                    className: styles.page,
+                    size: "small",
+                    onChange: (page = 1) => {
                         setPageNo(page);
                     }
                 }}
@@ -144,7 +176,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                         actions={getActions(item)}
                     >
                         <pre>{transSentence(item.content)}
-                            {item.mp3 ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => play(item.mp3)}></i> : ''}</pre>
+                            {hasMp3(item) ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => playMp3(item)}></i> : ''}</pre>
                     </List.Item>
                 )}
             />

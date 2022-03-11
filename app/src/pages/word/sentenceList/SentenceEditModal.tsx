@@ -5,7 +5,7 @@ import { SentenceItem, ArticleItem } from '@/data/word';
 import { saveSentence } from '@/services/article';
 import ImgUpload from '../components/ImgUpload'
 import Mp3Upload from '../components/Mp3Upload'
-import { brReg, DisplaySentence, splipSentences } from '@/utils/wordUtils'
+import { brReg, DisplaySentence, splipSentences, timeIntervalReg as reg } from '@/utils/wordUtils'
 import { connect, WordState } from 'umi';
 
 const { TextArea } = Input;
@@ -55,7 +55,7 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
 
         if (currentStep === 0) {
             setCurrentStep(currentStep + 1);
-            setSentences(splipSentences(formValue.content.split(brReg), 0));
+            setSentences(splipSentences(formValue.content.replace(reg,"").split(brReg), 0));
         } else {//提交 
             setLoading(true);
             const article: ArticleItem = { id: articleId, type: 0 };

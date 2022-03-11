@@ -13,6 +13,8 @@ const ArticleList: React.FC<{}> = () => {
 
     const [listData, setListData] = useState<ArticleItem[]>([]);
     const [total, setTotal] = useState<number>(0);
+    const [pageNo, setPageNo] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(5);
     const [createModalVisible, handleModalVisible] = useState<boolean>(false);
     const createForm = useRef();
 
@@ -20,8 +22,13 @@ const ArticleList: React.FC<{}> = () => {
         getTableData();
     }, [])
 
+
+    useEffect(() => {
+        getTableData();
+    }, [pageNo, pageSize])
+
     const getTableData = () => {
-        getArticleList({type:0}).then(res => {
+        getArticleList({ type: 0, pageSize, pageNo }).then(res => {
             if (res) {
                 setListData(res.result.records);
                 setTotal(res.result.total);
@@ -71,8 +78,16 @@ const ArticleList: React.FC<{}> = () => {
                     size="large"
                     pagination={{
                         onChange: page => {
+                            setPageNo(page);
                         },
-                        pageSize: 5,
+                        showSizeChanger: true,
+                        onShowSizeChange: (current, pageSize) => {
+
+                            setPageSize(pageSize);
+                            setPageNo(current);
+                        },
+                        showTotal: total => `共 ${total} 条`,
+                        pageSize,
                         total
                     }}
                     dataSource={listData}

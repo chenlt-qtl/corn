@@ -9,6 +9,7 @@ export interface DisplaySentence {
 
 export const brReg = /[\n]+/; //匹配换行
 
+export const timeIntervalReg = /^(\[(\d{2}):(\d{2}\.\d{2})\])(\[(\d{2}):(\d{2}\.\d{2})\])?/;//匹配mp3时间区间
 /**
  * 
  * @param sentenceStrs 

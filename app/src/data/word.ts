@@ -3,7 +3,7 @@ export interface ArticleListParams {
     title?: string;
     type: number;
     pageSize?: number;
-    currentPage?: number;
+    pageNo?: number;
 }
 
 

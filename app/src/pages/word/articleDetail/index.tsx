@@ -7,7 +7,7 @@ import ArticleEditModal from '../articleEditModal';
 import WordList from '../wordList';
 import SentenceList from '../sentenceList';
 import WordDetailModal from '../wordDetailModal';
-import { Link, history,connect } from 'umi';
+import { Link, history, connect } from 'umi';
 
 export interface ArticleDetailProps {
     match: object
@@ -28,7 +28,8 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
 
     const createForm = useRef();
 
-    const player = useRef();
+    const player1 = useRef();
+    const player2 = useRef();
     const source = useRef();
 
     useEffect(() => {
@@ -50,14 +51,29 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
         setEditModalVisible(true);
     }
 
-    const play = (src: string) => {
+    const play = (src: string, currentTime: number = 0, duration: number = -1) => {
+        let player;
+        
         if (src) {
-            source.current.src = src;
-            player.current!.load();
-            player.current!.play();
+
+            player = player2.current;//有播放源的用player2
+            player1.current!.pause();
+            source.current!.src = src;
+            player.load();
+        } else {
+            player = player1.current;//没有播放源的用player1
+            player2.current!.pause();
+        }
+        player.currentTime = currentTime;
+        player.play();
+        if (duration >= 0) {
+            setTimeout(() => {
+                player.pause();
+            }, duration * 1000)
         }
     }
 
+    
     const onSearchWord = (wordName: string) => {
         if (wordName) {
             setWordName(wordName);
@@ -97,7 +113,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                 <div className={styles.info}>
                     <div className={styles.left}>
                         {article.mp3 ? <div className={styles.infoItem}>
-                            <audio controls>
+                            <audio controls ref={player1}>
                                 <source src={article.mp3} type="audio/mpeg" />
                                 您的浏览器不支持 audio 元素。
                             </audio>
@@ -117,7 +133,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                         </a> : ''}
                 </div>
 
-                <SentenceList articleId={id} onSearchWord={onSearchWord} setSenteceNum={setSentenceNum} setWordsNum={setWordsNum} play={play} edit={true}></SentenceList>
+                <SentenceList articleId={id} articleMp3={article.mp3} onSearchWord={onSearchWord} setSenteceNum={setSentenceNum} setWordsNum={setWordsNum} play={play} edit={true}></SentenceList>
                 <WordList articleId={id} onSearchWord={onSearchWord} setWordsNum={setWordsNum}></WordList>
 
             </main>
@@ -136,7 +152,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
             }}
                 modalVisible={editModalVisible}>
             </ArticleEditModal>
-            <audio ref={player}>
+            <audio ref={player2}>
                 <source ref={source} type="audio/mpeg" />
                 您的浏览器不支持 audio 元素。
             </audio>
