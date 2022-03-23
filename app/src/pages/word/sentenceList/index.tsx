@@ -5,7 +5,7 @@ import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
 import { SentenceItem } from '@/data/word';
 import SentenceEditModal from './SentenceEditModal';
-import { splipSentences,timeIntervalReg as reg } from '@/utils/wordUtils'
+import { splipSentences, timeIntervalReg as reg } from '@/utils/wordUtils'
 import { connect, WordState } from 'umi';
 
 
@@ -116,23 +116,23 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
         if (sentence.mp3) {
             play(sentence.mp3)
         } else {
-            
+
             const matcher = sentence.content.match(reg);
-            
-            const [,,startMin,startSecond,,endMin,endSecond] = [...matcher];
-            console.log(startMin,startSecond,endMin,endSecond);
-            
-            
-            const startTime = Number.parseInt(startMin)*60+ Number.parseFloat(startSecond);
-            const endTime = Number.parseInt(endMin)*60+ Number.parseFloat(endSecond);
-            
-            play(articleMp3,startTime,endTime-startTime);
-            
+
+            const [, , startMin, startSecond, , endMin, endSecond] = [...matcher];
+            console.log(startMin, startSecond, endMin, endSecond);
+
+
+            const startTime = Number.parseInt(startMin) * 60 + Number.parseFloat(startSecond);
+            const endTime = Number.parseInt(endMin) * 60 + Number.parseFloat(endSecond);
+
+            play(articleMp3, startTime, endTime - startTime);
+
         }
     }
 
-    const transSentence = (content: string) => {        
-        const sentences = splipSentences([content.replace(reg,"")]);
+    const transSentence = (content: string) => {
+        const sentences = splipSentences([content.replace(reg, "")]);
         const result = sentences.length > 0 && sentences[0].allWords.map((word, index) => {
             const text = word.text;
             const isRelated = props.word.wordNames.includes(text.toLowerCase())
@@ -176,7 +176,8 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                         actions={getActions(item)}
                     >
                         <pre>{transSentence(item.content)}
-                            {hasMp3(item) ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => playMp3(item)}></i> : ''}</pre>
+                            {hasMp3(item) ? (<><i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => playMp3(item)}></i>
+                            <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => playMp3(item)}></i></>) : ''}</pre>
                     </List.Item>
                 )}
             />

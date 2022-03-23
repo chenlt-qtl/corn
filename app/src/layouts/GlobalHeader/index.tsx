@@ -5,6 +5,8 @@ import styles from './styles.less'
 import { outLogin } from '@/services/login';
 import { getPageQuery } from '@/utils/utils';
 import LoginTimer from "@/components/LoginTimer"
+import { MenuOutlined } from '@ant-design/icons';
+import HocMedia from "@/components/HocMedia";
 
 /**
  * 退出登录，并且将当前的 url 保存
@@ -23,7 +25,7 @@ const loginOut = async () => {
     }
 };
 
-export default function GlobalHeader({ children, location, route, history, match }: IRouteComponentProps) {
+function GlobalHeader({ children, location, isMobile }: IRouteComponentProps) {
 
     const [activeUrl, setActiveUrl] = useState<string>('/');
     const { initialState, setInitialState } = useModel('@@initialState');
@@ -40,6 +42,10 @@ export default function GlobalHeader({ children, location, route, history, match
         return;
     }
 
+    const showMenu = () => {
+
+    }
+
     return (
         <>
             <LoginTimer></LoginTimer>
@@ -48,18 +54,38 @@ export default function GlobalHeader({ children, location, route, history, match
                     <div className={styles.logo}>
                         <a href="/">Acorn</a>
                     </div>
-                    <nav className={styles.nav}>
-                        <ul>
-                            {menus.map(item => (
-                                <li key={item.url} className={item.url === activeUrl ? styles.active : undefined}>
-                                    <Link to={item.url}>{item.text}</Link>
-                                </li>
-                            ))}
-                            <li><a href="#" onClick={logout}>退出</a></li>
+                    {isMobile ?
+                        <nav>
+                            <div className={styles.menu} onClick={showMenu}>
+                                <MenuOutlined />
+                            </div>
+                        </nav> :
+                        <nav className={styles.nav}>
+                            <ul>
+                                {menus.map(item => (
+                                    <li key={item.url} className={item.url === activeUrl ? styles.active : undefined}>
+                                        <Link to={item.url}>{item.text}</Link>
+                                    </li>
+                                ))}
+                                <li><a href="#" onClick={logout}>退出</a></li>
+                            </ul>
+                        </nav>
+                    }
+
+                    <div className={styles.wrapper}>
+                        <ul className={styles.menu}>
+                            <li><a href="#">Menu</a></li>
+                            <li><a href="#">Menu</a></li>
+                            <li><a href="#">Menu</a></li>
+                            <li><a href="#">Menu</a></li>
+                            <li><a href="#">Menu</a></li>
                         </ul>
-                    </nav>
+                    </div>
+
                 </div>
             </header>
             {children}
         </>)
 }
+
+export default HocMedia(GlobalHeader);

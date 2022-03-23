@@ -66,6 +66,7 @@
     "react-dom": "^16.8.6",
     "react-infinite-scroller": "^1.2.4",
     "react-markdown-editor-lite": "^1.2.4",
+    "react-media": "^1.10.0",
     "umi": "^3.2.22",
     "umi-request": "^1.0.8",
     "use-merge-value": "^1.0.1"

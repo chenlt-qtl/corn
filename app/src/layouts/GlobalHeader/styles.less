@@ -1,31 +1,31 @@
 .container {
-  color: #777777;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 1.625em;
-  padding: 0 .625rem .625rem .625rem;
-  font-family: "Work Sans", arial, sans-serif;
-  letter-spacing: 2px;
-  display: flex;
+  color          : #777777;
+  font-family    : "Poppins", sans-serif;
+  font-size      : 14px;
+  font-weight    : 300;
+  line-height    : 1.625em;
+  padding        : 0 .625rem .625rem .625rem;
+  font-family    : "Work Sans", arial, sans-serif;
+  letter-spacing : 2px;
+  display        : flex;
   justify-content: space-between;
-  border-bottom: 1px dotted #cdcdcd;
+  border-bottom  : 1px dotted #cdcdcd;
 }
 
 .logo {
   display: inline-block;
 
   a {
-    color: #000;
-    font-size: 22px;
+    color      : #000;
+    font-size  : 22px;
     font-weight: 400;
   }
 }
 
 .nav {
   * {
-    margin: 0;
-    padding: 0;
+    margin    : 0;
+    padding   : 0;
     list-style: none;
   }
 
@@ -34,27 +34,27 @@
 
     ul {
       position: absolute;
-      display: none;
-      top: 100%;
-      left: 0;
-      z-index: 99;
+      display : none;
+      top     : 100%;
+      left    : 0;
+      z-index : 99;
     }
 
     >li {
-      float: left;
+      float      : left;
       margin-left: 10px;
-      transition: all 0.3s;
+      transition : all 0.3s;
 
       a {
-        padding: 0 8px 0px 8px;
+        padding        : 0 8px 0px 8px;
         text-decoration: none;
-        display: inline-block;
-        color: gray;
-        font-size: 12px;
-        text-transform: uppercase;
-        outline: none;
-        transition: 0.3s;
-        text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.25);
+        display        : inline-block;
+        color          : gray;
+        font-size      : 12px;
+        text-transform : uppercase;
+        outline        : none;
+        transition     : 0.3s;
+        text-shadow    : 0px 0px 3px rgba(0, 0, 0, 0.25);
 
         &:hover {
           transform: scale(1.1)
@@ -64,7 +64,21 @@
 
     .active a {
       font-weight: 700;
-      color: #2ecc71;
+      color      : #2ecc71;
     }
   }
+}
+
+.menu {
+  position        : absolute;
+  top             : -10px;
+  right           : 0;
+  border-radius   : 50%;
+  background-color: #ccc;
+  width           : 36px;
+  height          : 34px;
+  cursor          : pointer;
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
 }
