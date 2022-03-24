@@ -7,6 +7,14 @@ import { getPageQuery } from '@/utils/utils';
 import LoginTimer from "@/components/LoginTimer"
 import { MenuOutlined } from '@ant-design/icons';
 import HocMedia from "@/components/HocMedia";
+import menuConfig from '../../../config/menu';
+
+
+const configs = menuConfig.routes.map(route=>route.routes.map(i=>({...i})).filter(i=>{
+    i.path = route.path+i.path;
+    return i.name}));
+    
+const menus = [].concat.apply([],configs);
 
 /**
  * 退出登录，并且将当前的 url 保存
@@ -25,7 +33,7 @@ const loginOut = async () => {
     }
 };
 
-function GlobalHeader({ children, location, isMobile }: IRouteComponentProps) {
+function HeaderLayout({ children, location, isMobile }: IRouteComponentProps) {
 
     const [activeUrl, setActiveUrl] = useState<string>('/');
     const { initialState, setInitialState } = useModel('@@initialState');
@@ -33,8 +41,6 @@ function GlobalHeader({ children, location, isMobile }: IRouteComponentProps) {
     useEffect(() => {
         setActiveUrl(location.pathname);
     }, [location])
-
-    const menus = [{ url: '/noteapp', text: '笔记' }, { url: '/word', text: '英语' }, { url: '/game', text: '游戏管理' }, { url: '/play/list', text: '游戏' }, { url: '/wordChinese', text: '语文天地' }, { url: '/splicMp3', text: '切割' }, { url: '/exam', text: '例子' }];
 
     const logout = () => {
         setInitialState({ ...initialState, currentUser: undefined });
@@ -56,15 +62,24 @@ function GlobalHeader({ children, location, isMobile }: IRouteComponentProps) {
                     </div>
                     {isMobile ?
                         <nav>
-                            <div className={styles.menu} onClick={showMenu}>
-                                <MenuOutlined />
+                            <div className={`${styles.menu} ${styles.a}`} onClick={showMenu}>
+                                <div className={styles.menuBtn}>
+                                    <MenuOutlined />
+                                </div>
+                                <ul className={styles.menu}>
+                                    <li><a href="#">Menu</a></li>
+                                    <li><a href="#">Menu</a></li>
+                                    <li><a href="#">Menu</a></li>
+                                    <li><a href="#">Menu</a></li>
+                                    <li><a href="#">Menu</a></li>
+                                </ul>
                             </div>
                         </nav> :
                         <nav className={styles.nav}>
                             <ul>
                                 {menus.map(item => (
-                                    <li key={item.url} className={item.url === activeUrl ? styles.active : undefined}>
-                                        <Link to={item.url}>{item.text}</Link>
+                                    <li key={item.path} className={item.path === activeUrl ? styles.active : undefined}>
+                                        <Link to={item.path}>{item.name}</Link>
                                     </li>
                                 ))}
                                 <li><a href="#" onClick={logout}>退出</a></li>
@@ -72,15 +87,7 @@ function GlobalHeader({ children, location, isMobile }: IRouteComponentProps) {
                         </nav>
                     }
 
-                    <div className={styles.wrapper}>
-                        <ul className={styles.menu}>
-                            <li><a href="#">Menu</a></li>
-                            <li><a href="#">Menu</a></li>
-                            <li><a href="#">Menu</a></li>
-                            <li><a href="#">Menu</a></li>
-                            <li><a href="#">Menu</a></li>
-                        </ul>
-                    </div>
+
 
                 </div>
             </header>
@@ -88,4 +95,4 @@ function GlobalHeader({ children, location, isMobile }: IRouteComponentProps) {
         </>)
 }
 
-export default HocMedia(GlobalHeader);
+export default HocMedia(HeaderLayout);

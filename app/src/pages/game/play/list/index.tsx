@@ -19,7 +19,7 @@ const PlayList: React.FC<{}> = () => {
     }
 
     const handlePlay = (game: GameItem) => {
-        history.push(`/play/${game.id}`);
+        history.push(`/a/play/${game.id}`);
     }
 
 

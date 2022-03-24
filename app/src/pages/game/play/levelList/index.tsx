@@ -52,9 +52,9 @@ const LevelList: React.FC<{}> = (props) => {
         let urlParams = props.match.params;
 
         if (type == 0) {
-            history.push("/play/en/" + urlParams.id)
+            history.push("/b/play/en/" + urlParams.id)
         } else {
-            history.push("/play/cn/" + urlParams.id)
+            history.push("/b/play/cn/" + urlParams.id)
         }
 
     }

@@ -4,14 +4,13 @@ import { queryCurrent } from '@/services/user';
 import styles from './styles.less'
 import QuestionCircleOutlined from '@ant-design/icons'
 import { history } from 'umi';
-import { stringify } from 'querystring';
 import { outLogin } from '@/services/login';
 import { getPageQuery } from '@/utils/utils';
 
 
 
 export const INIT_TIMER = 5*60*60;//自动登出时间s
-export const INIT_TIMER_WARNING = 5*60;//还剩多少秒弹出对话框s
+export const INIT_TIMER_WARNING = 5 * 60;//还剩多少秒弹出对话框s
 export const REMAIN_TIME_KEY = "remainTimeKey";
 
 // 获取过期时间戳
@@ -46,12 +45,8 @@ export default function LoginTimer() {
         const { redirect } = getPageQuery();
         // Note: There may be security issues, please note
         if (window.location.pathname !== '/user/login' && !redirect) {
-            history.replace({
-                pathname: '/user/login',
-                search: stringify({
-                    redirect: window.location.href,
-                }),
-            });
+            history.replace({ pathname: '/user/login' });
+
         }
     }
 
