@@ -12,14 +12,11 @@ export default defineConfig({
   dva: {
     hmr: true,
   },
-  layout: {
-    name: 'Corn',
-    locale: true,
-  },
+  layout: false,
   locale: {
     default: 'zh-CN',
-    antd: true,
-    baseNavigator: true,
+    antd: false,
+    baseNavigator: false,
   },
   dynamicImport: {
     loading: '@/components/PageLoading/index',

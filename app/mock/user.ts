@@ -64,8 +64,7 @@ export default {
     }
 
     res.send({
-      status: 'error',
-      currentAuthority: 'guest',
+      msg:"这是MOCK里的数据"
     });
     access = 'guest';
   },

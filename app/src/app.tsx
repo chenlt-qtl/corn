@@ -1,10 +1,7 @@
-import React from 'react';
-import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
+import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 
 import { notification } from 'antd';
 import { history, RequestConfig } from 'umi';
-import RightContent from '@/components/RightContent';
-import Footer from '@/components/Footer';
 import { queryCurrent } from './services/user';
 import tokenInterceptor from '@/utils/Interceptor';
 
@@ -34,20 +31,6 @@ export async function getInitialState(): Promise<{
     settings: defaultSettings,
   };
 }
-
-export const layout = ({
-  initialState,
-}: {
-  initialState: { settings?: LayoutSettings };
-}): BasicLayoutProps => {
-  return {
-    rightContentRender: () => <RightContent />,
-    disableContentMargin: false,
-    footerRender: () => <Footer />,
-    menuHeaderRender: undefined,
-    ...initialState?.settings,
-  };
-};
 
 
 interface error {

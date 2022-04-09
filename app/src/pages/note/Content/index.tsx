@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { Tabs, Input, Button, Divider, Spin } from 'antd';
-import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled } from '@ant-design/icons';
+import { Tabs, Input, Menu, Dropdown, Spin } from 'antd';
+import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, EllipsisOutlined, MenuOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { connect } from 'umi';
 import { guid } from '@/utils/utils'
@@ -22,6 +22,9 @@ const Content = React.forwardRef((props, ref) => {
     const [displayIndex, setDisplayIndex] = useState<number>(-1);
 
     const [title, setTitle] = useState<String>("");
+
+    const [closeMenuVisible, setCloseMenuVisible] = useState<boolean>(false);
+
 
     useEffect(() => {
         setDisplayIndex(0)
@@ -148,13 +151,21 @@ const Content = React.forwardRef((props, ref) => {
         })
     }
 
+
+    const menu = (
+        <Menu onClick={e => closeNotes(e.key === '1' ? false : true)}>
+            <Menu.Item key="1">关闭其他</Menu.Item>
+            <Menu.Item key="2">关闭所有</Menu.Item>
+        </Menu>
+    );
+
     const render = function () {
         const { openedNote = {}, openedNotes } = props.note;
         const loading = props.loading.effects["noteFavorite/editOne"] || props.loading.effects["note/openNote"] || false;
         return (
-            <div className={styles.main}>
-                <div className={styles.top}>
-                    <div className={styles.block}></div>
+            <Spin spinning={loading} wrapperClassName={styles.main} >
+                <div className={styles.tabPane}>
+                    <div className={styles.menuBtn}><MenuOutlined /></div>
                     <div className={styles.tab}>
                         <Tabs
                             hideAdd
@@ -162,11 +173,17 @@ const Content = React.forwardRef((props, ref) => {
                             activeKey={openedNote.id}
                             type="editable-card"
                             onEdit={handleRemoveTab}
-                            tabBarExtraContent={<>
-                                <Button onClick={() => { closeNotes(false) }} type="link">关闭其他</Button>
-                                <Divider type="vertical" />
-                                <Button onClick={() => { closeNotes(true) }} type="link">关闭所有</Button>
-                            </>}
+                            tabBarExtraContent={
+                                <Dropdown
+                                    overlay={menu}
+                                    onVisibleChange={e => { setCloseMenuVisible(e) }}
+                                    visible={closeMenuVisible}
+                                >
+                                    <div className={styles.closeBtn}>
+                                        <EllipsisOutlined />
+                                    </div>
+                                </Dropdown>
+                            }
                         >
                             {openedNotes.map(pane => (
                                 <TabPane tab={pane.name} key={pane.id}>
@@ -175,22 +192,19 @@ const Content = React.forwardRef((props, ref) => {
                         </Tabs>
 
                     </div>
-                    <div className={styles.block}></div>
                 </div>
 
-                <Spin spinning={loading}>
-                    <div className={styles.title}>
-                        <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
-                        {openedNote.id ? <div className={styles.buttons}>{openedNote.fav ? <StarFilled className={styles.fav} onClick={handleChangeFav} /> : <StarOutlined onClick={handleChangeFav} />}{displayIndex == 0 ? <EditOutlined onClick={() => setDisplayIndex(1)} /> :
-                            <EyeOutlined onClick={() => {
-                                setDisplayIndex(0)
-                            }} />}{statusIcons[saveStatus]}</div> : ""}
-                    </div>
-                </Spin>
+                <div className={styles.title}>
+                    <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
+                    {openedNote.id ? <div className={styles.buttons}>{openedNote.fav ? <StarFilled className={styles.fav} onClick={handleChangeFav} /> : <StarOutlined onClick={handleChangeFav} />}{displayIndex == 0 ? <EditOutlined onClick={() => setDisplayIndex(1)} /> :
+                        <EyeOutlined onClick={() => {
+                            setDisplayIndex(0)
+                        }} />}{statusIcons[saveStatus]}</div> : ""}
+                </div>
                 <div className={styles.content}>
                     <MarkDownIt handleChange={handleChange} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDownIt>
                 </div>
-            </div>
+            </Spin>
         );
     };
     return render();

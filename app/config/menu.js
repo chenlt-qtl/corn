@@ -27,7 +27,7 @@ export default {
                 },
                 {
                     path: '/wordChinese',
-                    name: '语言天地',
+                    name: '语文天地',
                     component: './wordChinese/articleList',
                 },
                 {

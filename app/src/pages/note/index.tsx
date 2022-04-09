@@ -37,18 +37,23 @@ const NoteList: React.FC<{}> = (props) => {
     const loading = props.loading.effects["note/queryNote"] || props.loading.effects["note/deleteNote"] || props.loading.effects["note/updateNoteTitle"]
       || props.loading.effects["note/queryTabTree"] || props.loading.effects["note/queryChildren"] || false;
     return (
-      <Spin spinning={loading}>
-        <div className={style.main}>
-          <TreeMenu onNoteClick={handleNoteClick} getDragNote={()=>dragNote}></TreeMenu>
-          <div className={style.body}>
+
+      <div className={style.main}>
+        <div className={style.container}>
+          <div className={style.menu}>
+            {/* <TreeMenu onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu>
+            <ListMenu onNoteClick={handleNoteClick} setDragNote={(note: NoteItem) => dragNote = note}></ListMenu> */}
+          </div>
+          <div className={style.content}><Content></Content></div>
+        </div>
+        {/* <TreeMenu onNoteClick={handleNoteClick} getDragNote={()=>dragNote}></TreeMenu> */}
+        {/* <div className={style.body}>
             <div className={style.listMenu}><ListMenu onNoteClick={handleNoteClick} setDragNote={(note: NoteItem) => dragNote = note}></ListMenu> </div>
             <div className={style.divider}></div>
             <div className={style.content}><Content></Content></div>
 
-          </div>
-        </div>
-
-      </Spin >
+          </div> */}
+      </div>
     );
   };
   return render();

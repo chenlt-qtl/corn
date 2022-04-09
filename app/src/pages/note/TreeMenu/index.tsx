@@ -180,12 +180,11 @@ const LeftMenu: React.FC = (props, ref) => {
 
         return (
 
-            <Spin spinning={loading} wrapperClassName={styles.content} >
+            <div className={styles.content} >
                 <div className={styles.toolbar}>
                     <Dropdown overlay={menu} trigger={['click']}>
                         <Button type="primary" shape="round" icon={<PlusOutlined />}>增加</Button>
                     </Dropdown>
-                    {/* <Button type="primary" shape="round" icon={<DeleteOutlined />} onClick={handleDelete} danger>删除</Button> */}
                 </div>
 
                 <div className={styles.menu}>
@@ -251,7 +250,7 @@ const LeftMenu: React.FC = (props, ref) => {
                         </FormItem>
                     </Form>
                 </Modal>
-            </Spin>
+            </div>
 
         );
     };

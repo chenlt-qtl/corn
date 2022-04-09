@@ -1,122 +1,24 @@
-@menuWidth    : 220px;
-@toolbarHeight: 20px;
-
-
 .content {
   background-color: rgba(205, 205, 205, 0.2);
-  width           : @menuWidth;
+  width           : 220px;
   height          : 100%;
-
-
-  .tree {
-    transition-duration: 5s;
-    width              : @menuWidth;
-
-    .treeNode {
-      display: flex;
-
-      .treeMenu {
-        display: none;
-      }
-
-      .title {
-        flex         : 1;
-        overflow     : hidden;
-        text-overflow: ellipsis;
-        white-space  : nowrap;
-        >span{
-          display: inline-block;
-          margin: 0 5px;
-        }
-      }
-    }
-
-    :global {
-
-      .noteTreeMenu {
-        display     : none;
-        padding-left: 5px;
-
-        &:hover {
-          scale: 1.05;
-        }
-      }
-
-      .delete {
-        color: #e74c3c;
-      }
-
-      .ant-tree {
-        background-color: rgba(205, 205, 205, 0);
-        color           : rgba(0, 0, 0, 0.65);
-      }
-
-      .ant-tree-switcher {
-        width: 6px;
-      }
-
-      .ant-tree-indent-unit {
-        width: 8px;
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode:hover::before {
-        background-color: rgba(205, 205, 205, 0.2);
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode {
-        padding: 5px 0 5px 20px;
-
-        &:hover {
-          .noteTreeMenu {
-            display: inline-block;
-          }
-        }
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode-selected:hover::before,
-      .ant-tree.ant-tree-directory .ant-tree-treenode-selected::before {
-        background-color: rgba(205, 205, 205, 0.4);
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected {
-        color: rgba(0, 0, 0, 0.65);
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode-selected .ant-tree-switcher {
-        color: rgba(0, 0, 0, 0.65);
-      }
-
-      .ant-tree-node-content-wrapper {
-        display   : flex;
-        overflow-x: hidden;
-      }
-
-      .ant-tree-title {
-
-        margin-right: 15px;
-        display     : inline-block;
-        width       : 100%;
-        overflow    : hidden;
-      }
-
-      .ant-tree .ant-tree-node-content-wrapper .ant-tree-iconEle {
-        flex-shrink: 0;
-      }
-    }
-
-  }
+  display         : flex;
+  flex-direction: column;
 
   .toolbar {
     text-align: center;
     padding   : 20px 5px;
 
     >button {
-      margin: 0 5px;
+      margin : 0 5px;
+      padding: 4px 16px;
     }
   }
 
   .menu {
-    height    : calc(~"100vh - 160px");
+    // height    : calc(~"100vh - 160px");
+    flex      : 1;
+    width: 100%;
     overflow-y: hidden;
     overflow-x: hidden;
 
@@ -139,6 +41,105 @@
       &:hover {
         background-color: rgba(205, 205, 205, 0.2);
       }
+    }
+
+    .tree {
+      transition-duration: 5s;
+      width: 100%;
+
+      .treeNode {
+        display: flex;
+
+        .treeMenu {
+          display: none;
+        }
+
+        .title {
+          flex         : 1;
+          overflow     : hidden;
+          text-overflow: ellipsis;
+          white-space  : nowrap;
+
+          >span {
+            display: inline-block;
+            margin : 0 5px;
+          }
+        }
+      }
+
+      :global {
+
+        .noteTreeMenu {
+          display     : none;
+          padding-left: 5px;
+
+          &:hover {
+            scale: 1.05;
+          }
+        }
+
+        .delete {
+          color: #e74c3c;
+        }
+
+        .ant-tree {
+          background-color: rgba(205, 205, 205, 0);
+          color           : rgba(0, 0, 0, 0.65);
+        }
+
+        .ant-tree-switcher {
+          width: 6px;
+        }
+
+        .ant-tree-indent-unit {
+          width: 8px;
+        }
+
+        .ant-tree.ant-tree-directory .ant-tree-treenode:hover::before {
+          background-color: rgba(205, 205, 205, 0.2);
+        }
+
+        .ant-tree.ant-tree-directory .ant-tree-treenode {
+          padding: 5px 0 5px 20px;
+
+          &:hover {
+            .noteTreeMenu {
+              display: inline-block;
+            }
+          }
+        }
+
+        .ant-tree.ant-tree-directory .ant-tree-treenode-selected:hover::before,
+        .ant-tree.ant-tree-directory .ant-tree-treenode-selected::before {
+          background-color: rgba(205, 205, 205, 0.4);
+        }
+
+        .ant-tree.ant-tree-directory .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected {
+          color: rgba(0, 0, 0, 0.65);
+        }
+
+        .ant-tree.ant-tree-directory .ant-tree-treenode-selected .ant-tree-switcher {
+          color: rgba(0, 0, 0, 0.65);
+        }
+
+        .ant-tree-node-content-wrapper {
+          display   : flex;
+          overflow-x: hidden;
+        }
+
+        .ant-tree-title {
+
+          margin-right: 15px;
+          display     : inline-block;
+          width       : 100%;
+          overflow    : hidden;
+        }
+
+        .ant-tree .ant-tree-node-content-wrapper .ant-tree-iconEle {
+          flex-shrink: 0;
+        }
+      }
+
     }
   }
 }
