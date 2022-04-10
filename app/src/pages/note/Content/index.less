@@ -15,7 +15,29 @@
     .menuBtn {
       border-bottom: 1px solid #f0f0f0;
       margin-bottom: 16px;
-      padding: 16px;
+      padding: 6px;
+      
+      >span{
+        cursor: pointer;
+        border-radius: 7px;
+        padding: 10px;
+        &:hover{
+          background: linear-gradient(145deg, #f7f7f7, #ebebeb);
+          color     : #888;
+        }
+
+        
+      }
+    }
+
+    .menuActive{
+      >span{
+        background: #f4f4f4;
+        color     : #bdbdbd;
+        padding   : 11px 9px 9px 11px;
+        box-shadow: inset 2px 2px 3px #cbcbcb,
+            inset -2px -2px 3px #ffffff;
+      }
     }
     .closeBtn{
       padding: 16px;

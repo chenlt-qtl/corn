@@ -25,7 +25,6 @@ const Content = React.forwardRef((props, ref) => {
 
     const [closeMenuVisible, setCloseMenuVisible] = useState<boolean>(false);
 
-
     useEffect(() => {
         setDisplayIndex(0)
         setTitle(props.note.openedNote.name)
@@ -161,11 +160,12 @@ const Content = React.forwardRef((props, ref) => {
 
     const render = function () {
         const { openedNote = {}, openedNotes } = props.note;
+        const { showMenu } = props;
         const loading = props.loading.effects["noteFavorite/editOne"] || props.loading.effects["note/openNote"] || false;
         return (
             <Spin spinning={loading} wrapperClassName={styles.main} >
                 <div className={styles.tabPane}>
-                    <div className={styles.menuBtn}><MenuOutlined /></div>
+                    <div className={`${styles.menuBtn} ${showMenu ? styles.menuActive : ""}`} onClick={toggleShowMenu}><MenuOutlined /></div>
                     <div className={styles.tab}>
                         <Tabs
                             hideAdd
