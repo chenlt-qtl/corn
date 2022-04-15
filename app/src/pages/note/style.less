@@ -1,18 +1,17 @@
 .main {
     height    : 100%;
-    width     : 100%;
+    width     : 100vw;
     display   : flex;
     overflow  : hidden;
-    border-top: 1px solid rgba(205, 205, 205, 0.2);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
 
     .container {
         flex      : 1;
         display   : flex;
-        // padding: 10px;
+        overflow: hidden;
 
         .menu {
-            width        : 455px;
             overflow     : hidden;
             display      : flex;
             border-radius: 18px;
@@ -21,7 +20,8 @@
                 -5px -5px 10px rgba(255, 255, 255, 0.1),
                 inset 5px 5px 10px rgba(255, 255, 255, 0.1),
                 inset -5px -5px 10px rgba(255, 255, 255, 0.1);
-            margin: 15px;
+            margin    : 15px;
+            transition: .3s;
         }
 
         .content {

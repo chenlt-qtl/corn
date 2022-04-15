@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Dropdown, Menu, Modal, notification, Button, Spin, Input } from 'antd';
-import { ExclamationCircleOutlined, SearchOutlined, SwapLeftOutlined, UnorderedListOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, SearchOutlined, SwapLeftOutlined, UnorderedListOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { queryNoteById } from '@/pages/note/service'
@@ -121,7 +121,7 @@ const ListMenu: React.FC = (props, ref) => {
 
         let listParentNote;
         const parentId = props.noteMenu.listParentNote.parentId;
-        
+
 
         if (!home && parentId != 0) {
             const res = await queryNoteById(parentId);
@@ -170,43 +170,40 @@ const ListMenu: React.FC = (props, ref) => {
         const buttonDisable = !isNormalNoteId(listParentNote.id);
 
         return (
-            <Spin spinning={loading}>
-                <div className={styles.menu}>
-                    <div className={styles.searchBar}>
-                        <Input className={styles.search} value={searchInputStr} onChange={e => setSearchInputStr(e.currentTarget.value)} onPressEnter={handleSearch} suffix={<SearchOutlined />}></Input>
-                    </div>
-                    <div className={styles.toolbar}>
-                        <div className={styles.btn}>
-                            {buttonDisable ? <div></div> : <div onClick={() => goBack()}><SwapLeftOutlined /></div>}
-                            {buttonDisable ? <div></div> : <div onClick={() => goBack(true)}><HomeOutlined /></div>}
-                            <div><Dropdown overlay={sortMenu} trigger={['click']}><UnorderedListOutlined /></Dropdown></div>
-                        </div>
-                        <div className={styles.title}>
-                            <span>{listParentNote.name || "所有笔记"}</span>
-                        </div>
-                    </div>
-                    <div className={styles.list}>
-                        <ul> {listMenuItems.map(item => {
-                            const note = transportNote(item);
-                            const { id, title } = note;
-                            const isActive = openedNote.id == id;
-                            return <li key={id} >
-                                <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => props.onNoteClick(item)}>
-                                    {item.isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
-                                    <div className={styles.noteTitle} draggable={true} onDragStart={() => props.setDragNote(note)
-                                    }>&nbsp;&nbsp;{title}</div><div className={styles.menu}
-                                        onClick={e => handleDelete(e, note)}
-                                    ><DeleteOutlined /></div>
-                                </div>
-                            </li>
-
-                        })}
-                            {(hasMore && (activeMenuId == "newest" || listParentNote.id == "search")) ? <li><Button type="link" loading={loading} onClick={loadMore}>加载更多</Button></li> : ""}
-                        </ul>
-
-                    </div>
+            <div className={styles.container}>
+                <div className={styles.toolbar}>
+                    <Button type="text" disabled={buttonDisable} onClick={() => goBack()}><SwapLeftOutlined /></Button>
+                    <span className={styles.title}>{listParentNote.name || "所有笔记"}</span>
+                    {buttonDisable ? <div></div> : <Button type="text" disabled={buttonDisable} onClick={() => goBack(true)}><HomeOutlined /></Button>}
+                    <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                 </div>
-            </Spin>
+                <div className={styles.searchBar}>
+                    <Input className={styles.search} value={searchInputStr} onChange={e => setSearchInputStr(e.currentTarget.value)} onPressEnter={handleSearch} suffix={<SearchOutlined />}></Input>
+                </div>
+                <div className={styles.list}>
+                    <ul> {listMenuItems.map(item => {
+                        const note = transportNote(item);
+                        const { id, title } = note;
+                        const isActive = openedNote.id == id;
+                        return <li key={id} >
+                            <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => props.onNoteClick(item)}>
+                                {item.isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
+                                <div className={styles.noteTitle} draggable={true} onDragStart={() => props.setDragNote(note)
+                                }>&nbsp;&nbsp;{title}</div>
+                                <div className={styles.menu}
+                                    onClick={e => handleDelete(e, note)}
+                                >
+                                    <DeleteOutlined />
+                                </div>
+                            </div>
+                        </li>
+
+                    })}
+                        {(hasMore && (activeMenuId == "newest" || listParentNote.id == "search")) ? <li><Button type="link" loading={loading} onClick={loadMore}>加载更多</Button></li> : ""}
+                    </ul>
+
+                </div>
+            </div>
         );
     };
     return render();

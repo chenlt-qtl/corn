@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Spin } from 'antd';
 import { connect } from 'umi';
 import style from './style.less';
@@ -46,9 +46,9 @@ const NoteList: React.FC<{}> = (props) => {
 
       <div className={style.main}>
         <div className={style.container}>
-          <div className={style.menu} style={{width:showMenu?"300px":"0px"}}>
-            {/* <TreeMenu onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu>
-            <ListMenu onNoteClick={handleNoteClick} setDragNote={(note: NoteItem) => dragNote = note}></ListMenu> */}
+          <div className={style.menu} style={{ width: showMenu ? "465px" : "0px" }}>
+              <TreeMenu onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu>
+              <ListMenu onNoteClick={handleNoteClick} setDragNote={(note: NoteItem) => dragNote = note}></ListMenu>
           </div>
           <div className={style.content}><Content toggleShowMenu={toggleShowMenu} showMenu={showMenu}></Content></div>
         </div>

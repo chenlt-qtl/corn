@@ -223,7 +223,8 @@ const LeftMenu: React.FC = (props, ref) => {
 
                                 return <div className={styles.treeNode} onDrop={() => handleChangeParent(node.key)} onDragOver={(event) => {
                                     event.preventDefault();
-                                }}><div className={styles.title}>{icon}{node.title}</div>
+                                }}>
+                                    <div className={styles.title}>{icon}{node.title}</div>
                                     <div className="noteTreeMenu" onClick={e => {
                                         e.preventDefault();
                                         e.stopPropagation();
@@ -233,7 +234,8 @@ const LeftMenu: React.FC = (props, ref) => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         handleDelete(node)
-                                    }}><DeleteOutlined /></div></div>
+                                    }}><DeleteOutlined /></div>
+                                </div>
                             }}
                             // onExpand={onExpand}
                             autoExpandParent={true}

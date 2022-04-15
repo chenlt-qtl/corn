@@ -1,16 +1,17 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { Tabs, Input, Menu, Dropdown, Spin } from 'antd';
-import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, EllipsisOutlined, MenuOutlined } from '@ant-design/icons';
-import styles from './index.less';
+import { Tabs, Input, Menu, Dropdown, Spin, Button } from 'antd';
+import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, CloseCircleOutlined, MenuOutlined, ProfileOutlined } from '@ant-design/icons';
+import styles from './style.less';
 import { connect } from 'umi';
 import { guid } from '@/utils/utils'
-import MarkDownIt from './MarkDownIt'
+import MarkDownIt from './MarkDown'
 
 const { TabPane } = Tabs;
 
 let statusIcons = {
     '0': <CheckCircleTwoTone twoToneColor="#52c41a" />,
-    '1': <ExclamationCircleTwoTone twoToneColor='#f1c40f' />, '2': <LoadingOutlined />
+    '1': <ExclamationCircleTwoTone twoToneColor='#f1c40f' />,
+    '2': <LoadingOutlined />
 }
 
 const group = 'group';
@@ -150,6 +151,27 @@ const Content = React.forwardRef((props, ref) => {
         })
     }
 
+    const getTitleBtn = () => {
+        <Button type='text'><ProfileOutlined /></Button>
+        const btns = [];
+        if (props.note.openedNote.id) {
+            if (props.note.openedNote.fav) {
+                btns.push(<Button onClick={handleChangeFav} type='text'><StarFilled className={styles.fav} /></Button>)
+            } else {
+                btns.push(<Button onClick={handleChangeFav} type='text'><StarOutlined /></Button>)
+            }
+            if (!displayIndex) {
+                btns.push(<Button onClick={() => setDisplayIndex(1)} type='text'><EditOutlined /></Button>)
+            } else {
+                btns.push(<Button type='text' onClick={() => {
+                    setDisplayIndex(0)
+                }} ><EyeOutlined /></Button>)
+            }
+            btns.push(statusIcons[saveStatus])
+            return btns;
+        }
+    }
+
 
     const menu = (
         <Menu onClick={e => closeNotes(e.key === '1' ? false : true)}>
@@ -160,10 +182,11 @@ const Content = React.forwardRef((props, ref) => {
 
     const render = function () {
         const { openedNote = {}, openedNotes } = props.note;
-        const { showMenu } = props;
+        const { showMenu, toggleShowMenu } = props;
         const loading = props.loading.effects["noteFavorite/editOne"] || props.loading.effects["note/openNote"] || false;
         return (
-            <Spin spinning={loading} wrapperClassName={styles.main} >
+            // <Spin spinning={loading} wrapperClassName={styles.main} >
+            <div className={styles.main}>
                 <div className={styles.tabPane}>
                     <div className={`${styles.menuBtn} ${showMenu ? styles.menuActive : ""}`} onClick={toggleShowMenu}><MenuOutlined /></div>
                     <div className={styles.tab}>
@@ -180,7 +203,7 @@ const Content = React.forwardRef((props, ref) => {
                                     visible={closeMenuVisible}
                                 >
                                     <div className={styles.closeBtn}>
-                                        <EllipsisOutlined />
+                                        <CloseCircleOutlined />
                                     </div>
                                 </Dropdown>
                             }
@@ -195,16 +218,16 @@ const Content = React.forwardRef((props, ref) => {
                 </div>
 
                 <div className={styles.title}>
+                    <Button type='text'><ProfileOutlined /></Button>
                     <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
-                    {openedNote.id ? <div className={styles.buttons}>{openedNote.fav ? <StarFilled className={styles.fav} onClick={handleChangeFav} /> : <StarOutlined onClick={handleChangeFav} />}{displayIndex == 0 ? <EditOutlined onClick={() => setDisplayIndex(1)} /> :
-                        <EyeOutlined onClick={() => {
-                            setDisplayIndex(0)
-                        }} />}{statusIcons[saveStatus]}</div> : ""}
+
+                    <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>
                 </div>
-                <div className={styles.content}>
+                {/* <div className={styles.content}>
                     <MarkDownIt handleChange={handleChange} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDownIt>
-                </div>
-            </Spin>
+                </div> */}
+            </div>
+            // </Spin>
         );
     };
     return render();
