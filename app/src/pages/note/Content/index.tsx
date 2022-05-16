@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { Tabs, Input, Menu, Dropdown, Spin, Button } from 'antd';
-import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, CloseCircleOutlined, MenuOutlined, ProfileOutlined } from '@ant-design/icons';
+import { Tabs, Input, Menu, Dropdown, Button } from 'antd';
+import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, CloseCircleOutlined, ProfileOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { guid } from '@/utils/utils'
 import MarkDownIt from './MarkDown'
+import 'font-awesome/css/font-awesome.min.css';
+
 
 const { TabPane } = Tabs;
 
@@ -25,6 +27,8 @@ const Content = React.forwardRef((props, ref) => {
     const [title, setTitle] = useState<String>("");
 
     const [closeMenuVisible, setCloseMenuVisible] = useState<boolean>(false);
+
+    const [showToc, setShowToc] = useState<boolean>(false);
 
     useEffect(() => {
         setDisplayIndex(0)
@@ -180,15 +184,32 @@ const Content = React.forwardRef((props, ref) => {
         </Menu>
     );
 
+    const togglerMenu = [
+        { icon: '&#xe88c;', name: "three" },
+        { icon: '&#xe8bf;', name: "two" },
+        { icon: '&#xe88e;', name: "one" }]
+
     const render = function () {
         const { openedNote = {}, openedNotes } = props.note;
-        const { showMenu, toggleShowMenu } = props;
+        const { menuStyle, setMenuStyle } = props;
         const loading = props.loading.effects["noteFavorite/editOne"] || props.loading.effects["note/openNote"] || false;
         return (
             // <Spin spinning={loading} wrapperClassName={styles.main} >
             <div className={styles.main}>
                 <div className={styles.tabPane}>
-                    <div className={`${styles.menuBtn} ${showMenu ? styles.menuActive : ""}`} onClick={toggleShowMenu}><MenuOutlined /></div>
+                    {/* <div className={styles.btn} onClick={toggleShowMenu}>{showMenu ? <FullscreenOutlined /> : <FullscreenExitOutlined />}</div> */}
+                    {/* <div className={styles.btn} >    <Switch
+                        checkedChildren={<span className="iconfont">&#xe88c;</span>}
+                        unCheckedChildren={<span className='fa fa-expand'></span>}
+                        defaultChecked
+                    /></div> */}
+                    <div className={styles.btn} >
+                        <div className={styles.toggler}>
+                            {togglerMenu.map(item => <span key={item.name}
+                                className={`iconfont ${menuStyle == item.name ? styles.active : ""}`}
+                                dangerouslySetInnerHTML={{ __html: item.icon }} onClick={() => setMenuStyle(item.name)}></span>)}
+                        </div>
+                    </div>
                     <div className={styles.tab}>
                         <Tabs
                             hideAdd
@@ -196,36 +217,34 @@ const Content = React.forwardRef((props, ref) => {
                             activeKey={openedNote.id}
                             type="editable-card"
                             onEdit={handleRemoveTab}
-                            tabBarExtraContent={
-                                <Dropdown
-                                    overlay={menu}
-                                    onVisibleChange={e => { setCloseMenuVisible(e) }}
-                                    visible={closeMenuVisible}
-                                >
-                                    <div className={styles.closeBtn}>
-                                        <CloseCircleOutlined />
-                                    </div>
-                                </Dropdown>
-                            }
                         >
                             {openedNotes.map(pane => (
                                 <TabPane tab={pane.name} key={pane.id}>
                                 </TabPane>
                             ))}
                         </Tabs>
-
+                    </div>
+                    <div className={styles.btn} >
+                        <Dropdown
+                            overlay={menu}
+                            onVisibleChange={e => { setCloseMenuVisible(e) }}
+                            visible={closeMenuVisible}
+                        >
+                            <div className={styles.closeBtn}>
+                                <CloseCircleOutlined />
+                            </div>
+                        </Dropdown>
                     </div>
                 </div>
 
                 <div className={styles.title}>
-                    <Button type='text'><ProfileOutlined /></Button>
+                    <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>
                     <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
-
                     <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>
                 </div>
-                {/* <div className={styles.content}>
-                    <MarkDownIt handleChange={handleChange} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDownIt>
-                </div> */}
+                <div className={styles.content}>
+                    <MarkDownIt handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDownIt>
+                </div>
             </div>
             // </Spin>
         );

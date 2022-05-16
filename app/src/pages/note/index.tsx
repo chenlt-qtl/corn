@@ -13,11 +13,7 @@ let dragNote;
 
 const NoteList: React.FC<{}> = (props) => {
 
-  const [showMenu, setShowMenu] = useState<boolean>(true);
-
-  const toggleShowMenu = () => {
-    setShowMenu(!showMenu);
-  }
+  const [ menuStyle, setMenuStyle] = useState<String>("three");
 
   const handleNoteClick = (note: NoteItem) => {
     if (note.isLeaf) {
@@ -46,11 +42,11 @@ const NoteList: React.FC<{}> = (props) => {
 
       <div className={style.main}>
         <div className={style.container}>
-          <div className={style.menu} style={{ width: showMenu ? "465px" : "0px" }}>
+          <div className={`${style.menu} ${style[menuStyle]}`}>
               <TreeMenu onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu>
               <ListMenu onNoteClick={handleNoteClick} setDragNote={(note: NoteItem) => dragNote = note}></ListMenu>
           </div>
-          <div className={style.content}><Content toggleShowMenu={toggleShowMenu} showMenu={showMenu}></Content></div>
+          <div className={style.content}><Content setMenuStyle={setMenuStyle} menuStyle={menuStyle}></Content></div>
         </div>
         {/* <TreeMenu onNoteClick={handleNoteClick} getDragNote={()=>dragNote}></TreeMenu> */}
         {/* <div className={style.body}>

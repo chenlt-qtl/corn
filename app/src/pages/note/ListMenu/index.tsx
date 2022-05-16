@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Dropdown, Menu, Modal, notification, Button, Spin, Input } from 'antd';
-import { ExclamationCircleOutlined, SearchOutlined, SwapLeftOutlined, UnorderedListOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { Dropdown, Menu, Modal, notification, Button, Input } from 'antd';
+import { ExclamationCircleOutlined, SearchOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { queryNoteById } from '@/pages/note/service'
@@ -172,7 +172,7 @@ const ListMenu: React.FC = (props, ref) => {
         return (
             <div className={styles.container}>
                 <div className={styles.toolbar}>
-                    <Button type="text" disabled={buttonDisable} onClick={() => goBack()}><SwapLeftOutlined /></Button>
+                    <Button type="text" disabled={buttonDisable} onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button>
                     <span className={styles.title}>{listParentNote.name || "所有笔记"}</span>
                     {buttonDisable ? <div></div> : <Button type="text" disabled={buttonDisable} onClick={() => goBack(true)}><HomeOutlined /></Button>}
                     <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>

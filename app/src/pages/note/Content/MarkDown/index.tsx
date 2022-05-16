@@ -56,15 +56,14 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 
 const MarkDownIt = React.forwardRef((props, ref) => {
     const [value, setValue] = useState<string>("");
-    const [showToc, setShowToc] = useState<boolean>(false);
     const [htmlStr, setHtmlStr] = useState<string>("");
 
     useEffect(() => {
         const text = props.note.openedNote.text || "";
-        
+
         setValue(text);
         renderHTML(text);
-        setShowToc(false);
+        props.setShowToc(false);
     }, [props.note.openedNote])
 
     const handleEditorChange = ({ html, text }) => {
@@ -112,8 +111,8 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
 
     const render = function () {
-        const { displayIndex } = props;
-        
+        const { displayIndex, showToc, setShowToc } = props;
+
         return (
             <>
 
@@ -135,7 +134,7 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                         {showToc ? <div className={styles.toc}>
                             <div className={styles.title}><CloseOutlined onClick={() => { setShowToc(false) }} /></div>
                             {tocify && tocify.render()}
-                        </div> : <BarsOutlined style={{margin:"10px"}}onClick={() => { setShowToc(true) }} />}
+                        </div> : ""}
 
                         <div className={styles.text}>
                             <MdEditor

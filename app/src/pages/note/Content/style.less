@@ -8,15 +8,45 @@
   padding-left  : 0;
 
   .tabPane {
-    width        : 100%;
-    margin       : 10px 5px 0 5px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    position     : relative;
+    width          : 100%;
+    margin         : 10px 5px 0 5px;
+    border-bottom  : 1px solid rgba(0, 0, 0, 0.1);
+    position       : relative;
+    display        : flex;
+    align-content  : center;
+    justify-content: space-between;
 
+    .btn {
+      display: inline-block;
+      padding: 5px;
+      cursor : pointer;
+    }
+
+    .toggler {
+      border       : 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      box-shadow   : 2px 2px 2px rgba(0, 0, 0, 0.05), -2px -2px 2px rgba(255, 255, 255, 0.5), inset 3px 3px 2px rgba(0, 0, 0, 0.08), inset -3px -3px 2px rgba(255, 255, 255, 0.5);
+      overflow     : hidden;
+
+      span {
+        display: inline-block;
+        padding: 0 7px;
+      }
+
+      span:nth-of-type(n+2) {
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .active {
+        background-color: #78e08f;
+        color           : #fff;
+      }
+    }
 
 
     .menuBtn {
       padding: 3px;
+      display: inline-block;
 
       >span {
         cursor       : pointer;
@@ -43,8 +73,8 @@
     .tab {
       position        : absolute;
       bottom          : -1px;
-      left            : 33px;
-      right           : 5px;
+      left            : 110px;
+      right           : 22px;
       background-color: #F9F9F9;
 
       overflow: hidden;
@@ -59,7 +89,7 @@
 
         .ant-tabs-card>.ant-tabs-nav .ant-tabs-tab,
         .ant-tabs-card>div>.ant-tabs-nav .ant-tabs-tab {
-          padding: 5px 10px;
+          padding: 10px;
         }
 
         .ant-tabs-top>.ant-tabs-nav,
@@ -91,6 +121,17 @@
         .ant-tabs-bottom>div>.ant-tabs-nav::before {
           border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
+
+        .ant-tabs {
+          line-height: 1.2;
+        }
+
+        .ant-tabs-tab-btn {
+          max-width    : 80px;
+          overflow     : hidden;
+          text-overflow: ellipsis;
+          white-space  : nowrap;
+        }
       }
     }
 
@@ -99,7 +140,6 @@
   .title {
     display      : flex;
     align-items  : baseline;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     padding      : 10px 16px 5px 16px;
 
     .buttons {
@@ -127,13 +167,18 @@
     }
   }
 
-  // .content {
-  //   flex: 1;
+  .content {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    flex: 1;
 
-  //   div {
-  //     overflow-wrap: break-word;
-  //     word-break   : break-word;
-  //     word-wrap    : break-word;
-  //   }
-  // }
+    div {
+      overflow-wrap: break-word;
+      word-break   : break-word;
+      word-wrap    : break-word;
+    }
+  }
+}
+
+.fav {
+  color: #e74c3c;
 }

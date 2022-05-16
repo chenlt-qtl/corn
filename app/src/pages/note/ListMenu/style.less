@@ -1,6 +1,10 @@
 .container {
-  width     : 50%;
-  margin-top: 5px;
+  // width : 50%;
+  flex:1;
+  padding: 5px 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   >div {
     text-align: center;
@@ -49,8 +53,6 @@
 
   .list {
     overflow-y: auto;
-    height    : 100%;
-
   }
 
   ul {
@@ -63,9 +65,9 @@
     line-height    : 30px;
     padding        : 5px 15px;
     cursor         : pointer;
-    align-items: center;
-    border-radius: 15px;
-    margin: 0 5px;
+    align-items    : center;
+    border-radius  : 15px;
+    margin         : 0 5px;
 
 
     &:hover {
@@ -85,7 +87,7 @@
     }
 
     .menu {
-      display   : none;
+      display        : none;
       transition     : .2s;
       width          : 20px;
       align-items    : center;
