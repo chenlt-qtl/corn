@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Dropdown, Menu, Modal, notification, Button, Input } from 'antd';
 import { ExclamationCircleOutlined, SearchOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
-import styles from './style.less';
+import styles from './styles.less';
 import { connect } from 'umi';
 import { queryNoteById } from '@/pages/note/service'
 import { isNormalNoteId } from '@/utils/utils';
-import EditFolderModal from '../components/EditFolderModal';
-
 
 let searchStr;
 let searchParentId;
 const { confirm } = Modal;
-const ListMenu: React.FC = (props, ref) => {
+const Search: React.FC = (props, ref) => {
     const [searchInputStr, setSearchInputStr] = useState<string>("");
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -169,19 +166,10 @@ const ListMenu: React.FC = (props, ref) => {
         const { openedNote } = props.note;
 
         const loading = props.loading.effects["noteMenu/refreshNewestData"] || false;
-
-        const buttonDisable = !isNormalNoteId(listParentNote.id);
-
         return (
             <div className={styles.container} style={props.style}>
-                
-                <EditFolderModal visible={isModalVisible} node={{}} onCancel={() => setIsModalVisible(false)}></EditFolderModal>
-
-                <div className={styles.toolbar}>
-                    <Button type="text" disabled={buttonDisable} onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button>
-                    <span className={styles.title}>{listParentNote.name || "所有笔记"}</span>
-                    {buttonDisable ? <div></div> : <Button type="text" disabled={buttonDisable} onClick={() => goBack(true)}><HomeOutlined /></Button>}
-                    <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
+                <div className={styles.searchBar}>
+                    <Input className={styles.search} value={searchInputStr} onChange={e => setSearchInputStr(e.currentTarget.value)} onPressEnter={handleSearch} suffix={<SearchOutlined />}></Input>
                 </div>
                 <div className={styles.list}>
                     <ul> {listMenuItems.map(item => {
@@ -212,4 +200,4 @@ const ListMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(ListMenu);
+export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(Search);

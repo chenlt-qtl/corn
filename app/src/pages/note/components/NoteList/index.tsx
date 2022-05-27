@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Dropdown, Menu, Modal, notification, Button, Input } from 'antd';
-import { ExclamationCircleOutlined, SearchOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
+import React, { useEffect } from 'react';
+import { Modal, notification, Button } from 'antd';
+import { ExclamationCircleOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
-import { queryNoteById } from '@/pages/note/service'
-import { isNormalNoteId } from '@/utils/utils';
-import EditFolderModal from '../components/EditFolderModal';
 
 
-let searchStr;
-let searchParentId;
 const { confirm } = Modal;
-const ListMenu: React.FC = (props, ref) => {
-    const [searchInputStr, setSearchInputStr] = useState<string>("");
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+const NoteList: React.FC = (props, ref) => {
 
     useEffect(() => {
 
@@ -58,39 +51,6 @@ const ListMenu: React.FC = (props, ref) => {
         })
     }, []);
 
-    const handleSort = e => {
-        const { listMenuItems } = props.noteMenu;
-
-        const key = e.key;
-        let items = [...listMenuItems];
-        if (key == "default") {
-            items = items.sort((a, b) => a.isLeaf - b.isLeaf)
-        } else if (key == "date") {
-            items = items.sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
-        } else if (key == "name") {
-            items = items.sort((a, b) => a.name > b.name)
-        }
-
-        props.dispatch({
-            type: 'noteMenu/refreshListMenu',
-            payload: items
-        })
-
-    }
-
-    const sortMenu = (
-        <Menu onClick={handleSort}>
-            <Menu.Item key="default">
-                默认排序
-            </Menu.Item>
-            <Menu.Item key="date">
-                按时间排序
-            </Menu.Item>
-            <Menu.Item key="name">
-                按名称排序
-            </Menu.Item>
-        </Menu>
-    );
 
     const handleDelete = (e, note) => {
         e.preventDefault();
@@ -120,24 +80,6 @@ const ListMenu: React.FC = (props, ref) => {
         return { ...note, id, title }
     }
 
-    const goBack = async (home: boolean = false) => {
-
-        let listParentNote;
-        const parentId = props.noteMenu.listParentNote.parentId;
-
-
-        if (!home && parentId != 0) {
-            const res = await queryNoteById(parentId);
-            listParentNote = res.result;
-        }
-
-        props.dispatch({
-            type: `noteMenu/refreshListParentNote`,
-            payload: listParentNote,
-        })
-
-    }
-
     const loadMore = () => {
         const { pageNo, pageSize } = props.noteMenu;
         let type = `noteMenu/queryNewest`;
@@ -150,39 +92,14 @@ const ListMenu: React.FC = (props, ref) => {
         })
     }
 
-    const handleSearch = e => {
-        if (searchInputStr) {
-            searchStr = searchInputStr;
-            searchParentId = props.noteMenu.listParentNote.id;
-            props.dispatch({
-                type: "noteMenu/refreshListParentNote",
-                payload: { id: "search", name: `"${searchStr}"搜索结果` }
-            })
-            setSearchInputStr("");
-        }
-
-    }
-
     const render = function () {
-        const { listParentNote, listMenuItems, hasMore, activeMenuId } = props.noteMenu;
+        const { listMenuItems } = props.noteMenu;
+        const { hasMore } = props;
 
         const { openedNote } = props.note;
 
-        const loading = props.loading.effects["noteMenu/refreshNewestData"] || false;
-
-        const buttonDisable = !isNormalNoteId(listParentNote.id);
-
         return (
             <div className={styles.container} style={props.style}>
-                
-                <EditFolderModal visible={isModalVisible} node={{}} onCancel={() => setIsModalVisible(false)}></EditFolderModal>
-
-                <div className={styles.toolbar}>
-                    <Button type="text" disabled={buttonDisable} onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button>
-                    <span className={styles.title}>{listParentNote.name || "所有笔记"}</span>
-                    {buttonDisable ? <div></div> : <Button type="text" disabled={buttonDisable} onClick={() => goBack(true)}><HomeOutlined /></Button>}
-                    <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
-                </div>
                 <div className={styles.list}>
                     <ul> {listMenuItems.map(item => {
                         const note = transportNote(item);
@@ -202,7 +119,7 @@ const ListMenu: React.FC = (props, ref) => {
                         </li>
 
                     })}
-                        {(hasMore && (activeMenuId == "newest" || listParentNote.id == "search")) ? <li><Button type="link" loading={loading} onClick={loadMore}>加载更多</Button></li> : ""}
+                        {hasMore ? <li><Button type="link" loading={loading} onClick={loadMore}>加载更多</Button></li> : ""}
                     </ul>
 
                 </div>
@@ -212,4 +129,4 @@ const ListMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(ListMenu);
+export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(NoteList);

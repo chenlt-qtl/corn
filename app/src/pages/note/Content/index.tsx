@@ -6,6 +6,7 @@ import { connect } from 'umi';
 import { guid } from '@/utils/utils'
 import MarkDownIt from './MarkDown'
 import 'font-awesome/css/font-awesome.min.css';
+import HocMedia from "@/components/HocMedia";
 
 
 const { TabPane } = Tabs;
@@ -155,6 +156,13 @@ const Content = React.forwardRef((props, ref) => {
         })
     }
 
+    const goBack = () => {
+        props.dispatch({
+            type: 'note/refreshShowMenu',
+            payload: true,
+        })
+    }
+
     const getTitleBtn = () => {
         <Button type='text'><ProfileOutlined /></Button>
         const btns = [];
@@ -189,53 +197,74 @@ const Content = React.forwardRef((props, ref) => {
         { icon: '&#xe8bf;', name: "two" },
         { icon: '&#xe88e;', name: "one" }]
 
+    const menu1 = (
+        <Menu
+            items={[
+                {
+                    key: '1',
+                    label: '1st item',
+                },
+                {
+                    key: '2',
+                    label: '2nd item',
+                },
+                {
+                    key: '3',
+                    label: '3rd item',
+                },
+            ]}
+        />
+    );
+
     const render = function () {
+        const { isMobile } = props;
         const { openedNote = {}, openedNotes } = props.note;
         const { menuStyle, setMenuStyle } = props;
         const loading = props.loading.effects["noteFavorite/editOne"] || props.loading.effects["note/openNote"] || false;
         return (
             // <Spin spinning={loading} wrapperClassName={styles.main} >
-            <div className={styles.main}>
-                <div className={styles.tabPane}>
-                    {/* <div className={styles.btn} onClick={toggleShowMenu}>{showMenu ? <FullscreenOutlined /> : <FullscreenExitOutlined />}</div> */}
-                    {/* <div className={styles.btn} >    <Switch
-                        checkedChildren={<span className="iconfont">&#xe88c;</span>}
-                        unCheckedChildren={<span className='fa fa-expand'></span>}
-                        defaultChecked
-                    /></div> */}
-                    <div className={styles.btn} >
-                        <div className={styles.toggler}>
-                            {togglerMenu.map(item => <span key={item.name}
-                                className={`iconfont ${menuStyle == item.name ? styles.active : ""}`}
-                                dangerouslySetInnerHTML={{ __html: item.icon }} onClick={() => setMenuStyle(item.name)}></span>)}
-                        </div>
+            <div className={`${styles.main} ${isMobile ? styles.isMobile : ""}`}>
+                {isMobile ?
+                    <div className={styles.toolbar}>
+                        <Button shape='circle' onClick={goBack}><span className='iconfont'>&#xe7c3;</span></Button>
+
+                        <Dropdown.Button overlay={menu1}>Actions</Dropdown.Button>
                     </div>
-                    <div className={styles.tab}>
-                        <Tabs
-                            hideAdd
-                            onTabClick={handleActiveNote}
-                            activeKey={openedNote.id}
-                            type="editable-card"
-                            onEdit={handleRemoveTab}
-                        >
-                            {openedNotes.map(pane => (
-                                <TabPane tab={pane.name} key={pane.id}>
-                                </TabPane>
-                            ))}
-                        </Tabs>
-                    </div>
-                    <div className={styles.btn} >
-                        <Dropdown
-                            overlay={menu}
-                            onVisibleChange={e => { setCloseMenuVisible(e) }}
-                            visible={closeMenuVisible}
-                        >
-                            <div className={styles.closeBtn}>
-                                <CloseCircleOutlined />
+                    :
+                    (<div className={styles.tabPane}>
+                        <div className={styles.btn} >
+                            <div className={styles.toggler}>
+                                {togglerMenu.map(item => <span key={item.name}
+                                    className={`iconfont ${menuStyle == item.name ? styles.active : ""}`}
+                                    dangerouslySetInnerHTML={{ __html: item.icon }} onClick={() => setMenuStyle(item.name)}></span>)}
                             </div>
-                        </Dropdown>
-                    </div>
-                </div>
+                        </div>
+                        <div className={styles.tab}>
+                            <Tabs
+                                hideAdd
+                                onTabClick={handleActiveNote}
+                                activeKey={openedNote.id}
+                                type="editable-card"
+                                onEdit={handleRemoveTab}
+                            >
+                                {openedNotes.map(pane => (
+                                    <TabPane tab={pane.name} key={pane.id}>
+                                    </TabPane>
+                                ))}
+                            </Tabs>
+                        </div>
+                        <div className={styles.btn} >
+                            <Dropdown
+                                overlay={menu}
+                                onVisibleChange={e => { setCloseMenuVisible(e) }}
+                                visible={closeMenuVisible}
+                            >
+                                <div className={styles.closeBtn}>
+                                    <CloseCircleOutlined />
+                                </div>
+                            </Dropdown>
+                        </div>
+                    </div>)}
 
                 <div className={styles.title}>
                     <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>
@@ -252,5 +281,5 @@ const Content = React.forwardRef((props, ref) => {
     return render();
 });
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) =>
-    ({ note, noteMenu, loading }), null, null, { forwardRef: true })(Content);
+export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) =>
+    ({ note, noteMenu, loading }), null, null, { forwardRef: true })(Content));

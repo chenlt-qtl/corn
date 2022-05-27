@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Dropdown, Menu, Modal, notification, Button, Input } from 'antd';
 import { ExclamationCircleOutlined, SearchOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
-import styles from './style.less';
+import styles from './styles.less';
 import { connect } from 'umi';
 import { queryNoteById } from '@/pages/note/service'
-import { isNormalNoteId } from '@/utils/utils';
-import EditFolderModal from '../components/EditFolderModal';
-
+import NoteList from '../components/NoteList';
 
 let searchStr;
 let searchParentId;
 const { confirm } = Modal;
-const ListMenu: React.FC = (props, ref) => {
+const Fav: React.FC = (props, ref) => {
     const [searchInputStr, setSearchInputStr] = useState<string>("");
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -169,47 +166,13 @@ const ListMenu: React.FC = (props, ref) => {
         const { openedNote } = props.note;
 
         const loading = props.loading.effects["noteMenu/refreshNewestData"] || false;
-
-        const buttonDisable = !isNormalNoteId(listParentNote.id);
-
         return (
-            <div className={styles.container} style={props.style}>
-                
-                <EditFolderModal visible={isModalVisible} node={{}} onCancel={() => setIsModalVisible(false)}></EditFolderModal>
-
-                <div className={styles.toolbar}>
-                    <Button type="text" disabled={buttonDisable} onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button>
-                    <span className={styles.title}>{listParentNote.name || "所有笔记"}</span>
-                    {buttonDisable ? <div></div> : <Button type="text" disabled={buttonDisable} onClick={() => goBack(true)}><HomeOutlined /></Button>}
-                    <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
-                </div>
-                <div className={styles.list}>
-                    <ul> {listMenuItems.map(item => {
-                        const note = transportNote(item);
-                        const { id, title } = note;
-                        const isActive = openedNote.id == id;
-                        return <li key={id} >
-                            <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => props.onNoteClick(item)}>
-                                {item.isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
-                                <div className={styles.noteTitle} draggable={true} onDragStart={() => props.setDragNote(note)
-                                }>&nbsp;&nbsp;{title}</div>
-                                <div className={styles.menu}
-                                    onClick={e => handleDelete(e, note)}
-                                >
-                                    <DeleteOutlined />
-                                </div>
-                            </div>
-                        </li>
-
-                    })}
-                        {(hasMore && (activeMenuId == "newest" || listParentNote.id == "search")) ? <li><Button type="link" loading={loading} onClick={loadMore}>加载更多</Button></li> : ""}
-                    </ul>
-
-                </div>
+            <div style={props.style}>
+                <NoteList></NoteList>
             </div>
         );
     };
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(ListMenu);
+export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(Fav);
