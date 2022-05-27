@@ -1,0 +1,168 @@
+.main {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  padding-left: 0;
+}
+.main .tabPane {
+  width: 100%;
+  margin: 10px 5px 0 5px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+}
+.main .tabPane .btn {
+  display: inline-block;
+  padding: 5px;
+  cursor: pointer;
+}
+.main .tabPane .toggler {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.05), -2px -2px 2px rgba(255, 255, 255, 0.5), inset 3px 3px 2px rgba(0, 0, 0, 0.08), inset -3px -3px 2px rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+}
+.main .tabPane .toggler span {
+  display: inline-block;
+  padding: 0 7px;
+}
+.main .tabPane .toggler span:nth-of-type(n+2) {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.main .tabPane .toggler .active {
+  background-color: #78e08f;
+  color: #fff;
+}
+.main .tabPane .menuBtn {
+  padding: 3px;
+  display: inline-block;
+}
+.main .tabPane .menuBtn > span {
+  cursor: pointer;
+  border-radius: 7px;
+  padding: 5px;
+}
+.main .tabPane .menuBtn > span:hover {
+  background: linear-gradient(145deg, #f7f7f7, #ebebeb);
+  color: #888;
+}
+.main .tabPane .menuActive > span {
+  background: #f4f4f4;
+  color: #bdbdbd;
+  padding: 6px 4px 4px 6px;
+  box-shadow: inset 1px 1px 3px #cbcbcb, inset -1px -1px 3px #fcfcfc;
+}
+.main .tabPane .tab {
+  position: absolute;
+  bottom: -1px;
+  left: 110px;
+  right: 22px;
+  background-color: #F9F9F9;
+  overflow: hidden;
+  z-index: 1;
+}
+.main .tabPane .tab :global .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab,
+.main .tabPane .tab :global .ant-tabs-card.ant-tabs-top > div > .ant-tabs-nav .ant-tabs-tab {
+  border-radius: 10px 10px 0 0;
+}
+.main .tabPane .tab :global .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab,
+.main .tabPane .tab :global .ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab {
+  padding: 10px;
+}
+.main .tabPane .tab :global .ant-tabs-top > .ant-tabs-nav,
+.main .tabPane .tab :global .ant-tabs-bottom > .ant-tabs-nav,
+.main .tabPane .tab :global .ant-tabs-top > div > .ant-tabs-nav,
+.main .tabPane .tab :global .ant-tabs-bottom > div > .ant-tabs-nav {
+  margin-bottom: 0;
+}
+.main .tabPane .tab :global .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab,
+.main .tabPane .tab :global .ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab {
+  background-color: #f0ecec;
+}
+.main .tabPane .tab :global .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active,
+.main .tabPane .tab :global .ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab-active {
+  background-color: #F9F9F9;
+  border-bottom: #F9F9F9;
+}
+.main .tabPane .tab :global .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab,
+.main .tabPane .tab :global .ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+.main .tabPane .tab :global .ant-tabs-top > .ant-tabs-nav::before,
+.main .tabPane .tab :global .ant-tabs-bottom > .ant-tabs-nav::before,
+.main .tabPane .tab :global .ant-tabs-top > div > .ant-tabs-nav::before,
+.main .tabPane .tab :global .ant-tabs-bottom > div > .ant-tabs-nav::before {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.main .tabPane .tab :global .ant-tabs {
+  line-height: 1.2;
+}
+.main .tabPane .tab :global .ant-tabs-tab-btn {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.main .title {
+  display: flex;
+  align-items: baseline;
+  padding: 10px 16px 5px 16px;
+}
+.main .title .buttons {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+.main .title > input {
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: transparent;
+}
+.main .title > input:focus {
+  box-shadow: none;
+}
+.main .title button,
+.main .title .buttons > span {
+  padding: 5px;
+  height: 27px;
+  line-height: 1;
+}
+.main .content {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  flex: 1;
+  overflow: auto;
+}
+.main .content div {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  word-wrap: break-word;
+}
+.fav {
+  color: #e74c3c;
+}
+.isMobile {
+  padding: 0;
+}
+.isMobile :global .ant-btn-group > .ant-btn:first-child:not(:last-child),
+.isMobile :global .ant-btn-group > span:first-child:not(:last-child) > .ant-btn {
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+}
+.isMobile :global .ant-btn-group > .ant-btn:last-child:not(:first-child),
+.isMobile :global .ant-btn-group > span:last-child:not(:first-child) > .ant-btn {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+.isMobile .toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+.isMobile .title {
+  background-color: #fff;
+}

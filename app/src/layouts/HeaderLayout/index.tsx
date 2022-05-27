@@ -17,8 +17,6 @@ const configs = menuConfig.routes.map(route => route.routes.map(i => ({ ...i }))
 
 const menus = [].concat.apply([], configs);
 
-console.log(menus);
-
 
 /**
  * 退出登录，并且将当前的 url 保存
@@ -65,7 +63,7 @@ function HeaderLayout({ children, location, isMobile }: IRouteComponentProps) {
     }
 
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} ${isMobile?styles.isMobile:""}`}>
             <LoginTimer></LoginTimer>
             <header className={styles.header}>
                 <div className={styles.logo}>

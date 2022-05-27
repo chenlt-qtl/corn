@@ -170,7 +170,7 @@ const ListMenu: React.FC = (props, ref) => {
         const buttonDisable = !isNormalNoteId(listParentNote.id);
 
         return (
-            <div className={styles.container}>
+            <div className={styles.container} style={props.style}>
                 <div className={styles.toolbar}>
                     <Button type="text" disabled={buttonDisable} onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button>
                     <span className={styles.title}>{listParentNote.name || "所有笔记"}</span>

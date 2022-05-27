@@ -6,6 +6,7 @@ import { isNormalNoteId } from '@/utils/utils';
 export interface NoteState {
     openedNote: NoteItem;
     openedNotes: NoteItem[];
+    showMenu: boolean;
 }
 
 export interface NoteModelType {
@@ -23,6 +24,7 @@ export interface NoteModelType {
     reducers: {
         refreshOpenedNote: Reducer<NoteState>;
         refreshOpenedNotes: Reducer<NoteState>;
+        refreshShowMenu: Reducer<NoteState>;
     };
 }
 
@@ -32,13 +34,14 @@ const NoteModel: NoteModelType = {
     state: {
         openedNote: {},
         openedNotes: [],
+        showMenu: true,
     },
 
     effects: {
 
         *openNote({ payload }, { call, put, select }) {
 
-            const openedNotes = yield select(state => state.note.openedNotes);            
+            const openedNotes = yield select(state => state.note.openedNotes);
 
             const listParentNote = yield select(state => state.noteMenu.listParentNote);
 
@@ -51,7 +54,7 @@ const NoteModel: NoteModelType = {
                 if (result) {
                     if (result.success) {
                         note = result.result;
-                        
+
                         // 成功
                         yield put({
                             type: 'refreshOpenedNotes',
@@ -104,28 +107,15 @@ const NoteModel: NoteModelType = {
             let result = yield call(updateNoteTitle, payload);
             if (result) {
 
-                if (result.result.id == listParentNote.id) {
-                    yield put({
-                        type: "noteMenu/refreshListParentNote",
-                        payload: result.result
-                    });
-                }
+                const newData = result.result;
 
-                if (result.result.parentId == listParentNote.id || result.result.isLeaf) {
-                    //更新list菜单
-                    yield put({
-                        type: "noteMenu/queryMenuItems",
-                        payload: listParentNote.id
-                    });
-                }
-
-                if (result.result.isLeaf) {
-                    //更新tab数据
+                //更新tab数据  
+                if (newData.isLeaf) {//newData是文件才需要更新
                     yield put({
                         type: "refreshOpenedNotes",
                         payload: openedNotes.map(item => {
                             if (item.id == "new" && !payload.id) {
-                                return result.result;
+                                return newData;
                             }
                             if (item.id == payload.id) {
                                 item.name = payload.name
@@ -140,10 +130,29 @@ const NoteModel: NoteModelType = {
                     if (openedNote.id == "new") {
                         yield put({
                             type: "refreshOpenedNote",
-                            payload: result.result
+                            payload: newData
                         })
                     }
                 }
+
+                //更新list菜单
+                if (newData.id == listParentNote.id) {
+                    yield put({
+                        type: "noteMenu/refreshListParentNote",
+                        payload: newData
+                    });
+                } else if (newData.parentId == listParentNote.id) {
+                    yield put({
+                        type: "noteMenu/queryMenuItems",
+                        payload: listParentNote.id
+                    });
+                }
+
+                //更新tree菜单
+                yield put({
+                    type: `noteMenu/queryMenuTree`,
+                    payload: 0,
+                })
 
                 return result;
             }
@@ -273,7 +282,12 @@ const NoteModel: NoteModelType = {
                 openedNotes: payload
             }
         },
-
+        refreshShowMenu(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                showMenu: payload
+            }
+        },
 
     },
 };

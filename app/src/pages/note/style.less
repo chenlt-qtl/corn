@@ -7,36 +7,11 @@
     box-sizing: border-box;
 
     .container {
-        flex      : 1;
-        display   : flex;
+        flex    : 1;
+        display : flex;
         overflow: hidden;
 
-        .menu {
-            overflow     : hidden;
-            display      : flex;
-            border-radius: 18px;
-            background   : #fff;
-            box-shadow   : 5px 5px 10px rgba(0, 0, 0, 0.2),
-                -5px -5px 10px rgba(255, 255, 255, 0.1),
-                inset 5px 5px 10px rgba(255, 255, 255, 0.1),
-                inset -5px -5px 10px rgba(255, 255, 255, 0.1);
-            margin    : 15px;
-            transition: .3s;
-        }
-        .three{
-            width: 465px;
-        }
-        .one{
-            width: 0px;
-        }
-        .two{
-            >:first-child{
-                width: 0px;
-                flex: 0;
-            }
-            width: 233px;
-        }
-
+       
         .content {
             flex: 1;
         }
@@ -62,4 +37,8 @@
     }
 
 
+}
+
+.isMobile {
+    display: block;
 }

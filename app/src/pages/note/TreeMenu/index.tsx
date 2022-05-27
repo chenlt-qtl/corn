@@ -4,7 +4,7 @@ import { ClockCircleOutlined, StarFilled, PlusOutlined, CaretDownOutlined, Delet
 import styles from './style.less';
 import { connect } from 'umi';
 import { isNormalNoteId } from '@/utils/utils';
-
+import EditFolderModal from '../components/EditFolderModal';
 
 const { confirm } = Modal;
 
@@ -17,6 +17,7 @@ const LeftMenu: React.FC = (props, ref) => {
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [renameNode, setRenameNode] = useState<object>({});
     const [form] = Form.useForm();
 
 
@@ -42,30 +43,6 @@ const LeftMenu: React.FC = (props, ref) => {
     }, [props.noteMenu.listParentNote]);
 
 
-    const handleAddNote = ({ key }) => {
-        if (key == "1") {//文件夹
-            setIsModalVisible(true);
-            form.setFieldsValue({ foldName: "" });
-            fold = { parentId: props.noteMenu.listParentNote.id, isLeaf: false }
-        } else {
-            const newNote = { id: "new", name: "新文档", parentId: props.noteMenu.listParentNote.id, isLeaf: true };
-            props.dispatch({
-                type: "note/refreshOpenedNote",
-                payload: newNote
-            })
-            props.dispatch({
-                type: 'note/refreshOpenedNotes',
-                payload: [newNote, ...props.note.openedNotes]
-            })
-        }
-    }
-
-    const menu = (
-        <Menu onClick={handleAddNote}>
-            <Menu.Item key="1" icon={<FolderOutlined />}>文件夹</Menu.Item>
-            <Menu.Item key="2" icon={<FileMarkdownOutlined />}>笔记</Menu.Item>
-        </Menu>
-    );
 
     const handleSaveFold = async () => {
 
@@ -151,8 +128,7 @@ const LeftMenu: React.FC = (props, ref) => {
 
     const handleRename = node => {
         setIsModalVisible(true);
-        form.setFieldsValue({ foldName: node.name });
-        fold = { id: node.key, ...node };
+        setRenameNode(node);
     }
 
     const handleChangeParent = (newParent: string) => {
@@ -180,12 +156,9 @@ const LeftMenu: React.FC = (props, ref) => {
 
         return (
 
-            <div className={styles.content} >
-                <div className={styles.toolbar}>
-                    <Dropdown overlay={menu} trigger={['click']}>
-                        <Button type="primary" shape="round" icon={<PlusOutlined />}>增加</Button>
-                    </Dropdown>
-                </div>
+            <div className={styles.content} style={props.style}>
+
+                <EditFolderModal visible={isModalVisible} node={renameNode} onCancel={() => setIsModalVisible(false)}></EditFolderModal>
 
                 <div className={styles.menu}>
                     {menuItems.map(item =>
@@ -244,7 +217,7 @@ const LeftMenu: React.FC = (props, ref) => {
                         />
                     </div>
                 </div>
-                <Modal title="请输入文件夹名称..." visible={isModalVisible} onOk={handleSaveFold} onCancel={() => setIsModalVisible(false)}>
+                <Modal title="请输入文件夹名称..." visible={false} onOk={handleSaveFold} onCancel={() => setIsModalVisible(false)}>
                     <Form form={form}                    >
                         <FormItem name="foldName"
                             rules={[{ required: true, message: '请输入文件夹名称!' }]}>
