@@ -1,5 +1,5 @@
-import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote } from '@/pages/note/service'
-import { NoteItem } from '@/pages/note/data.d';
+import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote } from '@/services/note'
+import { NoteItem } from '@/data/note';
 import { Effect, Reducer } from 'umi';
 import { isNormalNoteId } from '@/utils/utils';
 

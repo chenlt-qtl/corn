@@ -46,6 +46,17 @@ export async function queryNote(parentId: string) {
   })
 }
 
+export async function queryFav() {
+  return request('/api/note/noteFavorite/queryNotes').then(res => {
+
+    if (res) {
+      res.result = res.result.map(item => decryptNote(item))
+    }
+    return res;
+  })
+}
+
+
 
 export async function searchNote(params) {
 
@@ -105,9 +116,6 @@ export async function updateNoteText(params: NoteItem) {
 //   });
 // }
 
-// export async function queryFavorite() {
-//   return request('/api/note/noteFavorite/queryNotes');
-// }
 
 // export async function editAllFav(noteIds: String) {
 //   return request('/api/note/noteFavorite/edit', {

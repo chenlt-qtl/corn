@@ -3,7 +3,7 @@ import { Dropdown, Menu, Modal, notification, Button, Input } from 'antd';
 import { ExclamationCircleOutlined, SearchOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
-import { queryNoteById } from '@/pages/note/service'
+import { queryNoteById } from '@/services/note'
 import { isNormalNoteId } from '@/utils/utils';
 import EditFolderModal from '../components/EditFolderModal';
 

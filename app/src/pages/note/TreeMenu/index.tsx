@@ -71,10 +71,6 @@ const LeftMenu: React.FC = (props, ref) => {
 
     const openNote = (_, { node }) => {
 
-        props.dispatch({
-            type: 'noteMenu/refreshActiveMenuId',
-            payload: "all",
-        })
         const { key, title, isLeaf, parentIds, parentId } = node;
 
         props.onNoteClick({ id: key, name: title, parentIds, isLeaf, parentId })
@@ -94,10 +90,7 @@ const LeftMenu: React.FC = (props, ref) => {
                 id = "fav";
             }
         }
-        props.dispatch({
-            type: 'noteMenu/refreshActiveMenuId',
-            payload: type,
-        })
+
         const { listParentNote } = props.noteMenu;
         if (listParentNote.id != id) {
             props.dispatch({

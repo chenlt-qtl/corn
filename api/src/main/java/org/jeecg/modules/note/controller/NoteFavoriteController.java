@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -90,28 +91,6 @@ public class NoteFavoriteController {
 		return result;
 	}
 	
-	/**
-	  * 通过登录用户查询
-	 * @return
-	 */
-	@GetMapping(value = "/query")
-	public Result<String[]> query() {
-		Result<String[]> result = new Result();
-
-		SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-
-		QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
-		queryWrapper.eq("create_by",sysUser.getUsername());
-		result.setSuccess(true);
-		NoteFavorite noteFavorite = noteFavoriteService.getOne(queryWrapper);
-		if(noteFavorite != null){
-			String noteIds = noteFavorite.getNoteIds();
-			if(StringUtils.isNotBlank(noteIds)){
-				result.setResult(noteIds.split(","));
-			}
-		}
-		return result;
-	}
 
 	 /**
 	  * 通过登录用户查询
@@ -122,9 +101,17 @@ public class NoteFavoriteController {
 		 Result<List<NoteModel>> result = new Result();
 
 		 SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+		 List<NoteModel> notes = noteFavoriteService.queryNotes(sysUser.getUsername());
+		 List<NoteModel> list = new ArrayList();
 
+		 for (NoteModel note : notes) {
+			 if (note.getIsLeaf()) {
+				 note.encryption();
+				 list.add(note);
+			 }
+		 }
 		 result.setSuccess(true);
-		 result.setResult(noteFavoriteService.queryNotes(sysUser.getUsername()));
+		 result.setResult(list);
 
 		 return result;
 	 }

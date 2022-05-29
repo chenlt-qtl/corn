@@ -98,10 +98,12 @@ const NoteList: React.FC = (props, ref) => {
 
         const { openedNote } = props.note;
 
+        const { data = [] } = props;
+
         return (
             <div className={styles.container} style={props.style}>
                 <div className={styles.list}>
-                    <ul> {listMenuItems.map(item => {
+                    <ul> {data.map(item => {
                         const note = transportNote(item);
                         const { id, title } = note;
                         const isActive = openedNote.id == id;

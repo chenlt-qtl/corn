@@ -1,6 +1,6 @@
 import { Reducer } from 'umi';
-import { queryNote, queryTreeMenu, getNewest, searchNote } from '@/pages/note/service'
-import { NoteNode, NoteItem } from '@/pages/note/data.d';
+import { queryNote, queryTreeMenu, getNewest, searchNote } from '@/services/note'
+import { NoteNode, NoteItem } from '@/data/note';
 
 export interface NoteState {
 
@@ -43,7 +43,6 @@ const NoteModel: NoteModelType = {
         hasMore: true,
         pageNo: 0,
         pageSize: 20,
-        activeMenuId: "",
     },
 
     effects: {
@@ -150,12 +149,6 @@ const NoteModel: NoteModelType = {
                 ...state,
                 pageNo: payload.pageNo,
                 pageSize: payload.pageSize
-            }
-        },
-        refreshActiveMenuId(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                activeMenuId: payload
             }
         },
     },

@@ -1,6 +1,6 @@
-import { editAllFav, editOneFav, queryNoteById } from '@/pages/note/service'
+import { editOneFav, queryNoteById } from '@/services/note'
 import { Effect, Reducer } from 'umi';
-import { NoteItem } from '@/pages/note/data.d';
+import { NoteItem } from '@/data/note';
 
 
 export interface NoteFavoriteState {
@@ -29,18 +29,6 @@ const noteFavoriteModel: NoteFavoriteModelType = {
         noteIds: [],
     },
     effects: {
-        // *edit({ payload }, { call, put }) {
-        //     yield put({//先修改id数据
-        //         type: 'refreshNoteIds', payload
-        //     });
-        //     let result = yield call(editAllFav, payload.join(','));//修改数据库
-        //     if (result && result.success) {//刷新收藏夹数据
-        //         yield put({
-        //             type: 'query'
-        //         });
-        //     }
-        //     return result;
-        // },
         *editOne({ payload }, { call, put, select }) {
 
             let result = yield call(editOneFav, payload);

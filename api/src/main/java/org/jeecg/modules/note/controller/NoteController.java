@@ -75,18 +75,18 @@ public class NoteController {
         Result result = new Result<>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         try {
-            List<NoteModel> list = new ArrayList();
-            if (parentId.equals("fav")) {//收藏夹
-                List<NoteModel> notes = noteFavoriteService.queryNotes(sysUser.getUsername());
-
-                for (NoteModel note : notes) {
-                    if (note.getIsLeaf()) {
-                        list.add(note);
-                    }
-                }
-            } else {
-                list = noteService.listNote(sysUser.getUsername(), parentId);
-            }
+            List<NoteModel> list = noteService.listNote(sysUser.getUsername(), parentId);
+//            if (parentId.equals("fav")) {//收藏夹
+//                List<NoteModel> notes = noteFavoriteService.queryNotes(sysUser.getUsername());
+//
+//                for (NoteModel note : notes) {
+//                    if (note.getIsLeaf()) {
+//                        list.add(note);
+//                    }
+//                }
+//            } else {
+//                list = noteService.listNote(sysUser.getUsername(), parentId);
+//            }
 
             for (NoteModel note : list) {
                 note.encryption();
