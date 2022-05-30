@@ -3,53 +3,41 @@ import { Modal, notification, Button } from 'antd';
 import { ExclamationCircleOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
+import HocMedia from "@/components/HocMedia";
 
 
 const { confirm } = Modal;
 const NoteList: React.FC = (props, ref) => {
 
-    useEffect(() => {
 
-        const parentId = props.noteMenu.listParentNote.id;
-
-        const pageNo = 1, pageSize = 5;
-
-        if (parentId != undefined) {
-            if (parentId == "search") {
-
+    const handleNoteClick = (note: NoteItem) => {
+        const { isMobile } = props;
+        if (note.isLeaf) {
+            const { openedNote } = props.note;
+            if (openedNote.id != note.id) {
                 props.dispatch({
-                    type: 'noteMenu/refreshPageInfo',
-                    payload: { pageNo, pageSize }
-                })
-                props.dispatch({
-                    type: 'noteMenu/searchNote',
-                    payload: { pageNo, pageSize, searchStr, searchParentId }
-                })
-            } else if (parentId == "newest") {
-                props.dispatch({
-                    type: 'noteMenu/refreshPageInfo',
-                    payload: { pageNo, pageSize }
-                })
-                props.dispatch({
-                    type: 'noteMenu/queryNewest',
-                    payload: { pageNo, pageSize }
-                })
-            } else {
-                props.dispatch({
-                    type: `noteMenu/queryMenuItems`,
-                    payload: parentId,
+                    type: 'note/openNote',
+                    payload: note.id,
                 })
             }
 
+            if (isMobile) {
+                props.dispatch({
+                    type: 'note/refreshShowMenu',
+                    payload: false,
+                })
+            }
+        } else {
+            const { listParentNote } = props.noteMenu;
+            if (listParentNote.id != note.id) {
+                props.dispatch({
+                    type: 'noteMenu/refreshListParentNote',
+                    payload: note
+                })
+            }
         }
 
-    }, [props.noteMenu.listParentNote]);
-
-    useEffect(() => {
-        props.dispatch({
-            type: `noteMenu/refreshListParentNote`,
-        })
-    }, []);
+    }
 
 
     const handleDelete = (e, note) => {
@@ -93,12 +81,10 @@ const NoteList: React.FC = (props, ref) => {
     }
 
     const render = function () {
-        const { listMenuItems } = props.noteMenu;
-        const { hasMore } = props;
 
         const { openedNote } = props.note;
 
-        const { data = [] } = props;
+        const { data = [], noDelete, hasMore } = props;
 
         return (
             <div className={styles.container} style={props.style}>
@@ -108,15 +94,16 @@ const NoteList: React.FC = (props, ref) => {
                         const { id, title } = note;
                         const isActive = openedNote.id == id;
                         return <li key={id} >
-                            <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => props.onNoteClick(item)}>
+                            <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => handleNoteClick(item)}>
                                 {item.isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
                                 <div className={styles.noteTitle} draggable={true} onDragStart={() => props.setDragNote(note)
                                 }>&nbsp;&nbsp;{title}</div>
-                                <div className={styles.menu}
-                                    onClick={e => handleDelete(e, note)}
-                                >
-                                    <DeleteOutlined />
-                                </div>
+                                {noDelete ? "" :
+                                    <div className={styles.menu}
+                                        onClick={e => handleDelete(e, note)}
+                                    >
+                                        <DeleteOutlined />
+                                    </div>}
                             </div>
                         </li>
 
@@ -131,4 +118,4 @@ const NoteList: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(NoteList);
+export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(NoteList));

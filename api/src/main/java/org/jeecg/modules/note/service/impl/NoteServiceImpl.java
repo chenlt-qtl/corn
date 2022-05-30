@@ -82,9 +82,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         String rootId = parentId;
 
         QueryWrapper<Note> queryWrapper = new QueryWrapper();
-        queryWrapper.select("id","name","parent_id","parent_ids");
+        queryWrapper.select("id","name","parent_id","parent_ids","is_leaf");
         queryWrapper.eq("create_by", getUsername());
-        queryWrapper.eq("is_leaf",0);
+//        queryWrapper.eq("is_leaf",0);
         queryWrapper.orderByAsc("name");
 
         List<Note> list = list(queryWrapper);

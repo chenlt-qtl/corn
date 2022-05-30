@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Tree, Spin, Modal, notification, Menu, Dropdown, Input, Form } from 'antd';
-import { ClockCircleOutlined, StarFilled, PlusOutlined, CaretDownOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, FileMarkdownOutlined, EditOutlined, FolderOpenOutlined, FolderFilled, FolderOpenFilled } from '@ant-design/icons';
+import { ClockCircleOutlined, StarFilled, PlusOutlined, FileTextOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, FileMarkdownOutlined, EditOutlined, FolderOpenOutlined, FolderFilled, FolderOpenFilled } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { isNormalNoteId } from '@/utils/utils';
 import EditFolderModal from '../components/EditFolderModal';
+import { queryTreeMenu } from '@/services/note'
+import { NoteNode } from '@/data/note';
+
+
 
 const { confirm } = Modal;
 
 const { DirectoryTree } = Tree;
-const FormItem = Form.Item;
-let fold = {};
 
 const LeftMenu: React.FC = (props, ref) => {
 
@@ -18,15 +20,12 @@ const LeftMenu: React.FC = (props, ref) => {
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [renameNode, setRenameNode] = useState<object>({});
-    const [form] = Form.useForm();
+
+    const [treeData, setTreeData] = useState<NoteNode[]>([])
 
 
     useEffect(() => {
-        getTreeData();
-        props.dispatch({
-            type: `noteMenu/refreshActiveMenu`,
-            payload: {}
-        })
+        queryTreeMenu("0").then(({ result }) => setTreeData(result))
     }, []);
 
     useEffect(() => {
@@ -43,28 +42,6 @@ const LeftMenu: React.FC = (props, ref) => {
     }, [props.noteMenu.listParentNote]);
 
 
-
-    const handleSaveFold = async () => {
-
-        const { foldName } = await form.validateFields();
-
-        props.dispatch({
-            type: "note/updateNoteTitle",
-            payload: { ...fold, name: foldName }
-        }).then(() => {
-            getTreeData();
-        })
-        setIsModalVisible(false)
-
-    }
-
-    const getTreeData = () => {
-        return props.dispatch({
-            type: `noteMenu/queryMenuTree`,
-            payload: 0,
-        })
-    }
-
     const handleExpand = value => {
         setExpandedKeys(value);
     }
@@ -74,30 +51,6 @@ const LeftMenu: React.FC = (props, ref) => {
         const { key, title, isLeaf, parentIds, parentId } = node;
 
         props.onNoteClick({ id: key, name: title, parentIds, isLeaf, parentId })
-    }
-
-
-    const handleMenuClick = (type: string) => {
-        let name = "";
-        let id = "0";
-        if (type == "newest") {
-            name = "最新文档"
-            id = "newest";
-
-        } else {
-            if (type == "fav") {
-                name = "收藏夹"
-                id = "fav";
-            }
-        }
-
-        const { listParentNote } = props.noteMenu;
-        if (listParentNote.id != id) {
-            props.dispatch({
-                type: 'noteMenu/refreshListParentNote',
-                payload: { id, name }
-            })
-        }
     }
 
 
@@ -138,88 +91,74 @@ const LeftMenu: React.FC = (props, ref) => {
 
 
     const render = function () {
-        const { treeData, activeMenuId } = props.noteMenu;
-
 
         const loading = props.loading.effects["note/queryMenuTree"] || false;
+        console.log(treeData);
 
-        const menuItems = [{ key: 'newest', text: <><ClockCircleOutlined />最新文档</> },
-        { key: 'fav', text: <><StarFilled className={styles.favorate} />收藏夹</> },
-        { key: 'all', text: <><CaretDownOutlined />所有笔记</> }]
 
         return (
 
-            <div className={styles.content} style={props.style}>
+            <div className={styles.content}>
 
                 <EditFolderModal visible={isModalVisible} node={renameNode} onCancel={() => setIsModalVisible(false)}></EditFolderModal>
 
-                <div className={styles.menu}>
-                    {menuItems.map(item =>
-                        <div key={item.key} className={`${styles.menuItem} ${item.key == activeMenuId ? styles.activeMenu : ""}`} onClick={() => handleMenuClick(item.key)} >{item.text}</div>
-                    )}
-                    <div className={styles.tree}>
-                        <DirectoryTree
-                            selectedKeys={selectedKeys}
-                            blockNode={true}
-                            multiple
-                            showIcon={false}
-                            expandedKeys={expandedKeys}
-                            treeData={treeData}
-                            onExpand={handleExpand}
-                            titleRender={node => {
-                                let icon;
-                                const style = { color: 'rgba(0, 0, 0, 0.5)' };
+                <div className={styles.tree}>
+                    <DirectoryTree
+                        selectedKeys={selectedKeys}
+                        blockNode={true}
+                        multiple
+                        showIcon={false}
+                        expandedKeys={expandedKeys}
+                        treeData={treeData}
+                        onExpand={handleExpand}
+                        titleRender={node => {
+                            let icon;
+                            const style = { color: 'rgba(0, 0, 0, 0.5)' };
 
-                                if (expandedKeys.includes(node.key)) {
+                            console.log(node);
+                            
+                            if (node.isLeaf) {
+                                icon = <FileTextOutlined />;
+                            } else if (expandedKeys.includes(node.key)) {
 
-                                    if (node.parentId == 0) {
-                                        icon = <FolderOpenFilled style={style} />;
+                                if (node.parentId == 0) {
+                                    icon = <FolderOpenFilled style={style} />;
 
-                                    } else {
-                                        icon = <FolderOpenOutlined />;
-                                    }
                                 } else {
-                                    if (node.parentId == 0) {
-                                        icon = <FolderFilled style={style} />;
-
-                                    } else {
-                                        icon = <FolderOutlined />;
-                                    }
+                                    icon = <FolderOpenOutlined />;
                                 }
+                            } else {
+                                if (node.parentId == 0) {
+                                    icon = <FolderFilled style={style} />;
 
-                                return <div className={styles.treeNode} onDrop={() => handleChangeParent(node.key)} onDragOver={(event) => {
-                                    event.preventDefault();
-                                }}>
-                                    <div className={styles.title}>{icon}{node.title}</div>
-                                    <div className="noteTreeMenu" onClick={e => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        handleRename(node)
-                                    }} ><EditOutlined /></div>
-                                    <div className="noteTreeMenu delete" onClick={e => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        handleDelete(node)
-                                    }}><DeleteOutlined /></div>
-                                </div>
-                            }}
-                            // onExpand={onExpand}
-                            autoExpandParent={true}
-                            draggable={false}
-                            onSelect={openNote}
-                        />
-                    </div>
+                                } else {
+                                    icon = <FolderOutlined />;
+                                }
+                            }
+
+                            return <div className={styles.treeNode} onDrop={() => handleChangeParent(node.key)} onDragOver={(event) => {
+                                event.preventDefault();
+                            }}>
+                                <div className={styles.title}>{icon}{node.title}</div>
+                                <div className="noteTreeMenu" onClick={e => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleRename(node)
+                                }} ><EditOutlined /></div>
+                                <div className="noteTreeMenu delete" onClick={e => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleDelete(node)
+                                }}><DeleteOutlined /></div>
+                            </div>
+                        }}
+                        // onExpand={onExpand}
+                        autoExpandParent={true}
+                        draggable={false}
+                        onSelect={openNote}
+                    />
                 </div>
-                <Modal title="请输入文件夹名称..." visible={false} onOk={handleSaveFold} onCancel={() => setIsModalVisible(false)}>
-                    <Form form={form}                    >
-                        <FormItem name="foldName"
-                            rules={[{ required: true, message: '请输入文件夹名称!' }]}>
-                            <Input prefix={<FolderOutlined />} />
-                        </FormItem>
-                    </Form>
-                </Modal>
             </div>
-
         );
     };
     return render();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './md.less';
 import { connect } from 'umi';
 import { CloseOutlined, BarsOutlined } from '@ant-design/icons';
-import { uploadImg } from '@/pages/note/service'
+import { uploadImg } from '@/services/note'
 
 import MdEditor, { Plugins } from 'react-markdown-editor-lite'
 // 导入编辑器的样式

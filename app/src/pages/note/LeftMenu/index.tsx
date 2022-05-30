@@ -11,7 +11,7 @@ import Fav from '../Fav';
 
 const LeftMenu: React.FC = (props, ref) => {
 
-    const [menuType, setMenuStyle] = useState<String>("tree");
+    const [menuType, setMenuStyle] = useState<String>("list");
 
     const setMenuType = value => {
         setMenuStyle(value);
@@ -78,10 +78,14 @@ const LeftMenu: React.FC = (props, ref) => {
                         {menuData[menuType] ? menuData[menuType].text : ""}
                     </header>
                     <article className={styles.body}>
-                        <TreeMenu style={{ display: menuType == "tree" ? "block" : "none" }} onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu>
-                        <ListMenu style={{ display: menuType == "list" ? "block" : "none" }} onNoteClick={handleNoteClick} setDragNote={() => { }}></ListMenu> 
-                        <Search style={{ display: menuType == "search" ? "block" : "none" }} onNoteClick={handleNoteClick} ></Search> 
-                        <Fav style={{ display: menuType == "fav" ? "block" : "none" }} onNoteClick={handleNoteClick} ></Fav> 
+                        {menuType == "tree" ?
+                            <TreeMenu onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu> : ""}
+                        {menuType == "list" ?
+                            <ListMenu onNoteClick={handleNoteClick} setDragNote={() => { }}></ListMenu> : ""}
+                        {menuType == "search" ?
+                            <Search onNoteClick={handleNoteClick} ></Search> : ""}
+                        {menuType == "fav" ?
+                            <Fav onNoteClick={handleNoteClick} ></Fav> : ""}
                     </article>
                 </div>
 

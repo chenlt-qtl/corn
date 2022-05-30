@@ -3,60 +3,36 @@ import { Dropdown, Menu, Modal, notification, Button, Input } from 'antd';
 import { ExclamationCircleOutlined, SearchOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
-import { queryNoteById } from '@/services/note'
+import { queryNoteById, queryNote } from '@/services/note'
 import { isNormalNoteId } from '@/utils/utils';
 import EditFolderModal from '../components/EditFolderModal';
+import NoteList from '../components/NoteList';
 
 
-let searchStr;
-let searchParentId;
+
 const { confirm } = Modal;
 const ListMenu: React.FC = (props, ref) => {
     const [searchInputStr, setSearchInputStr] = useState<string>("");
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [dataList, setDataList] = useState<[]>([]);
 
     useEffect(() => {
 
         const parentId = props.noteMenu.listParentNote.id;
-
-        const pageNo = 1, pageSize = 5;
-
-        if (parentId != undefined) {
-            if (parentId == "search") {
-
-                props.dispatch({
-                    type: 'noteMenu/refreshPageInfo',
-                    payload: { pageNo, pageSize }
-                })
-                props.dispatch({
-                    type: 'noteMenu/searchNote',
-                    payload: { pageNo, pageSize, searchStr, searchParentId }
-                })
-            } else if (parentId == "newest") {
-                props.dispatch({
-                    type: 'noteMenu/refreshPageInfo',
-                    payload: { pageNo, pageSize }
-                })
-                props.dispatch({
-                    type: 'noteMenu/queryNewest',
-                    payload: { pageNo, pageSize }
-                })
-            } else {
-                props.dispatch({
-                    type: `noteMenu/queryMenuItems`,
-                    payload: parentId,
-                })
-            }
-
-        }
+        getListData(parentId);
 
     }, [props.noteMenu.listParentNote]);
 
     useEffect(() => {
-        props.dispatch({
-            type: `noteMenu/refreshListParentNote`,
-        })
+        getListData("0");
     }, []);
+
+    const getListData = (parentId:string)=>{
+        queryNote(parentId).then(({ result }) => {
+            result.sort((a, b) => a.isLeaf - b.isLeaf);
+            setDataList(result);
+        });
+    }
 
     const handleSort = e => {
         const { listMenuItems } = props.noteMenu;
@@ -168,13 +144,16 @@ const ListMenu: React.FC = (props, ref) => {
 
         const { openedNote } = props.note;
 
+        console.log(dataList);
+
+
         const loading = props.loading.effects["noteMenu/refreshNewestData"] || false;
 
         const buttonDisable = !isNormalNoteId(listParentNote.id);
 
         return (
-            <div className={styles.container} style={props.style}>
-                
+            <div className={styles.container} >
+
                 <EditFolderModal visible={isModalVisible} node={{}} onCancel={() => setIsModalVisible(false)}></EditFolderModal>
 
                 <div className={styles.toolbar}>
@@ -183,29 +162,10 @@ const ListMenu: React.FC = (props, ref) => {
                     {buttonDisable ? <div></div> : <Button type="text" disabled={buttonDisable} onClick={() => goBack(true)}><HomeOutlined /></Button>}
                     <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                 </div>
-                <div className={styles.list}>
-                    <ul> {listMenuItems.map(item => {
-                        const note = transportNote(item);
-                        const { id, title } = note;
-                        const isActive = openedNote.id == id;
-                        return <li key={id} >
-                            <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => props.onNoteClick(item)}>
-                                {item.isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
-                                <div className={styles.noteTitle} draggable={true} onDragStart={() => props.setDragNote(note)
-                                }>&nbsp;&nbsp;{title}</div>
-                                <div className={styles.menu}
-                                    onClick={e => handleDelete(e, note)}
-                                >
-                                    <DeleteOutlined />
-                                </div>
-                            </div>
-                        </li>
-
-                    })}
-                        {(hasMore && (activeMenuId == "newest" || listParentNote.id == "search")) ? <li><Button type="link" loading={loading} onClick={loadMore}>加载更多</Button></li> : ""}
-                    </ul>
-
+                 <div className={styles.list}>
+                    <NoteList data={dataList} ></NoteList> 
                 </div>
+
             </div>
         );
     };
