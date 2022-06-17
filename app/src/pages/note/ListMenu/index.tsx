@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Dropdown, Menu, Modal, notification, Button, Input } from 'antd';
-import { ExclamationCircleOutlined, SearchOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { Dropdown, Menu, Modal, notification, Button } from 'antd';
+import { ExclamationCircleOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { queryNoteById, queryNote } from '@/services/note'
@@ -12,46 +12,20 @@ import NoteList from '../components/NoteList';
 
 const { confirm } = Modal;
 const ListMenu: React.FC = (props, ref) => {
-    const [searchInputStr, setSearchInputStr] = useState<string>("");
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [dataList, setDataList] = useState<[]>([]);
+    const [params, setParams] = useState<Object>({});
+    const [sortType, setSortType] = useState<string>('default');
+    
 
     useEffect(() => {
-
         const parentId = props.noteMenu.listParentNote.id;
-        getListData(parentId);
-
+        setSortType('default')
+        setParams({parentId})
     }, [props.noteMenu.listParentNote]);
 
-    useEffect(() => {
-        getListData("0");
-    }, []);
-
-    const getListData = (parentId:string)=>{
-        queryNote(parentId).then(({ result }) => {
-            result.sort((a, b) => a.isLeaf - b.isLeaf);
-            setDataList(result);
-        });
-    }
 
     const handleSort = e => {
-        const { listMenuItems } = props.noteMenu;
-
-        const key = e.key;
-        let items = [...listMenuItems];
-        if (key == "default") {
-            items = items.sort((a, b) => a.isLeaf - b.isLeaf)
-        } else if (key == "date") {
-            items = items.sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
-        } else if (key == "name") {
-            items = items.sort((a, b) => a.name > b.name)
-        }
-
-        props.dispatch({
-            type: 'noteMenu/refreshListMenu',
-            payload: items
-        })
-
+        setSortType(e.key)
     }
 
     const sortMenu = (
@@ -114,40 +88,10 @@ const ListMenu: React.FC = (props, ref) => {
 
     }
 
-    const loadMore = () => {
-        const { pageNo, pageSize } = props.noteMenu;
-        let type = `noteMenu/queryNewest`;
-        if (props.noteMenu.listParentNote.id == "search") {
-            type = "noteMenu/searchNote";
-        }
-        props.dispatch({
-            type,
-            payload: { pageNo: pageNo + 1, pageSize, searchStr, searchParentId },
-        })
-    }
 
-    const handleSearch = e => {
-        if (searchInputStr) {
-            searchStr = searchInputStr;
-            searchParentId = props.noteMenu.listParentNote.id;
-            props.dispatch({
-                type: "noteMenu/refreshListParentNote",
-                payload: { id: "search", name: `"${searchStr}"搜索结果` }
-            })
-            setSearchInputStr("");
-        }
-
-    }
 
     const render = function () {
-        const { listParentNote, listMenuItems, hasMore, activeMenuId } = props.noteMenu;
-
-        const { openedNote } = props.note;
-
-        console.log(dataList);
-
-
-        const loading = props.loading.effects["noteMenu/refreshNewestData"] || false;
+        const { listParentNote } = props.noteMenu;
 
         const buttonDisable = !isNormalNoteId(listParentNote.id);
 
@@ -163,7 +107,7 @@ const ListMenu: React.FC = (props, ref) => {
                     <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                 </div>
                  <div className={styles.list}>
-                    <NoteList data={dataList} ></NoteList> 
+                    <NoteList getDataMethod={queryNote} params={params} sortType={sortType}></NoteList> 
                 </div>
 
             </div>

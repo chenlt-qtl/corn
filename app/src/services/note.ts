@@ -6,8 +6,8 @@ import { decryptNote, encryptionNote } from '@/pages/note/utils';
 
 
 //树形数据结构
-export async function queryTreeMenu(id: string) {
-  return request('/api/note/queryTreeMenu?parentId=' + id).then(result => {
+export async function queryTreeMenu(id: string, withLeaf: boolean) {
+  return request('/api/note/queryTreeMenu?parentId=' + id + "&withLeaf=" + withLeaf).then(result => {
     if (result.success) {
       handleChildren(result.result);
       function handleChildren(notes) {//解密
@@ -27,6 +27,7 @@ export async function queryTreeMenu(id: string) {
 }
 
 export async function queryNoteById(id: string) {
+  
   return request('/api/note/queryById?id=' + id).then((res) => {
 
     if (res) {
@@ -36,7 +37,7 @@ export async function queryNoteById(id: string) {
   })
 }
 
-export async function queryNote(parentId: string) {
+export async function queryNote({ parentId = 0 }) {
   return request('/api/note/listNote?parentId=' + parentId).then(res => {
 
     if (res) {
@@ -57,10 +58,19 @@ export async function queryFav() {
 }
 
 
+/**
+ * 搜索note
+ * @param pageNo
+ * @param pageSize 
+ * @param searchStr 
+ * @param withLeaf 
+ * @returns 
+ */
+export async function pageSearchNote({ pageNo, pageSize, searchStr = "" }) {
+  console.log(pageNo, pageSize);
 
-export async function searchNote(params) {
 
-  return request(`/api/note/searchNote?${stringify(params)}`).then(res => {
+  return request(`/api/note/pageSearchNote?pageNo=${pageNo}&pageSize=${pageSize}&searchStr=${searchStr}&withLeaf=false`).then(res => {
     if (res) {
       res.result.records = res.result.records.map(item => decryptNote(item))
     }
@@ -101,31 +111,6 @@ export async function updateNoteText(params: NoteItem) {
     },
   });
 }
-
-// export async function queryOpenHistory() {
-//   return request('/api/note/openHistory/query');
-// }
-
-// export async function addOpenHistory(openNoteIds: String) {
-//   return request('/api/note/openHistory/add', {
-//     method: 'POST',
-//     data: {
-//       openNoteIds,
-//       method: 'post',
-//     },
-//   });
-// }
-
-
-// export async function editAllFav(noteIds: String) {
-//   return request('/api/note/noteFavorite/edit', {
-//     method: 'PUT',
-//     data: {
-//       noteIds,
-//       method: 'put',
-//     },
-//   });
-// }
 
 export async function editOneFav({ noteId, isFav }) {
   return request('/api/note/noteFavorite/edit/' + noteId + "?isFav=" + isFav, {

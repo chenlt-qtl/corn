@@ -1,4 +1,4 @@
-import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote } from '@/services/note'
+import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote, editOneFav } from '@/services/note'
 import { NoteItem } from '@/data/note';
 import { Effect, Reducer } from 'umi';
 import { isNormalNoteId } from '@/utils/utils';
@@ -7,6 +7,8 @@ export interface NoteState {
     openedNote: NoteItem;
     openedNotes: NoteItem[];
     showMenu: boolean;
+    favKey: number;
+    treeKey: number;
 }
 
 export interface NoteModelType {
@@ -18,13 +20,15 @@ export interface NoteModelType {
         updateNoteTitle: Effect;
         updateNoteText: Effect;
         deleteNote: Effect;
-        updateFav: Effect;
         updateParent: Effect;
+        editFav: Effect;
     };
     reducers: {
         refreshOpenedNote: Reducer<NoteState>;
         refreshOpenedNotes: Reducer<NoteState>;
         refreshShowMenu: Reducer<NoteState>;
+        refreshFavKey: Reducer<NoteState>;
+        refreshTreeKey: Reducer<NoteState>;
     };
 }
 
@@ -35,6 +39,8 @@ const NoteModel: NoteModelType = {
         openedNote: {},
         openedNotes: [],
         showMenu: true,
+        favKey: 1,
+        treeKey: 1,
     },
 
     effects: {
@@ -233,40 +239,76 @@ const NoteModel: NoteModelType = {
             }
         },
         *updateParent({ payload }, { call, put, select }) {
+
             const { id, parentId } = payload;
+
             const openedNotes = yield select(state => state.note.openedNotes);
             const openedNote = yield select(state => state.note.openedNote);
 
             const listParentNote = yield select(state => state.noteMenu.listParentNote);
+
+
             let result = yield call(updateParent, id, parentId);
             if (result) {
                 const note = result.result;
-                //文件夹
-                if (!note.isLeaf) {
-                    yield put({
-                        type: "noteMenu/queryMenuTree",
-                        payload: 0
-                    });
-                } else {//文件
+                //更新树
+                yield put({
+                    type: 'refreshTreeKey',
+                });
 
-                    if (openedNote.id == id) {
-                        yield put({
-                            type: "refreshOpenedNote",
-                            payload: openedNote
-                        });
-
-                    }
+                if (openedNote.id == id) {
                     yield put({
-                        type: "refreshOpenedNotes",
-                        payload: openedNotes.map(item => item.id == id ? { ...item, ...note } : item)
+                        type: "refreshOpenedNote",
+                        payload: note
                     });
 
                 }
+                yield put({
+                    type: "refreshOpenedNotes",
+                    payload: openedNotes.map(item => item.id == id ? { ...item, ...note } : item)
+                });
+
+            }
+            if (listParentNote.id == parentId) {
                 yield put({
                     type: "noteMenu/refreshListParentNote",
                     payload: { ...listParentNote }
                 });
             }
+        }
+    },
+    *editFav({ payload }, { call, put, select }) {
+
+        let result = yield call(editOneFav, payload);
+        if (result) {
+
+            //更新打开的数据
+            let res = yield call(queryNoteById, payload.noteId);
+
+            if (res) {
+                if (res.success) {
+                    const openedNotes = yield select(state => state.note.openedNotes);
+                    const note = res.result;
+                    // 成功
+                    yield put({
+                        type: 'note/refreshOpenedNotes',
+                        payload: openedNotes.map(item => item.id == payload.noteId ? note : item)
+                    })
+
+                    yield put({
+                        type: 'note/refreshOpenedNote',
+                        payload: note
+                    });
+
+                }
+
+                //更新收藏夹
+                yield put({
+                    type: 'refreshFavKey',
+                });
+
+            }
+            return result;
         }
     },
     reducers: {
@@ -288,7 +330,18 @@ const NoteModel: NoteModelType = {
                 showMenu: payload
             }
         },
-
+        refreshFavKey(state: NoteState, _): NoteState {
+            return {
+                ...state,
+                favKey: state.favKey + 1
+            }
+        },
+        refreshTreeKey(state: NoteState, _): NoteState {
+            return {
+                ...state,
+                treeKey: state.treeKey + 1
+            }
+        },
     },
 };
 

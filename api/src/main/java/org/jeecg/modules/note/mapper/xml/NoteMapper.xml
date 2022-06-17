@@ -26,6 +26,14 @@
         order by n.name
     </select>
 
+    <select id="listAllChildrenDetail" resultType="org.jeecg.modules.note.model.NoteModel">
+        SELECT n.id,n.name,n.parent_id,n.parent_ids,n.is_leaf,n.tag,n.source,n.content_id,c.text
+        FROM note_info n left join note_content c on n.content_id = c.id
+        WHERE n.create_by = #{createBy}
+        and (n.parent_ids like CONCAT('%','${parentId}','%' ) or n.id = #{parentId})
+        order by n.name
+    </select>
+
     <select id="getNameByIds" resultType="org.jeecg.modules.note.entity.Note">
         SELECT n.id,n.name
         FROM note_info n
@@ -34,7 +42,7 @@
             <![CDATA[ #{id} ]]>
         </foreach>
     </select>
-    <select id="getByIds" resultType="org.jeecg.modules.note.model.NoteModel">
+    <select id="getByIds" resultType="org.jeecg.modules.note.entity.Note">
         SELECT *
         FROM note_info n
         where id in
@@ -54,18 +62,6 @@
         ) a
     </select>
 
-
-    <select id="pageSearchNote" resultType="Map">
-        select a.id,a.name,a.parent_ids as parentIds,a.is_leaf as isLeaf from note_info a
-        where
-        a.create_by=#{createBy} and a.is_leaf =1
-        <if test="searchStr != null">
-            and (a.name like concat("%",#{searchStr},"%") or
-            exists (select 1 from note_content b where a.content_id=b.id and b.text like concat("%",#{searchStr},"%")))
-
-        </if>
-        limit #{offset},#{pageSize}
-    </select>
 
 
 </mapper>

@@ -14,7 +14,7 @@ const { confirm } = Modal;
 
 const { DirectoryTree } = Tree;
 
-const LeftMenu: React.FC = (props, ref) => {
+const TreeMenu: React.FC = (props, ref) => {
 
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -25,8 +25,14 @@ const LeftMenu: React.FC = (props, ref) => {
 
 
     useEffect(() => {
-        queryTreeMenu("0").then(({ result }) => setTreeData(result))
+        queryTreeMenu("0", true).then(({ result }) => setTreeData(result))
     }, []);
+
+    useEffect(() => {
+
+        queryTreeMenu("0", true).then(({ result }) => setTreeData(result))
+
+    }, [props.note.treeKey]);
 
     useEffect(() => {
         const { listParentNote } = props.noteMenu;
@@ -77,24 +83,21 @@ const LeftMenu: React.FC = (props, ref) => {
         setRenameNode(node);
     }
 
-    const handleChangeParent = (newParent: string) => {
-        const dragNote = props.getDragNote();
+    const onDrop: TreeProps['onDrop'] = ({ node, dragNode }) => {
 
-        if (dragNote && dragNote.parentId != newParent && dragNote.id != newParent) {
+        const newParentId = node.key;
+        if (dragNode && dragNode.parentId != newParentId && dragNode.key != newParentId) {
             props.dispatch({
                 type: 'note/updateParent',
-                payload: { ...dragNote, parentId: newParent },
+                payload: { id: dragNode.key, parentId: newParentId },
             })
         }
-
     }
 
 
     const render = function () {
 
         const loading = props.loading.effects["note/queryMenuTree"] || false;
-        console.log(treeData);
-
 
         return (
 
@@ -105,7 +108,7 @@ const LeftMenu: React.FC = (props, ref) => {
                 <div className={styles.tree}>
                     <DirectoryTree
                         selectedKeys={selectedKeys}
-                        blockNode={true}
+                        blockNode
                         multiple
                         showIcon={false}
                         expandedKeys={expandedKeys}
@@ -115,8 +118,6 @@ const LeftMenu: React.FC = (props, ref) => {
                             let icon;
                             const style = { color: 'rgba(0, 0, 0, 0.5)' };
 
-                            console.log(node);
-                            
                             if (node.isLeaf) {
                                 icon = <FileTextOutlined />;
                             } else if (expandedKeys.includes(node.key)) {
@@ -136,9 +137,7 @@ const LeftMenu: React.FC = (props, ref) => {
                                 }
                             }
 
-                            return <div className={styles.treeNode} onDrop={() => handleChangeParent(node.key)} onDragOver={(event) => {
-                                event.preventDefault();
-                            }}>
+                            return <div className={styles.treeNode}>
                                 <div className={styles.title}>{icon}{node.title}</div>
                                 <div className="noteTreeMenu" onClick={e => {
                                     e.preventDefault();
@@ -152,10 +151,10 @@ const LeftMenu: React.FC = (props, ref) => {
                                 }}><DeleteOutlined /></div>
                             </div>
                         }}
-                        // onExpand={onExpand}
-                        autoExpandParent={true}
-                        draggable={false}
+                        autoExpandParent
+                        draggable
                         onSelect={openNote}
+                        onDrop={onDrop}
                     />
                 </div>
             </div>
@@ -164,4 +163,4 @@ const LeftMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(LeftMenu);
+export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(TreeMenu);

@@ -8,7 +8,6 @@ import org.jeecg.modules.note.model.NoteModel;
 import org.jeecg.modules.note.model.NoteTreeModel;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description: 笔记管理
@@ -20,13 +19,11 @@ public interface INoteService extends IService<Note> {
 
     List<NoteModel> listNote(String createBy, String parentId);
 
-    List<Note> searchNote(String createBy, String parentId, String text);
-
     List<NoteModel> getModelByIds(String[] ids);
 
     List<Note> getNameByIds(String[] ids);
 
-    List<NoteTreeModel> queryTreeMenu(String createBy, String parentId);
+    List<NoteTreeModel> queryTreeMenu(String createBy, String parentId, boolean withLeaf);
 
     void updateParent(Note note, String oldParents);
 
@@ -40,7 +37,7 @@ public interface INoteService extends IService<Note> {
 
     Note saveNote(NoteModel note);
 
-    IPage<Map> searchNote(String searchStr, int pageNo, int pageSize);
+    IPage<Note> pageSearchNote(String searchStr, boolean withLeaf, int pageNo, int pageSize);
 
     IPage<Note> getNewest(int pageNo, int pageSize);
 }

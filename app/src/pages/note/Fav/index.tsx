@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Dropdown, Menu, Modal, notification, Button, Input } from 'antd';
-import { ExclamationCircleOutlined, SearchOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
-import styles from './styles.less';
 import { connect } from 'umi';
 import { queryFav } from '@/services/note'
 import NoteList from '../components/NoteList';
+import styles from './styles.less';
 
 
 const Fav: React.FC = (props, ref) => {
@@ -12,15 +10,16 @@ const Fav: React.FC = (props, ref) => {
     const [dataList, setDataList] = useState<[]>([]);
 
     useEffect(() => {
+        
         queryFav().then(({ result }) => setDataList(result));
-    }, []);
+        
+    }, [props.note.favKey]);
 
 
     const render = function () {
 
-        const loading = props.loading.effects["noteMenu/refreshNewestData"] || false;
         return (
-            <div style={props.style}>
+            <div className={styles.container}>
                 <NoteList data={dataList} noDelete={true}></NoteList>
             </div>
         );
@@ -28,4 +27,4 @@ const Fav: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(Fav);
+export default connect(({ note }: { note: NoteModelState }) => ({ note }))(Fav);

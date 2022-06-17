@@ -31,12 +31,19 @@ public interface NoteMapper extends BaseMapper<Note> {
      */
     public List<Note> listAllChildren(@Param("createBy") String createBy,@Param("parentId") String parentId,@Param("text") String text,@Param("detail") boolean detail);
 
+    /**
+     * 查询所有的note和text 包括自己
+     * @param createBy
+     * @param parentId
+     * @return
+     */
+    public List<NoteModel> listAllChildrenDetail(@Param("createBy") String createBy,@Param("parentId") String parentId);
+
+
     public List<Note> getNameByIds(@Param("ids") String[] ids);
 
-    public List<NoteModel> getByIds(@Param("ids") String[] ids);
+    public List<Note> getByIds(@Param("ids") String[] ids);
 
     public Integer getNoteCount(@Param("searchStr") String searchStr,@Param("createBy") String createBy);
-
-    public List<Map> pageSearchNote(@Param("searchStr") String searchStr, @Param("createBy") String createBy, @Param("pageSize") int pageSize, @Param("offset") int offset);
 
 }

@@ -11,7 +11,7 @@ import Fav from '../Fav';
 
 const LeftMenu: React.FC = (props, ref) => {
 
-    const [menuType, setMenuStyle] = useState<String>("list");
+    const [menuType, setMenuStyle] = useState<String>("tree");
 
     const setMenuType = value => {
         setMenuStyle(value);

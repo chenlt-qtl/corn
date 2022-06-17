@@ -151,7 +151,7 @@ const Content = React.forwardRef((props, ref) => {
     const handleChangeFav = () => {
         const { openedNote } = props.note;
         props.dispatch({
-            type: 'noteFavorite/editOne',
+            type: 'note/editFav',
             payload: { noteId: openedNote.id, isFav: !openedNote.fav },
         })
     }
@@ -222,7 +222,6 @@ const Content = React.forwardRef((props, ref) => {
         const { menuStyle, setMenuStyle } = props;
         const loading = props.loading.effects["noteFavorite/editOne"] || props.loading.effects["note/openNote"] || false;
         return (
-            // <Spin spinning={loading} wrapperClassName={styles.main} >
             <div className={`${styles.main} ${isMobile ? styles.isMobile : ""}`}>
                 {isMobile ?
                     <div className={styles.toolbar}>

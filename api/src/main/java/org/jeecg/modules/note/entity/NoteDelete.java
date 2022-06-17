@@ -65,6 +65,7 @@ public class NoteDelete implements Serializable {
 
 	public NoteDelete(Note note){
 		BeanUtils.copyProperties(note,this);
+		this.setNoteId(note.getId());
 		this.setId(null);
 		this.setNoteId(note.getId());
 	}

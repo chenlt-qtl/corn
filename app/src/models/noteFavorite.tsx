@@ -12,7 +12,6 @@ export interface NoteFavoriteModelType {
     namespace: 'noteFavorite';
     state: NoteFavoriteState;
     effects: {
-        // edit: Effect;
         editOne: Effect;
     };
     reducers: {
