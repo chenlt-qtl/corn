@@ -3,7 +3,6 @@ import { Button, Tree, Spin, Modal, notification, Menu, Dropdown, Input, Form } 
 import { ClockCircleOutlined, StarFilled, PlusOutlined, FileTextOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, FileMarkdownOutlined, EditOutlined, FolderOpenOutlined, FolderFilled, FolderOpenFilled } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
-import { isNormalNoteId } from '@/utils/utils';
 import EditFolderModal from '../components/EditFolderModal';
 import { queryTreeMenu } from '@/services/note'
 import { NoteNode } from '@/data/note';
@@ -17,7 +16,6 @@ const { DirectoryTree } = Tree;
 const TreeMenu: React.FC = (props, ref) => {
 
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [renameNode, setRenameNode] = useState<object>({});
 
@@ -35,17 +33,14 @@ const TreeMenu: React.FC = (props, ref) => {
     }, [props.note.treeKey]);
 
     useEffect(() => {
-        const { listParentNote } = props.noteMenu;
+        const { openedNote } = props.note;
 
-        if (listParentNote.parentIds) {
-            const expandedKeys = (listParentNote.parentIds || "").split("/")
-            setExpandedKeys([listParentNote.id, ...expandedKeys])
+        if (openedNote.parentIds) {
+            const expandedKeys = (openedNote.parentIds || "").split("/")
+            setExpandedKeys([openedNote.id, ...expandedKeys])
         }
-        const { id } = listParentNote;
-        if (isNormalNoteId(id)) {
-            setSelectedKeys([id])
-        }
-    }, [props.noteMenu.listParentNote]);
+
+    }, [props.note.openedNote]);
 
 
     const handleExpand = value => {
@@ -98,6 +93,7 @@ const TreeMenu: React.FC = (props, ref) => {
     const render = function () {
 
         const loading = props.loading.effects["note/queryMenuTree"] || false;
+        const selectedKeys = props.note.openedNote.id?[props.note.openedNote.id]:[]
 
         return (
 

@@ -1,14 +1,13 @@
 import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote, editOneFav } from '@/services/note'
 import { NoteItem } from '@/data/note';
 import { Effect, Reducer } from 'umi';
-import { isNormalNoteId } from '@/utils/utils';
 
 export interface NoteState {
     openedNote: NoteItem;
     openedNotes: NoteItem[];
     showMenu: boolean;
-    favKey: number;
-    treeKey: number;
+    favKey: number;//有变化刷新fav
+    treeKey: number;//有变化刷新树
 }
 
 export interface NoteModelType {
@@ -71,7 +70,7 @@ const NoteModel: NoteModelType = {
                 }
             }
 
-            if (note.parentId != listParentNote.id && isNormalNoteId(listParentNote.id)) {
+            if (note.parentId != listParentNote.id) {
                 let parent = yield call(queryNoteById, note.parentId);
 
                 if (parent) {
@@ -275,41 +274,41 @@ const NoteModel: NoteModelType = {
                     payload: { ...listParentNote }
                 });
             }
-        }
-    },
-    *editFav({ payload }, { call, put, select }) {
-
-        let result = yield call(editOneFav, payload);
-        if (result) {
-
-            //更新打开的数据
-            let res = yield call(queryNoteById, payload.noteId);
-
-            if (res) {
-                if (res.success) {
-                    const openedNotes = yield select(state => state.note.openedNotes);
-                    const note = res.result;
-                    // 成功
+        },
+        *editFav({ payload }, { call, put, select }) {
+            
+            let result = yield call(editOneFav, payload);
+            if (result) {
+    
+                //更新打开的数据
+                let res = yield call(queryNoteById, payload.noteId);
+    
+                if (res) {
+                    if (res.success) {
+                        const openedNotes = yield select(state => state.note.openedNotes);
+                        const note = res.result;
+                        // 成功
+                        yield put({
+                            type: 'note/refreshOpenedNotes',
+                            payload: openedNotes.map(item => item.id == payload.noteId ? note : item)
+                        })
+    
+                        yield put({
+                            type: 'note/refreshOpenedNote',
+                            payload: note
+                        });
+    
+                    }
+    
+                    //更新收藏夹
                     yield put({
-                        type: 'note/refreshOpenedNotes',
-                        payload: openedNotes.map(item => item.id == payload.noteId ? note : item)
-                    })
-
-                    yield put({
-                        type: 'note/refreshOpenedNote',
-                        payload: note
+                        type: 'refreshFavKey',
                     });
-
+    
                 }
-
-                //更新收藏夹
-                yield put({
-                    type: 'refreshFavKey',
-                });
-
+                return result;
             }
-            return result;
-        }
+        },
     },
     reducers: {
         refreshOpenedNote(state: NoteState, { payload }): NoteState {

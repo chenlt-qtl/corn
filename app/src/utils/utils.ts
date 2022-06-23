@@ -32,14 +32,6 @@ export const guid = () => {
   return S4() + S4() + S4() + S4() + S4() + S4() + time.substring(time.length - 8);
 }
 
-export const isNormalNoteId = (id: string) => {
-  if (id) {
-    if (id != "search" && id != "fav" && id != "newest") {
-      return true
-    }
-  }
-  return false
-}
 
 /**
  * 加密
