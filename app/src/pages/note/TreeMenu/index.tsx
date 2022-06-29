@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tree, Spin, Modal, notification, Menu, Dropdown, Input, Form } from 'antd';
-import { ClockCircleOutlined, StarFilled, PlusOutlined, FileTextOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, FileMarkdownOutlined, EditOutlined, FolderOpenOutlined, FolderFilled, FolderOpenFilled } from '@ant-design/icons';
+import { Tree, Spin, Modal, notification } from 'antd';
+import { FileTextOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, EditOutlined, FolderOpenOutlined, FolderFilled, FolderOpenFilled } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import EditFolderModal from '../components/EditFolderModal';
@@ -18,6 +18,7 @@ const TreeMenu: React.FC = (props, ref) => {
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [renameNode, setRenameNode] = useState<object>({});
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
     const [treeData, setTreeData] = useState<NoteNode[]>([])
 
@@ -37,8 +38,10 @@ const TreeMenu: React.FC = (props, ref) => {
 
         if (openedNote.parentIds) {
             const expandedKeys = (openedNote.parentIds || "").split("/")
+        
             setExpandedKeys([openedNote.id, ...expandedKeys])
         }
+        setSelectedKeys([openedNote.id]);
 
     }, [props.note.openedNote]);
 
@@ -50,8 +53,14 @@ const TreeMenu: React.FC = (props, ref) => {
     const openNote = (_, { node }) => {
 
         const { key, title, isLeaf, parentIds, parentId } = node;
-
-        props.onNoteClick({ id: key, name: title, parentIds, isLeaf, parentId })
+        
+        if(isLeaf){
+            props.onNoteClick({ id: key, name: title, parentIds, isLeaf, parentId })
+        }else{
+            setSelectedKeys([key]);
+        }
+        
+        
     }
 
 
@@ -93,7 +102,6 @@ const TreeMenu: React.FC = (props, ref) => {
     const render = function () {
 
         const loading = props.loading.effects["note/queryMenuTree"] || false;
-        const selectedKeys = props.note.openedNote.id?[props.note.openedNote.id]:[]
 
         return (
 

@@ -4,7 +4,7 @@ import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutli
 import styles from './style.less';
 import { connect } from 'umi';
 import { guid } from '@/utils/utils'
-import MarkDownIt from './MarkDown'
+import MarkDown from './MarkDown'
 import 'font-awesome/css/font-awesome.min.css';
 import HocMedia from "@/components/HocMedia";
 
@@ -266,12 +266,12 @@ const Content = React.forwardRef((props, ref) => {
                     </div>)}
 
                 <div className={styles.title}>
-                    <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>
+                    {isMobile ? "" : <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>}
                     <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
                     <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>
                 </div>
                 <div className={styles.content}>
-                    <MarkDownIt handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDownIt>
+                    <MarkDown handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDown>
                 </div>
             </div>
             // </Spin>

@@ -3,6 +3,7 @@ import { Button, Modal, Menu, Dropdown, Input, Form } from 'antd';
 import { PlusOutlined, FolderOutlined, FileMarkdownOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
+import HocMedia from "@/components/HocMedia";
 
 
 const FormItem = Form.Item;
@@ -38,6 +39,12 @@ const AddBtn: React.FC = (props, ref) => {
                 type: 'note/refreshOpenedNotes',
                 payload: [newNote, ...props.note.openedNotes]
             })
+            if (props.isMobile) {
+                props.dispatch({
+                    type: 'note/refreshShowMenu',
+                    payload: false,
+                })
+            }
         }
     }
 
@@ -91,4 +98,4 @@ const AddBtn: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(AddBtn);
+export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(AddBtn));

@@ -3,6 +3,8 @@ import styles from './md.less';
 import { connect } from 'umi';
 import { CloseOutlined, BarsOutlined } from '@ant-design/icons';
 import { uploadImg } from '@/services/note'
+import HocMedia from "@/components/HocMedia";
+
 
 import MdEditor, { Plugins } from 'react-markdown-editor-lite'
 // 导入编辑器的样式
@@ -54,7 +56,7 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 
 
 
-const MarkDownIt = React.forwardRef((props, ref) => {
+const MarkDown = React.forwardRef((props, ref) => {
     const [value, setValue] = useState<string>("");
     const [htmlStr, setHtmlStr] = useState<string>("");
 
@@ -111,11 +113,12 @@ const MarkDownIt = React.forwardRef((props, ref) => {
 
 
     const render = function () {
-        const { displayIndex, showToc, setShowToc } = props;
+        const { displayIndex, showToc, setShowToc, isMobile } = props;
 
         return (
             <>
 
+                {/* 编辑 */}
                 {displayIndex == 1 ?
                     <div className={styles.text} style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
                         <MdEditor
@@ -126,9 +129,11 @@ const MarkDownIt = React.forwardRef((props, ref) => {
                             // plugins={plugins}
                             onImageUpload={handleImageUpload}
                             onBlur={saveContent}
+                            config={{ view: { menu: true, html: isMobile ? false : true, md: true } }}
                         />
                     </div> : ''}
 
+                {/* 预览 */}
                 {displayIndex == 0 ?
                     <div className={styles.view}>
                         {showToc ? <div className={styles.toc}>
@@ -151,5 +156,5 @@ const MarkDownIt = React.forwardRef((props, ref) => {
     return render();
 });
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) =>
-    ({ note, noteMenu, loading }), null, null, { forwardRef: true })(MarkDownIt);
+export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) =>
+    ({ note, noteMenu, loading }), null, null, { forwardRef: true })(MarkDown));

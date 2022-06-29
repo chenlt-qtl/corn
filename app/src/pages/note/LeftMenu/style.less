@@ -1,4 +1,5 @@
 @import url('../style.less');
+
 .container {
   overflow     : hidden;
   display      : flex;
@@ -12,12 +13,17 @@
   transition: .3s;
 }
 
-.show {
-  width: @menuMaxWidth;
+.three {
+  width      : @menuMaxWidth;
+  flex-shrink: 0;
 }
 
-.hide {
+.two {
   width: @menuMinWidth;
+}
+
+.one{
+  width: 0;
 }
 
 
@@ -109,5 +115,13 @@
     flex    : 1;
     overflow: hidden;
     display : flex;
+
+    .show {
+      width: calc(~"@{menuMaxWidth} - @{menuMinWidth}");
+    }
+
+    .hide {
+      width: 0;
+    }
   }
 }

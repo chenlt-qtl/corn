@@ -10,11 +10,19 @@ import Fav from '../Fav';
 
 
 const LeftMenu: React.FC = (props, ref) => {
+   
+    const [menuType, setMenuType] = useState<String>("tree");
 
-    const [menuType, setMenuStyle] = useState<String>("tree");
 
-    const setMenuType = value => {
-        setMenuStyle(value);
+    const hideMenu = ()=>{
+        props.setMenuStyle("two");
+    }
+
+    const onMenuClick = value => {
+        if(props.menuStyle!= "three"){
+            props.setMenuStyle("three");
+        }
+        setMenuType(value);
     }
 
     const handleNoteClick = (note: NoteItem) => {
@@ -29,10 +37,7 @@ const LeftMenu: React.FC = (props, ref) => {
             }
 
             if (isMobile) {
-                props.dispatch({
-                    type: 'note/refreshShowMenu',
-                    payload: false,
-                })
+                hideMenu();
             }
         } else {
             const { listParentNote } = props.noteMenu;
@@ -58,13 +63,13 @@ const LeftMenu: React.FC = (props, ref) => {
 
         return (
 
-            <div className={`${styles.container} ${props.note.showMenu ? styles.show : styles.hide}`}>
+            <div className={`${styles.container} ${styles[props.menuStyle]}`}>
                 {/* 菜单 */}
                 <div className={styles.menu}>
                     <span className={styles.avatar}><img src={star}></img></span>
                     <ul>
                         {Object.keys(menuData).map(key =>
-                            <li key={key} onClick={() => setMenuType(key)} className={menuData[key].menuType == menuType ? styles.active : ""}>
+                            <li key={key} onClick={() => onMenuClick(key)} className={menuData[key].menuType == menuType ? styles.active : ""}>
                                 <span className="iconfont" dangerouslySetInnerHTML={{ __html: menuData[key].icon }}></span>
                             </li>
                         )}
@@ -74,18 +79,22 @@ const LeftMenu: React.FC = (props, ref) => {
                 {/* 列表 */}
                 <div className={styles.content}>
                     <header className={styles.header}>
-                        <em className={styles.closeBtn}><span className="iconfont" >&#xe86a;</span></em>
+                        <em className={styles.closeBtn}><span className="iconfont" onClick={hideMenu}>&#xe86a;</span></em>
                         {menuData[menuType] ? menuData[menuType].text : ""}
                     </header>
                     <article className={styles.body}>
-                        {menuType == "tree" ?
-                            <TreeMenu onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu> : ""}
-                        {menuType == "list" ?
-                            <ListMenu onNoteClick={handleNoteClick} setDragNote={() => { }}></ListMenu> : ""}
-                        {menuType == "search" ?
-                            <Search onNoteClick={handleNoteClick} ></Search> : ""}
-                        {menuType == "fav" ?
-                            <Fav onNoteClick={handleNoteClick} ></Fav> : ""}
+                        <div className={menuType == "tree" ? styles.show : styles.hide}>
+                            <TreeMenu onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu>
+                        </div>
+                        <div className={menuType == "list" ? styles.show : styles.hide}>
+                            <ListMenu onNoteClick={handleNoteClick} setDragNote={() => { }}></ListMenu>
+                        </div>
+                        <div className={menuType == "search" ? styles.show : styles.hide}>
+                            <Search onNoteClick={handleNoteClick} ></Search>
+                        </div>
+                        <div className={menuType == "fav" ? styles.show : styles.hide}>
+                            <Fav onNoteClick={handleNoteClick} ></Fav>
+                        </div>
                     </article>
                 </div>
 

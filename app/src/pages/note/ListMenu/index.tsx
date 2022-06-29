@@ -4,7 +4,6 @@ import { ExclamationCircleOutlined, HomeOutlined, EllipsisOutlined } from '@ant-
 import styles from './style.less';
 import { connect } from 'umi';
 import { queryNoteById, queryNote } from '@/services/note'
-import { isNormalNoteId } from '@/utils/utils';
 import EditFolderModal from '../components/EditFolderModal';
 import NoteList from '../components/NoteList';
 
@@ -15,13 +14,21 @@ const ListMenu: React.FC = (props, ref) => {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [params, setParams] = useState<Object>({});
     const [sortType, setSortType] = useState<string>('default');
-    
+
 
     useEffect(() => {
+        refreshData();
+    }, [props.noteMenu.listParentNote]);
+
+    useEffect(() => {
+        refreshData();
+    }, [props.note.listKey]);
+
+    const refreshData = ()=>{
         const parentId = props.noteMenu.listParentNote.id;
         setSortType('default')
-        setParams({parentId})
-    }, [props.noteMenu.listParentNote]);
+        setParams({ parentId })
+    }
 
 
     const handleSort = e => {
@@ -93,7 +100,7 @@ const ListMenu: React.FC = (props, ref) => {
     const render = function () {
         const { listParentNote } = props.noteMenu;
 
-        const buttonDisable = !isNormalNoteId(listParentNote.id);
+        const buttonDisable = listParentNote.id == "0";
 
         return (
             <div className={styles.container} >
@@ -106,8 +113,8 @@ const ListMenu: React.FC = (props, ref) => {
                     {buttonDisable ? <div></div> : <Button type="text" disabled={buttonDisable} onClick={() => goBack(true)}><HomeOutlined /></Button>}
                     <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                 </div>
-                 <div className={styles.list}>
-                    <NoteList getDataMethod={queryNote} params={params} sortType={sortType}></NoteList> 
+                <div className={styles.list}>
+                    <NoteList getDataMethod={queryNote} params={params} sortType={sortType}></NoteList>
                 </div>
 
             </div>

@@ -8,6 +8,7 @@ export interface NoteState {
     showMenu: boolean;
     favKey: number;//有变化刷新fav
     treeKey: number;//有变化刷新树
+    listKey:number;//有变化刷新list
 }
 
 export interface NoteModelType {
@@ -28,6 +29,7 @@ export interface NoteModelType {
         refreshShowMenu: Reducer<NoteState>;
         refreshFavKey: Reducer<NoteState>;
         refreshTreeKey: Reducer<NoteState>;
+        refreshListKey: Reducer<NoteState>;
     };
 }
 
@@ -40,6 +42,7 @@ const NoteModel: NoteModelType = {
         showMenu: true,
         favKey: 1,
         treeKey: 1,
+        listKey:1,
     },
 
     effects: {
@@ -148,16 +151,14 @@ const NoteModel: NoteModelType = {
                     });
                 } else if (newData.parentId == listParentNote.id) {
                     yield put({
-                        type: "noteMenu/queryMenuItems",
-                        payload: listParentNote.id
+                        type: 'refreshListKey',
                     });
                 }
 
                 //更新tree菜单
                 yield put({
-                    type: `noteMenu/queryMenuTree`,
-                    payload: 0,
-                })
+                    type: 'refreshTreeKey',
+                });
 
                 return result;
             }
@@ -195,10 +196,8 @@ const NoteModel: NoteModelType = {
                     //文件夹
                     //刷新树
                     yield put({
-                        type: "noteMenu/queryMenuTree",
-                        payload: 0
+                        type: 'refreshTreeKey',
                     });
-
                     //过滤tab
                     const reg = new RegExp("^" + parentIds + "/" + id)
 
@@ -212,10 +211,8 @@ const NoteModel: NoteModelType = {
                 }
 
                 if (parentId == listParentNote.id) {
-
                     yield put({
-                        type: "noteMenu/queryMenuItems",
-                        payload: listParentNote.id
+                        type: 'refreshListKey',
                     });
                 }
 
@@ -339,6 +336,12 @@ const NoteModel: NoteModelType = {
             return {
                 ...state,
                 treeKey: state.treeKey + 1
+            }
+        },
+        refreshListKey(state: NoteState, _): NoteState {
+            return {
+                ...state,
+                listKey: state.listKey + 1
             }
         },
     },

@@ -15,7 +15,7 @@ let dragNote;
 
 const NoteList: React.FC<{}> = (props) => {
 
-  const [menuStyle, setMenuStyle] = useState<String>("three");
+  const [menuStyle, setMenuStyle] = useState<string>("three");
 
   const handleNoteClick = (note: NoteItem) => {
     const { isMobile } = props;
@@ -48,6 +48,7 @@ const NoteList: React.FC<{}> = (props) => {
 
   const render = function () {
     const { isMobile } = props;
+
     const loading = props.loading.effects["note/queryNote"] || props.loading.effects["note/deleteNote"] || props.loading.effects["note/updateNoteTitle"]
       || props.loading.effects["note/queryTabTree"] || props.loading.effects["note/queryChildren"] || false;
     return (
@@ -58,7 +59,7 @@ const NoteList: React.FC<{}> = (props) => {
             <ListMenu onNoteClick={handleNoteClick} setDragNote={(note: NoteItem) => dragNote = note}></ListMenu> :
             <Content setMenuStyle={setMenuStyle} menuStyle={menuStyle}></Content>) :
           <div className={style.container}>
-            <LeftMenu></LeftMenu>
+            <LeftMenu setMenuStyle={setMenuStyle} menuStyle={menuStyle}></LeftMenu>
             <div className={style.content}><Content setMenuStyle={setMenuStyle} menuStyle={menuStyle}></Content></div>
           </div>}
       </div>

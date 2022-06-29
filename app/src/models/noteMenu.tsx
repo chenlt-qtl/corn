@@ -4,7 +4,6 @@ import { NoteItem } from '@/data/note';
 export interface NoteState {
 
     listParentNote: NoteItem,
-    activeMenuId: string;
 
 }
 
@@ -17,7 +16,6 @@ export interface NoteModelType {
     }
     reducers: {
         refreshListParentNote: Reducer<NoteState>;
-        refreshActiveMenuId: Reducer<NoteState>;
     };
 }
 
@@ -25,7 +23,6 @@ const NoteModel: NoteModelType = {
     namespace: 'noteMenu',
     state: {
         listParentNote: {},
-        activeMenuId: "",
     },
 
     effects: {
