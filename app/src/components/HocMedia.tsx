@@ -6,9 +6,7 @@ const HocMedia = Com => props => {
     return (
         <Media query="(max-width:900px)">
             {
-                isMobile => <div className="is-mobile">
-                    <Com {...props} isMobile={isMobile} />
-                </div>
+                isMobile => <Com {...props} isMobile={isMobile} />
             }
         </Media>
     )

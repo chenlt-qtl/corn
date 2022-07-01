@@ -32,8 +32,17 @@ const Content = React.forwardRef((props, ref) => {
     const [showToc, setShowToc] = useState<boolean>(false);
 
     useEffect(() => {
-        setDisplayIndex(0)
-        setTitle(props.note.openedNote.name)
+        const { openedNote } = props.note;
+        console.log(openedNote.id);
+        
+        if (openedNote.id) {
+            if (openedNote.id.startsWith("new")) {
+                setDisplayIndex(1);
+            } else {
+                setDisplayIndex(0);
+            }
+            setTitle(openedNote.name)
+        }
     }, [props.note.openedNote])
 
     useImperativeHandle(ref, () => ({
@@ -116,7 +125,7 @@ const Content = React.forwardRef((props, ref) => {
 
         props.dispatch({
             type: method,
-            payload: { ...noteToSave, id: noteToSave.id == "new" ? null : noteToSave.id }
+            payload: { ...noteToSave, id: noteToSave.id.startsWith("new") ? null : noteToSave.id }
         }).then((res) => {
             if (res) {
                 if (props.note.openedNote.id == noteToSave.id) {

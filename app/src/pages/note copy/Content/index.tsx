@@ -116,7 +116,7 @@ const Content = React.forwardRef((props, ref) => {
 
         props.dispatch({
             type: method,
-            payload: { ...noteToSave, id: noteToSave.id == "new" ? null : noteToSave.id }
+            payload: { ...noteToSave, id: noteToSave.id.startsWith("new") ? null : noteToSave.id }
         }).then((res) => {
             if (res) {
                 if (props.note.openedNote.id == noteToSave.id) {

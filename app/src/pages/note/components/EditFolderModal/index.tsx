@@ -4,6 +4,7 @@ import { PlusOutlined, FolderOutlined, FileMarkdownOutlined } from '@ant-design/
 import styles from './style.less';
 import { connect } from 'umi';
 import HocMedia from "@/components/HocMedia";
+import { guid } from '@/utils/utils'
 
 
 const FormItem = Form.Item;
@@ -30,7 +31,7 @@ const AddBtn: React.FC = (props, ref) => {
             form.setFieldsValue({ foldName: "" });
             fold = { parentId: props.noteMenu.listParentNote.id, isLeaf: false }
         } else {
-            const newNote = { id: "new", name: "新文档", parentId: props.noteMenu.listParentNote.id, isLeaf: true };
+            const newNote = { id: "new"+guid(), name: "新文档", parentId: props.noteMenu.listParentNote.id, isLeaf: true };
             props.dispatch({
                 type: "note/refreshOpenedNote",
                 payload: newNote

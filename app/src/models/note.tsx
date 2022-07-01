@@ -122,7 +122,7 @@ const NoteModel: NoteModelType = {
                     yield put({
                         type: "refreshOpenedNotes",
                         payload: openedNotes.map(item => {
-                            if (item.id == "new" && !payload.id) {
+                            if (item.id.startsWith("new") && !payload.id) {
                                 return newData;
                             }
                             if (item.id == payload.id) {
@@ -135,7 +135,7 @@ const NoteModel: NoteModelType = {
 
 
                     //更新已打开
-                    if (openedNote.id == "new") {
+                    if (openedNote.id.startsWith("new")) {
                         yield put({
                             type: "refreshOpenedNote",
                             payload: newData
