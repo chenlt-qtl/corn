@@ -46,6 +46,7 @@ const Search: React.FC = (props, ref) => {
                             treeData={noteTree}
                             placeholder="Please select"
                             onChange={parentId => setParentId(parentId)}
+                            allowClear
                         />
                     </div>
                 </div>
