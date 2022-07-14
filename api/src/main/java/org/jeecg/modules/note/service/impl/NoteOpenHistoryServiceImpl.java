@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.util.UpLoadUtil;
 import org.jeecg.modules.note.entity.NoteOpenHistory;
 import org.jeecg.modules.note.mapper.NoteOpenHistoryMapper;
 import org.jeecg.modules.note.model.NoteModel;

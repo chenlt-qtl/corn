@@ -151,5 +151,5 @@ const MarkDownIt = React.forwardRef((props, ref) => {
     return render();
 });
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) =>
-    ({ note, noteMenu, loading }), null, null, { forwardRef: true })(MarkDownIt);
+export default connect(({ note, loading }: { note: NoteModelState, loading }) =>
+    ({ note, loading }), null, null, { forwardRef: true })(MarkDownIt);
