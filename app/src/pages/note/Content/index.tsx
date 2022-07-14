@@ -12,9 +12,9 @@ import HocMedia from "@/components/HocMedia";
 const { TabPane } = Tabs;
 
 let statusIcons = {
-    '0': <CheckCircleTwoTone twoToneColor="#52c41a" />,
-    '1': <ExclamationCircleTwoTone twoToneColor='#f1c40f' />,
-    '2': <LoadingOutlined />
+    '0': <CheckCircleTwoTone key="ok" twoToneColor="#52c41a" />,
+    '1': <ExclamationCircleTwoTone key="unsave" twoToneColor='#f1c40f' />,
+    '2': <LoadingOutlined key="saving" />
 }
 
 const group = 'group';
@@ -32,18 +32,19 @@ const Content = React.forwardRef((props, ref) => {
     const [showToc, setShowToc] = useState<boolean>(false);
 
     useEffect(() => {
-        const { openedNote } = props.note;
-        console.log(openedNote.id);
-        
-        if (openedNote.id) {
-            if (openedNote.id.startsWith("new")) {
+        const { openedNoteId, openedNotes } = props.note;
+        if (openedNoteId) {
+            const openedNote = openedNotes[openedNoteId];
+            if (openedNote.isNew) {
                 setDisplayIndex(1);
             } else {
                 setDisplayIndex(0);
             }
             setTitle(openedNote.name)
+        } else {
+            setTitle("")
         }
-    }, [props.note.openedNote])
+    }, [props.note.openedNoteId])
 
     useImperativeHandle(ref, () => ({
         handleAddNote: (parentId: string) => {
@@ -71,8 +72,8 @@ const Content = React.forwardRef((props, ref) => {
 
     const handleActiveNote = (id) => {
 
-        const { openedNote } = props.note;
-        if (openedNote.id != id) {
+        const { openedNoteId } = props.note;
+        if (openedNoteId != id) {
             props.dispatch({
                 type: 'note/openNote',
                 payload: id,
@@ -84,22 +85,21 @@ const Content = React.forwardRef((props, ref) => {
     }
 
     const closeNotes = (allClose: boolean) => {
-        const openedNotes = [];
-        const { openedNote } = props.note;
+        let newOpenedNotes = {};
+        const { openedNoteId, openedNotes } = props.note;
         if (!allClose) {
-
-            if (openedNote && openedNote.name) {
-                openedNotes.push(props.note.openedNote)
+            if (openedNoteId && openedNotes[openedNoteId]) {
+                newOpenedNotes = { [openedNoteId]: openedNotes[openedNoteId] }
             }
+
         } else {
             props.dispatch({
-                type: 'note/refreshOpenedNote',
-                payload: {},
+                type: 'note/refreshOpenedNoteId',
             })
         }
         props.dispatch({
             type: 'note/refreshOpenedNotes',
-            payload: openedNotes,
+            payload: newOpenedNotes,
         })
     }
 
@@ -107,8 +107,8 @@ const Content = React.forwardRef((props, ref) => {
         if (saveStatus == 0) {
             return;
         }
-
-        let noteToSave = { ...props.note.openedNote }
+        const { openedNoteId, openedNotes } = props.note;
+        let noteToSave = { ...openedNotes[openedNoteId] }
 
 
         setSaveStatus(2)
@@ -125,10 +125,10 @@ const Content = React.forwardRef((props, ref) => {
 
         props.dispatch({
             type: method,
-            payload: { ...noteToSave, id: noteToSave.id.startsWith("new") ? null : noteToSave.id }
+            payload: noteToSave
         }).then((res) => {
             if (res) {
-                if (props.note.openedNote.id == noteToSave.id) {
+                if (props.note.openedNoteId == noteToSave.id) {
                     setSaveStatus(0)
                 }
             }
@@ -158,10 +158,10 @@ const Content = React.forwardRef((props, ref) => {
     }
 
     const handleChangeFav = () => {
-        const { openedNote } = props.note;
+        const { openedNoteId, openedNotes } = props.note;
         props.dispatch({
             type: 'note/editFav',
-            payload: { noteId: openedNote.id, isFav: !openedNote.fav },
+            payload: { noteId: openedNoteId, isFav: !openedNotes[openedNoteId].fav },
         })
     }
 
@@ -175,16 +175,17 @@ const Content = React.forwardRef((props, ref) => {
     const getTitleBtn = () => {
         <Button type='text'><ProfileOutlined /></Button>
         const btns = [];
-        if (props.note.openedNote.id) {
-            if (props.note.openedNote.fav) {
-                btns.push(<Button onClick={handleChangeFav} type='text'><StarFilled className={styles.fav} /></Button>)
+        const { openedNoteId, openedNotes } = props.note;
+        if (openedNoteId && openedNotes[openedNoteId]) {
+            if (openedNotes[openedNoteId].fav) {
+                btns.push(<Button key="noFav" onClick={handleChangeFav} type='text'><StarFilled className={styles.fav} /></Button>)
             } else {
-                btns.push(<Button onClick={handleChangeFav} type='text'><StarOutlined /></Button>)
+                btns.push(<Button key="fav" onClick={handleChangeFav} type='text'><StarOutlined /></Button>)
             }
             if (!displayIndex) {
-                btns.push(<Button onClick={() => setDisplayIndex(1)} type='text'><EditOutlined /></Button>)
+                btns.push(<Button key="view" onClick={() => setDisplayIndex(1)} type='text'><EditOutlined /></Button>)
             } else {
-                btns.push(<Button type='text' onClick={() => {
+                btns.push(<Button key="edit" type='text' onClick={() => {
                     setDisplayIndex(0)
                 }} ><EyeOutlined /></Button>)
             }
@@ -227,16 +228,16 @@ const Content = React.forwardRef((props, ref) => {
 
     const render = function () {
         const { isMobile } = props;
-        const { openedNote = {}, openedNotes } = props.note;
+        const { openedNoteId, openedNotes } = props.note;
         const { menuStyle, setMenuStyle } = props;
-        const loading = props.loading.effects["noteFavorite/editOne"] || props.loading.effects["note/openNote"] || false;
+        const loading = props.loading.effects["note/openNote"] || false;
         return (
             <div className={`${styles.main} ${isMobile ? styles.isMobile : ""}`}>
                 {isMobile ?
                     <div className={styles.toolbar}>
                         <Button shape='circle' onClick={goBack}><span className='iconfont'>&#xe7c3;</span></Button>
-
-                        <Dropdown.Button overlay={menu1}>Actions</Dropdown.Button>
+                        {/* <Dropdown.Button overlay={menu1}>Actions</Dropdown.Button> */}
+                        <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>
                     </div>
                     :
                     (<div className={styles.tabPane}>
@@ -251,12 +252,12 @@ const Content = React.forwardRef((props, ref) => {
                             <Tabs
                                 hideAdd
                                 onTabClick={handleActiveNote}
-                                activeKey={openedNote.id}
+                                activeKey={openedNoteId}
                                 type="editable-card"
                                 onEdit={handleRemoveTab}
                             >
-                                {openedNotes.map(pane => (
-                                    <TabPane tab={pane.name} key={pane.id}>
+                                {Object.keys(openedNotes).map(key => (
+                                    <TabPane tab={openedNotes[key].name} key={openedNotes[key].id}>
                                     </TabPane>
                                 ))}
                             </Tabs>
@@ -277,7 +278,7 @@ const Content = React.forwardRef((props, ref) => {
                 <div className={styles.title}>
                     {isMobile ? "" : <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>}
                     <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
-                    <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>
+                    {isMobile ? "" : <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>}
                 </div>
                 <div className={styles.content}>
                     <MarkDown handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDown>
@@ -289,5 +290,5 @@ const Content = React.forwardRef((props, ref) => {
     return render();
 });
 
-export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) =>
-    ({ note, noteMenu, loading }), null, null, { forwardRef: true })(Content));
+export default HocMedia(connect(({ note, loading }: { note: NoteModelState, loading }) =>
+    ({ note, loading }), null, null, { forwardRef: true })(Content));

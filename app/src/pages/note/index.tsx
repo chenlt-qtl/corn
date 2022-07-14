@@ -35,10 +35,10 @@ const NoteList: React.FC<{}> = (props) => {
         })
       }
     } else {
-      const { listParentNote } = props.noteMenu;
+      const { listParentNote } = props.note;
       if (listParentNote.id != note.id) {
         props.dispatch({
-          type: 'noteMenu/refreshListParentNote',
+          type: 'note/refreshListParentNote',
           payload: note
         })
       }
@@ -68,4 +68,4 @@ const NoteList: React.FC<{}> = (props) => {
   return render();
 };
 
-export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(NoteList));
+export default HocMedia(connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(NoteList));

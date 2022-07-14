@@ -28,8 +28,8 @@ const LeftMenu: React.FC = (props, ref) => {
     const handleNoteClick = (note: NoteItem) => {
         const { isMobile } = props;
         if (note.isLeaf) {
-            const { openedNote } = props.note;
-            if (openedNote.id != note.id) {
+            const { openedNoteId } = props.note;
+            if (openedNoteId != note.id) {
                 props.dispatch({
                     type: 'note/openNote',
                     payload: note.id,
@@ -40,10 +40,10 @@ const LeftMenu: React.FC = (props, ref) => {
                 hideMenu();
             }
         } else {
-            const { listParentNote } = props.noteMenu;
+            const { listParentNote } = props.note;
             if (listParentNote.id != note.id) {
                 props.dispatch({
-                    type: 'noteMenu/refreshListParentNote',
+                    type: 'note/refreshListParentNote',
                     payload: note
                 })
             }
@@ -108,4 +108,4 @@ const LeftMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(LeftMenu);
+export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(LeftMenu);

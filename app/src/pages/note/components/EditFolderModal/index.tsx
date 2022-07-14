@@ -29,17 +29,20 @@ const AddBtn: React.FC = (props, ref) => {
         if (key == "1") {//文件夹
             setIsModalVisible(true);
             form.setFieldsValue({ foldName: "" });
-            fold = { parentId: props.noteMenu.listParentNote.id, isLeaf: false }
+            fold = { parentId: props.note.listParentNote.id, isLeaf: false }
         } else {
-            const newNote = { id: "new"+guid(), name: "新文档", parentId: props.noteMenu.listParentNote.id, isLeaf: true };
-            props.dispatch({
-                type: "note/refreshOpenedNote",
-                payload: newNote
-            })
+            const newNote = { id: guid(), name: "新文档", parentId: props.note.listParentNote.id, isLeaf: true, isNew: true };
+
             props.dispatch({
                 type: 'note/refreshOpenedNotes',
-                payload: [newNote, ...props.note.openedNotes]
+                payload: {...props.note.openedNotes,[newNote.id]:newNote}
             })
+
+            props.dispatch({
+                type: "note/refreshOpenedNoteId",
+                payload: newNote.id
+            })
+
             if (props.isMobile) {
                 props.dispatch({
                     type: 'note/refreshShowMenu',
@@ -99,4 +102,4 @@ const AddBtn: React.FC = (props, ref) => {
     return render();
 };
 
-export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(AddBtn));
+export default HocMedia(connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(AddBtn));

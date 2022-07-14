@@ -34,16 +34,18 @@ const TreeMenu: React.FC = (props, ref) => {
     }, [props.note.treeKey]);
 
     useEffect(() => {
-        const { openedNote } = props.note;
+        const { openedNoteId, openedNotes } = props.note;
 
-        if (openedNote.parentIds) {
+        const openedNote = openedNotes[openedNoteId];
+
+        if (openedNote && openedNote.parentIds) {
             const expandedKeys = (openedNote.parentIds || "").split("/")
-        
-            setExpandedKeys([openedNote.id, ...expandedKeys])
-        }
-        setSelectedKeys([openedNote.id]);
 
-    }, [props.note.openedNote]);
+            setExpandedKeys([openedNoteId, ...expandedKeys])
+        }
+        setSelectedKeys([openedNoteId]);
+
+    }, [props.note.openedNoteId]);
 
 
     const handleExpand = value => {
@@ -53,14 +55,20 @@ const TreeMenu: React.FC = (props, ref) => {
     const openNote = (_, { node }) => {
 
         const { key, title, isLeaf, parentIds, parentId } = node;
-        
-        if(isLeaf){
+
+        if (isLeaf) {
             props.onNoteClick({ id: key, name: title, parentIds, isLeaf, parentId })
-        }else{
+        } else {
+
+            props.dispatch({
+                type: 'note/refreshListParentNote',
+                payload: { id: key, name: title }
+            })
+
             setSelectedKeys([key]);
         }
-        
-        
+
+
     }
 
 
@@ -167,4 +175,4 @@ const TreeMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(TreeMenu);
+export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(TreeMenu);

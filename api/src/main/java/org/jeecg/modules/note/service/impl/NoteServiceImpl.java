@@ -54,18 +54,15 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     private INoteHistoryService noteHistoryService;
 
     @Override
-    public List<NoteModel> listNote(String createBy, String parentId)
-    {
+    public List<NoteModel> listNote(String createBy, String parentId) {
         return noteMapper.listSon(createBy, parentId);
     }
 
     @Override
-    public List<NoteModel> getModelByIds(String[] ids)
-    {
+    public List<NoteModel> getModelByIds(String[] ids) {
         Collection<Note> notes = listByIds(Arrays.asList(ids));
         List<NoteModel> result = new ArrayList<>();
-        for (Note note : notes)
-        {
+        for (Note note : notes) {
             NoteModel noteModel = new NoteModel(note);
             setParentNames(noteModel);
             result.add(noteModel);
@@ -74,21 +71,18 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public List<Note> getNameByIds(String[] ids)
-    {
+    public List<Note> getNameByIds(String[] ids) {
         return noteMapper.getNameByIds(ids);
     }
 
     @Override
-    public List<NoteTreeModel> queryTreeMenu(String createBy, String parentId, boolean withLeaf)
-    {
+    public List<NoteTreeModel> queryTreeMenu(String createBy, String parentId, boolean withLeaf) {
         String rootId = parentId;
 
         QueryWrapper<Note> queryWrapper = new QueryWrapper();
         queryWrapper.select("id", "name", "parent_id", "parent_ids", "is_leaf");
         queryWrapper.eq("create_by", getUsername());
-        if (!withLeaf)
-        {
+        if (!withLeaf) {
             //不要叶子
             queryWrapper.eq("is_leaf", 0);
         }
@@ -97,12 +91,10 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         List<Note> list = list(queryWrapper);
 
         List<NoteTreeModel> treeList = new ArrayList<>();
-        for (Note note : list)
-        {
+        for (Note note : list) {
             NoteTreeModel model = new NoteTreeModel(note);
             model.encryption();//加密
-            if (parentId.equals(model.getKey()))
-            {
+            if (parentId.equals(model.getKey())) {
                 rootId = model.getParentId();
             }
             treeList.add(model);
@@ -113,23 +105,20 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Transactional
     @Override
-    public void updateParent(Note note, String oldParents)
-    {
+    public void updateParent(Note note, String oldParents) {
         setParentIds(note);
         note.setUpdateBy(null);
         note.setUpdateTime(null);
         updateById(note);
         List<Note> list = noteMapper.listAllChildren(getUsername(), note.getId(), null, true);//子笔记
-        for (Note child : list)
-        {
+        for (Note child : list) {
             child.setParentIds(child.getParentIds().replace(oldParents, note.getParentIds()));
             updateById(child);
         }
     }
 
     @Override
-    public boolean updateText(NoteModel note, NoteContent content)
-    {
+    public boolean updateText(NoteModel note, NoteContent content) {
         content.setText(UpLoadUtil.parseText(uploadpath, note.getText(), content.getText()));
         noteContentService.saveOrUpdate(content);
         noteHistoryService.addHistory(note);
@@ -138,12 +127,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public Note saveNote(NoteModel note)
-    {
-        try
-        {
-            if (note.getIsLeaf())
-            {
+    public Note saveNote(NoteModel note) {
+        try {
+            if (note.getIsLeaf()) {
                 note.setText(UpLoadUtil.parseText(uploadpath, note.getText(), ""));
                 NoteContent content = noteContentService.addContent(note);
                 note.setContentId(content.getId());
@@ -151,29 +137,25 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             Note obj = note.toNote();
             save(obj);
             return obj;
-        }
-        catch (DataIntegrityViolationException e)
-        {
+        } catch (DataIntegrityViolationException e) {
             throw new CornException("笔记本目录最多只能60层!" + note.getParentIds());
         }
     }
 
     @Override
-    public IPage<Note> pageSearchNote(String searchStr, boolean withLeaf, int pageNo, int pageSize)
-    {
+    public IPage<Note> pageSearchNote(String parentId, String searchStr, boolean withLeaf, int pageNo, int pageSize) {
         IPage<Note> result = new Page<>();
-        if (StringUtils.isBlank(searchStr))
-        {
+        if (StringUtils.isBlank(searchStr)) {
             result.setTotal(0L);
             result.setRecords(new ArrayList<>());
-        }
-        else
-        {
+        } else {
             Page<Note> page = new Page<>(pageNo, pageSize);
             QueryWrapper<Note> queryWrapper = new QueryWrapper();
-            if (!withLeaf)
-            {
+            if (!withLeaf) {
                 queryWrapper.eq("is_leaf", 1);
+            }
+            if(StringUtils.isNotBlank(parentId)){
+                queryWrapper.eq("parent_id",parentId);
             }
             queryWrapper.select("id", "name", "parent_id", "parent_ids", "is_leaf");
             queryWrapper.eq("create_by", getUsername());
@@ -186,16 +168,14 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Transactional
     @Override
-    public void delete(String userName, String id)
-    {
+    public void delete(String userName, String id) {
         List<String> deleteNoteIds = new ArrayList<>();//要删除的note
         List<String> deleteContentIds = new ArrayList<>();//对应的content
         List<NoteDelete> noteDeleteList = new ArrayList<>();//保存到删除历史表的数据
 
 
         List<NoteModel> noteList = noteMapper.listAllChildrenDetail(userName, id);
-        for (NoteModel noteModel : noteList)
-        {
+        for (NoteModel noteModel : noteList) {
             deleteNoteIds.add(noteModel.getId());
             deleteContentIds.add(noteModel.getContentId());
             NoteDelete noteDelete = new NoteDelete(noteModel);
@@ -211,15 +191,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
      *
      * @param note
      */
-    public void setParentIds(Note note)
-    {
-        if (StringUtils.isBlank(note.getParentId()) || "0".equals(note.getParentId()))
-        {
+    @Override
+    public void setParentIds(Note note) {
+        if (StringUtils.isBlank(note.getParentId()) || "0".equals(note.getParentId())) {
             note.setParentId("0");
             note.setParentIds("0");
-        }
-        else
-        {
+        } else {
             Note parent = getById(note.getParentId());
             note.setParentIds(parent.getParentIds() + "/" + note.getParentId());
         }
@@ -230,16 +207,14 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
      *
      * @param note
      */
-    public void setParentNames(NoteModel note)
-    {
+    @Override
+    public void setParentNames(NoteModel note) {
         String parentIds = note.getParentIds();
         String parents = "";
-        if (parentIds != null)
-        {
+        if (parentIds != null) {
             String[] parentIdArr = parentIds.split("/");
             List<Note> parentNotes = this.getNameByIds(parentIdArr);
-            for (Note parentNote : parentNotes)
-            {
+            for (Note parentNote : parentNotes) {
                 parents += parents.length() > 0 ? "/" : "";
                 parents += parentNote.getName();
             }
@@ -248,8 +223,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public IPage<Note> getNewest(int pageNo, int pageSize)
-    {
+    public IPage<Note> getNewest(int pageNo, int pageSize) {
 
         QueryWrapper<Note> queryWrapper = new QueryWrapper();
         queryWrapper.eq("create_by", getUsername());
@@ -260,8 +234,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         return page(page, queryWrapper);
     }
 
-    private String getUsername()
-    {
+    private String getUsername() {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         return sysUser.getUsername();
     }

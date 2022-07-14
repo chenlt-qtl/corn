@@ -61,12 +61,15 @@ const MarkDown = React.forwardRef((props, ref) => {
     const [htmlStr, setHtmlStr] = useState<string>("");
 
     useEffect(() => {
-        const text = props.note.openedNote.text || "";
-
+        const { openedNoteId, openedNotes } = props.note;
+        let text = "";
+        if (openedNoteId) {
+            text = openedNotes[openedNoteId].text || "";
+        }
         setValue(text);
         renderHTML(text);
         props.setShowToc(false);
-    }, [props.note.openedNote])
+    }, [props.note.openedNoteId])
 
     const handleEditorChange = ({ html, text }) => {
         setValue(text);
@@ -156,5 +159,5 @@ const MarkDown = React.forwardRef((props, ref) => {
     return render();
 });
 
-export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) =>
-    ({ note, noteMenu, loading }), null, null, { forwardRef: true })(MarkDown));
+export default HocMedia(connect(({ note, loading }: { note: NoteModelState, loading }) =>
+    ({ note, loading }), null, null, { forwardRef: true })(MarkDown));

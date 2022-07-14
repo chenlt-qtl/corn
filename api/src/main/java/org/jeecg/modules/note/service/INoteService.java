@@ -37,7 +37,7 @@ public interface INoteService extends IService<Note> {
 
     Note saveNote(NoteModel note);
 
-    IPage<Note> pageSearchNote(String searchStr, boolean withLeaf, int pageNo, int pageSize);
+    IPage<Note> pageSearchNote(String parentId, String searchStr, boolean withLeaf, int pageNo, int pageSize);
 
     IPage<Note> getNewest(int pageNo, int pageSize);
 }

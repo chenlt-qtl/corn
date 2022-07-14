@@ -18,14 +18,14 @@ const ListMenu: React.FC = (props, ref) => {
 
     useEffect(() => {
         refreshData();
-    }, [props.noteMenu.listParentNote]);
+    }, [props.note.listParentNote]);
 
     useEffect(() => {
         refreshData();
     }, [props.note.listKey]);
 
     const refreshData = ()=>{
-        const parentId = props.noteMenu.listParentNote.id;
+        const parentId = props.note.listParentNote.id;
         setSortType('default')
         setParams({ parentId })
     }
@@ -71,16 +71,10 @@ const ListMenu: React.FC = (props, ref) => {
     }
 
 
-    const transportNote = (note: object) => {
-        const id = note.key || note.id;
-        const title = note.title || note.name;
-        return { ...note, id, title }
-    }
-
     const goBack = async (home: boolean = false) => {
 
         let listParentNote;
-        const parentId = props.noteMenu.listParentNote.parentId;
+        const parentId = props.note.listParentNote.parentId;
 
 
         if (!home && parentId != 0) {
@@ -89,7 +83,7 @@ const ListMenu: React.FC = (props, ref) => {
         }
 
         props.dispatch({
-            type: `noteMenu/refreshListParentNote`,
+            type: `note/refreshListParentNote`,
             payload: listParentNote,
         })
 
@@ -98,7 +92,7 @@ const ListMenu: React.FC = (props, ref) => {
 
 
     const render = function () {
-        const { listParentNote } = props.noteMenu;
+        const { listParentNote } = props.note;
 
         const buttonDisable = listParentNote.id == "0";
 
@@ -123,4 +117,4 @@ const ListMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(ListMenu);
+export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(ListMenu);

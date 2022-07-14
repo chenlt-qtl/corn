@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TreeSelect, Input } from 'antd';
-import {  SearchOutlined} from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import styles from './styles.less';
 import { connect } from 'umi';
 import { queryTreeMenu, pageSearchNote } from '@/services/note'
@@ -22,8 +22,12 @@ const Search: React.FC = (props, ref) => {
 
     }, []);
 
+    useEffect(() => {
+        handleSearch();
+    }, [parentId]);
+
     const handleSearch = () => {
-        const params = { searchStr,withLeaf:false }
+        const params = { parentId, searchStr, withLeaf: false }
         setParams(params);
     }
 
@@ -41,7 +45,6 @@ const Search: React.FC = (props, ref) => {
                             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                             treeData={noteTree}
                             placeholder="Please select"
-                            treeDefaultExpandAll
                             onChange={parentId => setParentId(parentId)}
                         />
                     </div>
@@ -55,4 +58,4 @@ const Search: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(Search);
+export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(Search);

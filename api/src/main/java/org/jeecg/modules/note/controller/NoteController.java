@@ -49,15 +49,12 @@ public class NoteController {
      * @return
      */
     @GetMapping(value = "/pageSearchNote")
-    public Result<IPage<Note>> pageSearchNote(@RequestParam String searchStr,@RequestParam boolean withLeaf, @RequestParam Integer pageNo, @RequestParam Integer pageSize)
-    {
+    public Result<IPage<Note>> pageSearchNote(@RequestParam String parentId,@RequestParam String searchStr, @RequestParam boolean withLeaf, @RequestParam Integer pageNo, @RequestParam Integer pageSize) {
         Result<IPage<Note>> result = new Result<>();
 
-        IPage<Note> pageList = noteService.pageSearchNote(searchStr, withLeaf, pageNo, pageSize);
-        for (Note note : pageList.getRecords())
-        {
-            if (note.getName() != null)
-            {
+        IPage<Note> pageList = noteService.pageSearchNote(parentId,searchStr, withLeaf, pageNo, pageSize);
+        for (Note note : pageList.getRecords()) {
+            if (note.getName() != null) {
                 //加密名称
                 note.setName(BtoaEncode.encryption(note.getName()));
             }
@@ -68,66 +65,46 @@ public class NoteController {
     }
 
     /**
-     * 查询笔记本
+     * 查询笔记本列表
      *
      * @return
      */
     @GetMapping(value = "/listNote")
-    public Result queryNote(String parentId)
-    {
+    public Result queryNote(String parentId) {
         Result result = new Result<>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        try
-        {
+        try {
             List<NoteModel> list = noteService.listNote(sysUser.getUsername(), parentId);
-//            if (parentId.equals("fav")) {//收藏夹
-//                List<NoteModel> notes = noteFavoriteService.queryNotes(sysUser.getUsername());
-//
-//                for (NoteModel note : notes) {
-//                    if (note.getIsLeaf()) {
-//                        list.add(note);
-//                    }
-//                }
-//            } else {
-//                list = noteService.listNote(sysUser.getUsername(), parentId);
-//            }
 
-            for (NoteModel note : list)
-            {
+            for (NoteModel note : list) {
                 note.encryption();
             }
             result.setResult(list);
             result.setSuccess(true);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
 
     /**
-     * 查询笔记本
+     * 查询最近笔记本
      *
      * @return
      */
     @GetMapping(value = "/queryNewest")
-    public Result<IPage> queryNewest(Integer pageNo, Integer pageSize)
-    {
+    public Result<IPage> queryNewest(Integer pageNo, Integer pageSize) {
         Result<IPage> result = new Result<>();
 
-        if (pageNo == null)
-        {
+        if (pageNo == null) {
             pageNo = 0;
         }
-        if (pageSize == null)
-        {
+        if (pageSize == null) {
             pageSize = 20;
         }
         IPage<Note> page = noteService.getNewest(pageNo, pageSize);
 
-        for (Note note : page.getRecords())
-        {
+        for (Note note : page.getRecords()) {
             note.setName(BtoaEncode.encryption(note.getName()));
         }
         result.setResult(page);
@@ -137,19 +114,21 @@ public class NoteController {
         return result;
     }
 
+    /**
+     * 查询树目录
+     * @param parentId
+     * @param withLeaf
+     * @return
+     */
     @RequestMapping(value = "/queryTreeMenu", method = RequestMethod.GET)
-    public Result<List<NoteTreeModel>> queryTree(String parentId, boolean withLeaf)
-    {
+    public Result<List<NoteTreeModel>> queryTree(String parentId, boolean withLeaf) {
         Result<List<NoteTreeModel>> result = new Result<>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        try
-        {
+        try {
             List<NoteTreeModel> list = noteService.queryTreeMenu(sysUser.getUsername(), parentId, withLeaf);
             result.setResult(list);
             result.setSuccess(true);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -162,18 +141,14 @@ public class NoteController {
      * @return
      */
     @PostMapping(value = "/add")
-    public Result<Note> add(@RequestBody NoteModel note)
-    {
+    public Result<Note> add(@RequestBody NoteModel note) {
         Result<Note> result = new Result<Note>();
-        try
-        {
+        try {
             noteService.setParentIds(note);
             noteService.saveNote(note);
             result.setResult(note);
             result.success("添加成功！");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             log.info(e.getMessage());
             result.error500("操作失败");
@@ -187,11 +162,9 @@ public class NoteController {
      * @return
      */
     @PostMapping(value = "/copy")
-    public Result<Note> copy(@RequestBody NoteModel note)
-    {
+    public Result<Note> copy(@RequestBody NoteModel note) {
         Result<Note> result = new Result<Note>();
-        try
-        {
+        try {
             Note parent = noteService.getById(note.getParentId());
             Note oldNote = noteService.getById(note.getId());
             NoteContent oldContent = noteContentService.getById(note.getContentId());
@@ -203,9 +176,7 @@ public class NoteController {
             noteService.saveNote(newNote);
             result.setResult(newNote);
             result.success("复制成功！");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             log.info(e.getMessage());
             result.error500("操作失败");
@@ -220,24 +191,19 @@ public class NoteController {
      * @return
      */
     @PostMapping(value = "/updateTitle")
-    public Result<Note> updateTitle(@RequestBody Note note)
-    {
+    public Result<NoteModel> updateTitle(@RequestBody NoteModel note) {
         note.setName(BtoaEncode.decrypt(note.getName()));
 
-        Result<Note> result = new Result<Note>();
+        Result<NoteModel> result = new Result<>();
         Note noteEntity = noteService.getById(note.getId());
-        if (noteEntity == null)
-        {//新增
+        if (noteEntity == null) {//新增
             noteService.setParentIds(note);
-            note = noteService.saveNote(new NoteModel(note));
-
-        }
-        else
-        {
+            noteService.saveNote(new NoteModel(note));
+        } else {
             noteService.setParentIds(note);
             note.setUpdateBy(null);
             note.setUpdateTime(null);
-            boolean ok = noteService.updateById(note);
+            noteService.updateById(note);
         }
         note.setName(BtoaEncode.encryption(note.getName()));
         result.setResult(note);
@@ -252,25 +218,20 @@ public class NoteController {
      * @return
      */
     @PostMapping(value = "/updateText")
-    public Result<NoteModel> updateText(@RequestBody NoteModel note)
-    {
+    public Result<NoteModel> updateText(@RequestBody NoteModel note) {
         note.decrypt();
 
         Result<NoteModel> result = new Result<NoteModel>();
         Note noteEntity = noteService.getById(note.getId());
-        if (noteEntity == null)
-        {//新增
+        if (noteEntity == null) {//新增
             noteService.setParentIds(note);
             noteService.saveNote(note);
-        }
-        else
-        {
+        } else {
             NoteContent content = noteContentService.getById(noteEntity.getContentId());
             noteService.setParentIds(note);
             boolean ok = noteService.updateText(note, content);
             note.setText(UpLoadUtil.dbToReal(note.getText(), "html"));
-            if (ok)
-            {
+            if (ok) {
                 noteService.setParentNames(note);
             }
         }
@@ -288,26 +249,19 @@ public class NoteController {
      * @return
      */
     @PutMapping(value = "/updateParent")
-    public Result<Note> updateParent(@RequestBody Note note)
-    {
+    public Result<Note> updateParent(@RequestBody Note note) {
         Result<Note> result = new Result<Note>();
         Note noteEntity = noteService.getById(note.getId());
-        if (noteEntity == null)
-        {
+        if (noteEntity == null) {
             result.error500("未找到对应实体");
-        }
-        else
-        {
-            if (!noteEntity.getParentId().equals(note.getParentId()) && !note.getId().equals(note.getParentId()))
-            {
+        } else {
+            if (!noteEntity.getParentId().equals(note.getParentId()) && !note.getId().equals(note.getParentId())) {
                 noteEntity.setParentId(note.getParentId());
                 noteService.updateParent(noteEntity, noteEntity.getParentIds());
                 noteEntity.setName(BtoaEncode.encryption(noteEntity.getName()));
                 result.setResult(noteEntity);
                 result.success("修改成功!");
-            }
-            else
-            {
+            } else {
                 result.error500("父节点不合法");
             }
         }
@@ -322,8 +276,7 @@ public class NoteController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public Result<Note> delete(@RequestParam(name = "id", required = true) String id)
-    {
+    public Result<Note> delete(@RequestParam(name = "id", required = true) String id) {
         Result<Note> result = new Result<Note>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 
@@ -339,24 +292,19 @@ public class NoteController {
      * @return
      */
     @GetMapping(value = "/queryById")
-    public Result<NoteModel> queryById(@RequestParam(name = "id", required = true) String id)
-    {
+    public Result<NoteModel> queryById(@RequestParam(name = "id", required = true) String id) {
         Result<NoteModel> result = new Result<NoteModel>();
 
         Note note = noteService.getById(id);
 
-        if (note == null)
-        {
+        if (note == null) {
             result.error500("未找到对应实体");
-        }
-        else
-        {
+        } else {
             NoteContent content = noteContentService.getById(note.getContentId());
             NoteModel model = new NoteModel(note);
 
             noteService.setParentNames(model);//设置父节点名称
-            if (content != null)
-            {
+            if (content != null) {
                 model.setText(UpLoadUtil.dbToReal(content.getText(), "md"));
             }
             model.setFav(noteFavoriteService.queryIfFavorite(id));

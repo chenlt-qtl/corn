@@ -27,7 +27,7 @@ export async function queryTreeMenu(id: string, withLeaf: boolean) {
 }
 
 export async function queryNoteById(id: string) {
-  
+
   return request('/api/note/queryById?id=' + id).then((res) => {
 
     if (res) {
@@ -66,11 +66,9 @@ export async function queryFav() {
  * @param withLeaf 
  * @returns 
  */
-export async function pageSearchNote({ pageNo, pageSize, searchStr = "" }) {
-  console.log(pageNo, pageSize);
+export async function pageSearchNote({ pageNo, pageSize, searchStr = "", parentId = "" }) {
 
-
-  return request(`/api/note/pageSearchNote?pageNo=${pageNo}&pageSize=${pageSize}&searchStr=${searchStr}&withLeaf=false`).then(res => {
+  return request(`/api/note/pageSearchNote?pageNo=${pageNo}&pageSize=${pageSize}&searchStr=${searchStr}&parentId=${parentId}&withLeaf=false`).then(res => {
     if (res) {
       res.result.records = res.result.records.map(item => decryptNote(item))
     }

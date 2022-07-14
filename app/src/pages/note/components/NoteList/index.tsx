@@ -74,8 +74,8 @@ const NoteList: React.FC = (props, ref) => {
     const handleNoteClick = (note: NoteItem) => {
         const { isMobile } = props;
         if (note.isLeaf) {
-            const { openedNote } = props.note;
-            if (openedNote.id != note.id) {
+            const { openedNoteId } = props.note;
+            if (openedNoteId != note.id) {
                 props.dispatch({
                     type: 'note/openNote',
                     payload: note.id,
@@ -89,10 +89,10 @@ const NoteList: React.FC = (props, ref) => {
                 })
             }
         } else {
-            const { listParentNote } = props.noteMenu;
+            const { listParentNote } = props.note;
             if (listParentNote.id != note.id) {
                 props.dispatch({
-                    type: 'noteMenu/refreshListParentNote',
+                    type: 'note/refreshListParentNote',
                     payload: note
                 })
             }
@@ -136,7 +136,7 @@ const NoteList: React.FC = (props, ref) => {
 
     const render = function () {
 
-        const { openedNote } = props.note;
+        const { openedNoteId } = props.note;
 
         const { data = noteList, noDelete } = props;
 
@@ -146,7 +146,7 @@ const NoteList: React.FC = (props, ref) => {
                     <ul> {data.map(item => {
                         const note = transportNote(item);
                         const { id, title } = note;
-                        const isActive = openedNote.id == id;
+                        const isActive = openedNoteId == id;
                         return <li key={id} >
                             <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => handleNoteClick(item)}>
                                 {item.isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
@@ -171,4 +171,4 @@ const NoteList: React.FC = (props, ref) => {
     return render();
 };
 
-export default HocMedia(connect(({ note, noteMenu, loading }: { note: NoteModelState, noteMenu, loading }) => ({ note, noteMenu, loading }))(NoteList));
+export default HocMedia(connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(NoteList));
