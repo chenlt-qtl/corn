@@ -1,50 +1,83 @@
 .view {
-    display : flex;
-    height  : 100%;
-    overflow: hidden;
+    display   : flex;
+    height    : 100%;
+    overflow  : hidden;
+    border    : 1px solid #e7e7e7;
+    border-top: none;
+    background-color: #FFF;
 
-    .toc {
-        margin-left: -5px;
-        .title {
-            width      : 100%;
-            text-align : right;
-            padding    : 5px 10px;
-            font-weight: 500;
 
-            >span {
-                line-height: 30px;
-                display    : inline-block;
-
-                &:first-of-type {
-                    flex      : 1;
-                    text-align: center;
-                }
-
-                &:last-of-type {
-                    cursor: pointer;
-                }
-            }
-
-        }
-
-        width           : 350px;
+    .container {
+        flex            : 1;
         height          : 100%;
-        background-color: #F9F9F9;
-        border-right    :1px solid #e7e7e7;
-        overflow-y      : hidden;
+        padding         : 20px 30px;
+        overflow        : auto;
 
-        &:hover {
-            overflow-y: auto;
+        display       : flex;
+        flex-direction: column;
 
+        .restSpace {
+            flex      : 1;
+            min-height: 40px;
         }
-
     }
 }
 
+.toc {
+    margin-left: -5px;
+
+    .title {
+        width      : 100%;
+        text-align : right;
+        padding    : 5px 10px;
+        font-weight: 500;
+
+        >span {
+            line-height: 30px;
+            display    : inline-block;
+
+            &:first-of-type {
+                flex      : 1;
+                text-align: center;
+            }
+
+            &:last-of-type {
+                cursor: pointer;
+            }
+        }
+
+    }
+
+    :global{
+        .ant-anchor-link{
+            padding-left: 32px;
+        }
+    }
+
+    width           : 350px;
+    height          : 100%;
+    // background-color: #F9F9F9;
+    border-right    :1px solid #e7e7e7;
+    overflow-y      : hidden;
+
+    &:hover {
+        overflow-y: auto;
+
+    }
+
+}
+
 .text {
-    overflow: hidden;
-    flex    : 1;
-    height: 100%;
+    overflow : hidden;
+    flex     : 1;
+    height   : 100%;
+    font-size: 18px;
+
+    p,
+    span {
+        font-size  : 18px;
+        font-weight: 300;
+    }
 
     ul>li {
         list-style: disc outside none;
@@ -64,10 +97,10 @@
     }
 
     pre {
-        white-space     : pre-wrap !important;
-        word-wrap       : break-word !important;
-        *white-space    : normal !important;
-        border-radius   : 6px;
+        white-space            : pre-wrap !important;
+        word-wrap              : break-word !important;
+        *white-space           : normal !important;
+        border-radius          : 6px;
         // background-color: #282c34;
         // code {
         //     background-color: #282c34;
@@ -81,16 +114,17 @@
         }
 
         .rc-md-editor .editor-container>.section>.section-container {
-            padding: 24px;
+            padding: 24px 40px;
         }
     }
-    code{
-        padding: 0 5px;
+
+    code {
+        padding         : 0 5px;
         background-color: #f1c40f;
-        font-weight: 500;
+        font-weight     : 500;
     }
 
-    pre code{
+    pre code {
         background-color: transparent;
     }
 
