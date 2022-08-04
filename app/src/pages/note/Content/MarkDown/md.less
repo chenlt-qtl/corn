@@ -1,17 +1,17 @@
 .view {
-    display   : flex;
-    height    : 100%;
-    overflow  : hidden;
-    border    : 1px solid #e7e7e7;
-    border-top: none;
+    display         : flex;
+    height          : 100%;
+    overflow        : hidden;
+    border          : 1px solid #e7e7e7;
+    border-top      : none;
     background-color: #FFF;
 
 
     .container {
-        flex            : 1;
-        height          : 100%;
-        padding         : 20px 30px;
-        overflow        : auto;
+        flex    : 1;
+        height  : 100%;
+        padding : 34px 30px;
+        overflow: auto;
 
         display       : flex;
         flex-direction: column;
@@ -48,17 +48,17 @@
 
     }
 
-    :global{
-        .ant-anchor-link{
+    :global {
+        .ant-anchor-link {
             padding-left: 32px;
         }
     }
 
-    width           : 350px;
-    height          : 100%;
+    width              : 350px;
+    // height          : 100%;
     // background-color: #F9F9F9;
-    border-right    :1px solid #e7e7e7;
-    overflow-y      : hidden;
+    border-right       :1px solid #e7e7e7;
+    overflow-y         : hidden;
 
     &:hover {
         overflow-y: auto;
@@ -67,10 +67,7 @@
 
 }
 
-.text {
-    overflow : hidden;
-    flex     : 1;
-    height   : 100%;
+.content {
     font-size: 18px;
 
     p,
@@ -127,5 +124,12 @@
     pre code {
         background-color: transparent;
     }
+
+}
+
+.text {
+    overflow: hidden;
+    flex    : 1;
+    height  : 100%;
 
 }

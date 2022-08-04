@@ -210,7 +210,7 @@ const MarkDown = React.forwardRef((props, ref) => {
         const { displayIndex, showToc, setShowToc, isMobile } = props;
 
         return (
-            <>
+            <div className={styles.content}>
                 {/* 编辑 */}
                 {displayIndex == 1 ?
                     <div className={styles.text} style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
@@ -255,12 +255,11 @@ const MarkDown = React.forwardRef((props, ref) => {
                         renderHTML={renderHTML}
                         onChange={handleEditorChange}
                         onImageUpload={handleImageUpload}
-                        onBlur={saveTexts}
                         config={{ view: { menu: true, html: true, md: true } }}
                         style={{ "minHeight": "500px" }}
                     />
                 </Modal>
-            </>
+            </div>
         );
     };
     return render();
