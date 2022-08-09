@@ -71,10 +71,7 @@ const MarkDown = React.forwardRef((props, ref) => {
         if (openedNoteId) {
             text = openedNotes[openedNoteId].text || "";
         }
-
         processText(text);
-
-        props.setShowToc(props.isMobile ? false : true);
     }, [props.note.openedNoteId])
 
     useEffect(() => {
@@ -91,14 +88,12 @@ const MarkDown = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         const { displayIndex } = props;
-
-        const { openedNoteId, openedNotes } = props.note;
-        let text = "";
-        if (openedNoteId) {
-            text = openedNotes[openedNoteId].text || "";
-        }
-
-        if (displayIndex == 1) {//view
+        if (displayIndex) {//编辑
+            const { openedNoteId, openedNotes } = props.note;
+            let text = "";
+            if (openedNoteId) {
+                text = openedNotes[openedNoteId].text || "";
+            }
             setValue(text);
         }
     }, [props.displayIndex])
@@ -210,36 +205,31 @@ const MarkDown = React.forwardRef((props, ref) => {
         const { displayIndex, showToc, setShowToc, isMobile } = props;
 
         return (
-            <div className={styles.content}>
-                {/* 编辑 */}
-                {displayIndex == 1 ?
-                    <div className={styles.text} style={{ display: displayIndex == 1 ? 'block' : 'none' }}>
-                        <MdEditor
-                            value={value}
-                            // style={{ height: "600px" }}
-                            renderHTML={text => marked(text)}
-                            onChange={handleEditorChange}
-                            // plugins={plugins}
-                            onImageUpload={handleImageUpload}
-                            onBlur={saveContent}
-                            config={{ view: { menu: true, html: isMobile ? false : true, md: true } }}
-                        />
-                    </div> : ''}
-
-                {/* view */}
-                {displayIndex == 0 ?
-                    <div className={styles.view}>
-                        {showToc ? <div className={styles.toc}>
-                            <div className={styles.title}><CloseOutlined onClick={() => { setShowToc(false) }} /></div>
-                            {tocify && tocify.render()}
-                        </div> : ""}
-                        <div className={styles.container} onBlur={() => console.log(123123123123)}>
-
-                            {htmlObjs.length > 0 && htmlObjs.map(item =>
-                                <div key={item.id} dangerouslySetInnerHTML={{ __html: item.html }} onDoubleClick={() => clickText(item.id)}></div>
-                            )}
-                            <div className={styles.restSpace} onDoubleClick={() => clickText("new")}></div>
-                        </div> </div> : ''}
+            <>
+                <div className={styles.md_container}>
+                    {!isMobile && showToc ? <div className={styles.md_toc}>
+                        <div className={styles.md_title}><CloseOutlined onClick={() => { setShowToc(false) }} /></div>
+                        {tocify && tocify.render()}
+                    </div> : ""}
+                    <div className={`${styles.md_content} ${styles.md_md}`}>
+                        {displayIndex == 1 ?
+                            <MdEditor
+                                value={value}
+                                renderHTML={text => marked(text)}
+                                onChange={handleEditorChange}
+                                onImageUpload={handleImageUpload}
+                                onBlur={saveContent}
+                                style={{height:'100%'}}
+                                config={{ view: { menu: true, html: isMobile ? false : true, md: true } }}
+                            />
+                            : <div className={styles.md_view}>
+                                {htmlObjs.length > 0 && htmlObjs.map(item =>
+                                    <div key={item.id} dangerouslySetInnerHTML={{ __html: item.html }} onDoubleClick={() => clickText(item.id)}></div>
+                                )}
+                                <div className={styles.md_restSpace} onDoubleClick={() => clickText("new")}></div>
+                            </div>}
+                    </div>
+                </div>
 
                 <Modal
                     title={null}
@@ -250,16 +240,18 @@ const MarkDown = React.forwardRef((props, ref) => {
                     maskClosable={true}
                     onCancel={saveTexts}
                 >
-                    <MdEditor
-                        value={value}
-                        renderHTML={renderHTML}
-                        onChange={handleEditorChange}
-                        onImageUpload={handleImageUpload}
-                        config={{ view: { menu: true, html: true, md: true } }}
-                        style={{ "minHeight": "500px" }}
-                    />
+                    <div className={styles.md_md}>
+                        <MdEditor
+                            value={value}
+                            renderHTML={renderHTML}
+                            onChange={handleEditorChange}
+                            onImageUpload={handleImageUpload}
+                            config={{ view: { menu: true, html: true, md: true } }}
+                            style={{ "minHeight": "500px" }}
+                        />
+                    </div>
                 </Modal>
-            </div>
+            </>
         );
     };
     return render();

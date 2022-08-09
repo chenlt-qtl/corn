@@ -29,7 +29,15 @@ const Content = React.forwardRef((props, ref) => {
 
     const [closeMenuVisible, setCloseMenuVisible] = useState<boolean>(false);
 
-    const [showToc, setShowToc] = useState<boolean>(false);
+    const [showToc, setShowToc] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (displayIndex) {//编辑
+            setShowToc(false)
+        } else {//view
+            setShowToc(true)
+        }
+    }, [displayIndex])
 
     useEffect(() => {
         const { openedNoteId, openedNotes } = props.note;
@@ -41,6 +49,7 @@ const Content = React.forwardRef((props, ref) => {
                 setDisplayIndex(0);
             }
             setTitle(openedNote.name)
+            setShowToc(true)
         } else {
             setTitle("")
         }
@@ -183,7 +192,9 @@ const Content = React.forwardRef((props, ref) => {
                 btns.push(<Button key="fav" onClick={handleChangeFav} type='text'><StarOutlined /></Button>)
             }
             if (!displayIndex) {
-                btns.push(<Button key="view" onClick={() => setDisplayIndex(1)} type='text'><EditOutlined /></Button>)
+                btns.push(<Button key="view" onClick={() => {
+                    setDisplayIndex(1);
+                }} type='text'><EditOutlined /></Button>)
             } else {
                 btns.push(<Button key="edit" type='text' onClick={() => {
                     setDisplayIndex(0)

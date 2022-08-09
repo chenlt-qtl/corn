@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { Spin } from 'antd';
 import { connect } from 'umi';
 import style from './style.less';
 
-
 import ListMenu from './ListMenu'
 import Content from './Content'
-import { NoteItem } from './data';
+import { NoteItem } from '@/data/note';
 import HocMedia from "@/components/HocMedia";
 import LeftMenu from "./LeftMenu";
 
@@ -53,14 +51,14 @@ const NoteList: React.FC<{}> = (props) => {
       || props.loading.effects["note/queryTabTree"] || props.loading.effects["note/queryChildren"] || false;
     return (
 
-      <div className={`${style.main} ${isMobile ? style.isMobile : ""}`}>
+      <div className={`${style.nt_main} ${isMobile ? style.nt_isMobile : ""}`}>
         {isMobile ?
           (props.note.showMenu ?
             <ListMenu onNoteClick={handleNoteClick} setDragNote={(note: NoteItem) => dragNote = note}></ListMenu> :
             <Content setMenuStyle={setMenuStyle} menuStyle={menuStyle}></Content>) :
-          <div className={style.container}>
+          <div className={style.nt_container}>
             <LeftMenu setMenuStyle={setMenuStyle} menuStyle={menuStyle}></LeftMenu>
-            <div className={style.content}><Content setMenuStyle={setMenuStyle} menuStyle={menuStyle}></Content></div>
+            <div className={style.nt_content}><Content setMenuStyle={setMenuStyle} menuStyle={menuStyle}></Content></div>
           </div>}
       </div>
     );

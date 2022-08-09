@@ -1,32 +1,35 @@
-.view {
+.md_container {
     display         : flex;
     height          : 100%;
+    width           : 100%;
     overflow        : hidden;
     border          : 1px solid #e7e7e7;
     border-top      : none;
     background-color: #FFF;
 
-
-    .container {
+    .md_content {
         flex    : 1;
         height  : 100%;
-        padding : 34px 30px;
-        overflow: auto;
+        overflow: hidden;
 
-        display       : flex;
-        flex-direction: column;
+        .md_view{
+            padding : 34px 30px;
+            overflow: auto;
+            height: 100%;
+        }
 
-        .restSpace {
+        .md_restSpace {
             flex      : 1;
             min-height: 40px;
         }
     }
 }
 
-.toc {
+
+.md_toc {
     margin-left: -5px;
 
-    .title {
+    .md_title {
         width      : 100%;
         text-align : right;
         padding    : 5px 10px;
@@ -67,13 +70,19 @@
 
 }
 
-.content {
+//定义md样式
+.md_md {
+
     font-size: 18px;
 
     p,
     span {
         font-size  : 18px;
         font-weight: 300;
+    }
+
+    img{
+        max-width: 100%;
     }
 
     ul>li {
@@ -105,12 +114,12 @@
     }
 
     :global {
-        .rc-md-editor {
+        .rc-md_editor {
             height: 100%;
             border: none;
         }
 
-        .rc-md-editor .editor-container>.section>.section-container {
+        .rc-md_editor .editor-container>.section>.section-container {
             padding: 24px 40px;
         }
     }
@@ -124,12 +133,5 @@
     pre code {
         background-color: transparent;
     }
-
-}
-
-.text {
-    overflow: hidden;
-    flex    : 1;
-    height  : 100%;
 
 }

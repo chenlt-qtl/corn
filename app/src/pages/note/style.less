@@ -1,8 +1,7 @@
+@menuMaxWidth: 300px;
+@menuMinWidth: 50px;
 
-@menuMaxWidth:300px;
-@menuMinWidth:50px;
-
-.main {
+.nt_main {
     height    : 100%;
     width     : 100vw;
     display   : flex;
@@ -10,20 +9,23 @@
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
 
-    .container {
+    .nt_container {
         flex    : 1;
         display : flex;
         overflow: hidden;
 
-       
-        .content {
-            flex: 1;
+
+        .nt_content {
+            overflow-x: hidden;
+            flex      : 1;
         }
     }
 
-
 }
 
-.isMobile {
-    display: block;
+.nt_isMobile {
+    display: flex;
+    height: auto;
+    min-height: 100%;
+    flex:1;
 }
