@@ -14,6 +14,11 @@ export default {
                 {
                     path: '/word',
                     name: '英语',
+                    component: './word',
+                },
+                {
+                    path: '/article/list',
+                    name: '英语',
                     component: './word/articleList',
                 },
                 {

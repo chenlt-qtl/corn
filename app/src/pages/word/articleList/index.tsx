@@ -2,7 +2,7 @@ import { StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined } from '
 import { List, Button, Input, Popconfirm } from 'antd';
 import { Link } from 'umi';
 import React, { useState, useEffect, useRef } from 'react';
-import { ArticleItem } from '../data';
+import { ArticleItem } from '@/data/word';
 import { getArticleList, removeArticle } from '@/services/article';
 import styles from './styles.less'
 import ArticleEditModal from '../articleEditModal'
