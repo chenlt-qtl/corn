@@ -1,0 +1,96 @@
+.md_container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #e7e7e7;
+  border-top: none;
+  background-color: #FFF;
+}
+.md_container .md_content {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+.md_container .md_content .md_view {
+  padding: 34px 30px;
+  overflow: auto;
+  height: 100%;
+}
+.md_container .md_content .md_restSpace {
+  flex: 1;
+  min-height: 40px;
+}
+.md_toc {
+  margin-left: -5px;
+  width: 350px;
+  border-right: 1px solid #e7e7e7;
+  overflow-y: hidden;
+}
+.md_toc .md_title {
+  width: 100%;
+  text-align: right;
+  padding: 5px 10px;
+  font-weight: 500;
+}
+.md_toc .md_title > span {
+  line-height: 30px;
+  display: inline-block;
+}
+.md_toc .md_title > span:first-of-type {
+  flex: 1;
+  text-align: center;
+}
+.md_toc .md_title > span:last-of-type {
+  cursor: pointer;
+}
+.md_toc :global .ant-anchor-link {
+  padding-left: 32px;
+}
+.md_toc:hover {
+  overflow-y: auto;
+}
+.md_md {
+  font-size: 18px;
+}
+.md_md p,
+.md_md span {
+  font-size: 18px;
+  font-weight: 300;
+}
+.md_md img {
+  max-width: 100%;
+}
+.md_md ul > li {
+  list-style: disc outside none;
+}
+.md_md ul > li ul > li {
+  list-style: circle;
+}
+.md_md ul > li ul > li ul > li {
+  list-style: square;
+}
+.md_md ol > li {
+  list-style: decimal outside none;
+}
+.md_md pre {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  *white-space: normal !important;
+  border-radius: 6px;
+}
+.md_md :global .rc-md_editor {
+  height: 100%;
+  border: none;
+}
+.md_md :global .rc-md_editor .editor-container > .section > .section-container {
+  padding: 24px 40px;
+}
+.md_md code {
+  padding: 0 5px;
+  background-color: #f1c40f;
+  font-weight: 500;
+}
+.md_md pre code {
+  background-color: transparent;
+}
