@@ -12,10 +12,10 @@
         height  : 100%;
         overflow: hidden;
 
-        .md_view{
-            padding : 34px 30px;
+        .md_view {
+            padding : 60px 50px;
             overflow: auto;
-            height: 100%;
+            height  : 100%;
         }
 
         .md_restSpace {
@@ -75,14 +75,27 @@
 
     font-size: 18px;
 
+    h1,
+    h2 {
+        border-bottom : solid 1px #edd;
+        padding-bottom: 10px;
+        margin-bottom : 0.7em;
+    }
+
     p,
     span {
         font-size  : 18px;
         font-weight: 300;
     }
 
-    img{
+    img {
         max-width: 100%;
+    }
+
+
+    hr {
+        margin: 36px 0;
+        border: dashed #ccc 1px;
     }
 
     ul>li {
@@ -103,14 +116,14 @@
     }
 
     pre {
-        white-space            : pre-wrap !important;
-        word-wrap              : break-word !important;
-        *white-space           : normal !important;
-        border-radius          : 6px;
-        // background-color: #282c34;
-        // code {
-        //     background-color: #282c34;
-        // }
+        white-space     : pre-wrap !important;
+        word-wrap       : break-word !important;
+        *white-space    : normal !important;
+        border-radius   : 6px;
+        background-color: #f5f5f5;
+        padding         : 20px;
+        border          : solid #edd 1px;
+
     }
 
     :global {
@@ -124,14 +137,47 @@
         }
     }
 
-    code {
+    p code {
         padding         : 0 5px;
         background-color: #f1c40f;
         font-weight     : 500;
+        border-radius   : 6px;
     }
 
-    pre code {
-        background-color: transparent;
+    blockquote {
+        position   : relative;
+        margin     : 16px 0;
+        padding    : 5px 8px 5px 30px;
+        background : none repeat scroll 0 0 rgba(102, 128, 153, .03);
+        color      : #333;
+        border-left: 4px solid #d6dbdf;
+
+        p {
+            padding-top: 1em;
+        }
     }
 
+    table {
+        font-size      : 14px;
+        line-height    : 1.7;
+        border-collapse: collapse;
+        border-spacing : 0;
+
+        th {
+            text-align      : center;
+            font-weight     : 700;
+            border          : 1px solid #efefef;
+            padding         : 10px 6px;
+            background-color: #f5f7fa;
+            word-break      : break-word;
+        }
+
+        td {
+            border    : 1px solid #efefef;
+            text-align: left;
+            padding   : 10px 15px;
+            word-break: break-word;
+            min-width : 60px;
+        }
+    }
 }
