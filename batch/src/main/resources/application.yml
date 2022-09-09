@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    batch:
+      username: root
+      password: root
+      url: jdbc:mysql://127.0.0.1:3306/batch?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=UTC
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    corn:
+      username: root
+        password: root
+        url: jdbc:mysql://127.0.0.1:3306/corn?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=UTC
+        driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    open-in-view: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  #禁止项目启动时运行JOB
+  batch:
+    job:
+      enabled: false
