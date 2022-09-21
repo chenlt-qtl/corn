@@ -5,20 +5,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
-@Data
 @Entity
-@Table(name = "student")
+@Table(name = "note_content")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student {
+@Data
+public class NoteContent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-    private Integer age;
-    private String sex;
-    private String address;
-    private Integer cid;
+    private String id;
+    private String text;
+    private Date createTime;
+    private String createBy;
+    private Date updateTime;
+    private String updateBy;
+
 }

@@ -2,7 +2,8 @@ package corn.job;
 
 
 import corn.listener.JobListener;
-import corn.modal.Student;
+import corn.modal.NoteContent;
+import corn.utils.ImgUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -18,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManagerFactory;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -28,12 +32,19 @@ public class BackupImgJob {
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
 
-    @Autowired
+
     private EntityManagerFactory emf;
+
+    @Autowired
+    private ImgUtil imgUtil;
 
     @Autowired
     private JobListener jobListener;
 
+    @Autowired
+    public BackupImgJob(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
 
     public Job dataHandleJob() {
         return jobBuilderFactory.get("dataHandleJob")
@@ -51,7 +62,7 @@ public class BackupImgJob {
      */
     public Step handleDataStep() {
         return stepBuilderFactory.get("getData")
-                .<Student, Student>chunk(2)
+                .<NoteContent, List<String>>chunk(100)
                 .faultTolerant().retryLimit(3).retry(Exception.class).skipLimit(100).skip(Exception.class)
                 .reader(getDataReader())
                 .processor(getDataProcessor())
@@ -60,33 +71,45 @@ public class BackupImgJob {
 
     }
 
-    private ItemWriter<Student> getDataWriter() {
+    private ItemWriter<List<String>> getDataWriter() {
         return list -> {
-            for (Student student:list){
-                log.info("write data: {}",student);
+            for (List<String> urls : list) {
+                urls.forEach(url -> {
+                    //写到对应目录中
+                    log.info("write data: {}", url);
+                    try {
+                        imgUtil.saveFile(url);
+                        log.info("{} 保存成功", url);
+                    } catch (IOException e) {
+                        log.info("保存失败: {}", e.getMessage());
+                    }
+                });
+
             }
         };
     }
 
-    private ItemProcessor<Student, Student> getDataProcessor() {
-        return student -> {
-            log.info("processer data: {}",student.toString());
-            return student;
+    private ItemProcessor<NoteContent, List<String>> getDataProcessor() {
+        return content -> {
+            //1.提取图片URL
+            String[] imgUrls = ImgUtil.getImgUrls(content.getText());
+
+            //2.把URL放到List中返回
+            return Arrays.asList(imgUrls);
         };
     }
 
-    private ItemReader<Student> getDataReader() {
-        JpaPagingItemReader<Student> reader = new JpaPagingItemReader<>();
+    private ItemReader<NoteContent> getDataReader() {
+        JpaPagingItemReader<NoteContent> reader = new JpaPagingItemReader<>();
         try {
-            JpaNativeQueryProvider<Student> queryProvider = new JpaNativeQueryProvider<>();
-            queryProvider.setSqlQuery("select * from student");
-            //设置实体类
-            queryProvider.setEntityClass(Student.class);
+            JpaNativeQueryProvider<NoteContent> queryProvider = new JpaNativeQueryProvider<>();
+            queryProvider.setSqlQuery("select * from note_content");
+            queryProvider.setEntityClass(NoteContent.class);
             queryProvider.afterPropertiesSet();
 
             reader.setEntityManagerFactory(emf);
             //设置每页读取的记录数
-            reader.setPageSize(3);
+            reader.setPageSize(100);
             //设置数据提供者
             reader.setQueryProvider(queryProvider);
             reader.afterPropertiesSet();

@@ -11,14 +11,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class JobListener implements JobExecutionListener {
-    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
     private long startTime;
 
-    // TODO: 2022/7/15 这是个啥作法 为啥不直接autowired
     @Autowired
-    public JobListener(ThreadPoolTaskExecutor threadPoolTaskExecutor) {
-        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
-    }
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
