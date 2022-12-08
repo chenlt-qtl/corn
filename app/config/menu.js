@@ -1,8 +1,8 @@
 export default {
-    index: "/a/noteapp",
+    index: "/page/noteapp",
     routes: [
         {
-            path: '/a',
+            path: '/page',
             component: '@/layouts/HeaderLayout',
             desc: '有头部的',
             routes: [
@@ -64,14 +64,20 @@ export default {
             ]
         },
         {
-            path: '/b',
+            path: '/all',
             component: '@/layouts/BlankLayout',
             desc: "没有头部的",
             routes: [
                 {
                     path: '/play/cn/:id',
                     component: './game/play/cnGame',
-                }]
+                },
+                {
+                    path: '/card',
+                    component: './card',
+                    name: '卡片',
+                }
+            ]
         }
     ]
 
