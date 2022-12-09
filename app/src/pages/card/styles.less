@@ -1,0 +1,155 @@
+@back-color: #EBECF0;
+
+.btn() {
+    border-radius   : 5px;
+    cursor          : pointer;
+    border          : none;
+    color           : #6D7587;
+    background-color: @back-color;
+    box-shadow      : 7px 7px 15px rgba(55, 84, 170, .15),
+        -7px -7px 20px rgba(255, 255, 255, 1),
+        inset 0px 0px 4px rgba(255, 255, 255, .2),
+        inset 7px 7px 15px rgba(55, 84, 170, 0),
+        inset -7px -7px 20px rgba(255, 255, 255, 0),
+        0px 0px 4px rgba(255, 255, 255, 0);
+    transition: box-shadow .25s ease !important;
+    padding   : 5px 12px;
+    margin    : 5px;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:active {
+        box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+            -7px -7px 20px rgba(255, 255, 255, 1),
+            inset 0px 0px 4px rgba(255, 255, 255, 0),
+            inset 7px 7px 15px rgba(55, 84, 170, .15),
+            inset -7px -7px 20px rgba(255, 255, 255, 1),
+            0px 0px 4px rgba(255, 255, 255, .2);
+    }
+}
+
+
+.add() {
+    color: #2ed573;
+}
+
+.sub() {
+    color: #ff6b81;
+}
+
+.container {
+    padding         : 50px;
+    width           : 500px;
+    margin          : 0 auto;
+    background-color: @back-color;
+
+    font-weight: 600;
+
+    ul {
+        display: flex;
+        gap    : 10px;
+
+        li {
+            padding: 5px 15px;
+        }
+
+        .add {
+            .add()
+        }
+
+        .sub {
+            .sub()
+        }
+    }
+
+
+    .button {
+        .btn();
+    }
+
+    .result,
+    .item {
+        ul {
+            flex-wrap   : wrap;
+            padding-left: 0;
+        }
+
+        background-color: @back-color;
+        box-shadow      : 7px 7px 15px rgba(55, 84, 170, .15),
+        -7px -7px 20px rgba(255, 255, 255, 1),
+        0px 0px 4px rgba(255, 255, 255, .2) !important;
+
+        border-radius: 20px;
+        padding      : 30px;
+        min-height   : 200px;
+        margin-bottom: 30px;
+        font-size    : 16px;
+    }
+
+    .gray {
+        color: #bbb;
+
+    }
+
+    .sum {
+        text-align    : center;
+        padding-bottom: 50px;
+
+        button {
+            .btn();
+            padding     : 10px 50px;
+            margin-right: 15px;
+        }
+
+    }
+
+    .item {
+
+        ul {
+            flex-direction: column;
+        }
+
+        .controls {
+            display         : flex;
+            border          : 4px solid @back-color;
+            background-color: @back-color;
+            border-radius   : 15px;
+            margin-bottom   : 15px;
+        }
+
+        .control {
+            padding         : 10px 20px;
+            color           : #535D74;
+            background-color: @back-color;
+            box-shadow      : inset 0px 0px 4px rgba(255, 255, 255, .2), inset 7px 7px 15px rgba(55, 84, 170, 0), inset -7px -7px 20px rgba(255, 255, 255, 0);
+            transition      : box-shadow .4s ease;
+            cursor          : pointer;
+        }
+
+        .control:first-child {
+            border-top-left-radius   : 11px;
+            border-bottom-left-radius: 11px;
+        }
+
+        .control:last-child {
+            border-top-right-radius   : 11px;
+            border-bottom-right-radius: 11px;
+        }
+
+        .active {
+            box-shadow: inset 0px 0px 4px rgba(255, 255, 255, 0), inset 7px 7px 15px rgba(55, 84, 170, .15), inset -7px -7px 20px rgba(255, 255, 255, 1);
+        }
+
+        .inner {
+            box-shadow: inset 0px 0px 4px rgba(255, 255, 255, 0),
+                inset 7px 7px 15px rgba(55, 84, 170, .15),
+                inset -7px -7px 20px rgba(255, 255, 255, 1),
+                0px 0px 4px rgba(255, 255, 255, .2) !important;
+            border-radius: 10px;
+            padding      : 20px;
+            min-height   : 150px;
+        }
+    }
+}
