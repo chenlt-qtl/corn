@@ -17,7 +17,7 @@ export const cardItems = (() => [[
     { title: "10点后完成作业", value: -10 },
     { title: "没完成作业前画画", value: -2 },
 ], [
-    { title: "10点前睡觉", value: 5 },
+    { title: "10点前睡觉", values: [5, -5] },
     { title: "睡前不说话", value: 5 },
 ]
 ])();
