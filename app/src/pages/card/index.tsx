@@ -1,17 +1,17 @@
-import { Modal } from 'antd';
+import { Modal, Row, Col } from 'antd';
 import React, { useState, useEffect } from 'react';
 import styles from './styles.less'
 import { cardItems as itemList} from "@/utils/constants";
 import {cardTabs as tabs } from "@/utils/constants";
 
 const staticData = [3, 2, 1, -1, -2, -3]
+
+
 // const itemList = [
 //     [{ title: "a", values: [3, -3] },
 //     { title: "b", value: -3 }],
-//      [{ title: "c", values: [3, -3] },{ title: "d", values: [3, -3] }],
+//     [{ title: "c", values: [3, -3] }, { title: "d", values: [3, -3] }],
 // ]
-
-
 // const tabs = ["aa", "bb", "cc"]
 
 const DiamondCard: React.FC<{}> = () => {
@@ -73,13 +73,15 @@ const DiamondCard: React.FC<{}> = () => {
         setActiveTab(id)
     }
 
+    const layout = { sm: { span: 4 }, xs: { span: 8 } }
+
     return (
         <main className={styles.container}>
             <section className={styles.static}>
-                <ul>
-                    {staticData.map(item => <li key={item} className={`${styles.button} ${item > 0 ? styles.add : styles.sub}`}
-                        onClick={() => addStatic(item)}>{formatTitle({ title: "", value: item })}</li>)}
-                </ul>
+                <Row gutter={[8, 8]}>
+                    {staticData.map(item => <Col {...layout} key={item}><div className={`${styles.button} ${item > 0 ? styles.add : styles.sub}`}
+                        onClick={() => addStatic(item)}>{formatTitle({ title: "", value: item })}</div></Col>)}
+                </Row>
             </section>
             <section className={styles.item}>
                 <div className={styles.neumorphicOuter}>

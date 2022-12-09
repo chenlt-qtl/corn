@@ -41,20 +41,14 @@
 
 .container {
     padding         : 50px;
-    width           : 500px;
+    max-width       : 500px;
+    width           : 100vw;
     margin          : 0 auto;
     background-color: @back-color;
 
     font-weight: 600;
 
-    ul {
-        display: flex;
-        gap    : 10px;
-
-        li {
-            padding: 5px 15px;
-        }
-
+    section {
         .add {
             .add()
         }
@@ -64,9 +58,23 @@
         }
     }
 
+    ul {
+        display: flex;
+        gap    : 10px;
+
+        li {
+            padding: 5px 15px;
+        }
+    }
+
 
     .button {
         .btn();
+        width: fit-content;
+    }
+
+    .static {
+        padding: 10px;
     }
 
     .result,
@@ -90,7 +98,6 @@
 
     .gray {
         color: #bbb;
-
     }
 
     .sum {
