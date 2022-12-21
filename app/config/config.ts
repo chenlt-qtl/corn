@@ -43,8 +43,8 @@ export default defineConfig({
     ...menus.routes.map(r => ({
       ...r,
       layout: false,
-      routes:r.routes.map(item=>({
-        ...item,path:r.path+item.path
+      routes: r.routes.map(item => ({
+        ...item, path: r.path + item.path
       }))
     })),
     {
@@ -59,4 +59,7 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  define: {
+    publicPath: REACT_APP_ENV == "dev" ? "http://localhost:89" : "http://42.192.15.59"
+  }
 });

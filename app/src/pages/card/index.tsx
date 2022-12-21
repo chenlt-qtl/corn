@@ -2,7 +2,8 @@ import { Modal, Row, Col } from 'antd';
 import React, { useState, useEffect } from 'react';
 import styles from './styles.less'
 import { cardItems as itemList} from "@/utils/constants";
-import {cardTabs as tabs } from "@/utils/constants";
+import { cardTabs as tabs } from "@/utils/constants";
+import { useRef } from 'react';
 
 const staticData = [3, 2, 1, -1, -2, -3]
 
@@ -20,12 +21,16 @@ const DiamondCard: React.FC<{}> = () => {
 
     const [activeTab, setActiveTab] = useState<number>(0);
 
+    const player = useRef();
+    const source = useRef();
+
     useEffect(() => {
 
     }, [])
 
-    const addStatic = (value: number) => {
-        setResult([...result, { title: "", value: value }])
+    const addRecord = (item) => {
+        soundEffect(item.value)
+        setResult([...result, item])
     }
 
     const subItem = (index: number) => {
@@ -35,6 +40,7 @@ const DiamondCard: React.FC<{}> = () => {
     }
 
     const sum = () => {
+        soundEffect(0)
         const total = result.reduce((total, item) => {
             console.log(item);
             return total + item.value
@@ -52,8 +58,6 @@ const DiamondCard: React.FC<{}> = () => {
     }
 
     const formatTitle = item => {
-        console.log(item);
-
         const { title, value } = item;
         if (value > 0) {
             return title + " +" + value;
@@ -73,6 +77,25 @@ const DiamondCard: React.FC<{}> = () => {
         setActiveTab(id)
     }
 
+    //type: -1扣分 1得分 0算分
+    const soundEffect = (type: number) => {
+        console.log("type", type);
+
+        let mp3;
+        if (type < 0) {
+            mp3 = "37j888piCfxy.mp3";
+        } else if (type > 0) {
+            mp3 = "53s888piCC7e.mp3";
+        } else {
+            mp3 = "42f888piCquQ.mp3";
+        }
+        source.current.src = publicPath + "/public/sound/" + mp3;
+
+        player.current!.load();
+        player.current!.play();
+
+    }
+
     const layout = { sm: { span: 4 }, xs: { span: 8 } }
 
     return (
@@ -80,7 +103,7 @@ const DiamondCard: React.FC<{}> = () => {
             <section className={styles.static}>
                 <Row gutter={[8, 8]}>
                     {staticData.map(item => <Col {...layout} key={item}><div className={`${styles.button} ${item > 0 ? styles.add : styles.sub}`}
-                        onClick={() => addStatic(item)}>{formatTitle({ title: "", value: item })}</div></Col>)}
+                        onClick={() => addRecord({ title: "", value: item })}>{formatTitle({ title: "", value: item })}</div></Col>)}
                 </Row>
             </section>
             <section className={styles.item}>
@@ -93,9 +116,9 @@ const DiamondCard: React.FC<{}> = () => {
                         <ul>
                             {(itemList[activeTab] || []).map(item => <li key={item.title}>
                                 <span className={result.filter(i => i.title == item.title).length > 0 ? styles.gray : ""}>{item.title} : </span>
-                                {item.values ? item.values.map(value => <small key={`${item.title}${value}`} onClick={() => setResult([...result, { ...item, value: value }])}
+                                {item.values ? item.values.map(value => <small key={`${item.title}${value}`} onClick={() => addRecord({ ...item, value: value })}
                                     className={`${styles.button} ${value > 0 ? styles.add : styles.sub}`}
-                                >{formatValue(value)}</small>) : <small onClick={() => setResult([...result, { ...item, value: item.value }])}
+                                >{formatValue(value)}</small>) : <small onClick={() => addRecord({ ...item, value: item.value })}
                                     className={`${styles.button} ${item.value > 0 ? styles.add : styles.sub}`}
                                 >{formatValue(item.value)}</small>}</li>)}
                         </ul>
@@ -110,6 +133,10 @@ const DiamondCard: React.FC<{}> = () => {
                 </ul>
             </section>
             <section className={styles.sum}><button onClick={sum}>计算</button><button onClick={clean}>清空</button></section>
+            <div><audio ref={player}>
+                <source ref={source} type="audio/mpeg" />
+                您的浏览器不支持 audio 元素。
+            </audio></div>
         </main>
     );
 };
