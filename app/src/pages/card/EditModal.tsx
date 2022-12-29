@@ -47,11 +47,13 @@ const EditModal = React.forwardRef((props: editProps, ref) => {
         let formData = await form.validateFields();
         setTabs(formData.tabs.split(","))
 
-        const json = JSON.parse(data.value)
-        const { value } = json;
-        const formValue = {};
+        if (data.value) {
+            const json = JSON.parse(data.value)
+            const { value } = json;
+            const formValue = {};
 
-        form.setFieldsValue((value || []).map((str, index) => formValue[index] = str));
+            form.setFieldsValue((value || []).map((str, index) => formValue[index] = str));
+        }
         setStep(1)
     }
 
