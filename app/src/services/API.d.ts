@@ -32,4 +32,16 @@ declare namespace API {
     extra: any;
     status: string;
   }
+
+  export interface SysData {
+    id: string;
+    name: string;
+    code: string;
+    value: string;
+  }
+
+  export interface CardData {
+    tabs: string[];
+    value: string[];
+  }
 }
