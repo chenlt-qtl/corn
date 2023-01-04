@@ -26,6 +26,10 @@ const Search: React.FC = (props, ref) => {
         handleSearch();
     }, [parentId]);
 
+    useEffect(() => {
+        handleSearch();
+    }, [props.note.listParam]);
+
     const handleSearch = () => {
         const params = { parentId, searchStr, withLeaf: false }
         setParams(params);

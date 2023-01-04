@@ -1,109 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { Tree, Spin, Modal, notification } from 'antd';
-import { FileTextOutlined, DeleteOutlined, ExclamationCircleOutlined, FolderOutlined, EditOutlined, FolderOpenOutlined, FolderFilled, FolderOpenFilled } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
+import { queryNote, queryTreeMenu } from '@/services/note'
+import Resize from './Resize';
 import EditFolderModal from '../components/EditFolderModal';
-import { queryTreeMenu } from '@/services/note'
-import { NoteNode } from '@/data/note';
+import NoteList from '../components/NoteList';
+import NoteTree from './NoteTree';
+import { Button, Spin } from "antd"
+import { CaretLeftOutlined } from '@ant-design/icons';
+import ChangeParentModal from '../components/ChangeParentModal';
+import { NoteNode } from '@/data/note'
 
-
-
-const { confirm } = Modal;
-
-const { DirectoryTree } = Tree;
+let tempHeight = localStorage.getItem("filesHeight") || 400;
+let onMouseUpListerner = false;
 
 const TreeMenu: React.FC = (props, ref) => {
 
-    const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [renameNode, setRenameNode] = useState<object>({});
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+    const [folderModalVisible, setFolderModalVisible] = useState<boolean>(false);
+    const [parentModalVisible, setParentModalVisible] = useState<boolean>(false);
 
+    const [editNode, setEditNode] = useState<object>({});
+    const [rootKey, setRootKey] = useState<string>("0")
+    const [selectedKey, setSelectedKey] = useState<string>(rootKey)
+    const [height, setHeight] = useState<number>(tempHeight);
     const [treeData, setTreeData] = useState<NoteNode[]>([])
 
-
-    useEffect(() => {
-        queryTreeMenu("0", true).then(({ result }) => setTreeData(result))
-    }, []);
-
-    useEffect(() => {
-
-        queryTreeMenu("0", true).then(({ result }) => setTreeData(result))
-
-    }, [props.note.treeKey]);
-
-    useEffect(() => {
-        const { openedNoteId, openedNotes } = props.note;
-
-        const openedNote = openedNotes[openedNoteId];
-
-        if (openedNote && openedNote.parentIds) {
-            const expandedKeys = (openedNote.parentIds || "").split("/")
-
-            setExpandedKeys([openedNoteId, ...expandedKeys])
-        }
-        setSelectedKeys([openedNoteId]);
-
-    }, [props.note.openedNoteId]);
-
-
-    const handleExpand = value => {
-        setExpandedKeys(value);
+    const handleRename = (node) => {
+        setFolderModalVisible(true);
+        setEditNode(node);
     }
 
-    const openNote = (_, { node }) => {
-
-        const { key, title, isLeaf, parentIds, parentId } = node;
-
-        if (isLeaf) {
-            props.onNoteClick({ id: key, name: title, parentIds, isLeaf, parentId })
-        } else {
-
-            props.dispatch({
-                type: 'note/refreshListParentNote',
-                payload: { id: key, name: title }
-            })
-
-            setSelectedKeys([key]);
-        }
-
-
+    const handleChangeParent = (node) => {
+        console.log(node);
+        
+        setEditNode(node);
+        setParentModalVisible(true);
     }
 
-
-    const handleDelete = node => {
-        confirm({
-            title: `确定要删除 ${node.title}?`,
-            icon: <ExclamationCircleOutlined />,
-            onOk() {
-
-                props.dispatch({
-                    type: 'note/deleteNote',
-                    payload: { id: node.key, isLeaf: node.isLeaf, parentIds: node.parentIds, parentId: node.parentId },
-                }).then(() => {
-                    notification["info"]({
-                        message: '删除成功',
-                    });
-                });
+    useEffect(() => {
+        queryTreeMenu("0", false).then(({ result }) => {
+            const nodes = {
+                key: "0",
+                title: "文件夹",
+                name: "文件夹",
+                children: result
             }
-        });
-    }
+            setTreeData([nodes])
+        })
+    }, [props.note.treeParam]);
 
-    const handleRename = node => {
-        setIsModalVisible(true);
-        setRenameNode(node);
-    }
 
-    const onDrop: TreeProps['onDrop'] = ({ node, dragNode }) => {
 
-        const newParentId = node.key;
-        if (dragNode && dragNode.parentId != newParentId && dragNode.key != newParentId) {
-            props.dispatch({
-                type: 'note/updateParent',
-                payload: { id: dragNode.key, parentId: newParentId },
-            })
+    const onResize = e => {
+        const y = e.movementY
+        tempHeight = tempHeight - y;
+        setHeight(tempHeight);
+        localStorage.setItem("filesHeight", tempHeight);
+        if (!onMouseUpListerner) {
+            document.body.addEventListener('mouseup', onMouseUp);
+            onMouseUpListerner = true;
         }
+    }
+
+    const onMouseUp = () => {
+        document.body.removeEventListener('mousemove', onResize);
+        document.body.removeEventListener('mouseup', onMouseUp);
+        onMouseUpListerner = false;
     }
 
 
@@ -113,63 +75,28 @@ const TreeMenu: React.FC = (props, ref) => {
 
         return (
 
-            <div className={styles.content}>
-
-                <EditFolderModal visible={isModalVisible} node={renameNode} onCancel={() => setIsModalVisible(false)}></EditFolderModal>
-
-                <div className={styles.tree}>
-                    <DirectoryTree
-                        selectedKeys={selectedKeys}
-                        blockNode
-                        multiple
-                        showIcon={false}
-                        expandedKeys={expandedKeys}
-                        treeData={treeData}
-                        onExpand={handleExpand}
-                        titleRender={node => {
-                            let icon;
-                            const style = { color: 'rgba(0, 0, 0, 0.5)' };
-
-                            if (node.isLeaf) {
-                                icon = <FileTextOutlined />;
-                            } else if (expandedKeys.includes(node.key)) {
-
-                                if (node.parentId == 0) {
-                                    icon = <FolderOpenFilled style={style} />;
-
-                                } else {
-                                    icon = <FolderOpenOutlined />;
-                                }
-                            } else {
-                                if (node.parentId == 0) {
-                                    icon = <FolderFilled style={style} />;
-
-                                } else {
-                                    icon = <FolderOutlined />;
-                                }
-                            }
-
-                            return <div className={styles.treeNode}>
-                                <div className={styles.title}>{icon}{node.title}</div>
-                                <div className="noteTreeMenu" onClick={e => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleRename(node)
-                                }} ><EditOutlined /></div>
-                                <div className="noteTreeMenu delete" onClick={e => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleDelete(node)
-                                }}><DeleteOutlined /></div>
-                            </div>
-                        }}
-                        autoExpandParent
-                        draggable
-                        onSelect={openNote}
-                        onDrop={onDrop}
-                    />
+            <Spin spinning={loading} wrapperClassName={styles.content}>
+                <div className={styles.toolbar}>
+                    <Button className={styles.back} type='link' icon={<CaretLeftOutlined />} onClick={() => setRootKey("0")} disabled={rootKey == "0"}></Button>
+                    <EditFolderModal visible={folderModalVisible} parentId={selectedKey} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
                 </div>
-            </div>
+                <div className={styles.tree}>
+                    <NoteTree
+                        handleRename={handleRename}
+                        handleChangeParent={handleChangeParent}
+                        selectedKey={selectedKey}
+                        rootKey={rootKey}
+                        setSelectedKey={setSelectedKey}
+                        setRootKey={setRootKey}
+                        treeData={treeData}
+                    ></NoteTree>
+                </div>
+                <Resize resize={onResize}></Resize>
+                <div className={styles.files} style={{ height: height + "px" }}>
+                    <NoteList getDataMethod={queryNote} params={props.note.listParam} handleChangeParent={handleChangeParent}></NoteList>
+                </div>
+                <ChangeParentModal treeData={treeData} node={editNode} onCancel={() => setParentModalVisible(false)} visible={parentModalVisible}></ChangeParentModal>
+            </Spin >
         );
     };
     return render();

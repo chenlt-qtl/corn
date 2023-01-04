@@ -43,13 +43,13 @@ const MarkDown = React.forwardRef((props, ref) => {
 
 
     useEffect(() => {
-        const { openedNoteId, openedNotes } = props.note;
+        const { openedNote } = props.note;
         let text = "";
-        if (openedNoteId) {
-            text = openedNotes[openedNoteId].text || "";
+        if (openedNote.id) {
+            text =openedNote.text || "";
         }
         processText(text);
-    }, [props.note.openedNoteId])
+    }, [props.note.openedNote])
 
     useEffect(() => {
         if (editKey == "new") {
@@ -66,10 +66,10 @@ const MarkDown = React.forwardRef((props, ref) => {
     useEffect(() => {
         const { displayIndex } = props;
         if (displayIndex) {//编辑
-            const { openedNoteId, openedNotes } = props.note;
+            const { openedNote } = props.note;
             let text = "";
-            if (openedNoteId) {
-                text = openedNotes[openedNoteId].text || "";
+            if (openedNote) {
+                text = openedNote.text || "";
             }
             setValue(text);
         }
@@ -141,7 +141,7 @@ const MarkDown = React.forwardRef((props, ref) => {
     const processText = (text: string) => {
 
         tocify.reset();
-        const { openedNoteId } = props.note;
+        const { openedNote } = props.note;
 
         const separator = "\n## ";
         let index = text.indexOf(separator);
@@ -152,7 +152,7 @@ const MarkDown = React.forwardRef((props, ref) => {
             let tempText = text.substring(oldIndex, index);
 
             if (tempText.length > 0) {
-                htmlObjs.push({ id: openedNoteId + index, text: tempText, html: marked(tempText) });
+                htmlObjs.push({ id: openedNote.id + index, text: tempText, html: marked(tempText) });
             }
             oldIndex = index + 1;
             index = text.indexOf(separator, index + 1);
@@ -160,7 +160,7 @@ const MarkDown = React.forwardRef((props, ref) => {
 
         let tempText = text.substring(oldIndex, text.length);
         if (tempText.length > 0) {
-            htmlObjs.push({ id: openedNoteId + text.length, text: tempText, html: marked(tempText) });
+            htmlObjs.push({ id: openedNote.id + text.length, text: tempText, html: marked(tempText) });
         }
 
         setHtmlObjs(htmlObjs);
@@ -200,7 +200,7 @@ const MarkDown = React.forwardRef((props, ref) => {
 
 
     const clickText = (textId) => {
-        if (props.note.openedNoteId && !props.isMobile) {
+        if (props.note.openedNote.id && !props.isMobile) {
             setEditKey(textId)
             setVisible(true)
         }

@@ -1,16 +1,36 @@
 .content {
-  height        : 100%;
-  display       : flex;
-  flex-direction: column;
-  overflow      : hidden;
-  flex          : 1;
+  height: 100%;
+
+  :global {
+    .ant-spin-container {
+      height        : 100%;
+      display       : flex;
+      flex-direction: column;
+      overflow      : hidden;
+      position      : relative;
+    }
+  }
+
+  .toolbar {
+    flex-shrink: 0;
+    text-align : center;
+    padding    : 10px 5px;
+
+    :global {
+      .ant-btn-round {
+        border-radius: 5px;
+      }
+    }
+  }
 
   .tree {
-    overflow      : auto;
-    padding-bottom: 20px;
+    overflow: auto;
+    flex    : 1;
+    padding : 5px 0 20px 0;
 
     .treeNode {
       display: flex;
+      padding: 5px 0;
 
       .treeMenu {
         display: none;
@@ -33,7 +53,7 @@
 
       .noteTreeMenu {
         display     : none;
-        padding-left: 5px;
+        padding: 0 10px;
 
         &:hover {
           scale: 1.05;
@@ -58,14 +78,14 @@
       }
 
       .ant-tree.ant-tree-directory .ant-tree-treenode:hover::before {
-        background-color: rgba(205, 205, 205, 0.2);
-        border-radius   : 15px;
-        margin          : 0 10px;
-        bottom          : 0;
+        background-color   : rgba(205, 205, 205, 0.2);
+        // border-radius   : 15px;
+        // margin          : 0 10px;
+        bottom             : 0;
       }
 
       .ant-tree.ant-tree-directory .ant-tree-treenode {
-        padding: 5px 0 5px 25px;
+        padding-left: 25px;
 
         &:hover {
           .noteTreeMenu {
@@ -76,9 +96,11 @@
 
       .ant-tree.ant-tree-directory .ant-tree-treenode-selected:hover::before,
       .ant-tree.ant-tree-directory .ant-tree-treenode-selected::before {
-        background-color: rgba(205, 205, 205, 0.4);
-        border-radius   : 15px;
-        margin          : 0 10px;
+        background-color   : rgba(205, 205, 205, 0.4);
+        border-left        : #f39c12 2px solid;
+        // border-radius   : 15px;
+        // margin          : 0 10px;
+        bottom             : 0;
       }
 
       .ant-tree.ant-tree-directory .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected {
@@ -107,5 +129,25 @@
       }
     }
 
+  }
+
+  .files {
+    border-top : solid 1px rgba(0, 0, 0, 0.1);
+    padding    : 5px 0;
+    // height     : 400px;
+    overflow-y : auto;
+    flex-shrink: 0;
+  }
+
+  .resizeBar {
+    height    : 4px;
+    cursor    : n-resize;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .back {
+    position: absolute;
+    left    : 5px;
+    top     : 10px
   }
 }

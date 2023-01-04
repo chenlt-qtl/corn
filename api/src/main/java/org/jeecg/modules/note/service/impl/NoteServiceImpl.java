@@ -82,6 +82,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         QueryWrapper<Note> queryWrapper = new QueryWrapper();
         queryWrapper.select("id", "name", "parent_id", "parent_ids", "is_leaf");
         queryWrapper.eq("create_by", getUsername());
+        queryWrapper.like("parent_ids",parentId);
         if (!withLeaf) {
             //不要叶子
             queryWrapper.eq("is_leaf", 0);

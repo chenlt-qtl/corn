@@ -5,7 +5,7 @@
     <select id="listSon" resultType="org.jeecg.modules.note.model.NoteModel">
         SELECT n.*
         FROM note_info n
-        WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
+        WHERE n.create_by = #{createBy,jdbcType=VARCHAR} and is_leaf = 1
         <if test="parentId != null">
             and n.parent_id = #{parentId,jdbcType=VARCHAR}
         </if>

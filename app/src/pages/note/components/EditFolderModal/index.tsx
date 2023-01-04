@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal, Menu, Dropdown, Input, Form } from 'antd';
 import { PlusOutlined, FolderOutlined, FileMarkdownOutlined } from '@ant-design/icons';
-import styles from './style.less';
 import { connect } from 'umi';
 import HocMedia from "@/components/HocMedia";
 import { guid } from '@/utils/utils'
@@ -10,7 +9,9 @@ import { guid } from '@/utils/utils'
 const FormItem = Form.Item;
 let fold = {};
 
-const AddBtn: React.FC = (props, ref) => {
+const EditFolder: React.FC = (props, ref) => {
+
+    const { parentId } = props;
 
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [form] = Form.useForm();
@@ -29,18 +30,18 @@ const AddBtn: React.FC = (props, ref) => {
         if (key == "1") {//文件夹
             setIsModalVisible(true);
             form.setFieldsValue({ foldName: "" });
-            fold = { parentId: props.note.listParentNote.id, isLeaf: false }
+            fold = { parentId, isLeaf: false }
         } else {
-            const newNote = { id: guid(), name: "新文档", parentId: props.note.listParentNote.id, isLeaf: true, isNew: true };
+            const newNote = { id: guid(), name: "新文档", parentId, isLeaf: true, isNew: true };
 
             props.dispatch({
                 type: 'note/refreshOpenedNotes',
-                payload: {...props.note.openedNotes,[newNote.id]:newNote}
+                payload: { ...props.note.openedNotes, [newNote.id]: newNote }
             })
 
             props.dispatch({
-                type: "note/refreshOpenedNoteId",
-                payload: newNote.id
+                type: "note/refreshOpenedNote",
+                payload: newNote
             })
 
             if (props.isMobile) {
@@ -66,6 +67,11 @@ const AddBtn: React.FC = (props, ref) => {
         props.dispatch({
             type: "note/updateNoteTitle",
             payload: { ...fold, name: foldName }
+        }).then(() => {
+            props.dispatch({
+                type: "note/refreshTreeParam",
+                payload: {}
+            })
         })
 
         props.onCancel();
@@ -78,7 +84,7 @@ const AddBtn: React.FC = (props, ref) => {
         return (
 
             <div className={props.className}>
-                <div className={styles.toolbar}>
+                <div>
                     <Dropdown overlay={menu} trigger={['click']}>
                         <Button type="primary" shape="round" icon={<PlusOutlined />}>增加</Button>
                     </Dropdown>
@@ -102,4 +108,4 @@ const AddBtn: React.FC = (props, ref) => {
     return render();
 };
 
-export default HocMedia(connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(AddBtn));
+export default HocMedia(connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(EditFolder));

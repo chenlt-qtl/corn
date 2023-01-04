@@ -10,10 +10,8 @@ const Fav: React.FC = (props, ref) => {
     const [dataList, setDataList] = useState<[]>([]);
 
     useEffect(() => {
-        
         queryFav().then(({ result }) => setDataList(result));
-        
-    }, [props.note.favKey]);
+    }, [props.note.listParam]);
 
 
     const render = function () {

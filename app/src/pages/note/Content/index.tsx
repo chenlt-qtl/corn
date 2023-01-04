@@ -40,9 +40,8 @@ const Content = React.forwardRef((props, ref) => {
     }, [displayIndex])
 
     useEffect(() => {
-        const { openedNoteId, openedNotes } = props.note;
-        if (openedNoteId) {
-            const openedNote = openedNotes[openedNoteId];
+        const { openedNote } = props.note;
+        if (openedNote) {
             if (openedNote.isNew) {
                 setDisplayIndex(1);
             } else {
@@ -53,7 +52,7 @@ const Content = React.forwardRef((props, ref) => {
         } else {
             setTitle("")
         }
-    }, [props.note.openedNoteId])
+    }, [props.note.openedNote])
 
     useImperativeHandle(ref, () => ({
         handleAddNote: (parentId: string) => {
@@ -81,8 +80,8 @@ const Content = React.forwardRef((props, ref) => {
 
     const handleActiveNote = (id) => {
 
-        const { openedNoteId } = props.note;
-        if (openedNoteId != id) {
+        const { openedNote } = props.note;
+        if (openedNote.id != id) {
             props.dispatch({
                 type: 'note/openNote',
                 payload: id,
@@ -93,19 +92,33 @@ const Content = React.forwardRef((props, ref) => {
         }
     }
 
-    const closeNotes = (allClose: boolean) => {
-        let newOpenedNotes = {};
-        const { openedNoteId, openedNotes } = props.note;
-        if (!allClose) {
-            if (openedNoteId && openedNotes[openedNoteId]) {
-                newOpenedNotes = { [openedNoteId]: openedNotes[openedNoteId] }
-            }
+    const closeNotes = (key: string) => {
 
-        } else {
+        let newOpenedNotes = {};
+        const { openedNote, openedNotes } = props.note;
+
+        if (key == "1") {//关闭其他
+            if (openedNote && openedNotes[openedNote.id]) {
+                newOpenedNotes = { [openedNote.id]: openedNote }
+            }
+        } else if (key == "2") {//关闭所有
             props.dispatch({
-                type: 'note/refreshOpenedNoteId',
+                type: 'note/refreshOpenedNote',
+                payload: {}
             })
+        } else {//关闭单个
+            newOpenedNotes = { ...openedNotes };
+            delete newOpenedNotes[key]
+            if (openedNote && openedNote.id == key) {
+                props.dispatch({
+                    type: 'note/refreshOpenedNote',
+                    payload: Object.values(newOpenedNotes)[0]
+                })
+                setDisplayIndex(0)
+                setSaveStatus(0)
+            }
         }
+
         props.dispatch({
             type: 'note/refreshOpenedNotes',
             payload: newOpenedNotes,
@@ -116,9 +129,7 @@ const Content = React.forwardRef((props, ref) => {
         if (saveStatus == 0) {
             return;
         }
-        const { openedNoteId, openedNotes } = props.note;
-        let noteToSave = { ...openedNotes[openedNoteId] }
-
+        let noteToSave = { ...props.note.openedNote }
 
         setSaveStatus(2)
         noteToSave.name = title
@@ -135,9 +146,15 @@ const Content = React.forwardRef((props, ref) => {
         props.dispatch({
             type: method,
             payload: noteToSave
-        }).then((res) => {
+        }).then(res => {
+            if (type == "title") {
+                props.dispatch({
+                    type: 'note/refreshListParam',
+                    payload: { ...props.note.listParam },
+                })
+            }
             if (res) {
-                if (props.note.openedNoteId == noteToSave.id) {
+                if (props.note.openedNote.id == noteToSave.id) {
                     setSaveStatus(0)
                 }
             }
@@ -147,30 +164,17 @@ const Content = React.forwardRef((props, ref) => {
     }
 
     const handleBlur = (e, type) => {
-        if (type == 'title') {
-            saveNote(type)
-        } else if (!e.relatedTarget || e.relatedTarget.getAttribute('group') != group) {
+        if (type == 'title' || !e.relatedTarget || e.relatedTarget.getAttribute('group') != group) {
             saveNote(type)
         }
 
     }
 
-    const handleRemoveTab = id => {
-
-        props.dispatch({
-            type: 'note/closeNote',
-            payload: id,
-        })
-
-        setDisplayIndex(0)
-        setSaveStatus(0)
-    }
-
     const handleChangeFav = () => {
-        const { openedNoteId, openedNotes } = props.note;
+        const { openedNote } = props.note;
         props.dispatch({
             type: 'note/editFav',
-            payload: { noteId: openedNoteId, isFav: !openedNotes[openedNoteId].fav },
+            payload: { noteId: openedNote.id, isFav: !openedNote.fav },
         })
     }
 
@@ -184,9 +188,9 @@ const Content = React.forwardRef((props, ref) => {
     const getTitleBtn = () => {
         <Button type='text'><ProfileOutlined /></Button>
         const btns = [];
-        const { openedNoteId, openedNotes } = props.note;
-        if (openedNoteId && openedNotes[openedNoteId]) {
-            if (openedNotes[openedNoteId].fav) {
+        const { openedNote } = props.note;
+        if (openedNote.id) {
+            if (openedNote.fav) {
                 btns.push(<Button key="noFav" onClick={handleChangeFav} type='text'><StarFilled className={styles.fav} /></Button>)
             } else {
                 btns.push(<Button key="fav" onClick={handleChangeFav} type='text'><StarOutlined /></Button>)
@@ -207,7 +211,7 @@ const Content = React.forwardRef((props, ref) => {
 
 
     const menu = (
-        <Menu onClick={e => closeNotes(e.key === '1' ? false : true)}>
+        <Menu onClick={e => closeNotes(e.key)}>
             <Menu.Item key="1">关闭其他</Menu.Item>
             <Menu.Item key="2">关闭所有</Menu.Item>
         </Menu>
@@ -218,28 +222,10 @@ const Content = React.forwardRef((props, ref) => {
         { icon: '&#xe8bf;', name: "two" },
         { icon: '&#xe88e;', name: "one" }]
 
-    const menu1 = (
-        <Menu
-            items={[
-                {
-                    key: '1',
-                    label: '1st item',
-                },
-                {
-                    key: '2',
-                    label: '2nd item',
-                },
-                {
-                    key: '3',
-                    label: '3rd item',
-                },
-            ]}
-        />
-    );
 
     const render = function () {
         const { isMobile } = props;
-        const { openedNoteId, openedNotes } = props.note;
+        const { openedNote, openedNotes } = props.note;
         const { menuStyle, setMenuStyle } = props;
         const loading = props.loading.effects["note/openNote"] || false;
         return (
@@ -263,9 +249,9 @@ const Content = React.forwardRef((props, ref) => {
                             <Tabs
                                 hideAdd
                                 onTabClick={handleActiveNote}
-                                activeKey={openedNoteId}
+                                activeKey={openedNote.id}
                                 type="editable-card"
-                                onEdit={handleRemoveTab}
+                                onEdit={closeNotes}
                             >
                                 {Object.keys(openedNotes).map(key => (
                                     <TabPane tab={openedNotes[key].name} key={openedNotes[key].id}>

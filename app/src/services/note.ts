@@ -107,6 +107,11 @@ export async function updateNoteText(params: NoteItem) {
       ...encryptionNote(params),
       method: 'post',
     },
+  }).then(res => {
+    if (res) {
+      res.result = decryptNote(res.result);
+    }
+    return res;
   });
 }
 

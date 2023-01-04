@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, notification, Button } from 'antd';
-import { ExclamationCircleOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, } from '@ant-design/icons';
+import { Modal, notification, Button, Menu, Dropdown } from 'antd';
+import { ExclamationCircleOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, SwapOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import HocMedia from "@/components/HocMedia";
@@ -55,9 +55,9 @@ const NoteList: React.FC = (props, ref) => {
         sortData(noteList);
     }, [props.sortType])
 
-    const sortData = (items)=>{
+    const sortData = (items) => {
         const { sortType } = props;
-        
+
         if (sortType) {
             if (sortType == "default") {
                 items = items.sort((a, b) => a.isLeaf - b.isLeaf)
@@ -72,39 +72,29 @@ const NoteList: React.FC = (props, ref) => {
 
 
     const handleNoteClick = (note: NoteItem) => {
-        const { isMobile } = props;
-        if (note.isLeaf) {
-            const { openedNoteId } = props.note;
-            if (openedNoteId != note.id) {
-                props.dispatch({
-                    type: 'note/openNote',
-                    payload: note.id,
-                })
-            }
 
-            if (isMobile) {
-                props.dispatch({
-                    type: 'note/refreshShowMenu',
-                    payload: false,
-                })
-            }
-        } else {
-            const { listParentNote } = props.note;
-            if (listParentNote.id != note.id) {
-                props.dispatch({
-                    type: 'note/refreshListParentNote',
-                    payload: note
-                })
-            }
+        const { isMobile } = props;
+
+        const { openedNote } = props.note;
+        if (openedNote.id != note.id) {
+            props.dispatch({
+                type: 'note/openNote',
+                payload: note.id,
+            })
+
+        }
+
+        if (isMobile) {
+            props.dispatch({
+                type: 'note/refreshShowMenu',
+                payload: false,
+            })
         }
 
     }
 
 
-    const handleDelete = (e, note) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+    const handleDelete = note => {
         confirm({
             title: `确定要删除 ${note.name}?`,
             icon: <ExclamationCircleOutlined />,
@@ -112,7 +102,7 @@ const NoteList: React.FC = (props, ref) => {
 
                 props.dispatch({
                     type: 'note/deleteNote',
-                    payload: note,
+                    payload: note.id,
                 }).then(() => {
                     notification["info"]({
                         message: '删除成功',
@@ -134,9 +124,21 @@ const NoteList: React.FC = (props, ref) => {
         getData(pageNo + 1);
     }
 
+    const operMenu = node =>
+        <Menu>
+            {props.handleChangeParent ?
+                <Menu.Item onClick={e => props.handleChangeParent(node)}>
+                    <SwapOutlined />&nbsp;&nbsp;移动
+                </Menu.Item> : ""}
+            <Menu.Item onClick={e => handleDelete(node)}>
+                <DeleteOutlined />&nbsp;&nbsp;删除
+            </Menu.Item>
+        </Menu>
+
+
     const render = function () {
 
-        const { openedNoteId } = props.note;
+        const { openedNote } = props.note;
 
         const { data = noteList, noDelete } = props;
 
@@ -146,17 +148,16 @@ const NoteList: React.FC = (props, ref) => {
                     <ul> {data.map(item => {
                         const note = transportNote(item);
                         const { id, title } = note;
-                        const isActive = openedNoteId == id;
+                        const isActive = openedNote.id == id;
                         return <li key={id} >
                             <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => handleNoteClick(item)}>
                                 {item.isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
                                 <div className={styles.noteTitle} draggable={true} >&nbsp;&nbsp;{title}</div>
                                 {noDelete ? "" :
-                                    <div className={styles.menu}
-                                        onClick={e => handleDelete(e, note)}
-                                    >
-                                        <DeleteOutlined />
-                                    </div>}
+                                    <Dropdown overlay={operMenu(note)} trigger={['click']}>
+                                        <div className={styles.menu} onClick={e => e.stopPropagation()}>
+                                            <EllipsisOutlined />
+                                        </div></Dropdown>}
                             </div>
                         </li>
 
@@ -165,7 +166,7 @@ const NoteList: React.FC = (props, ref) => {
                     </ul>
 
                 </div>
-            </div>
+            </div >
         );
     };
     return render();

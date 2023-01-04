@@ -1,8 +1,8 @@
 .container {
-  flex:1;
-  padding: 5px 0;
-  overflow: hidden;
-  display: flex;
+  flex          : 1;
+  padding       : 5px 0;
+  overflow      : hidden;
+  display       : flex;
   flex-direction: column;
 
   .list {
@@ -16,14 +16,14 @@
   }
 
   .menuItem {
-    display        : flex;
-    justify-content: flex-start;
-    line-height    : 30px;
-    padding        : 5px 15px;
-    cursor         : pointer;
-    align-items    : center;
-    border-radius  : 15px;
-    margin         : 0 5px;
+    display           : flex;
+    justify-content   : flex-start;
+    line-height       : 30px;
+    padding           : 2px 15px;
+    cursor            : pointer;
+    align-items       : center;
+    // border-radius  : 15px;
+    // margin         : 0 5px;
 
 
     &:hover {
@@ -45,13 +45,13 @@
     .menu {
       display        : none;
       transition     : .2s;
-      width          : 20px;
       align-items    : center;
       justify-content: center;
+      padding        : 0 15px;
 
 
       &:hover {
-        color: #e74c3c;
+        color: rgba(0, 0, 0, 0.9);
 
         span {
           scale: 1.05;
