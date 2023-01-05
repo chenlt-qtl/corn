@@ -143,19 +143,21 @@ const NoteModel: NoteModelType = {
             let result = yield call(updateParent, id, parentId);
             if (result) {
                 const note = result.result;
-
                 if (openedNotes[id]) {
+                    const { parentId, parentIds } = note;
+                    const newNote = { ...openedNotes[id], parentId, parentIds }
+
                     yield put({
                         type: "refreshOpenedNotes",
-                        payload: { ...openedNotes, id: note }
+                        payload: { ...openedNotes, [id]: newNote }
                     });
 
-                }
-                if (openedNote.id == id) {
-                    yield put({
-                        type: "refreshOpenedNote",
-                        payload: { ...note }
-                    });
+                    if (openedNote.id == id) {
+                        yield put({
+                            type: "refreshOpenedNote",
+                            payload: newNote
+                        });
+                    }
                 }
 
                 yield put({

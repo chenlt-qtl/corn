@@ -32,15 +32,10 @@ const ChangeParent: React.FC = (props, ref) => {
     }
 
     const onSelect = ([_, id]) => {
-        console.log(id);
         setNewParentId(id)
     }
 
     const render = function () {
-
-        console.log(node);
-
-
         return (
             <Modal title="移动" visible={visible} onOk={handleChangeParent}
                 onCancel={onCancel}>
