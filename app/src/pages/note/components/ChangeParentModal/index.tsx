@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Modal, message, Card, Tree } from 'antd';
 import { connect } from 'umi';
 import HocMedia from "@/components/HocMedia";
@@ -9,6 +9,10 @@ const ChangeParent: React.FC = (props, ref) => {
     const { treeData, node, onCancel, visible } = props;
 
     const [newParentId, setNewParentId] = useState<String>("");
+
+    useEffect(() => {
+        setNewParentId(node.parentId)
+    }, [node])
 
     const handleChangeParent = () => {
         props.dispatch({
@@ -44,7 +48,7 @@ const ChangeParent: React.FC = (props, ref) => {
                     <label>移动到:</label>
                     <Card>
                         <Tree
-                            selectedKeys={[node.parentId]}
+                            selectedKeys={[newParentId]}
                             blockNode
                             multiple
                             showIcon={false}

@@ -136,7 +136,7 @@ const NoteTree: React.FC = (props, ref) => {
                     setSelectedKey(node.key)
                 }} onDoubleClick={() => setRootKey(node.key)}>
                     <div className={styles.title}>&nbsp;{node.title}</div>
-                    <Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown>
+                    {node.key == "0" ? "" : <Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown>}
                 </div>
                 }
             />
