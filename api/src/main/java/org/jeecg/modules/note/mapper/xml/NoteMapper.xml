@@ -5,9 +5,12 @@
     <select id="listSon" resultType="org.jeecg.modules.note.model.NoteModel">
         SELECT n.*
         FROM note_info n
-        WHERE n.create_by = #{createBy,jdbcType=VARCHAR} and is_leaf = 1
+        WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
         <if test="parentId != null">
             and n.parent_id = #{parentId,jdbcType=VARCHAR}
+        </if>
+        <if test="isLeaf != null">
+            and n.is_leaf = #{isLeaf}
         </if>
         order by n.name
     </select>

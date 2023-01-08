@@ -48,7 +48,7 @@ const NoteTree: React.FC = (props, ref) => {
         if (selectedKey != listParam.parentId) {
             props.dispatch({
                 type: 'note/refreshListParam',
-                payload: { parentId: selectedKey },
+                payload: { ...props.note.listParam, parentId: selectedKey },
             })
         }
     }, [selectedKey]);

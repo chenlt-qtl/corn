@@ -74,21 +74,24 @@ const NoteList: React.FC = (props, ref) => {
     const handleNoteClick = (note: NoteItem) => {
 
         const { isMobile } = props;
+        if (note.isLeaf) {
 
-        const { openedNote } = props.note;
-        if (openedNote.id != note.id) {
-            props.dispatch({
-                type: 'note/openNote',
-                payload: note.id,
-            })
+            const { openedNote } = props.note;
+            if (openedNote.id != note.id) {
+                props.dispatch({
+                    type: 'note/openNote',
+                    payload: note.id,
+                })
+            }
 
-        }
-
-        if (isMobile) {
-            props.dispatch({
-                type: 'note/refreshShowMenu',
-                payload: false,
-            })
+            if (isMobile) {
+                props.dispatch({
+                    type: 'note/refreshShowMenu',
+                    payload: false,
+                })
+            }
+        } else {
+            props.onFoldClick && props.onFoldClick(note);
         }
 
     }

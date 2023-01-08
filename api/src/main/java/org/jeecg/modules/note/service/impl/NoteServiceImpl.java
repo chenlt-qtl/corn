@@ -54,8 +54,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     private INoteHistoryService noteHistoryService;
 
     @Override
-    public List<NoteModel> listNote(String createBy, String parentId) {
-        return noteMapper.listSon(createBy, parentId);
+    public List<NoteModel> listNote(String createBy, String parentId, String isLeaf) {
+        return noteMapper.listSon(createBy, parentId, isLeaf);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         QueryWrapper<Note> queryWrapper = new QueryWrapper();
         queryWrapper.select("id", "name", "parent_id", "parent_ids", "is_leaf");
         queryWrapper.eq("create_by", getUsername());
-        queryWrapper.like("parent_ids",parentId);
+        queryWrapper.like("parent_ids", parentId);
         if (!withLeaf) {
             //不要叶子
             queryWrapper.eq("is_leaf", 0);
@@ -155,8 +155,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             if (!withLeaf) {
                 queryWrapper.eq("is_leaf", 1);
             }
-            if(StringUtils.isNotBlank(parentId)){
-                queryWrapper.eq("parent_id",parentId);
+            if (StringUtils.isNotBlank(parentId)) {
+                queryWrapper.eq("parent_id", parentId);
             }
             queryWrapper.select("id", "name", "parent_id", "parent_ids", "is_leaf");
             queryWrapper.eq("create_by", getUsername());

@@ -37,7 +37,7 @@ const NoteModel: NoteModelType = {
         openedNote: {},
         openedNotes: {},
         showMenu: true,
-        listParam: { parentId: "0" },
+        listParam: { parentId: "0", isLeaf: 1 },
         treeParam: { parentId: "0" },
     },
 

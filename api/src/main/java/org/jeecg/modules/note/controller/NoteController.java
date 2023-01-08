@@ -70,11 +70,11 @@ public class NoteController {
      * @return
      */
     @GetMapping(value = "/listNote")
-    public Result queryNote(String parentId) {
+    public Result queryNote(String parentId,String isLeaf ) {
         Result result = new Result<>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         try {
-            List<NoteModel> list = noteService.listNote(sysUser.getUsername(), parentId);
+            List<NoteModel> list = noteService.listNote(sysUser.getUsername(), parentId,isLeaf);
 
             for (NoteModel note : list) {
                 note.encryption();
