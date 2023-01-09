@@ -2,7 +2,6 @@ package org.jeecg.modules.note.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.lucene.search.BooleanClause;
 import org.jeecg.modules.note.entity.Note;
 import org.jeecg.modules.note.entity.NoteContent;
 import org.jeecg.modules.note.model.NoteModel;
