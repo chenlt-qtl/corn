@@ -59,6 +59,11 @@ export default {
                     path: '/exam',
                     name: '例子',
                     component: './exam',
+                },
+                {
+                    path: '/food',
+                    component: './food',
+                    name: '食谱',
                 }
 
             ]

@@ -8,7 +8,7 @@ import LoginTimer from "@/components/LoginTimer"
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import HocMedia from "@/components/HocMedia";
 import menuConfig from '../../../config/menu';
-
+import logo from '@/assets/024-cactus.svg'
 
 const configs = menuConfig.routes.map(route => route.routes.map(i => ({ ...i })).filter(i => {
     i.path = route.path + i.path;
@@ -38,12 +38,18 @@ const loginOut = async () => {
 function HeaderLayout({ children, location, isMobile }: IRouteComponentProps) {
 
     const [activeUrl, setActiveUrl] = useState<string>('/');
+    const [activeName, setActiveName] = useState<string>('');
     const { initialState, setInitialState } = useModel('@@initialState');
     const [classNames, setClassNames] = useState<string[]>([styles.menu]);
     const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
 
     useEffect(() => {
+
         setActiveUrl(location.pathname);
+        const menu = menus.find(item => (item.path === location.pathname))
+        if (menu) {
+            setActiveName(menu.name)
+        }
     }, [location])
 
     const logout = () => {
@@ -63,12 +69,13 @@ function HeaderLayout({ children, location, isMobile }: IRouteComponentProps) {
     }
 
     return (
-        <div className={`${styles.container} ${isMobile?styles.isMobile:""}`}>
+        <div className={`${styles.container} ${isMobile ? styles.isMobile : ""}`}>
             <LoginTimer></LoginTimer>
             <header className={styles.header}>
                 <div className={styles.logo}>
-                    <a href="/">Acorn</a>
+                    <img src={logo}></img><a href="/">Cactus</a>
                 </div>
+                {isMobile ? <h1 className={styles.title}>{activeName}</h1> : ""}
                 {isMobile ?
                     <nav>
                         <div className={classNames.join(" ")} onClick={handleMenuClick}>
@@ -76,7 +83,7 @@ function HeaderLayout({ children, location, isMobile }: IRouteComponentProps) {
                                 {isMenuVisible ? <CloseOutlined /> : <MenuOutlined />}
                             </div>
                             <ul>
-                                {menus.map(menu=><li key={menu.path}><Link to={menu.path}>{menu.name}</Link></li>)}
+                                {menus.map(menu => <li key={menu.path}><Link to={menu.path}>{menu.name}</Link></li>)}
                             </ul>
                         </div>
                     </nav> :

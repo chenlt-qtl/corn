@@ -1,0 +1,8 @@
+.toolbar {
+  text-align: right;
+  padding: 20px;
+}
+.amount {
+  display: block;
+  margin: 12px 0;
+}

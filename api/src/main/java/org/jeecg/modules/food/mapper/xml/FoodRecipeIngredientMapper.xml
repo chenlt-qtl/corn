@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.food.mapper.FoodRecipeIngredientMapper">
+<select id="getByRecipe" resultType="org.jeecg.modules.food.vo.RecipeRelVo">
+    SELECT n.*,a.name
+    FROM food_recipe_ingredient n left join food_ingredient a on a.id=n.ingredient_id
+    WHERE n.id = #{id}
+    and n.status = 1
+</select>
+</mapper>

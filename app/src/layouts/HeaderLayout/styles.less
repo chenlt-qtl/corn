@@ -1,5 +1,9 @@
+.container{
+  display: flex;
+  flex-direction: column;
+}
+
 .main {
-  flex  : 1;
   height: calc(100vh - 75px);
   width : 100vw;
 
@@ -11,6 +15,7 @@
 }
 
 .header {
+  
   color          : #777777;
   font-family    : "Poppins", sans-serif;
   font-size      : 14px;
@@ -24,13 +29,22 @@
 }
 
 .logo {
-  display: inline-block;
-
+  display: flex;
+  img{
+    height: 25px;
+    width: 25px;
+  }
   a {
+    padding-left: 10px;
     color      : #000;
     font-size  : 22px;
     font-weight: 400;
   }
+}
+
+.title{
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .nav {
@@ -165,7 +179,7 @@
   .logo {
 
     a {
-      font-size: 16px;
+      display: none;
     }
   }
 }

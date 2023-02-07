@@ -53,9 +53,10 @@ const ListMenu: React.FC = (props, ref) => {
 
 
     const goBack = async (home: boolean = false) => {
-
+        
         let parentNote;
-        if (home) {
+        
+        if (home || rootNote.parentId == "0") {
             parentNote = homeNote;
         } else if (rootNote.parentId) {
             const res = await queryNoteById(rootNote.parentId);

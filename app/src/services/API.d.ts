@@ -44,4 +44,25 @@ declare namespace API {
     tabs: string[];
     value: string[];
   }
+
+  export interface Recipe {
+    id: number;
+    name: string;
+    recipeRelVoList:object[]
+  }
+
+  export interface Ingredient {
+    id: number;
+    name: string;
+    expirationDate:number;
+    status:number;
+  }
+
+  export interface RecipeRel {
+    id?: number;
+    recipeId: number;
+    ingredientId:number;
+    amount:string;
+  }
+  
 }

@@ -37,8 +37,9 @@ export async function queryNoteById(id: string) {
   })
 }
 
-export async function queryNote({ parentId = 0 }) {
-  return request('/api/note/listNote?parentId=' + parentId).then(res => {
+export async function queryNote({ parentId = 0, isLeaf }) {
+  
+  return request('/api/note/listNote?parentId=' + parentId + (isLeaf?"&isLeaf=" + isLeaf:"")).then(res => {
 
     if (res) {
       res.result = res.result.map(item => decryptNote(item))

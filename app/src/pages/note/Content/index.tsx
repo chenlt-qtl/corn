@@ -112,7 +112,7 @@ const Content = React.forwardRef((props, ref) => {
             if (openedNote && openedNote.id == key) {
                 props.dispatch({
                     type: 'note/refreshOpenedNote',
-                    payload: Object.values(newOpenedNotes)[0]
+                    payload: Object.values(newOpenedNotes)[0]||{}
                 })
                 setDisplayIndex(0)
                 setSaveStatus(0)
