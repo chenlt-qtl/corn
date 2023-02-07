@@ -6,11 +6,12 @@ import Resize from './Resize';
 import EditFolderModal from '../components/EditFolderModal';
 import NoteList from '../components/NoteList';
 import NoteTree from './NoteTree';
-import { Button, Spin } from "antd"
-import { CaretLeftOutlined } from '@ant-design/icons';
+import { Button, Spin, Modal, notification } from "antd"
+import { CaretLeftOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import ChangeParentModal from '../components/ChangeParentModal';
 import { NoteNode } from '@/data/note'
 
+const { confirm } = Modal;
 let tempHeight = localStorage.getItem("filesHeight") || 400;
 let onMouseUpListerner = false;
 
@@ -24,6 +25,7 @@ const TreeMenu: React.FC = (props, ref) => {
     const [selectedKey, setSelectedKey] = useState<string>(rootKey)
     const [height, setHeight] = useState<number>(tempHeight);
     const [treeData, setTreeData] = useState<NoteNode[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
 
     const handleRename = (node) => {
         setFolderModalVisible(true);
@@ -31,13 +33,17 @@ const TreeMenu: React.FC = (props, ref) => {
     }
 
     const handleChangeParent = (node) => {
-        console.log(node);
-        
         setEditNode(node);
         setParentModalVisible(true);
     }
 
     useEffect(() => {
+        reloadAllTreeData()
+    }, [props.note.treeParam]);
+
+
+    const reloadAllTreeData = () => {
+        setLoading(true)
         queryTreeMenu("0", false).then(({ result }) => {
             const nodes = {
                 key: "0",
@@ -46,9 +52,9 @@ const TreeMenu: React.FC = (props, ref) => {
                 children: result
             }
             setTreeData([nodes])
+            setLoading(false)
         })
-    }, [props.note.treeParam]);
-
+    }
 
 
     const onResize = e => {
@@ -68,10 +74,27 @@ const TreeMenu: React.FC = (props, ref) => {
         onMouseUpListerner = false;
     }
 
+    const handleDelete = (node) => {
+        confirm({
+            title: `确定要删除 ${node.title}?`,
+            icon: <ExclamationCircleOutlined />,
+            onOk() {
+
+                props.dispatch({
+                    type: 'note/deleteNote',
+                    payload: node.key,
+                }).then(() => {
+                    notification["info"]({
+                        message: '删除成功',
+                    });
+                    reloadAllTreeData();
+                });
+            }
+        });
+    }
+
 
     const render = function () {
-
-        const loading = props.loading.effects["note/queryMenuTree"] || false;
 
         return (
 
@@ -89,6 +112,7 @@ const TreeMenu: React.FC = (props, ref) => {
                         setSelectedKey={setSelectedKey}
                         setRootKey={setRootKey}
                         treeData={treeData}
+                        onDelete={handleDelete}
                     ></NoteTree>
                 </div>
                 <Resize resize={onResize}></Resize>
@@ -102,4 +126,4 @@ const TreeMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(TreeMenu);
+export default connect(({ note }: { note: NoteModelState }) => ({ note }))(TreeMenu);

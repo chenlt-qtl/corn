@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Tree, Modal, notification, Dropdown, Menu } from 'antd';
-import { DeleteOutlined, ExclamationCircleOutlined, EditOutlined, EllipsisOutlined, SwapOutlined } from '@ant-design/icons';
+import { Tree, Dropdown, Menu } from 'antd';
+import { DeleteOutlined, EditOutlined, EllipsisOutlined, SwapOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { NoteNode } from '@/data/note'
 
 
-const { confirm } = Modal;
 
 const { DirectoryTree } = Tree;
 
@@ -29,7 +28,7 @@ function getNodes(pId, nodes) {
 
 const NoteTree: React.FC = (props, ref) => {
 
-    const { treeData: allTreeData } = props;
+    const { treeData: allTreeData, onDelete } = props;
 
     const { selectedKey, rootKey, setSelectedKey, setRootKey } = props;
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
@@ -74,35 +73,6 @@ const NoteTree: React.FC = (props, ref) => {
     }
 
 
-    const handleDelete = (node) => {
-        confirm({
-            title: `确定要删除 ${node.title}?`,
-            icon: <ExclamationCircleOutlined />,
-            onOk() {
-
-                props.dispatch({
-                    type: 'note/deleteNote',
-                    payload: node.key,
-                }).then(() => {
-                    notification["info"]({
-                        message: '删除成功',
-                    });
-                });
-            }
-        });
-    }
-
-    const onDrop: TreeProps['onDrop'] = ({ node, dragNode }) => {
-
-        const newParentId = node.key;
-        if (dragNode && dragNode.parentId != newParentId && dragNode.key != newParentId) {
-            props.dispatch({
-                type: 'note/updateParent',
-                payload: { id: dragNode.key, parentId: newParentId },
-            })
-        }
-    }
-
     const operMenu = node => (
         <Menu>
             <Menu.Item onClick={e => props.handleRename(node)}>
@@ -111,7 +81,7 @@ const NoteTree: React.FC = (props, ref) => {
             <Menu.Item onClick={e => props.handleChangeParent(node)}>
                 <SwapOutlined />&nbsp;&nbsp;移动
             </Menu.Item>
-            <Menu.Item onClick={e => handleDelete(node)}>
+            <Menu.Item onClick={e => onDelete(node)}>
                 <DeleteOutlined />&nbsp;&nbsp;删除
             </Menu.Item>
         </Menu>
@@ -129,8 +99,6 @@ const NoteTree: React.FC = (props, ref) => {
                 treeData={treeData}
                 autoExpandParent={false}
                 onExpand={handleExpand}
-                draggable
-                onDrop={onDrop}
                 titleRender={node => <div className={styles.treeNode} onClick={e => {
                     e.stopPropagation();
                     setSelectedKey(node.key)
