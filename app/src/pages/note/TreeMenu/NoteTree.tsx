@@ -28,9 +28,7 @@ function getNodes(pId, nodes) {
 
 const NoteTree: React.FC = (props, ref) => {
 
-    const { treeData: allTreeData, onDelete } = props;
-
-    const { selectedKey, rootKey, setSelectedKey, setRootKey } = props;
+    const { treeData: allTreeData, onDelete, selectedKey, rootKey, setSelectedKey, setRootKey } = props;
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
     const [treeData, setTreeData] = useState<NoteNode[]>([])
 
@@ -72,6 +70,22 @@ const NoteTree: React.FC = (props, ref) => {
         setExpandedKeys(value);
     }
 
+    const onNodeSelect = (e, node) => {
+
+        e.stopPropagation();
+        let newExpandedKeys;
+
+        if (expandedKeys.includes(node.key)) {
+            newExpandedKeys = expandedKeys.filter(i => i != node.key);
+        } else {
+            newExpandedKeys = [node.key, ...(node.parentIds || "").split("/")]
+        }
+
+        
+        setExpandedKeys(newExpandedKeys)
+        setSelectedKey(node.key)
+    }
+
 
     const operMenu = node => (
         <Menu>
@@ -99,10 +113,7 @@ const NoteTree: React.FC = (props, ref) => {
                 treeData={treeData}
                 autoExpandParent={false}
                 onExpand={handleExpand}
-                titleRender={node => <div className={styles.treeNode} onClick={e => {
-                    e.stopPropagation();
-                    setSelectedKey(node.key)
-                }} onDoubleClick={() => setRootKey(node.key)}>
+                titleRender={node => <div className={styles.treeNode} onClick={e => onNodeSelect(e, node)} onDoubleClick={() => setRootKey(node.key)}>
                     <div className={styles.title}>&nbsp;{node.title}</div>
                     {node.key == "0" ? "" : <Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown>}
                 </div>
