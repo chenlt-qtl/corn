@@ -10,9 +10,9 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.util.oConvertUtils;
+import org.seed.common.api.vo.Result;
+import org.seed.common.system.query.QueryGenerator;
+import oConvertUtils;
 import ${bussiPackage}.entity.${entityPackage}.${entityName};
 import ${bussiPackage}.service.${entityPackage}.I${entityName}Service;
 

@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jeecgframework.boot</groupId>
-	<artifactId>jeecg-boot</artifactId>
+	<artifactId>seed</artifactId>
 	<version>1.1.0</version>
 	<packaging>jar</packaging>
 
@@ -236,6 +236,31 @@
 			<groupId>com.googlecode.mp4parser</groupId>
 			<artifactId>isoparser</artifactId>
 			<version>1.1.22</version>
+		</dependency>
+
+		<!-- lucene-->
+		<dependency>
+			<groupId>com.github.magese</groupId>
+			<artifactId>ik-analyzer</artifactId>
+			<version>8.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>8.11.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.lucene</groupId>
+					<artifactId>lucene-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>8.11.1</version>
 		</dependency>
 		  
 	</dependencies>

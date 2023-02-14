@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.seed.modules.note.mapper.NoteMapper">
+
+    <select id="listSon" resultType="org.seed.modules.note.model.NoteModel">
+        SELECT n.*
+        FROM note_info n
+        WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
+        <if test="parentId != null">
+            and n.parent_id = #{parentId,jdbcType=VARCHAR}
+        </if>
+        <if test="isLeaf != null">
+            and n.is_leaf = #{isLeaf}
+        </if>
+        order by n.name
+    </select>
+
+    <select id="listAllChildren" resultType="org.seed.modules.note.entity.Note">
+        SELECT n.id,n.name,n.parent_id,n.parent_ids,n.is_leaf
+        <if test="detail == true">
+            <![CDATA[ ,n.tag,n.source,n.create_time,n.create_by,
+        n.update_time,n.update_by,n.status ]]>
+        </if>
+        FROM note_info n
+        WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
+        <if test="parentId != null">
+            <![CDATA[ and n.parent_ids like CONCAT('%','${parentId}','%' ) ]]>
+        </if>
+        order by n.name
+    </select>
+
+    <select id="listAllChildrenDetail" resultType="org.seed.modules.note.model.NoteModel">
+        SELECT n.id,n.name,n.parent_id,n.parent_ids,n.is_leaf,n.tag,n.source,n.content_id,c.text
+        FROM note_info n left join note_content c on n.content_id = c.id
+        WHERE n.create_by = #{createBy}
+        and (n.parent_ids like CONCAT('%','${parentId}','%' ) or n.id = #{parentId})
+        order by n.name
+    </select>
+
+    <select id="getNameByIds" resultType="org.seed.modules.note.entity.Note">
+        SELECT n.id,n.name
+        FROM note_info n
+        where id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            <![CDATA[ #{id} ]]>
+        </foreach>
+    </select>
+    <select id="getByIds" resultType="org.seed.modules.note.entity.Note">
+        SELECT *
+        FROM note_info n
+        where id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            <![CDATA[ #{id} ]]>
+        </foreach>
+    </select>
+
+    <select id="getNoteCount" resultType="int">
+        SELECT count(*)
+        FROM (
+        select a.id,a.name,b.text from note_info a join note_content b on a.content_id=b.id where
+        a.create_by=#{createBy}
+        <if test="searchStr != null">
+            and (a.name like concat("%",#{searchStr},"%") or b.text like concat("%",#{searchStr},"%"))
+        </if>
+        ) a
+    </select>
+
+
+
+</mapper>

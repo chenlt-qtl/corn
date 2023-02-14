@@ -21,7 +21,7 @@ jeecg:
 logging:
   level:
     root: INFO
-    org.jeecg.modules: DEBUG
+    org.seed.modules: DEBUG
   root:
     appender: Console
     path: .
