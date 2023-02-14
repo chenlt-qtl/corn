@@ -115,7 +115,7 @@ const NoteTree: React.FC = (props, ref) => {
                 onExpand={handleExpand}
                 titleRender={node => <div className={styles.treeNode} onClick={e => onNodeSelect(e, node)} onDoubleClick={() => setRootKey(node.key)}>
                     <div className={styles.title}>&nbsp;{node.title}</div>
-                    {node.key == "0" ? "" : <Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown>}
+                    {node.key == "0" ? "" : <div onClick={e=>e.stopPropagation()}><Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown></div>}
                 </div>
                 }
             />
