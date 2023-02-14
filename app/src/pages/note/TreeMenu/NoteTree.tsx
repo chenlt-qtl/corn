@@ -9,16 +9,16 @@ import { NoteNode } from '@/data/note'
 
 const { DirectoryTree } = Tree;
 
-function getNodes(pId, nodes) {
+function getNodes(id, nodes) {
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        if (node.key == pId) {
+        if (node.key == id) {
             return node;
         }
     }
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        const result = getNodes(pId, node.children)
+        const result = getNodes(id, node.children)
         if (result) {
             return result;
         }
@@ -53,14 +53,9 @@ const NoteTree: React.FC = (props, ref) => {
     useEffect(() => {
         const { openedNote } = props.note;
 
-        if (openedNote && openedNote.parentIds) {
-            const expandedKeys = (openedNote.parentIds || "").split("/")
-
-            setExpandedKeys([openedNote.id, ...expandedKeys])
-        }
-
-        if (openedNote.parentId != selectedKey) {
-            setSelectedKey(openedNote.parentId);
+        if(openedNote.id){
+            const parent = getNodes(openedNote.parentId,treeData)
+            onNodeSelect(null, parent)
         }
 
     }, [props.note.openedNote]);
@@ -70,18 +65,25 @@ const NoteTree: React.FC = (props, ref) => {
         setExpandedKeys(value);
     }
 
+    const getParentIds = (node, parentIds) => {
+        if (node.parentId == rootKey) {
+            return [...parentIds, rootKey]
+        } else {
+            const parent = getNodes(node.parentId, treeData)
+            return getParentIds(parent, [...parentIds, parent.key]);
+        }
+    }
+
     const onNodeSelect = (e, node) => {
-
-        e.stopPropagation();
+        e && e.stopPropagation();
         let newExpandedKeys;
-
         if (expandedKeys.includes(node.key)) {
             newExpandedKeys = expandedKeys.filter(i => i != node.key);
         } else {
-            newExpandedKeys = [node.key, ...(node.parentIds || "").split("/")]
+            newExpandedKeys = [...getParentIds(node, []), node.key]
         }
 
-        
+
         setExpandedKeys(newExpandedKeys)
         setSelectedKey(node.key)
     }
@@ -115,7 +117,7 @@ const NoteTree: React.FC = (props, ref) => {
                 onExpand={handleExpand}
                 titleRender={node => <div className={styles.treeNode} onClick={e => onNodeSelect(e, node)} onDoubleClick={() => setRootKey(node.key)}>
                     <div className={styles.title}>&nbsp;{node.title}</div>
-                    {node.key == "0" ? "" : <div onClick={e=>e.stopPropagation()}><Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown></div>}
+                    {node.key == "0" ? "" : <div onClick={e => e.stopPropagation()}><Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown></div>}
                 </div>
                 }
             />
