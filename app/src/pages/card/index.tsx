@@ -97,8 +97,7 @@ const DiamondCard: React.FC<{}> = () => {
     const sum = () => {
         soundEffect(0)
         const total = result.reduce((total, item) => {
-            console.log(item);
-            return total + item.value
+            return total + parseInt(item.value)
         }, 0)
 
         Modal.info({

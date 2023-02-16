@@ -53,8 +53,8 @@ const NoteTree: React.FC = (props, ref) => {
     useEffect(() => {
         const { openedNote } = props.note;
 
-        if(openedNote.id){
-            const parent = getNodes(openedNote.parentId,treeData)
+        if (openedNote.id) {
+            const parent = getNodes(openedNote.parentId, treeData)
             onNodeSelect(null, parent)
         }
 
@@ -76,15 +76,16 @@ const NoteTree: React.FC = (props, ref) => {
 
     const onNodeSelect = (e, node) => {
         e && e.stopPropagation();
-        let newExpandedKeys;
-        if (expandedKeys.includes(node.key)) {
-            newExpandedKeys = expandedKeys.filter(i => i != node.key);
-        } else {
-            newExpandedKeys = [...getParentIds(node, []), node.key]
+        if (node.key != "0") {
+            let newExpandedKeys;
+            if (expandedKeys.includes(node.key)) {
+                newExpandedKeys = expandedKeys.filter(i => i != node.key);
+            } else {
+                newExpandedKeys = [...getParentIds(node, []), node.key]
+            }
+
+            setExpandedKeys(newExpandedKeys)
         }
-
-
-        setExpandedKeys(newExpandedKeys)
         setSelectedKey(node.key)
     }
 

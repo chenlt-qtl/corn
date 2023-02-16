@@ -64,6 +64,11 @@ export default {
                     path: '/food',
                     component: './food',
                     name: '食谱',
+                },
+                {
+                    path: '/card',
+                    component: './card',
+                    name: '卡片',
                 }
 
             ]
@@ -77,11 +82,6 @@ export default {
                     path: '/play/cn/:id',
                     component: './game/play/cnGame',
                 },
-                {
-                    path: '/card',
-                    component: './card',
-                    name: '卡片',
-                }
             ]
         }
     ]

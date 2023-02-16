@@ -5,8 +5,6 @@ import HocMedia from "@/components/HocMedia";
 import LeftMenu from "./LeftMenu";
 import Content from './Content'
 import ListMenu from './ListMenu'
-import { NoteItem } from '@/data/note';
-
 
 const NoteList: React.FC<{}> = (props) => {
 
