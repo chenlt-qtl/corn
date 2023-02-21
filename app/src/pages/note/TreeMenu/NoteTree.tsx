@@ -53,9 +53,9 @@ const NoteTree: React.FC = (props, ref) => {
     useEffect(() => {
         const { openedNote } = props.note;
 
-        if (openedNote.id) {
+        if (openedNote.parentId) {
             const parent = getNodes(openedNote.parentId, treeData)
-            onNodeSelect(null, parent)
+            parent && onNodeSelect(null, parent)
         }
 
     }, [props.note.openedNote]);
