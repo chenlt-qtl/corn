@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Spin, Anchor, Modal, Button } from 'antd';
+import { Spin, Anchor } from 'antd';
 import styles from './styles.less';
 import { WordItem, IcibaSentenceItem, SentenceItem } from '../data';
 import { connect } from 'umi';
