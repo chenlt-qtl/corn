@@ -60,7 +60,7 @@ const Login: React.FC<{}> = () => {
         replaceGoto();
 
         const token = msg.result!.token;
-        localStorage.setItem('jwToken',token)
+        localStorage.setItem('jwToken', token)
 
         setTimeout(() => {
           refresh();
