@@ -9,7 +9,11 @@ export default {
                 {
                     path: '/noteapp',
                     name: '笔记',
-                    component: 'note',
+                    component: './note',
+                },
+                {
+                    path: '/noteapp/:id',
+                    component: './note',
                 },
                 {
                     path: '/word',

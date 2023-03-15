@@ -4,8 +4,8 @@ import { HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
 import { queryNote, queryNoteById } from '@/services/note'
-import EditFolderModal from '../components/EditFolderModal';
-import NoteList from '../components/NoteList';
+import EditFolderModal from '../../../components/EditFolderModal';
+import NoteList from '../NoteList';
 import { NoteItem } from '@/data/note';
 
 

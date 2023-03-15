@@ -5,7 +5,7 @@ import styles from './styles.less';
 import { connect } from 'umi';
 import { queryTreeMenu, pageSearchNote } from '@/services/note'
 import { NoteNode } from '@/data/note';
-import NoteList from '../components/NoteList';
+import NoteList from '../NoteList';
 
 const Search: React.FC = (props, ref) => {
     const [searchStr, setSearchStr] = useState<string>("");

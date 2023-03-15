@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'umi';
 import { queryFav } from '@/services/note'
-import NoteList from '../components/NoteList';
+import NoteList from '../NoteList';
 import styles from './styles.less';
 
 

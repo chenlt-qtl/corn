@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { Tabs, Input, Menu, Dropdown, Button } from 'antd';
 import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, CloseCircleOutlined, ProfileOutlined } from '@ant-design/icons';
 import styles from './style.less';
-import { connect } from 'umi';
+import { connect, Link, history } from 'umi';
 import { guid } from '@/utils/utils'
 import MarkDown from './MarkDown'
 import 'font-awesome/css/font-awesome.min.css';
 import HocMedia from "@/components/HocMedia";
-
+import { queryNoteById } from '@/services/note'
+import { NoteItem } from '@/data/note';
 
 const { TabPane } = Tabs;
 
@@ -31,6 +32,10 @@ const Content = React.forwardRef((props, ref) => {
 
     const [showToc, setShowToc] = useState<boolean>(true);
 
+    const [note, setNote] = useState<NoteItem>({});
+
+    const [loading, setLoading] = useState<Boolean>(false);
+
     useEffect(() => {
         if (displayIndex) {//编辑
             setShowToc(false)
@@ -40,19 +45,34 @@ const Content = React.forwardRef((props, ref) => {
     }, [displayIndex])
 
     useEffect(() => {
-        const { openedNote } = props.note;
-        if (openedNote) {
-            if (openedNote.isNew) {
-                setDisplayIndex(1);
-            } else {
-                setDisplayIndex(0);
-            }
-            setTitle(openedNote.name)
-            setShowToc(true)
+        getData();
+    }, [props.match.params])
+
+    const getData = async () => {
+        const { id } = props.match.params;
+        if (!id) {
+            return;
+        } else if (id == "add") {
+            setDisplayIndex(1);
         } else {
-            setTitle("")
+            setLoading(true);
+            let result = await queryNoteById(id);
+            setLoading(false);
+            if (result) {
+                if (result.success) {
+                    const note = result.result;
+
+                    if (note) {
+                        setDisplayIndex(0);
+                        setTitle(note.name)
+                        setNote(note);
+                        setShowToc(true)
+                    }
+
+                }
+            }
         }
-    }, [props.note.openedNote])
+    }
 
     useImperativeHandle(ref, () => ({
         handleAddNote: (parentId: string) => {
@@ -112,7 +132,7 @@ const Content = React.forwardRef((props, ref) => {
             if (openedNote && openedNote.id == key) {
                 props.dispatch({
                     type: 'note/refreshOpenedNote',
-                    payload: Object.values(newOpenedNotes)[0]||{}
+                    payload: Object.values(newOpenedNotes)[0] || {}
                 })
                 setDisplayIndex(0)
                 setSaveStatus(0)
@@ -218,16 +238,17 @@ const Content = React.forwardRef((props, ref) => {
     );
 
     const togglerMenu = [
-        { icon: '&#xe88c;', name: "three" },
-        { icon: '&#xe8bf;', name: "two" },
-        { icon: '&#xe88e;', name: "one" }]
+        { icon: '&#xe88c;', type: 3 },
+        { icon: '&#xe8bf;', type: 2 },
+        { icon: '&#xe88e;', type: 1 }]
 
 
     const render = function () {
         const { isMobile } = props;
-        const { openedNote, openedNotes } = props.note;
-        const { menuStyle, setMenuStyle } = props;
-        const loading = props.loading.effects["note/openNote"] || false;
+        const { id } = props.match.params;
+        const { openedNotes } = props.note;
+        const { menuType = 3 } = history.location.query;
+
         return (
             <div className={`${styles.main} ${isMobile ? styles.isMobile : ""}`}>
                 {isMobile ?
@@ -240,16 +261,16 @@ const Content = React.forwardRef((props, ref) => {
                     (<div className={styles.tabPane}>
                         <div className={styles.btn} >
                             <div className={styles.toggler}>
-                                {togglerMenu.map(item => <span key={item.name}
-                                    className={`iconfont ${menuStyle == item.name ? styles.active : ""}`}
-                                    dangerouslySetInnerHTML={{ __html: item.icon }} onClick={() => setMenuStyle(item.name)}></span>)}
+                                {togglerMenu.map(item => <Link key={item.type} to={{ pathname: history.location.pathname, search: "menuType=" + item.type, state: { abc: item.type } }}>
+                                    <span className={`iconfont ${menuType == item.type ? styles.active : ""}`}
+                                        dangerouslySetInnerHTML={{ __html: item.icon }}></span></Link>)}
                             </div>
                         </div>
                         <div className={styles.tab}>
                             <Tabs
                                 hideAdd
                                 onTabClick={handleActiveNote}
-                                activeKey={openedNote.id}
+                                activeKey={id}
                                 type="editable-card"
                                 onEdit={closeNotes}
                             >

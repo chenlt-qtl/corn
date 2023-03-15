@@ -4,7 +4,7 @@ import Media from 'react-media'
 
 const HocMedia = Com => props => {
     return (
-        <Media query="(max-width:900px)">
+        <Media query="(max-width:992px)">
             {
                 isMobile => <Com {...props} isMobile={isMobile} />
             }

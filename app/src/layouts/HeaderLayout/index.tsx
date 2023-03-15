@@ -8,7 +8,7 @@ import LoginTimer from "@/components/LoginTimer"
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import HocMedia from "@/components/HocMedia";
 import menuConfig from '../../../config/menu';
-import logo from '@/assets/024-cactus.svg'
+import logo from '@/assets/种子.svg'
 
 const configs = menuConfig.routes.map(route => route.routes.map(i => ({ ...i })).filter(i => {
     i.path = route.path + i.path;
@@ -73,7 +73,7 @@ function HeaderLayout({ children, location, isMobile }: IRouteComponentProps) {
             <LoginTimer></LoginTimer>
             <header className={styles.header}>
                 <div className={styles.logo}>
-                    <img src={logo}></img><a href="/">Cactus</a>
+                    <img src={logo}></img><a href="/">Seed</a>
                 </div>
                 {isMobile ? <h1 className={styles.title}>{activeName}</h1> : ""}
                 {isMobile ?

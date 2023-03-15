@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import star from '@/assets/diamond.svg';
 import styles from './style.less';
 import { connect } from 'umi';
-import TreeMenu from '../TreeMenu'
-import Search from '../Search';
-import Fav from '../Fav';
+import TreeMenu from './components/TreeMenu'
+import Search from './components/Search';
+import Fav from './components/Fav';
+import FolderMenu from './components/FolderMenu';
 
-const LeftMenu: React.FC = (props, ref) => {
-   
-    const [menuType, setMenuType] = useState<String>("tree");
+const Menu: React.FC = (props, ref) => {
+
+    const [menuType, setMenuType] = useState<String>("folder");
 
 
-    const hideMenu = ()=>{
+    const hideMenu = () => {
         props.setMenuStyle("two");
     }
 
     const onMenuClick = value => {
-        if(props.menuStyle!= "three"){
+        if (props.menuStyle != "three") {
             props.setMenuStyle("three");
         }
         setMenuType(value);
@@ -80,8 +81,11 @@ const LeftMenu: React.FC = (props, ref) => {
                         {menuData[menuType] ? menuData[menuType].text : ""}
                     </header>
                     <article className={styles.body}>
+                        <div className={menuType == "folder" ? styles.show : styles.hide}>
+                            <FolderMenu onNoteClick={handleNoteClick}></FolderMenu>
+                        </div>
                         <div className={menuType == "tree" ? styles.show : styles.hide}>
-                            <TreeMenu onNoteClick={handleNoteClick} getDragNote={() => dragNote}></TreeMenu>
+                            <TreeMenu onNoteClick={handleNoteClick}></TreeMenu>
                         </div>
                         <div className={menuType == "search" ? styles.show : styles.hide}>
                             <Search onNoteClick={handleNoteClick} ></Search>
@@ -102,4 +106,4 @@ const LeftMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(LeftMenu);
+export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(Menu);
