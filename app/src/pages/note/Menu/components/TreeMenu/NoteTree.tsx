@@ -12,12 +12,8 @@ const NoteTree: React.FC = (props, ref) => {
 
 
     useEffect(() => {
-        console.log(333, props.selectFolder);
-
         if (props.selectFolder.id) {
             const { id } = props.selectFolder;
-            console.log(1111, id);
-
             expandNote({ ...props.selectFolder, key: id })
         }
 
@@ -51,7 +47,6 @@ const NoteTree: React.FC = (props, ref) => {
     const onNodeSelect = (e, node) => {
 
         e && e.stopPropagation();
-        expandNote(node)
         onSelectFolder({ ...node, id: node.key })
     }
 

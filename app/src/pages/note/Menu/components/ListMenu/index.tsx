@@ -19,9 +19,7 @@ const ListMenu: React.FC = (props, ref) => {
     }, [props.match.params]);
 
     useEffect(() => {
-        if (props.selectFolder.id) {
-            loadData()
-        }
+        loadData()
     }, [props.selectFolder]);
 
     const loadData = async () => {
@@ -50,6 +48,18 @@ const ListMenu: React.FC = (props, ref) => {
         setListData(listData.sort(i => i.isLeaf))
         setSortType('default')
 
+    }
+
+    const goBack = () => {
+
+        const { selectFolder = {}, onSelectFolder } = props;
+
+        if (!selectFolder.parentId || selectFolder.parentId == "0") {
+            onSelectFolder({})
+        } else {
+            const parentNote = getNode(selectFolder.parentId, props.note.noteTreeData);
+            onSelectFolder({ ...parentNote, id: parentNote.key })
+        }
     }
 
     const handleSort = e => {
@@ -91,7 +101,8 @@ const ListMenu: React.FC = (props, ref) => {
                 </div>
                 {type == "folder" ?
                     <div className={styles.toolbar}>
-                        <span className={styles.title}>{selectFolder.name}</span>
+                        {selectFolder.id ? <Button type="text" onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button> : ""}
+                        <span className={styles.title}>{selectFolder.name||"文件夹"}</span>
                         <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                     </div> : ""}
                 {type ?

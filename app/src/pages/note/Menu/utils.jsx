@@ -2,8 +2,8 @@ export function getFolderData(nodes) {
     return nodes.map(node => {
         let children;
         if (node.children) {
-            children = [...node.children.filter(i => !i.isLeaf)]
-            getFolderData(children)
+            const folders = [...node.children.filter(i => !i.isLeaf)]
+            children = getFolderData(folders)
         }
         return { ...node, children }
     })

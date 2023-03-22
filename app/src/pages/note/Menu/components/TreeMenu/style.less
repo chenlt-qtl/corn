@@ -1,7 +1,8 @@
 .content {
-  height          : 100%;
-  width           : 230px;
+  height      : 100%;
+  width       : 230px;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
+  overflow    : hidden;
 
   .toolbar {
     flex-shrink: 0;
@@ -36,6 +37,7 @@
   .tree {
     overflow: auto;
     flex    : 1;
+    height: calc(~"100% - 128px");
 
     //修改树节点样式
     :global {
@@ -43,10 +45,10 @@
       .ant-tree,
       .ant-tree .ant-tree-node-content-wrapper {
         background-color: transparent;
-        color: rgba(0, 0, 0, 0.65);
+        color           : rgba(0, 0, 0, 0.65);
       }
 
-      .ant-tree .ant-tree-treenode{
+      .ant-tree .ant-tree-treenode {
         padding-left: 20px;
       }
 
