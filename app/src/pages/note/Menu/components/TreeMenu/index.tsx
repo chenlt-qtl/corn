@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import styles from './style.less';
-import { connect } from 'umi';
-import { queryNote, queryTreeMenu } from '@/services/note'
-import Resize from './Resize';
+import { connect, history } from 'umi';
+import { queryTreeMenu } from '@/services/note'
 import EditFolderModal from '../../../components/EditFolderModal';
-import NoteList from '../NoteList';
 import NoteTree from './NoteTree';
-import { Button, Spin, Modal, notification } from "antd"
-import { CaretLeftOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Spin, Modal, notification } from "antd"
+import { StarOutlined, FolderOutlined, ExclamationCircleOutlined, FolderOpenOutlined } from '@ant-design/icons';
 import ChangeParentModal from '../../../components/ChangeParentModal';
 import { NoteNode } from '@/data/note'
+import { changeUrl } from '../../../utils'
+import { getFolderData } from '../../utils'
 
 const { confirm } = Modal;
-let tempHeight = localStorage.getItem("filesHeight") || 400;
-let onMouseUpListerner = false;
 
 const TreeMenu: React.FC = (props, ref) => {
 
@@ -21,11 +19,13 @@ const TreeMenu: React.FC = (props, ref) => {
     const [parentModalVisible, setParentModalVisible] = useState<boolean>(false);
 
     const [editNode, setEditNode] = useState<object>({});
-    const [rootKey, setRootKey] = useState<string>("0")
-    const [selectedKey, setSelectedKey] = useState<string>(rootKey)
-    const [height, setHeight] = useState<number>(tempHeight);
-    const [treeData, setTreeData] = useState<NoteNode[]>([])
-    const [loading, setLoading] = useState<boolean>(false)
+    const [treeData, setTreeData] = useState<NoteNode[]>([]);
+
+    useEffect(() => {
+        if (props.note.noteTreeData) {
+            setTreeData(getFolderData(props.note.noteTreeData));
+        }
+    }, [props.note.noteTreeData]);
 
     const handleRename = (node) => {
         setFolderModalVisible(true);
@@ -37,42 +37,6 @@ const TreeMenu: React.FC = (props, ref) => {
         setParentModalVisible(true);
     }
 
-    useEffect(() => {
-        reloadAllTreeData()
-    }, [props.note.treeParam]);
-
-
-    const reloadAllTreeData = () => {
-        setLoading(true)
-        queryTreeMenu("0", false).then(({ result }) => {
-            const nodes = {
-                key: "0",
-                title: "文件夹",
-                name: "文件夹",
-                children: result
-            }
-            setTreeData([nodes])
-            setLoading(false)
-        })
-    }
-
-
-    const onResize = e => {
-        const y = e.movementY
-        tempHeight = tempHeight - y;
-        setHeight(tempHeight);
-        localStorage.setItem("filesHeight", tempHeight);
-        if (!onMouseUpListerner) {
-            document.body.addEventListener('mouseup', onMouseUp);
-            onMouseUpListerner = true;
-        }
-    }
-
-    const onMouseUp = () => {
-        document.body.removeEventListener('mousemove', onResize);
-        document.body.removeEventListener('mouseup', onMouseUp);
-        onMouseUpListerner = false;
-    }
 
     const handleDelete = (node) => {
         confirm({
@@ -87,7 +51,7 @@ const TreeMenu: React.FC = (props, ref) => {
                     notification["info"]({
                         message: '删除成功',
                     });
-                    reloadAllTreeData();
+                    // loadTreeData();
                 });
             }
         });
@@ -95,29 +59,42 @@ const TreeMenu: React.FC = (props, ref) => {
 
 
     const render = function () {
+        const { type } = props.match.params;
+        const { selectFolder = {}, onSelectFolder } = props;
 
         return (
 
-            <Spin spinning={loading} wrapperClassName={styles.content}>
+            <div className={styles.content}>
                 <div className={styles.toolbar}>
-                    <Button className={styles.back} type='link' icon={<CaretLeftOutlined />} onClick={() => setRootKey("0")} disabled={rootKey == "0"}></Button>
-                    <EditFolderModal visible={folderModalVisible} parentId={selectedKey} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
+                    <EditFolderModal visible={folderModalVisible} parentId={selectFolder.id} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
                 </div>
-                <div className={styles.menuItem}>收藏夹</div>
-                <div className={styles.tree}>
-                    <NoteTree
-                        handleRename={handleRename}
-                        handleChangeParent={handleChangeParent}
-                        selectedKey={selectedKey}
-                        rootKey={rootKey}
-                        setSelectedKey={setSelectedKey}
-                        setRootKey={setRootKey}
-                        treeData={treeData}
-                        onDelete={handleDelete}
-                    ></NoteTree>
+                <div className={`${styles.menuItem} ${type == "fav" ? styles.active : ""}`} onClick={() => {
+                    changeUrl(props, "type", "fav")
+                }}>
+                    {/* <StarOutlined /> */}
+                    <i className="fa fa-star-o"></i>
+                    收藏夹
                 </div>
+                <div className={`${styles.menuItem} ${type == "folder" && !selectFolder.id ? styles.active : ""}`} onClick={() => {
+                    changeUrl(props, "type", "folder");
+                    onSelectFolder({})
+                }}>
+                    {type == "fav" ? <i className="fa fa-folder-o"></i> : <i className="fa fa-folder-open-o"></i>}
+                    文件夹
+                </div>
+                {type == "folder" ?
+                    <div className={styles.tree}>
+                        <NoteTree
+                            handleRename={handleRename}
+                            handleChangeParent={handleChangeParent}
+                            selectFolder={selectFolder}
+                            onSelectFolder={onSelectFolder}
+                            onDelete={handleDelete}
+                            treeData={treeData}
+                        ></NoteTree>
+                    </div> : ""}
                 <ChangeParentModal treeData={treeData} node={editNode} onCancel={() => setParentModalVisible(false)} visible={parentModalVisible}></ChangeParentModal>
-            </Spin >
+            </div >
         );
     };
     return render();

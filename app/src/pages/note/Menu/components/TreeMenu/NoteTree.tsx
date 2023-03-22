@@ -3,58 +3,31 @@ import { Tree, Dropdown, Menu } from 'antd';
 import { DeleteOutlined, EditOutlined, EllipsisOutlined, SwapOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
-import { NoteNode } from '@/data/note'
-
-
-
-const { DirectoryTree } = Tree;
-
-function getNodes(id, nodes) {
-    for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-        if (node.key == id) {
-            return node;
-        }
-    }
-    for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-        const result = getNodes(id, node.children)
-        if (result) {
-            return result;
-        }
-    }
-    return null;
-}
+import { getNode } from '../../utils';
 
 const NoteTree: React.FC = (props, ref) => {
 
-    const { treeData: allTreeData, onDelete, selectedKey, rootKey, setSelectedKey, setRootKey } = props;
+    const { treeData, onDelete, selectFolder, onSelectFolder } = props;
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-    const [treeData, setTreeData] = useState<NoteNode[]>([])
+
 
     useEffect(() => {
-        if (allTreeData && allTreeData.length > 0) {
-            const node = getNodes(rootKey, allTreeData);
-            setTreeData([node])
-            setExpandedKeys([rootKey])
-        }
-    }, [rootKey, allTreeData]);
+        console.log(333, props.selectFolder);
 
-    useEffect(() => {
-        const { listParam } = props.note;
-        if (selectedKey != listParam.parentId) {
-            props.dispatch({
-                type: 'note/refreshListParam',
-                payload: { ...props.note.listParam, parentId: selectedKey },
-            })
+        if (props.selectFolder.id) {
+            const { id } = props.selectFolder;
+            console.log(1111, id);
+
+            expandNote({ ...props.selectFolder, key: id })
         }
-    }, [selectedKey]);
+
+    }, [props.selectFolder]);
 
     useEffect(() => {
         const { openedNote } = props.note;
 
         if (openedNote.parentId) {
-            const parent = getNodes(openedNote.parentId, treeData)
+            const parent = getNode(openedNote.parentId, treeData)
             parent && onNodeSelect(null, parent)
         }
 
@@ -66,16 +39,27 @@ const NoteTree: React.FC = (props, ref) => {
     }
 
     const getParentIds = (node, parentIds) => {
-        if (node.parentId == rootKey) {
-            return [...parentIds, rootKey]
-        } else {
-            const parent = getNodes(node.parentId, treeData)
+        const parent = getNode(node.parentId, treeData)
+        if (parent) {
             return getParentIds(parent, [...parentIds, parent.key]);
+        } else {
+            return parentIds
         }
+
     }
 
     const onNodeSelect = (e, node) => {
+
         e && e.stopPropagation();
+        expandNote(node)
+        onSelectFolder({ ...node, id: node.key })
+    }
+
+    /**
+     * 展开节点
+     * @param node 
+     */
+    const expandNote = node => {
         if (node.key != "0") {
             let newExpandedKeys;
             if (expandedKeys.includes(node.key)) {
@@ -86,7 +70,7 @@ const NoteTree: React.FC = (props, ref) => {
 
             setExpandedKeys(newExpandedKeys)
         }
-        setSelectedKey(node.key)
+
     }
 
 
@@ -107,16 +91,16 @@ const NoteTree: React.FC = (props, ref) => {
 
     const render = function () {
         return (
-            <DirectoryTree
-                selectedKeys={[selectedKey]}
+            <Tree
+                selectedKeys={[selectFolder.id]}
                 blockNode
                 multiple
-                showIcon={false}
                 expandedKeys={expandedKeys}
                 treeData={treeData}
+                showIcon
                 autoExpandParent={false}
                 onExpand={handleExpand}
-                titleRender={node => <div className={styles.treeNode} onClick={e => onNodeSelect(e, node)} onDoubleClick={() => setRootKey(node.key)}>
+                titleRender={node => <div className={styles.treeNode} onClick={e => onNodeSelect(e, node)}>
                     <div className={styles.title}>&nbsp;{node.title}</div>
                     {node.key == "0" ? "" : <div onClick={e => e.stopPropagation()}><Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown></div>}
                 </div>

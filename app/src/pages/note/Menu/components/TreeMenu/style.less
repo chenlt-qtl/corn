@@ -1,21 +1,12 @@
 .content {
-  height: 100%;
-  width: 200px;
-
-  :global {
-    .ant-spin-container {
-      height        : 100%;
-      display       : flex;
-      flex-direction: column;
-      overflow      : hidden;
-      position      : relative;
-    }
-  }
+  height          : 100%;
+  width           : 230px;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
 
   .toolbar {
     flex-shrink: 0;
     text-align : center;
-    padding    : 10px 5px;
+    padding    : 10px 5px 24px 5px;
 
     :global {
       .ant-btn-round {
@@ -24,19 +15,51 @@
     }
   }
 
-  .menuItem{
-    padding: 2px 20px;
-    font-size: 12px;
+  .menuItem {
+    padding    : 2px 20px;
+    font-size  : 12px;
+    display    : flex;
+    align-items: center;
+    cursor     : pointer;
+
+    >i {
+      padding  : 5px 8px 4px 5px;
+      font-size: 16px;
+    }
+  }
+
+  .active {
+    background-color: rgba(205, 205, 205, 0.4);
+    border-left     : #f39c12 2px solid;
   }
 
   .tree {
     overflow: auto;
     flex    : 1;
-    padding : 5px 0 20px 0;
+
+    //修改树节点样式
+    :global {
+
+      .ant-tree,
+      .ant-tree .ant-tree-node-content-wrapper {
+        background-color: transparent;
+        color: rgba(0, 0, 0, 0.65);
+      }
+
+      .ant-tree .ant-tree-treenode{
+        padding-left: 20px;
+      }
+
+      .ant-tree-treenode-selected {
+        background-color: rgba(205, 205, 205, 0.4);
+        border-left     : #f39c12 2px solid;
+      }
+    }
 
     .treeNode {
-      display  : flex;
-      font-size: 12px;
+      display      : flex;
+      font-size    : 12px;
+      padding-right: 7px;
 
       .treeMenu {
         display: none;
@@ -55,105 +78,6 @@
       }
     }
 
-    :global {
-
-      .noteTreeMenu {
-        display: none;
-        padding: 0 10px;
-
-        &:hover {
-          scale: 1.05;
-        }
-      }
-
-      .delete {
-        color: #e74c3c;
-      }
-
-      .ant-tree {
-        background-color: rgba(205, 205, 205, 0);
-        color           : rgba(0, 0, 0, 0.65);
-      }
-
-      .ant-tree-switcher {
-        width: 6px;
-      }
-
-      .ant-tree-indent-unit {
-        width: 8px;
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode:hover::before {
-        background-color   : rgba(205, 205, 205, 0.2);
-        // border-radius   : 15px;
-        // margin          : 0 10px;
-        bottom             : 0;
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode {
-        padding-left: 25px;
-
-        &:hover {
-          .noteTreeMenu {
-            display: inline-block;
-          }
-        }
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode-selected:hover::before,
-      .ant-tree.ant-tree-directory .ant-tree-treenode-selected::before {
-        background-color   : rgba(205, 205, 205, 0.4);
-        border-left        : #f39c12 2px solid;
-        // border-radius   : 15px;
-        // margin          : 0 10px;
-        bottom             : 0;
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected {
-        color: rgba(0, 0, 0, 0.65);
-      }
-
-      .ant-tree.ant-tree-directory .ant-tree-treenode-selected .ant-tree-switcher {
-        color: rgba(0, 0, 0, 0.65);
-      }
-
-      .ant-tree-node-content-wrapper {
-        display   : flex;
-        overflow-x: hidden;
-      }
-
-      .ant-tree-title {
-
-        margin-right: 15px;
-        display     : inline-block;
-        width       : 100%;
-        overflow    : hidden;
-      }
-
-      .ant-tree .ant-tree-node-content-wrapper .ant-tree-iconEle {
-        flex-shrink: 0;
-      }
-    }
-
   }
 
-  .files {
-    border-top    : solid 1px rgba(0, 0, 0, 0.1);
-    padding       : 5px 0;
-    // height     : 400px;
-    overflow-y    : auto;
-    flex-shrink   : 0;
-  }
-
-  .resizeBar {
-    height    : 4px;
-    cursor    : n-resize;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .back {
-    position: absolute;
-    left    : 5px;
-    top     : 10px
-  }
 }

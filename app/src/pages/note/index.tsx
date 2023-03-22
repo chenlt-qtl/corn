@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'umi';
 import style from './style.less';
 import HocMedia from "@/components/HocMedia";
@@ -7,6 +7,33 @@ import Content from './Content'
 import ListMenu from './Menu/components/ListMenu'
 
 const NoteList: React.FC<{}> = (props) => {
+
+  useEffect(() => {
+    props.dispatch({
+      type: 'note/getNoteTree',
+    })
+  }, [])
+
+  useEffect(() => {
+    getOpenData();
+  }, [props.match.params])
+
+  const getOpenData = () => {
+    const { id } = props.match.params;
+    if (id) {
+      props.dispatch({
+        type: 'note/openNote',
+        payload: id,
+      })
+    } else {
+      props.dispatch({
+        type: 'note/refreshOpenedNote',
+        payload: {},
+      })
+    }
+
+  }
+
 
   const getComponent = () => {
     const { isMobile } = props;

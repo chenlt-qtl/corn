@@ -1,55 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, notification, Button, Menu, Dropdown } from 'antd';
+import { Modal, notification, Menu, Dropdown } from 'antd';
 import { ExclamationCircleOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, SwapOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
-import { connect } from 'umi';
-import HocMedia from "@/components/HocMedia";
 import { NoteNode, NoteItem } from '@/data/note';
-
+import { connect } from 'umi';
+import { changeUrl } from '../../../utils'
 
 const { confirm } = Modal;
 
-const pageSize = 50;
-
 const NoteList: React.FC = (props, ref) => {
-    const [hasMore, setHasMore] = useState<boolean>(false);
-    const [pageNo, setPageNo] = useState<number>(1);
+
     const [noteList, setNoteList] = useState<NoteNode[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(() => { 
-        getData(1);
-    }, [props.params])
-
-    const getData = pageNo => {
-        const { getDataMethod, params } = props;
-        if (getDataMethod) {//需要自己加载数据    
-            setLoading(true)
-            getDataMethod({ pageSize, ...params, pageNo }).then(({ result, success }) => {
-                setLoading(false)
-                let rows;
-                if (success) {
-
-                    if (result instanceof Array) {
-                        rows = result;
-                    } else {
-
-                        const { records, total, current } = result;
-
-                        if (current == 1) {
-                            rows = records;
-                        } else {
-                            rows = [...noteList, ...records]
-                        }
-                        const hasMore = total > rows.length;
-                        setHasMore(hasMore);
-                        setPageNo(pageNo);
-                    }
-                    sortData(rows);
-                }
-            })
-        }
-    }
+    useEffect(() => {
+        setNoteList(props.data);
+    }, [props.data])
 
     useEffect(() => {
         sortData(noteList);
@@ -73,25 +38,10 @@ const NoteList: React.FC = (props, ref) => {
 
     const handleNoteClick = (note: NoteItem) => {
 
-        const { isMobile } = props;
         if (note.isLeaf) {
-
-            const { openedNote } = props.note;
-            if (openedNote.id != note.id) {
-                props.dispatch({
-                    type: 'note/openNote',
-                    payload: note.id,
-                })
-            }
-
-            if (isMobile) {
-                props.dispatch({
-                    type: 'note/refreshShowMenu',
-                    payload: false,
-                })
-            }
+            changeUrl(props, "id", note.id)
         } else {
-            props.onFoldClick && props.onFoldClick(note);
+            props.onFoldClick && props.onFoldClick({ ...note, id: note.key });
         }
 
     }
@@ -123,10 +73,6 @@ const NoteList: React.FC = (props, ref) => {
         return { ...note, id, title }
     }
 
-    const loadMore = () => {
-        getData(pageNo + 1);
-    }
-
     const operMenu = node =>
         <Menu>
             {props.handleChangeParent ?
@@ -143,12 +89,12 @@ const NoteList: React.FC = (props, ref) => {
 
         const { openedNote } = props.note;
 
-        const { data = noteList, noDelete } = props;
+        const { noDelete } = props;
 
         return (
-            <div className={styles.container} style={props.style}>
+            <div className={styles.noteList} style={props.style}>
                 <div className={styles.list}>
-                    <ul> {data.map(item => {
+                    <ul> {noteList.map(item => {
                         const note = transportNote(item);
                         const { id, title } = note;
                         const isActive = openedNote.id == id;
@@ -165,9 +111,7 @@ const NoteList: React.FC = (props, ref) => {
                         </li>
 
                     })}
-                        {hasMore ? <li><Button type="link" loading={loading} onClick={loadMore}>加载更多</Button></li> : ""}
                     </ul>
-
                 </div>
             </div >
         );
@@ -175,4 +119,4 @@ const NoteList: React.FC = (props, ref) => {
     return render();
 };
 
-export default HocMedia(connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(NoteList));
+export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(NoteList);

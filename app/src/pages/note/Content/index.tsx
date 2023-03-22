@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
 import { Tabs, Input, Menu, Dropdown, Button } from 'antd';
-import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, CloseCircleOutlined, ProfileOutlined } from '@ant-design/icons';
+import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, CloseCircleOutlined, ProfileOutlined, InboxOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect, Link, history } from 'umi';
 import { guid } from '@/utils/utils'
@@ -45,34 +45,12 @@ const Content = React.forwardRef((props, ref) => {
     }, [displayIndex])
 
     useEffect(() => {
-        getData();
-    }, [props.match.params])
-
-    const getData = async () => {
-        const { id } = props.match.params;
-        if (!id) {
-            return;
-        } else if (id == "add") {
-            setDisplayIndex(1);
-        } else {
-            setLoading(true);
-            let result = await queryNoteById(id);
-            setLoading(false);
-            if (result) {
-                if (result.success) {
-                    const note = result.result;
-
-                    if (note) {
-                        setDisplayIndex(0);
-                        setTitle(note.name)
-                        setNote(note);
-                        setShowToc(true)
-                    }
-
-                }
-            }
+        if (displayIndex) {//编辑
+            setShowToc(false)
+        } else {//view
+            setShowToc(true)
         }
-    }
+    }, [displayIndex])
 
     useImperativeHandle(ref, () => ({
         handleAddNote: (parentId: string) => {
@@ -168,10 +146,10 @@ const Content = React.forwardRef((props, ref) => {
             payload: noteToSave
         }).then(res => {
             if (type == "title") {
-                props.dispatch({
-                    type: 'note/refreshListParam',
-                    payload: { ...props.note.listParam },
-                })
+                // props.dispatch({
+                //     type: 'note/refreshListParam',
+                //     payload: { ...props.note.listParam },
+                // })
             }
             if (res) {
                 if (props.note.openedNote.id == noteToSave.id) {
@@ -245,8 +223,7 @@ const Content = React.forwardRef((props, ref) => {
 
     const render = function () {
         const { isMobile } = props;
-        const { id } = props.match.params;
-        const { openedNotes } = props.note;
+        const { openedNotes, openedNote } = props.note;
         const { menuType = 3 } = history.location.query;
 
         return (
@@ -270,7 +247,7 @@ const Content = React.forwardRef((props, ref) => {
                             <Tabs
                                 hideAdd
                                 onTabClick={handleActiveNote}
-                                activeKey={id}
+                                activeKey={openedNote.id}
                                 type="editable-card"
                                 onEdit={closeNotes}
                             >
@@ -292,15 +269,15 @@ const Content = React.forwardRef((props, ref) => {
                             </Dropdown>
                         </div>
                     </div>)}
-
-                <div className={styles.title}>
-                    {isMobile ? "" : <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>}
-                    <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
-                    {isMobile ? "" : <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>}
-                </div>
-                <div className={styles.content}>
-                    <MarkDown handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDown>
-                </div>
+                {openedNote.id ? <>
+                    <div className={styles.title}>
+                        {isMobile ? "" : <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>}
+                        <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
+                        {isMobile ? "" : <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>}
+                    </div>
+                    <div className={styles.content}>
+                        <MarkDown handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDown>
+                    </div></> : <div className={styles.empty}><InboxOutlined /></div>}
             </div>
             // </Spin>
         );

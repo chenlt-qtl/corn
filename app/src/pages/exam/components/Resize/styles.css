@@ -1,0 +1,21 @@
+.container {
+  margin: 20px auto;
+  height: 300px;
+  width: 300px;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+}
+.container .top {
+  flex: 1;
+  background-color: antiquewhite;
+}
+.container .bottom {
+  background-color: aquamarine;
+  flex-shrink: 0;
+}
+.container .resizeBar {
+  height: 4px;
+  cursor: n-resize;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}

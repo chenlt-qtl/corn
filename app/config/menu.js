@@ -1,5 +1,5 @@
 export default {
-    index: "/page/noteapp",
+    index: "/page/note",
     routes: [
         {
             path: '/page',
@@ -7,12 +7,17 @@ export default {
             desc: '有头部的',
             routes: [
                 {
-                    path: '/noteapp',
+                    path: '/note',
                     name: '笔记',
                     component: './note',
                 },
                 {
-                    path: '/noteapp/:id',
+                    path: '/note/:type',
+                    name: '笔记',
+                    component: './note',
+                },
+                {
+                    path: '/note/:type/:id',
                     component: './note',
                 },
                 {

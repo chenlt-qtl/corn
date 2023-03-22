@@ -67,11 +67,6 @@ const EditFolder: React.FC = (props, ref) => {
         props.dispatch({
             type: "note/updateNoteTitle",
             payload: { ...fold, name: foldName }
-        }).then(() => {
-            props.dispatch({
-                type: "note/refreshTreeParam",
-                payload: {}
-            })
         })
 
         props.onCancel();

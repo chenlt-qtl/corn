@@ -1,40 +1,64 @@
 import React, { useEffect, useState } from 'react';
-import { Dropdown, Menu, Button } from 'antd';
-import { HomeOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { Dropdown, Menu, Button, Input, Spin } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect } from 'umi';
-import { queryNote, queryNoteById } from '@/services/note'
-import EditFolderModal from '../../../components/EditFolderModal';
-import NoteList from '../NoteList';
-import { NoteItem } from '@/data/note';
-
-
-
-const homeNote = { id: "0", name: "所有笔记" }
+import { queryNote, queryFav } from '@/services/note'
+import NoteList from './NoteList';
+import { SearchOutlined, InboxOutlined } from '@ant-design/icons';
+import { getNode } from '../../utils';
 
 const ListMenu: React.FC = (props, ref) => {
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [params, setParams] = useState<Object>({});
     const [sortType, setSortType] = useState<string>('default');
-    const [rootNote, setRootNote] = useState<NoteItem>({ ...homeNote });
-
+    const [searchStr, setSearchStr] = useState<string>("");
+    const [listData, setListData] = useState<Object[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        refreshData({ ...homeNote })
-    }, []);
+        loadData();
+    }, [props.match.params]);
 
-    const refreshData = async (parentNote) => {
-        setParams({ parentId: parentNote.id })
-        setRootNote(parentNote);
+    useEffect(() => {
+        if (props.selectFolder.id) {
+            loadData()
+        }
+    }, [props.selectFolder]);
+
+    const loadData = async () => {
+        const { type } = props.match.params;
+        let listData = [];
+        setLoading(true);
+        let res;
+
+        if (type == "fav") {
+            res = await queryFav();
+            if (res && res.success) {
+                listData = res.result
+            }
+        } else if (type == "folder") {
+
+            const { selectFolder = {} } = props;
+            if (!selectFolder.id) {
+                listData = props.note.noteTreeData;
+            } else {
+                const parent = getNode(selectFolder.id, props.note.noteTreeData);
+                parent && (listData = parent.children);
+            }
+        }
+
+        setLoading(false)
+        setListData(listData.sort(i => i.isLeaf))
         setSortType('default')
-    }
 
-    const onFoldClick = parentNote => {
-        refreshData(parentNote)
     }
 
     const handleSort = e => {
         setSortType(e.key)
+    }
+
+    const handleSearch = () => {
+        const params = { searchStr }
+        setParams(params);
     }
 
     const sortMenu = (
@@ -52,42 +76,30 @@ const ListMenu: React.FC = (props, ref) => {
     );
 
 
-    const goBack = async (home: boolean = false) => {
-        
-        let parentNote;
-        
-        if (home || rootNote.parentId == "0") {
-            parentNote = homeNote;
-        } else if (rootNote.parentId) {
-            const res = await queryNoteById(rootNote.parentId);
-            parentNote = res.result;
-        }
-        refreshData(parentNote)
-
-    }
-
-
 
     const render = () => {
 
-        const buttonDisable = rootNote.id == homeNote.id;
+        const { type } = props.match.params;
+        const { selectFolder = {} } = props;
+
 
         return (
+
             <div className={styles.container} >
-
-                <EditFolderModal visible={isModalVisible} parentId={rootNote.id} node={{}} onCancel={() => setIsModalVisible(false)}></EditFolderModal>
-
-                <div className={styles.toolbar}>
-                    <Button type="text" disabled={buttonDisable} onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button>
-                    <span className={styles.title}>{rootNote.name}</span>
-                    {buttonDisable ? <div></div> : <Button type="text" disabled={buttonDisable} onClick={() => goBack(true)}><HomeOutlined /></Button>}
-                    <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
+                <div className={styles.searchBar}>
+                    <Input className={styles.search} value={searchStr} onChange={e => setSearchStr(e.currentTarget.value)} onPressEnter={handleSearch} suffix={<SearchOutlined />}></Input>
                 </div>
-                <div className={styles.list}>
-                    <NoteList getDataMethod={queryNote} params={params} sortType={sortType} onFoldClick={onFoldClick}></NoteList>
-                </div>
+                {type == "folder" ?
+                    <div className={styles.toolbar}>
+                        <span className={styles.title}>{selectFolder.name}</span>
+                        <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
+                    </div> : ""}
+                {type ?
+                    <Spin spinning={loading} wrapperClassName={styles.list}>
+                        <NoteList {...props} data={listData} sortType={sortType} onFoldClick={props.onSelectFolder}></NoteList>
+                    </Spin> : <div className={styles.empty}><InboxOutlined /></div>}
+            </div >
 
-            </div>
         );
     };
     return render();
