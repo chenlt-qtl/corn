@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styles from './style.less';
-import { connect, history } from 'umi';
-import { queryTreeMenu } from '@/services/note'
+import { connect } from 'umi';
 import EditFolderModal from '../../../components/EditFolderModal';
 import NoteTree from './NoteTree';
-import { Spin, Modal, notification } from "antd"
-import { StarOutlined, FolderOutlined, ExclamationCircleOutlined, FolderOpenOutlined } from '@ant-design/icons';
+import {  Modal, notification } from "antd"
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ChangeParentModal from '../../../components/ChangeParentModal';
 import { NoteNode } from '@/data/note'
 import { changeUrl } from '../../../utils'
@@ -28,8 +27,8 @@ const TreeMenu: React.FC = (props, ref) => {
     }, [props.note.noteTreeData]);
 
     const handleRename = (node) => {
-        setFolderModalVisible(true);
         setEditNode(node);
+        setFolderModalVisible(true);
     }
 
     const handleChangeParent = (node) => {
@@ -46,7 +45,7 @@ const TreeMenu: React.FC = (props, ref) => {
 
                 props.dispatch({
                     type: 'note/deleteNote',
-                    payload: node.key,
+                    payload: node.id,
                 }).then(() => {
                     notification["info"]({
                         message: '删除成功',
@@ -57,16 +56,20 @@ const TreeMenu: React.FC = (props, ref) => {
         });
     }
 
+    const onSelectedFolder = note=>{
+        props.dispatch({type:"note/refreshSelectedFolder",payload:note})
+    }
+
 
     const render = function () {
         const { type } = props.match.params;
-        const { selectFolder = {}, onSelectFolder } = props;
+        const { selectedFolder } = props.note;
 
         return (
 
             <div className={styles.content}>
                 <div className={styles.toolbar}>
-                    <EditFolderModal visible={folderModalVisible} parentId={selectFolder.id} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
+                    <EditFolderModal visible={folderModalVisible} parentId={selectedFolder.id} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
                 </div>
                 <div className={`${styles.menuItem} ${type == "fav" ? styles.active : ""}`} onClick={() => {
                     changeUrl(props, "type", "fav")
@@ -75,9 +78,9 @@ const TreeMenu: React.FC = (props, ref) => {
                     <i className="fa fa-star-o"></i>
                     收藏夹
                 </div>
-                <div className={`${styles.menuItem} ${type == "folder" && !selectFolder.id ? styles.active : ""}`} onClick={() => {
+                <div className={`${styles.menuItem} ${type == "folder" && !selectedFolder.id ? styles.active : ""}`} onClick={() => {
                     changeUrl(props, "type", "folder");
-                    onSelectFolder({})
+                    onSelectedFolder({})
                 }}>
                     {type == "fav" ? <i className="fa fa-folder-o"></i> : <i className="fa fa-folder-open-o"></i>}
                     文件夹
@@ -87,8 +90,6 @@ const TreeMenu: React.FC = (props, ref) => {
                         <NoteTree
                             handleRename={handleRename}
                             handleChangeParent={handleChangeParent}
-                            selectFolder={selectFolder}
-                            onSelectFolder={onSelectFolder}
                             onDelete={handleDelete}
                             treeData={treeData}
                         ></NoteTree>

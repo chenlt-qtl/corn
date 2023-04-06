@@ -1,45 +1,75 @@
-import React, { useEffect, useState } from 'react';
-import { Dropdown, Menu, Button, Input, Spin } from 'antd';
+import React, { useEffect, useState, useRef } from 'react';
+import { Dropdown, Menu, Button, Input, Spin, Radio } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
-import { connect } from 'umi';
-import { queryNote, queryFav } from '@/services/note'
+import { connect, useModel } from 'umi';
+import { queryFav, pageSearchNote } from '@/services/note'
 import NoteList from './NoteList';
-import { SearchOutlined, InboxOutlined } from '@ant-design/icons';
+import { SearchOutlined, InboxOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getNode } from '../../utils';
 
 const ListMenu: React.FC = (props, ref) => {
+
+    const { initialState: { currentUser } } = useModel('@@initialState');
+
     const [sortType, setSortType] = useState<string>('default');
     const [searchStr, setSearchStr] = useState<string>("");
     const [listData, setListData] = useState<Object[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [range, setRange] = useState<number>(1);
+    const [searchRecent, setSearchRecent] = useState<string[]>((localStorage.getItem("searchRecent" + currentUser.id) || "").split(","));
+    const inputRef = useRef<Input | null>(null);
+    const searchWinRef = useRef(null);
+    const [showSearchWin, setShowSearchWin] = useState<boolean>(false);
 
     useEffect(() => {
         loadData();
-    }, [props.match.params]);
+    }, [props.match.params.type]);
 
     useEffect(() => {
         loadData()
-    }, [props.selectFolder]);
+    }, [props.note.selectedFolder.id]);
+
+    useEffect(() => {
+        loadData()
+    }, [props.note.noteTreeData]);
+
+    useEffect(() => {
+        window.addEventListener('click', closeShowWin)
+        return () => {
+            window.removeEventListener('click', closeShowWin)
+        }
+    }, []);
+
+    const closeShowWin = e => {
+        const { target } = e
+        if (!searchWinRef.current.contains(target) && target != inputRef.current.input) {
+            setShowSearchWin(false)
+        }
+
+    }
 
     const loadData = async () => {
+
         const { type } = props.match.params;
+
         let listData = [];
         setLoading(true);
         let res;
 
         if (type == "fav") {
+
             res = await queryFav();
             if (res && res.success) {
                 listData = res.result
             }
         } else if (type == "folder") {
 
-            const { selectFolder = {} } = props;
-            if (!selectFolder.id) {
-                listData = props.note.noteTreeData;
+            const { selectedFolder } = props.note;
+            if (!selectedFolder.id) {
+                listData = props.note.noteTreeData || [];
             } else {
-                const parent = getNode(selectFolder.id, props.note.noteTreeData);
+                const parent = getNode(selectedFolder.id, props.note.noteTreeData);
                 parent && (listData = parent.children);
             }
         }
@@ -52,23 +82,57 @@ const ListMenu: React.FC = (props, ref) => {
 
     const goBack = () => {
 
-        const { selectFolder = {}, onSelectFolder } = props;
+        const { selectedFolder } = props.note;
 
-        if (!selectFolder.parentId || selectFolder.parentId == "0") {
-            onSelectFolder({})
+        if (!selectedFolder.parentId || selectedFolder.parentId == "0") {
+            setSelectedNote({})
         } else {
-            const parentNote = getNode(selectFolder.parentId, props.note.noteTreeData);
-            onSelectFolder({ ...parentNote, id: parentNote.key })
+            const parentNote = getNode(selectedFolder.parentId, props.note.noteTreeData);
+            setSelectedNote(parentNote)
         }
+    }
+
+    const setSelectedNote = note => {
+        props.dispatch({ type: "note/refreshSelectedFolder", payload: note })
     }
 
     const handleSort = e => {
         setSortType(e.key)
     }
 
-    const handleSearch = () => {
-        const params = { searchStr }
-        setParams(params);
+    const handleSearch = async (searchStr) => {
+
+        if (searchStr) {
+            const set = new Set([searchStr, ...searchRecent.filter(a => a)])
+            const newSearchRecent = [...set];
+            while (newSearchRecent.length > 5) {
+                newSearchRecent.pop()
+            }
+
+            setSearchRecent(newSearchRecent);
+            localStorage.setItem("searchRecent" + currentUser.id, newSearchRecent.join(","))
+        }
+
+        const { id } = props.note.selectedFolder;
+
+        const res = await pageSearchNote({ pageNo: 0, pageSize: 20, searchStr, parentId: range ? (id || 0) : 0 });
+
+        if (!range && id) {
+            props.dispatch({ type: "note/refreshSelectedFolder", payload: {} })
+        }
+
+        if (res && res.success) {
+            setListData(res.result.records)
+        }
+
+        setShowSearchWin(false)
+
+    }
+
+
+    const searchHistory = str => {
+        setSearchStr(str);
+        handleSearch(str);
     }
 
     const sortMenu = (
@@ -85,29 +149,59 @@ const ListMenu: React.FC = (props, ref) => {
         </Menu>
     );
 
+    const onRangeChange = e => {
+        setRange(e.target.value)
+    }
+
+    const cleanSearch = () => {
+
+        setSearchRecent([]);
+        localStorage.setItem("searchRecent" + props.user.id, "")
+    }
 
 
     const render = () => {
 
         const { type } = props.match.params;
-        const { selectFolder = {} } = props;
-
+        const { id, name } = props.note.selectedFolder;
 
         return (
 
             <div className={styles.container} >
                 <div className={styles.searchBar}>
-                    <Input className={styles.search} value={searchStr} onChange={e => setSearchStr(e.currentTarget.value)} onPressEnter={handleSearch} suffix={<SearchOutlined />}></Input>
+                    <Input ref={inputRef} className={styles.search} onClick={() => setShowSearchWin(true)}
+                        onFocus={() => setShowSearchWin(true)}
+                        value={searchStr}
+                        onChange={e => setSearchStr(e.currentTarget.value)}
+                        onPressEnter={() => handleSearch(searchStr)} suffix={<SearchOutlined />}></Input>
+                    <div ref={searchWinRef} className={styles.searchModel} style={{ display: showSearchWin ? "flex" : "none" }}>
+                        <div className={styles.recent}>
+                            <span className={styles.title}>最近搜索</span><span className={styles.icon} onClick={cleanSearch}><DeleteOutlined /> </span>
+                            <span className={styles.searchStrs}>{searchRecent.map(str => <span key={str} onClick={() => {
+                                searchHistory(str)
+                            }}>{str}</span>)}</span>
+                        </div>
+                        <div className={styles.ranger}>
+                            <span className={styles.title}>搜索范围</span>
+                            <div className={styles.rangerRadio}>
+                                <Radio.Group onChange={onRangeChange} value={range}>
+                                    <Radio value={1}>当前文件夹  </Radio>
+                                    <Radio value={0}>全部笔记</Radio>
+                                </Radio.Group>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
                 {type == "folder" ?
                     <div className={styles.toolbar}>
-                        {selectFolder.id ? <Button type="text" onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button> : ""}
-                        <span className={styles.title}>{selectFolder.name||"文件夹"}</span>
+                        {id ? <Button type="text" onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button> : ""}
+                        <span className={styles.title}>{name || "文件夹"}</span>
                         <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                     </div> : ""}
                 {type ?
                     <Spin spinning={loading} wrapperClassName={styles.list}>
-                        <NoteList {...props} data={listData} sortType={sortType} onFoldClick={props.onSelectFolder}></NoteList>
+                        <NoteList {...props} data={listData} sortType={sortType} onFoldClick={setSelectedNote}></NoteList>
                     </Spin> : <div className={styles.empty}><InboxOutlined /></div>}
             </div >
 

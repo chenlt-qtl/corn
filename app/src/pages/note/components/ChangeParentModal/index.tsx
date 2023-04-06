@@ -17,7 +17,7 @@ const ChangeParent: React.FC = (props, ref) => {
     const handleChangeParent = () => {
         props.dispatch({
             type: 'note/updateParent',
-            payload: { id: node.key || node.id, parentId: newParentId }
+            payload: { id: node.id, parentId: newParentId }
         }).then(res => {
             console.log(res);
             if (res) {

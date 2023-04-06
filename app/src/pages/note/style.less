@@ -1,3 +1,8 @@
+.body {
+    height  : 100%;
+    position: relative;
+}
+
 .container {
     height    : 100%;
     width     : 100vw;
@@ -6,6 +11,15 @@
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-@media screen {
-    
+.spin {
+    position        : absolute;
+    top             : 0;
+    left            : 0;
+    right           : 0;
+    bottom          : 0;
+    height          : 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index         : 9999;
 }
+
+@media screen {}

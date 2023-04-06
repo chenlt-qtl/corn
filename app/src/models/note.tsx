@@ -1,11 +1,12 @@
-import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote, editOneFav,queryTreeMenu } from '@/services/note'
-import { NoteItem,NoteNode } from '@/data/note';
+import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote, editOneFav, queryTreeMenu } from '@/services/note'
+import { NoteItem, NoteNode } from '@/data/note';
 import { Effect, Reducer } from 'umi';
 
 export interface NoteState {
     openedNote: NoteItem;
     openedNotes: object;
-    noteTreeData:NoteNode[]
+    noteTreeData: NoteNode[];
+    selectedFolder: NoteItem;
 }
 
 export interface NoteModelType {
@@ -24,6 +25,7 @@ export interface NoteModelType {
         refreshOpenedNote: Reducer<NoteState>;
         refreshOpenedNotes: Reducer<NoteState>;
         refreshNoteTreeData: Reducer<NoteState>;
+        refreshSelectedFolder: Reducer<NoteState>;
     };
 }
 
@@ -33,6 +35,8 @@ const NoteModel: NoteModelType = {
     state: {
         openedNote: {},
         openedNotes: {},
+        noteTreeData: [],
+        selectedFolder: {},
     },
 
     effects: {
@@ -53,10 +57,12 @@ const NoteModel: NoteModelType = {
                 }
             }
 
-            yield put({
-                type: 'refreshOpenedNotes',
-                payload: { ...openedNotes, [note.id]: note }
-            })
+            if (!openedNotes[note.id]) {
+                yield put({
+                    type: 'refreshOpenedNotes',
+                    payload: { ...openedNotes, [note.id]: { id: note.id, name: note.name, index:Object.keys(openedNotes).length } }
+                })
+            }
 
             yield put({
                 type: 'refreshOpenedNote',
@@ -76,7 +82,7 @@ const NoteModel: NoteModelType = {
                 if (openedNotes[newData.id]) {
                     yield put({
                         type: "refreshOpenedNotes",
-                        payload: { ...openedNotes, [newData.id]: newData }
+                        payload: { ...openedNotes, [newData.id]: { ...openedNotes[newData.id], name: newData.name } }
                     });
                 }
                 //刷新openedNote
@@ -119,8 +125,8 @@ const NoteModel: NoteModelType = {
 
                 if (openedNote.id == payload) {
                     yield put({
-                        type: "refreshOpenedNote",
-                        payload: Object.values(newOpenedNotes)[0] || {}
+                        type: "openNote",
+                        payload: Object.keys(newOpenedNotes)[0] || ""
                     });
                 }
 
@@ -166,10 +172,10 @@ const NoteModel: NoteModelType = {
                 return result;
             }
         },
-        *getNoteTree(_,{call,put}){
-            
-            let res = yield call(queryTreeMenu, "0",true);
-            if(res){
+        *getNoteTree(_, { call, put }) {
+
+            let res = yield call(queryTreeMenu, "0", true);
+            if (res) {
                 if (res.success) {
                     // 成功
                     yield put({
@@ -198,6 +204,12 @@ const NoteModel: NoteModelType = {
             return {
                 ...state,
                 noteTreeData: payload
+            }
+        },
+        refreshSelectedFolder(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                selectedFolder: payload
             }
         },
     },

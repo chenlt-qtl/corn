@@ -5,34 +5,30 @@ import HocMedia from "@/components/HocMedia";
 import Menu from "./Menu";
 import Content from './Content'
 import ListMenu from './Menu/components/ListMenu'
+import { Spin } from "antd"
 
-const NoteList: React.FC<{}> = (props) => {
-
-  useEffect(() => {
-    props.dispatch({
-      type: 'note/getNoteTree',
-    })
-  }, [])
+const Note: React.FC<{}> = (props) => {
 
   useEffect(() => {
-    getOpenData();
-  }, [props.match.params])
+    const { type } = props.match.params;
+    if (type == "folder") {
+      if (props.note.noteTreeData.length == 0) {
+        props.dispatch({
+          type: 'note/getNoteTree',
+        })
+      }
+    }
+  }, [props.match.params.type])
 
-  const getOpenData = () => {
+  useEffect(() => {
     const { id } = props.match.params;
     if (id) {
       props.dispatch({
         type: 'note/openNote',
         payload: id,
       })
-    } else {
-      props.dispatch({
-        type: 'note/refreshOpenedNote',
-        payload: {},
-      })
     }
-
-  }
+  }, [props.match.params.id])
 
 
   const getComponent = () => {
@@ -56,14 +52,16 @@ const NoteList: React.FC<{}> = (props) => {
   }
 
   const render = function () {
-
     return (
-      <>
+      <div className={style.body}>
+        {props.loading ? <Spin spinning={true} wrapperClassName={style.spin}>
+          <div></div>
+        </Spin> : ""}
         {getComponent()}
-      </>
+      </div>
     );
   };
   return render();
 };
 
-export default HocMedia(connect(({ loading }: { loading }) => ({ loading }))(NoteList));
+export default HocMedia(connect(({ loading, note }: { loading, note }) => ({ loading: loading.models.note, note }))(Note));

@@ -3,8 +3,7 @@ import { Button, Modal, Menu, Dropdown, Input, Form } from 'antd';
 import { PlusOutlined, FolderOutlined, FileMarkdownOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
 import HocMedia from "@/components/HocMedia";
-import { guid } from '@/utils/utils'
-
+import { changeUrl } from '../../utils'
 
 const FormItem = Form.Item;
 let fold = {};
@@ -22,7 +21,7 @@ const EditFolder: React.FC = (props, ref) => {
         const node = props.node || {};
 
         form.setFieldsValue({ foldName: node.name });
-        fold = { id: node.key, ...node };
+        fold = node;
     }
 
 
@@ -32,24 +31,14 @@ const EditFolder: React.FC = (props, ref) => {
             form.setFieldsValue({ foldName: "" });
             fold = { parentId, isLeaf: false }
         } else {
-            const newNote = { id: guid(), name: "新文档", parentId, isLeaf: true, isNew: true };
-
+            const newNote = { id: "new", name: "新文档", parentId, isLeaf: true, isNew: true };
+            const { openedNotes } = props.note;
             props.dispatch({
                 type: 'note/refreshOpenedNotes',
-                payload: { ...props.note.openedNotes, [newNote.id]: newNote }
+                payload: { ...openedNotes, [newNote.id]: { id: newNote.id, name: newNote.name, index: Object.keys(openedNotes).length } }
             })
+            changeUrl(props, "id", "add")
 
-            props.dispatch({
-                type: "note/refreshOpenedNote",
-                payload: newNote
-            })
-
-            if (props.isMobile) {
-                props.dispatch({
-                    type: 'note/refreshShowMenu',
-                    payload: false,
-                })
-            }
         }
     }
 

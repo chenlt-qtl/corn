@@ -68,8 +68,9 @@ export async function queryFav() {
  * @returns 
  */
 export async function pageSearchNote({ pageNo, pageSize, searchStr = "", parentId = "" }) {
+  
 
-  return request(`/api/note/pageSearchNote?pageNo=${pageNo}&pageSize=${pageSize}&searchStr=${searchStr}&parentId=${parentId}&withLeaf=false`).then(res => {
+  return request(`/api/note/pageSearchNote?pageNo=${pageNo}&pageSize=${pageSize}&searchStr=${searchStr}&parentId=${parentId}&withLeaf=true`).then(res => {
     if (res) {
       res.result.records = res.result.records.map(item => decryptNote(item))
     }

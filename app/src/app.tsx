@@ -14,12 +14,12 @@ export async function getInitialState(): Promise<{
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
     try {
-      const currentUser = await queryCurrent();
-      if (!currentUser) {
+      const res = await queryCurrent();
+      if (!res.success) {
         history.push('/user/login');
       } else {
         return {
-          currentUser,
+          currentUser:res["result"],
           settings: defaultSettings,
         };
       }

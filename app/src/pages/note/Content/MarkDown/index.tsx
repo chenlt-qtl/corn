@@ -46,7 +46,7 @@ const MarkDown = React.forwardRef((props, ref) => {
         const { openedNote } = props.note;
         let text = "";
         if (openedNote.id) {
-            text =openedNote.text || "";
+            text = openedNote.text || "";
         }
         processText(text);
     }, [props.note.openedNote])
@@ -141,7 +141,7 @@ const MarkDown = React.forwardRef((props, ref) => {
     const processText = (text: string) => {
 
         tocify.reset();
-        const { openedNote } = props.note;
+        const { id } = props.match.params;
 
         const separator = "\n## ";
         let index = text.indexOf(separator);
@@ -152,7 +152,7 @@ const MarkDown = React.forwardRef((props, ref) => {
             let tempText = text.substring(oldIndex, index);
 
             if (tempText.length > 0) {
-                htmlObjs.push({ id: openedNote.id + index, text: tempText, html: marked(tempText) });
+                htmlObjs.push({ id: id + index, text: tempText, html: marked(tempText) });
             }
             oldIndex = index + 1;
             index = text.indexOf(separator, index + 1);
@@ -160,7 +160,7 @@ const MarkDown = React.forwardRef((props, ref) => {
 
         let tempText = text.substring(oldIndex, text.length);
         if (tempText.length > 0) {
-            htmlObjs.push({ id: openedNote.id + text.length, text: tempText, html: marked(tempText) });
+            htmlObjs.push({ id: id + text.length, text: tempText, html: marked(tempText) });
         }
 
         setHtmlObjs(htmlObjs);
@@ -200,7 +200,8 @@ const MarkDown = React.forwardRef((props, ref) => {
 
 
     const clickText = (textId) => {
-        if (props.note.openedNote.id && !props.isMobile) {
+        const { id } = props.match.params;
+        if (id && !props.isMobile) {
             setEditKey(textId)
             setVisible(true)
         }

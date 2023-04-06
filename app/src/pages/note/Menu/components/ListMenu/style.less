@@ -1,8 +1,8 @@
 .container {
-  padding   : 5px 0;
-  height    : 100%;
-  text-align: center;
-  width     : 230px;
+  padding       : 5px 0;
+  height        : 100%;
+  text-align    : center;
+  width         : 230px;
   display       : flex;
   flex-direction: column;
   overflow      : hidden;
@@ -14,7 +14,8 @@
   }
 
   .searchBar {
-    padding: 10px 25px;
+    padding : 10px 25px;
+    position: relative;
 
     .search {
       border-radius: 15px;
@@ -22,6 +23,72 @@
       padding      : 3px 10px;
       margin-bottom: 4px;
     }
+
+    .searchModel {
+      position      : absolute;
+      top           : 45px;
+      left          : 8px;
+      width         : 215px;
+      flex-direction: column;
+      border-radius : 5px;
+      background    : #fff;
+      z-index       : 9999;
+      padding       : 10px;
+      box-shadow    : 5px 5px 5px rgba(0, 0, 0, 0.1),
+        -5px -5px 5px rgba(0, 0, 0, 0.05),
+        inset 5px 5px 10px rgba(255, 255, 255, 0.1),
+        inset -5px -5px 5px rgba(255, 255, 255, 0.05);
+
+      >div {
+        display       : flex;
+        flex-direction: column;
+        align-items   : flex-start;
+      }
+
+      .searchStrs {
+        display  : flex;
+        padding  : 5px 0;
+        flex-wrap: wrap;
+
+        >span {
+          display         : inline-block;
+          background-color: #eee;
+
+          border-radius: 7px;
+          padding      : 0 7px;
+          margin-right : 5px;
+          cursor       : pointer;
+        }
+      }
+
+      .recent {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        padding      : 5px 0;
+      }
+
+      .rangerRadio {
+        padding: 5px 0;
+
+        :global {
+          .ant-radio-wrapper {
+            font-size: 12px;
+          }
+        }
+      }
+
+      .title {
+        padding: 5px 0;
+      }
+
+      .icon {
+        position: absolute;
+        top     : 18px;
+        right   : 12px;
+        cursor  : pointer;
+      }
+    }
+
+
   }
 
   .toolbar {
