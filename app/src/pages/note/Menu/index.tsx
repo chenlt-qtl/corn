@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './style.less';
 import { connect, history } from 'umi';
 import MainMenu from './components/MainMenu'
