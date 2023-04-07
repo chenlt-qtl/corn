@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * @Description: 关联
  * @author： jeecg-boot
- * @date：   2021-12-15
+ * @date： 2021-12-15
  * @version： V1.0
  */
 @Service
@@ -44,32 +44,32 @@ public class GameWordRelServiceImpl extends ServiceImpl<GameWordRelMapper, GameW
         List<GameWordRel> relList = list(wrapper);
 
         List<String> existWords = new ArrayList<>();
-        for(GameWordRel gameWordRel:relList){
+        for (GameWordRel gameWordRel : relList) {
             existWords.add(gameWordRel.getWordId());
         }
 
 
         Game game = gameService.getById(gameId);
-        if(game==null){
+        if (game == null) {
             throw new CornException("Game Id 不存在");
         }
-        for(String articleId:articleIds) {
-            List<Map> words ;
-            if(game.getType().intValue()==0) {
+        for (String articleId : articleIds) {
+            List<Map> words;
+            if (game.getType().intValue() == 0) {
                 words = wordService.searchWordByArticle(articleId);
-            }else{
-                words=wordChineseService.searchWordByArticle(articleId);
+            } else {
+                words = wordChineseService.searchWordByArticle(articleId);
             }
-            for(Map word:words){
-                String wordId = (String)word.get("id");
-                if(!existWords.contains(wordId)){//不存在的话才添加
+            for (Map word : words) {
+                String wordId = (String) word.get("id");
+                if (!existWords.contains(wordId)) {//不存在的话才添加
                     GameWordRel gameWordRel = new GameWordRel();
                     gameWordRel.setWordId(wordId);
                     gameWordRel.setGameId(gameId);
                     this.save(gameWordRel);
                     existWords.add(wordId);
-                    if(result.length()>0){
-                        result +=", ";
+                    if (result.length() > 0) {
+                        result += ", ";
                     }
                     result += word.get("wordName");
                 }

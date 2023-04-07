@@ -74,9 +74,9 @@ QueryWrapper<?> queryWrapper = QueryGenerator.initQueryWrapper(?, req.getParamet
 		
 		Page<JeecgDemo> page = new Page<JeecgDemo>(pageNo, pageSize);
 		IPage<JeecgDemo> pageList = jeecgDemoService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+		
+		return ResultUtils.okData(pageList);
+		
 	}
 
 ```

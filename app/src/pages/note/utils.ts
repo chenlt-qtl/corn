@@ -29,7 +29,6 @@ export const decryptNote = (note: NoteItem) => {
 
 export const changeUrl = (props, name, value, query=null) => {
     const { type, id } = props.match.params;
-    console.log(props);
 
 
     let url = "/page/note";
@@ -41,8 +40,6 @@ export const changeUrl = (props, name, value, query=null) => {
     } else {
         url += "/" + type + "/" + value;
     }
-    console.log(url);
-    
 
     props.history.push({
         pathname: url,

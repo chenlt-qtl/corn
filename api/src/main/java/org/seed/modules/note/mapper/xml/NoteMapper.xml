@@ -16,24 +16,20 @@
     </select>
 
     <select id="listAllChildren" resultType="org.seed.modules.note.entity.Note">
-        SELECT n.id,n.name,n.parent_id,n.parent_ids,n.is_leaf
+        SELECT n.id,n.name,n.parent_id,n.is_leaf
         <if test="detail == true">
             <![CDATA[ ,n.tag,n.source,n.create_time,n.create_by,
         n.update_time,n.update_by,n.status ]]>
         </if>
         FROM note_info n
         WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
-        <if test="parentId != null">
-            <![CDATA[ and n.parent_ids like CONCAT('%','${parentId}','%' ) ]]>
-        </if>
         order by n.name
     </select>
 
     <select id="listAllChildrenDetail" resultType="org.seed.modules.note.model.NoteModel">
-        SELECT n.id,n.name,n.parent_id,n.parent_ids,n.is_leaf,n.tag,n.source,n.content_id,c.text
+        SELECT n.id,n.name,n.parent_id,n.is_leaf,n.tag,n.source,n.content_id,c.text
         FROM note_info n left join note_content c on n.content_id = c.id
         WHERE n.create_by = #{createBy}
-        and (n.parent_ids like CONCAT('%','${parentId}','%' ) or n.id = #{parentId})
         order by n.name
     </select>
 

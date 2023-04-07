@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.word.entity.WordChinese;
 import org.seed.modules.word.model.WordChineseVo;
 import org.seed.modules.word.service.IArticleWordRelService;
@@ -51,17 +53,16 @@ public class WordChineseController {
      * @return
      */
     @GetMapping(value = "/list")
-    public Result<IPage<WordChinese>> queryPageList(WordChinese wordChinese,
-                                                    @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                                    HttpServletRequest req) {
-        Result<IPage<WordChinese>> result = new Result<IPage<WordChinese>>();
+    public Result queryPageList(WordChinese wordChinese,
+                                @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                HttpServletRequest req) {
         QueryWrapper<WordChinese> queryWrapper = QueryGenerator.initQueryWrapper(wordChinese, req.getParameterMap());
         Page<WordChinese> page = new Page<WordChinese>(pageNo, pageSize);
         IPage<WordChinese> pageList = wordChineseService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+
+        return ResultUtils.okData(pageList);
+
     }
 
     /**
@@ -74,24 +75,23 @@ public class WordChineseController {
      * @return
      */
     @GetMapping(value = "/listByGame")
-    public Result<IPage<WordChinese>> listByGame(String gameId,
-                                                    @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                                    HttpServletRequest req) {
-		Result<IPage<WordChinese>> result = new Result();
-		if (StringUtils.isBlank(gameId)) {
-			result.error500("Game id 是必填项！");
-		}
+    public Result listByGame(String gameId,
+                             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                             HttpServletRequest req) {
+        if (StringUtils.isBlank(gameId)) {
+            throw new CornException("Game id 是必填项！");
+        }
 
-    	WordChinese wordChinese = new WordChinese();
+        WordChinese wordChinese = new WordChinese();
         QueryWrapper<WordChinese> queryWrapper = QueryGenerator.initQueryWrapper(wordChinese, req.getParameterMap());
-        queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId+"'");
+        queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId + "'");
         Page<WordChinese> page = new Page(pageNo, pageSize);
         IPage<WordChinese> pageList = wordChineseService.page(page, queryWrapper);
 
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+
+        return ResultUtils.okData(pageList);
+
 
     }
 
@@ -105,44 +105,43 @@ public class WordChineseController {
      * @return
      */
     @GetMapping(value = "/listByGameLevel/{gameId}")
-    public Result<IPage<WordChinese>> listByGameLevel(@PathVariable String gameId,
-                                          @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                          @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
-                                          HttpServletRequest req) {
-        Result<IPage<WordChinese>> result = new Result();
+    public Result listByGameLevel(@PathVariable String gameId,
+                                  @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                  @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize,
+                                  HttpServletRequest req) {
         if (StringUtils.isBlank(gameId)) {
-            result.error500("Game id 是必填项！");
+            throw new CornException("Game id 是必填项！");
         }
 
         QueryWrapper<WordChinese> queryWrapper = QueryGenerator.initQueryWrapper(new WordChinese(), req.getParameterMap());
-        queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId+"' and level = 0");
+        queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId + "' and level = 0");
         queryWrapper.orderByAsc("rand()");
         Page<WordChinese> page = new Page(pageNo, pageSize);
         IPage<WordChinese> pageList = wordChineseService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+
+        return ResultUtils.okData(pageList);
+
     }
 
     /**
      * 获取随机数量的字
+     *
      * @param size
      * @param req
      * @return
      */
     @GetMapping(value = "/listRand")
-    public Result<List<WordChinese>> getRandWord(@RequestParam(name = "size", defaultValue = "5") Integer size,
-                                                      HttpServletRequest req) {
-        Result<List<WordChinese>> result = new Result();
+    public Result getRandWord(@RequestParam(name = "size", defaultValue = "5") Integer size,
+                              HttpServletRequest req) {
 
 
         QueryWrapper<WordChinese> queryWrapper = QueryGenerator.initQueryWrapper(new WordChinese(), req.getParameterMap());
         queryWrapper.orderByAsc("rand()");
         Page<WordChinese> page = new Page(0, size);
         IPage<WordChinese> pageList = wordChineseService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList.getRecords());
-        return result;
+
+        return ResultUtils.okData(pageList.getRecords());
+
     }
 
     /**
@@ -152,17 +151,16 @@ public class WordChineseController {
      * @return
      */
     @PostMapping(value = "/add")
-    public Result<WordChinese> add(@RequestBody WordChinese wordChinese) {
-        Result<WordChinese> result = new Result<WordChinese>();
+    public Result add(@RequestBody WordChinese wordChinese) {
         try {
             wordChineseService.save(wordChinese);
-            result.success("添加成功！");
+            return ResultUtils.ok("添加成功！");
         } catch (Exception e) {
             e.printStackTrace();
             log.info(e.getMessage());
-            result.error500("操作失败");
+            throw new CornException("操作失败");
         }
-        return result;
+
     }
 
     /**
@@ -172,20 +170,17 @@ public class WordChineseController {
      * @return
      */
     @PutMapping(value = "/edit")
-    public Result<WordChinese> edit(@RequestBody WordChinese wordChinese) {
-        Result<WordChinese> result = new Result<WordChinese>();
+    public Result edit(@RequestBody WordChinese wordChinese) {
         WordChinese wordChineseEntity = wordChineseService.getById(wordChinese.getId());
         if (wordChineseEntity == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             boolean ok = wordChineseService.updateById(wordChinese);
-            //TODO 返回false说明什么？
-            if (ok) {
-                result.success("修改成功!");
-            }
+            return ResultUtils.ok("修改成功!");
+
         }
 
-        return result;
+
     }
 
     /**
@@ -195,19 +190,14 @@ public class WordChineseController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public Result<WordChinese> delete(@RequestParam(name = "id", required = true) String id) {
-        Result<WordChinese> result = new Result<WordChinese>();
+    public Result delete(@RequestParam(name = "id", required = true) String id) {
         WordChinese wordChinese = wordChineseService.getById(id);
         if (wordChinese == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             boolean ok = wordChineseService.removeById(id);
-            if (ok) {
-                result.success("删除成功!");
-            }
+            return ResultUtils.ok("删除成功!");
         }
-
-        return result;
     }
 
     /**
@@ -217,15 +207,14 @@ public class WordChineseController {
      * @return
      */
     @DeleteMapping(value = "/deleteBatch")
-    public Result<WordChinese> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
-        Result<WordChinese> result = new Result<WordChinese>();
+    public Result deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
         if (ids == null || "".equals(ids.trim())) {
-            result.error500("参数不识别！");
+            throw new CornException("参数不识别！");
         } else {
             this.wordChineseService.removeByIds(Arrays.asList(ids.split(",")));
-            result.success("删除成功!");
+            return ResultUtils.ok("删除成功!");
         }
-        return result;
+
     }
 
     /**
@@ -235,16 +224,15 @@ public class WordChineseController {
      * @return
      */
     @GetMapping(value = "/queryById")
-    public Result<WordChinese> queryById(@RequestParam(name = "id", required = true) String id) {
-        Result<WordChinese> result = new Result<WordChinese>();
+    public Result queryById(@RequestParam(name = "id", required = true) String id) {
         WordChinese wordChinese = wordChineseService.getById(id);
         if (wordChinese == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
-            result.setResult(wordChinese);
-            result.setSuccess(true);
+            return ResultUtils.okData(wordChinese);
+
         }
-        return result;
+
     }
 
     /**
@@ -254,38 +242,28 @@ public class WordChineseController {
      * @return
      */
     @GetMapping(value = "/queryByWordName")
-    public Result<WordChineseVo> queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = false) String articleId) {
-        Result<WordChineseVo> result = new Result<WordChineseVo>();
-        try {
-            WordChineseVo wordChineseVo = new WordChineseVo(wordChineseService.getWord(wordName));
-            String wordId = wordChineseVo.getId();
+    public Result queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = false) String articleId) throws Exception {
 
-            wordChineseVo.setRelWithUser(wordUserService.getRel(wordId) != null);
-            if (StringUtils.isNotBlank(articleId)) {
-                wordChineseVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
-            }
+        WordChineseVo wordChineseVo = new WordChineseVo(wordChineseService.getWord(wordName));
+        String wordId = wordChineseVo.getId();
 
-            result.setResult(wordChineseVo);
-            result.setSuccess(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.setSuccess(true);
-            result.setMessage("未查到结果");
+        wordChineseVo.setRelWithUser(wordUserService.getRel(wordId) != null);
+        if (StringUtils.isNotBlank(articleId)) {
+            wordChineseVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
         }
 
-        return result;
+        return ResultUtils.okData(wordChineseVo);
     }
 
 
     @GetMapping(value = "/queryByArticle")
-    public Result<Map> queryByArticle(@RequestParam(name = "id", required = true) String id) {
-        Result<Map> result = new Result<Map>();
+    public Result queryByArticle(@RequestParam(name = "id", required = true) String id) {
         //获取word
         List<Map> words = wordChineseService.searchWordByArticle(id);
-        result.setResult(new HashMap() {{
+        return ResultUtils.okData(new HashMap() {{
             put("records", words);
         }});
-        result.setSuccess(true);
-        return result;
+
+
     }
 }

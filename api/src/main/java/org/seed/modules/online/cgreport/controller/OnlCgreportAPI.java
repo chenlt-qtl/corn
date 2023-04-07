@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.seed.common.api.vo.Result;
 import org.seed.common.exception.CornException;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.online.cgreport.def.CgReportConstant;
 import org.seed.modules.online.cgreport.entity.OnlCgreportHead;
@@ -64,7 +65,7 @@ public class OnlCgreportAPI {
 	 * @throws Exception
 	 */
 	@GetMapping(value = "/getColumns/{code}")
-	public Result<?> getColumns(@PathVariable("code") String code) {
+	public Result getColumns(@PathVariable("code") String code) {
 
 		QueryWrapper<OnlCgreportItem> queryWrapper = new QueryWrapper<OnlCgreportItem>();
 		queryWrapper.eq("cgrhead_id", code);
@@ -87,7 +88,7 @@ public class OnlCgreportAPI {
 		Map<String, Object> result = new HashMap<String, Object>(1);
 		result.put("columns", array);
 
-		return Result.ok(result);
+		return ResultUtils.okData(result);
 	}
 
 	/**
@@ -97,19 +98,19 @@ public class OnlCgreportAPI {
 	 * @return
 	 */
 	@GetMapping(value = "/getData/{code}")
-	public Result<?> getData(@PathVariable("code") String code,HttpServletRequest request) {
+	public Result getData(@PathVariable("code") String code,HttpServletRequest request) {
 		OnlCgreportHead head = onlCgreportHeadService.getById(code);
 		if (head == null) {
-			return Result.error("实体不存在");
+			return ResultUtils.error("实体不存在");
 		}
 		String sql = head.getCgrSql();
 		try {
 			Map<String,Object> params = SqlUtil.getParameterMap(request);
 			Map<String, Object> reslutMap = onlCgreportHeadService.executeSelectSql(sql,params);
-			return Result.ok(reslutMap);
+			return ResultUtils.okData(reslutMap);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Result.error("SQL执行失败：" + e.getMessage());
+			return ResultUtils.error("SQL执行失败：" + e.getMessage());
 		}
 
 	}
@@ -119,14 +120,14 @@ public class OnlCgreportAPI {
 	 * 获取查询条件
 	 */
 	@GetMapping(value = "/getQueryInfo/{code}")
-	public Result<?> getQueryInfo(@PathVariable("code") String cgrheadId) {
+	public Result getQueryInfo(@PathVariable("code") String cgrheadId) {
 	    try {
 	    	List<Map<String,String>> list = onlCgreportItemService.getAutoListQueryInfo(cgrheadId);
-			return Result.ok(list);
+			return ResultUtils.okData(list);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info("OnlCgformApiController.getQueryInfo()发生异常：" + e.getMessage());
-			return Result.error("查询失败");
+			return ResultUtils.error("查询失败");
 		}
 	}
 	

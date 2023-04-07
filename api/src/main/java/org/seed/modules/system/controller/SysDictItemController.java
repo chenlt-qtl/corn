@@ -7,7 +7,9 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.system.entity.SysDictItem;
 import org.seed.modules.system.service.ISysDictItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,16 +51,15 @@ public class SysDictItemController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public Result<IPage<SysDictItem>> queryPageList(SysDictItem sysDictItem,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+	public Result queryPageList(SysDictItem sysDictItem,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
-		Result<IPage<SysDictItem>> result = new Result<IPage<SysDictItem>>();
 		QueryWrapper<SysDictItem> queryWrapper = QueryGenerator.initQueryWrapper(sysDictItem, req.getParameterMap());
 		queryWrapper.orderByAsc("sort_order");
 		Page<SysDictItem> page = new Page<SysDictItem>(pageNo, pageSize);
 		IPage<SysDictItem> pageList = sysDictItemService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+
+		return ResultUtils.okData(pageList);
+
 	}
 	
 	/**
@@ -68,18 +69,17 @@ public class SysDictItemController {
 	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@CacheEvict(value="dictCache", allEntries=true)
-	public Result<SysDictItem> add(@RequestBody SysDictItem sysDictItem) {
-		Result<SysDictItem> result = new Result<SysDictItem>();
+	public Result add(@RequestBody SysDictItem sysDictItem) {
 		try {
 			sysDictItem.setCreateTime(new Date());
 			sysDictItemService.save(sysDictItem);
-			result.success("保存成功！");
+			return ResultUtils.ok("保存成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			result.error500("操作失败");
+			throw new CornException("操作失败");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -89,20 +89,17 @@ public class SysDictItemController {
 	 */
 	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
 	@CacheEvict(value="dictCache", allEntries=true)
-	public Result<SysDictItem> edit(@RequestBody SysDictItem sysDictItem) {
-		Result<SysDictItem> result = new Result<SysDictItem>();
+	public Result edit(@RequestBody SysDictItem sysDictItem) {
 		SysDictItem sysdict = sysDictItemService.getById(sysDictItem.getId());
 		if(sysdict==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			sysDictItem.setUpdateTime(new Date());
 			boolean ok = sysDictItemService.updateById(sysDictItem);
-			//TODO 返回false说明什么？
-			if(ok) {
-				result.success("编辑成功!");
-			}
+			return ResultUtils.ok("编辑成功!");
+
 		}
-		return result;
+
 	}
 	
 	/**
@@ -112,18 +109,16 @@ public class SysDictItemController {
 	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	@CacheEvict(value="dictCache", allEntries=true)
-	public Result<SysDictItem> delete(@RequestParam(name="id",required=true) String id) {
-		Result<SysDictItem> result = new Result<SysDictItem>();
+	public Result delete(@RequestParam(name="id",required=true) String id) {
 		SysDictItem joinSystem = sysDictItemService.getById(id);
 		if(joinSystem==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = sysDictItemService.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
-			}
+			return ResultUtils.ok("删除成功!");
+
 		}
-		return result;
+
 	}
 	
 	/**
@@ -133,15 +128,14 @@ public class SysDictItemController {
 	 */
 	@RequestMapping(value = "/deleteBatch", method = RequestMethod.DELETE)
 	@CacheEvict(value="dictCache", allEntries=true)
-	public Result<SysDictItem> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<SysDictItem> result = new Result<SysDictItem>();
+	public Result deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
+			throw new CornException("参数不识别！");
 		}else {
 			this.sysDictItemService.removeByIds(Arrays.asList(ids.split(",")));
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
-		return result;
+
 	}
 	
 }

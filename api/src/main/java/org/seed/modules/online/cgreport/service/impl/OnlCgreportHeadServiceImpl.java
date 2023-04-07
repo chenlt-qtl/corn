@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.seed.common.api.vo.Result;
 import org.seed.common.exception.CornException;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.online.cgreport.def.CgReportConstant;
 import org.seed.modules.online.cgreport.entity.OnlCgreportHead;
@@ -74,12 +75,12 @@ public class OnlCgreportHeadServiceImpl extends ServiceImpl<OnlCgreportHeadMappe
 	/** 修改全部项，包括新增、修改、删除 */
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Result<?> editAll(OnlCgreportModel values) {
+	public Result editAll(OnlCgreportModel values) {
 		OnlCgreportHead head = values.getHead();
 
 		OnlCgreportHead onlCgreportHeadEntity = super.getById(head.getId());
 		if (onlCgreportHeadEntity == null) {
-			return Result.error("未找到对应实体");
+			return ResultUtils.error("未找到对应实体");
 		}
 
 		super.updateById(head);
@@ -141,7 +142,7 @@ public class OnlCgreportHeadServiceImpl extends ServiceImpl<OnlCgreportHeadMappe
 		onlCgreportParamService.removeByIds(values.getDeleteParamIdList());
 		onlCgreportItemService.removeByIds(values.getDeleteItemIdList());
 
-		return Result.ok("全部修改成功");
+		return ResultUtils.ok("全部修改成功");
 
 	}
 	

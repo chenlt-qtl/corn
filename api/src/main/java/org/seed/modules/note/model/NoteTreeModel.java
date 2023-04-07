@@ -1,30 +1,26 @@
 package org.seed.modules.note.model;
 
+import lombok.Data;
 import org.seed.common.util.BtoaEncode;
 import org.seed.common.util.tree.TreeModel;
 import org.seed.modules.note.entity.Note;
 
+import java.util.Date;
+
+@Data
 public class NoteTreeModel extends TreeModel<Note> {
 	
     private static final long serialVersionUID = 1L;
-
-    private String parentIds;
+    private Date updateTime;
 
     public NoteTreeModel(Note note) {
-        this.setParentIds(note.getParentIds());
+        this.setId(note.getId());
         this.setKey(note.getId());
         this.setTitle(note.getName());
         this.setName(note.getName());
         this.setParentId(note.getParentId());
         this.setIsLeaf(note.getIsLeaf());
-    }
-
-    public String getParentIds() {
-        return parentIds;
-    }
-
-    public void setParentIds(String parentIds) {
-        this.parentIds = parentIds;
+        this.setUpdateTime(note.getUpdateTime());
     }
 
 

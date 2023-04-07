@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.system.entity.SysData;
 import org.seed.modules.system.service.ISysDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +38,15 @@ public class SysDataController {
 	 * @return
 	 */
 	@GetMapping
-	public Result<IPage<SysData>> queryPageList(SysData sysData,
+	public Result queryPageList(SysData sysData,
 												@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 												@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 												HttpServletRequest req) {
-		Result<IPage<SysData>> result = new Result<IPage<SysData>>();
 		QueryWrapper<SysData> queryWrapper = QueryGenerator.initQueryWrapper(sysData, req.getParameterMap());
 		Page<SysData> page = new Page<SysData>(pageNo, pageSize);
 		IPage<SysData> pageList = sysDataService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+		return ResultUtils.okData(pageList);
+
 	}
 	
 	/**
@@ -55,17 +55,16 @@ public class SysDataController {
 	 * @return
 	 */
 	@PostMapping
-	public Result<SysData> add(@RequestBody SysData sysData) {
-		Result<SysData> result = new Result<SysData>();
+	public Result add(@RequestBody SysData sysData) {
 		try {
 			sysDataService.save(sysData);
-			result.success("添加成功！");
+			return ResultUtils.ok("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			result.error500("操作失败");
+			throw new CornException("操作失败");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -74,20 +73,15 @@ public class SysDataController {
 	 * @return
 	 */
 	@PutMapping
-	public Result<SysData> edit(@RequestBody SysData sysData) {
-		Result<SysData> result = new Result<SysData>();
+	public Result edit(@RequestBody SysData sysData) {
 		SysData sysDataEntity = sysDataService.getById(sysData.getId());
 		if(sysDataEntity==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = sysDataService.updateById(sysData);
-			//TODO 返回false说明什么？
-			if(ok) {
-				result.success("修改成功!");
-			}
+			return ResultUtils.ok("修改成功!");
 		}
-		
-		return result;
+
 	}
 	
 	/**
@@ -96,19 +90,16 @@ public class SysDataController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/{id}")
-	public Result<SysData> delete(@PathVariable String id) {
-		Result<SysData> result = new Result<SysData>();
+	public Result delete(@PathVariable String id) {
 		SysData sysData = sysDataService.getById(id);
 		if(sysData==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = sysDataService.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
-			}
+			return ResultUtils.ok("删除成功!");
+
 		}
-		
-		return result;
+
 	}
 	
 
@@ -119,16 +110,15 @@ public class SysDataController {
 	 * @return
 	 */
 	@GetMapping(value = "/{id}")
-	public Result<SysData> queryById(@PathVariable String id) {
-		Result<SysData> result = new Result<SysData>();
+	public Result queryById(@PathVariable String id) {
 		SysData sysData = sysDataService.getById(id);
 		if(sysData==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
-			result.setResult(sysData);
-			result.setSuccess(true);
+			return ResultUtils.okData(sysData);
+
 		}
-		return result;
+
 	}
 
 }

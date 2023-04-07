@@ -35,7 +35,7 @@ const EditFolder: React.FC = (props, ref) => {
             const { openedNotes } = props.note;
             props.dispatch({
                 type: 'note/refreshOpenedNotes',
-                payload: { ...openedNotes, [newNote.id]: { id: newNote.id, name: newNote.name, index: Object.keys(openedNotes).length } }
+                payload: { ...openedNotes, newNote }
             })
             changeUrl(props, "id", "add")
 

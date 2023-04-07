@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.word.entity.WordUser;
 import org.seed.modules.word.service.IWordUserService;
@@ -53,17 +55,16 @@ public class WordUserController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<WordUser>> queryPageList(WordUser wordUser,
+	public Result queryPageList(WordUser wordUser,
 									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
-		Result<IPage<WordUser>> result = new Result<IPage<WordUser>>();
 		QueryWrapper<WordUser> queryWrapper = QueryGenerator.initQueryWrapper(wordUser, req.getParameterMap());
 		Page<WordUser> page = new Page<WordUser>(pageNo, pageSize);
 		IPage<WordUser> pageList = wordUserService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+
+		return ResultUtils.okData(pageList);
+
 	}
 	
 	/**
@@ -72,17 +73,16 @@ public class WordUserController {
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result<WordUser> add(@RequestParam(name="wordId",required=true) String wordId) {
-		Result<WordUser> result = new Result<WordUser>();
+	public Result add(@RequestParam(name="wordId",required=true) String wordId) {
 		try {
 			wordUserService.saveRel(wordId);
-			result.success("添加成功！");
+			return ResultUtils.ok("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			result.error500("操作失败");
+			throw new CornException("操作失败");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -91,20 +91,17 @@ public class WordUserController {
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<WordUser> edit(@RequestBody WordUser wordUser) {
-		Result<WordUser> result = new Result<WordUser>();
+	public Result edit(@RequestBody WordUser wordUser) {
 		WordUser wordUserEntity = wordUserService.getById(wordUser.getId());
 		if(wordUserEntity==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = wordUserService.updateById(wordUser);
-			//TODO 返回false说明什么？
-			if(ok) {
-				result.success("修改成功!");
-			}
+			return ResultUtils.ok("修改成功!");
+
 		}
 		
-		return result;
+
 	}
 	
 	/**
@@ -113,19 +110,15 @@ public class WordUserController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result<WordUser> delete(@RequestParam(name="wordId",required=true) String wordId) {
-		Result<WordUser> result = new Result<WordUser>();
+	public Result delete(@RequestParam(name="wordId",required=true) String wordId) {
 		WordUser wordUser = wordUserService.getRel(wordId);
 		if(wordUser==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = wordUserService.removeById(wordUser.getId());
-			if(ok) {
-				result.success("删除成功!");
-			}
+			return ResultUtils.ok("删除成功!");
 		}
-		
-		return result;
+
 	}
 	
 	/**
@@ -134,15 +127,14 @@ public class WordUserController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/deleteBatch")
-	public Result<WordUser> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<WordUser> result = new Result<WordUser>();
+	public Result deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
+			throw new CornException("参数不识别！");
 		}else {
 			this.wordUserService.removeByIds(Arrays.asList(ids.split(",")));
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -151,16 +143,15 @@ public class WordUserController {
 	 * @return
 	 */
 	@GetMapping(value = "/queryById")
-	public Result<WordUser> queryById(@RequestParam(name="id",required=true) String id) {
-		Result<WordUser> result = new Result<WordUser>();
+	public Result queryById(@RequestParam(name="id",required=true) String id) {
 		WordUser wordUser = wordUserService.getById(id);
 		if(wordUser==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
-			result.setResult(wordUser);
-			result.setSuccess(true);
+			return ResultUtils.okData(wordUser);
+
 		}
-		return result;
+
 	}
 
   /**
@@ -203,7 +194,7 @@ public class WordUserController {
    * @return
    */
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-  public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
+  public Result importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
       Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
       for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
@@ -217,10 +208,10 @@ public class WordUserController {
               for (WordUser wordUserExcel : listWordUsers) {
                   wordUserService.save(wordUserExcel);
               }
-              return Result.ok("文件导入成功！数据行数：" + listWordUsers.size());
+              return ResultUtils.ok("文件导入成功！数据行数：" + listWordUsers.size());
           } catch (Exception e) {
               log.error(e.getMessage());
-              return Result.error("文件导入失败！");
+              return ResultUtils.error("文件导入失败！");
           } finally {
               try {
                   file.getInputStream().close();
@@ -229,7 +220,7 @@ public class WordUserController {
               }
           }
       }
-      return Result.ok("文件导入失败！");
+      return ResultUtils.ok("文件导入失败！");
   }
 
 }

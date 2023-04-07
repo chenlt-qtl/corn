@@ -9,6 +9,7 @@ public class VideoUtil {
 
     /**
      * 获取视频文件的播放长度(mp4、mov格式)
+     *
      * @param videoPath
      * @return 单位为毫秒
      */
@@ -23,13 +24,14 @@ public class VideoUtil {
 
     /**
      * 得到语音或视频文件时长,单位秒
+     *
      * @param filePath
      * @return
      * @throws IOException
      */
     public static long getDuration(String filePath) throws IOException {
         String format = getVideoFormat(filePath);
-        if(!"mp4".equals(format)){
+        if (!"mp4".equals(format)) {
             throw new CornException("只支持获取mp4的时长");
         }
         long result = VideoUtil.getMp4Duration(filePath);
@@ -39,10 +41,11 @@ public class VideoUtil {
 
     /**
      * 得到文件格式
+     *
      * @param path
      * @return
      */
-    public static String getVideoFormat(String path){
-        return  path.toLowerCase().substring(path.toLowerCase().lastIndexOf(".") + 1);
+    public static String getVideoFormat(String path) {
+        return path.toLowerCase().substring(path.toLowerCase().lastIndexOf(".") + 1);
     }
 }

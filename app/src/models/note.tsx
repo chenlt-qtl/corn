@@ -4,9 +4,11 @@ import { Effect, Reducer } from 'umi';
 
 export interface NoteState {
     openedNote: NoteItem;
-    openedNotes: object;
+    openedNotes: [];
     noteTreeData: NoteNode[];
+    listData:NoteItem[];
     selectedFolder: NoteItem;
+    selectedTreeKey:string;
 }
 
 export interface NoteModelType {
@@ -26,6 +28,8 @@ export interface NoteModelType {
         refreshOpenedNotes: Reducer<NoteState>;
         refreshNoteTreeData: Reducer<NoteState>;
         refreshSelectedFolder: Reducer<NoteState>;
+        refreshSelectedTreeKey: Reducer<NoteState>;
+        refreshListData: Reducer<NoteState>;
     };
 }
 
@@ -34,9 +38,11 @@ const NoteModel: NoteModelType = {
 
     state: {
         openedNote: {},
-        openedNotes: {},
+        openedNotes: [],
         noteTreeData: [],
         selectedFolder: {},
+        selectedTreeKey:"0",
+        listData:[],
     },
 
     effects: {
@@ -57,10 +63,10 @@ const NoteModel: NoteModelType = {
                 }
             }
 
-            if (!openedNotes[note.id]) {
+            if (openedNotes.filter(i => i.id == note.id).length == 0) {
                 yield put({
                     type: 'refreshOpenedNotes',
-                    payload: { ...openedNotes, [note.id]: { id: note.id, name: note.name, index:Object.keys(openedNotes).length } }
+                    payload: [note, ...openedNotes]
                 })
             }
 
@@ -78,11 +84,14 @@ const NoteModel: NoteModelType = {
 
                 const newData = result.result;
 
-                //更新tab数据  
-                if (openedNotes[newData.id]) {
+                //更新打开历史数据  
+                const newOpenedNotes = [...openedNotes]
+                const note = newOpenedNotes.filter(i => i.id == note.id)
+                if (note) {
+                    note.name = newData.name;
                     yield put({
                         type: "refreshOpenedNotes",
-                        payload: { ...openedNotes, [newData.id]: { ...openedNotes[newData.id], name: newData.name } }
+                        payload: newOpenedNotes
                     });
                 }
                 //刷新openedNote
@@ -112,9 +121,7 @@ const NoteModel: NoteModelType = {
             const openedNote = yield select(state => state.note.openedNote);
             let result = yield call(deleteNote, payload);
             if (result) {
-                let newOpenedNotes = { ...openedNotes };
-
-                delete newOpenedNotes[payload];
+                let newOpenedNotes = [...openedNotes].filter(i => i.id = payload);
 
                 if (newOpenedNotes.length != openedNotes.length) {
                     yield put({
@@ -126,7 +133,7 @@ const NoteModel: NoteModelType = {
                 if (openedNote.id == payload) {
                     yield put({
                         type: "openNote",
-                        payload: Object.keys(newOpenedNotes)[0] || ""
+                        payload: {}
                     });
                 }
 
@@ -210,6 +217,18 @@ const NoteModel: NoteModelType = {
             return {
                 ...state,
                 selectedFolder: payload
+            }
+        },
+        refreshSelectedTreeKey(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                selectedTreeKey: payload
+            }
+        },
+        refreshListData(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                listData: payload
             }
         },
     },

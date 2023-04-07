@@ -24,20 +24,17 @@ public class Note implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**contentId*/
 	@Excel(name = "contentId", width = 32)
-	private java.lang.String contentId;
+	private Long contentId;
 	/**name*/
 	@Excel(name = "name", width = 15)
 	private java.lang.String name;
 	/**pId*/
 	@Excel(name = "parentId", width = 15)
-	private java.lang.String parentId;
-	/**pIds*/
-	@Excel(name = "parentIds", width = 15)
-	private java.lang.String parentIds;
+	private Long parentId;
 
 	/**tag*/
 	@Excel(name = "tag", width = 15)

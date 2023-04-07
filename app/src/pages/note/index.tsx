@@ -7,18 +7,8 @@ import Content from './Content'
 import ListMenu from './Menu/components/ListMenu'
 import { Spin } from "antd"
 
-const Note: React.FC<{}> = (props) => {
 
-  useEffect(() => {
-    const { type } = props.match.params;
-    if (type == "folder") {
-      if (props.note.noteTreeData.length == 0) {
-        props.dispatch({
-          type: 'note/getNoteTree',
-        })
-      }
-    }
-  }, [props.match.params.type])
+const Note: React.FC<{}> = (props) => {
 
   useEffect(() => {
     const { id } = props.match.params;
@@ -26,6 +16,11 @@ const Note: React.FC<{}> = (props) => {
       props.dispatch({
         type: 'note/openNote',
         payload: id,
+      }).then(() => {
+        props.dispatch({
+          type: 'note/refreshSelectedTreeKey',
+          payload: props.note.openedNote.parentId,
+        })
       })
     }
   }, [props.match.params.id])

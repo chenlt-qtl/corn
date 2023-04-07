@@ -67,9 +67,9 @@ public class ${entityName}Controller {
 		QueryWrapper<${entityName}> queryWrapper = QueryGenerator.initQueryWrapper(${entityName?uncap_first}, req.getParameterMap());
 		Page<${entityName}> page = new Page<${entityName}>(pageNo, pageSize);
 		IPage<${entityName}> pageList = ${entityName?uncap_first}Service.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+
+		return ResultUtils.okData(pageList);
+
 	}
 	
 	/**
@@ -82,13 +82,13 @@ public class ${entityName}Controller {
 		Result<${entityName}> result = new Result<${entityName}>();
 		try {
 			${entityName?uncap_first}Service.save(${entityName?uncap_first});
-			result.success("添加成功！");
+			return ResultUtils.ok("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			result.error500("操作失败");
+			throw new CornException("操作失败");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -101,16 +101,14 @@ public class ${entityName}Controller {
 		Result<${entityName}> result = new Result<${entityName}>();
 		${entityName} ${entityName?uncap_first}Entity = ${entityName?uncap_first}Service.getById(${entityName?uncap_first}.getId());
 		if(${entityName?uncap_first}Entity==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = ${entityName?uncap_first}Service.updateById(${entityName?uncap_first});
-			//TODO 返回false说明什么？
-			if(ok) {
-				result.success("修改成功!");
-			}
+			return ResultUtils.ok("修改成功!");
+
 		}
 		
-		return result;
+
 	}
 	
 	/**
@@ -123,15 +121,14 @@ public class ${entityName}Controller {
 		Result<${entityName}> result = new Result<${entityName}>();
 		${entityName} ${entityName?uncap_first} = ${entityName?uncap_first}Service.getById(id);
 		if(${entityName?uncap_first}==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = ${entityName?uncap_first}Service.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 			}
 		}
 		
-		return result;
+
 	}
 	
 	/**
@@ -143,12 +140,12 @@ public class ${entityName}Controller {
 	public Result<${entityName}> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		Result<${entityName}> result = new Result<${entityName}>();
 		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
+			throw new CornException("参数不识别！");
 		}else {
 			this.${entityName?uncap_first}Service.removeByIds(Arrays.asList(ids.split(",")));
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -161,12 +158,12 @@ public class ${entityName}Controller {
 		Result<${entityName}> result = new Result<${entityName}>();
 		${entityName} ${entityName?uncap_first} = ${entityName?uncap_first}Service.getById(id);
 		if(${entityName?uncap_first}==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
-			result.setResult(${entityName?uncap_first});
-			result.setSuccess(true);
+			return ResultUtils.okData(${entityName?uncap_first});
+
 		}
-		return result;
+
 	}
 
 	/**
@@ -209,7 +206,7 @@ public class ${entityName}Controller {
      * @return
      */
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
+    public Result importExcel(HttpServletRequest request, HttpServletResponse response) {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
         for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
@@ -223,10 +220,10 @@ public class ${entityName}Controller {
                 for (${entityName} ${entityName?uncap_first}Excel : list${entityName}s) {
                     ${entityName?uncap_first}Service.save(${entityName?uncap_first}Excel);
                 }
-                return Result.ok("文件导入成功！数据行数：" + list${entityName}s.size());
+                return ResultUtils.ok("文件导入成功！数据行数：" + list${entityName}s.size());
             } catch (Exception e) {
                 log.error(e.getMessage());
-                return Result.error("文件导入失败！");
+                return ResultUtils.error("文件导入失败！");
             } finally {
                 try {
                     file.getInputStream().close();
@@ -235,7 +232,7 @@ public class ${entityName}Controller {
                 }
             }
         }
-        return Result.ok("文件导入失败！");
+        return ResultUtils.ok("文件导入失败！");
     }
 
 }

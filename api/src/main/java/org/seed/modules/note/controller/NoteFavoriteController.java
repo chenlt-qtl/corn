@@ -3,6 +3,7 @@ package org.seed.modules.note.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.seed.common.api.vo.Result;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.note.entity.NoteFavorite;
 import org.seed.modules.note.model.NoteModel;
 import org.seed.modules.note.service.INoteFavoriteService;
@@ -34,20 +35,16 @@ public class NoteFavoriteController {
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<NoteFavorite> edit(@RequestBody NoteFavorite noteFavorite) {
-		Result<NoteFavorite> result = new Result<NoteFavorite>();
+	public Result edit(@RequestBody NoteFavorite noteFavorite) {
 		noteFavoriteService.edit(noteFavorite.getNoteIds());
-		result.setSuccess(true);
-		return result;
+		return ResultUtils.ok();
 	}
 
 	 @PutMapping(value = "/edit/{noteId}")
 	 public Result editOne(@PathVariable("noteId") String id,@RequestParam Boolean isFav) {
 
-		 Result result = new Result();
 		 noteFavoriteService.editOne(id,isFav);
-		 result.setSuccess(true);
-		 return result;
+		 return ResultUtils.ok();
 	 }
 	
 	/**
@@ -56,46 +53,24 @@ public class NoteFavoriteController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result<NoteFavorite> delete(@RequestParam(name="id",required=true) String id) {
-		Result<NoteFavorite> result = new Result<NoteFavorite>();
+	public Result delete(@RequestParam(name="id",required=true) String id) {
 		NoteFavorite noteFavorite = noteFavoriteService.getById(id);
 		if(noteFavorite==null) {
-			result.error500("未找到对应实体");
+			return ResultUtils.error("未找到对应实体");
 		}else {
-			boolean ok = noteFavoriteService.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
-			}
+			noteFavoriteService.removeById(id);
+			return ResultUtils.ok();
 		}
-		
-		return result;
 	}
 	
-	/**
-	  *  批量删除
-	 * @param ids
-	 * @return
-	 */
-	@DeleteMapping(value = "/deleteBatch")
-	public Result<NoteFavorite> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<NoteFavorite> result = new Result<NoteFavorite>();
-		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
-		}else {
-			this.noteFavoriteService.removeByIds(Arrays.asList(ids.split(",")));
-			result.success("删除成功!");
-		}
-		return result;
-	}
-	
+
 
 	 /**
 	  * 通过登录用户查询
 	  * @return
 	  */
 	 @GetMapping(value = "/queryNotes")
-	 public Result<List<NoteModel>> queryNotes() {
-		 Result<List<NoteModel>> result = new Result();
+	 public Result queryNotes() {
 
 		 SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 		 List<NoteModel> notes = noteFavoriteService.queryNotes(sysUser.getUsername());
@@ -107,10 +82,8 @@ public class NoteFavoriteController {
 				 list.add(note);
 			 }
 		 }
-		 result.setSuccess(true);
-		 result.setResult(list);
 
-		 return result;
+		 return ResultUtils.okData(list);
 	 }
 
 

@@ -14,7 +14,7 @@ import java.util.Map;
  * @version： V1.0
  */
 public interface IWordChineseService extends IService<WordChinese> {
-    WordChinese getWord(String wordName) throws Exception;
+    WordChinese getWord(String wordName);
 
     List<Map> searchWordByArticle(String articleId);
 

@@ -32,6 +32,7 @@ public class NoteOpenHistoryServiceImpl extends ServiceImpl<NoteOpenHistoryMappe
      * @param history
      * @return
      */
+    @Override
     public NoteOpenHistory addHistory(NoteOpenHistory history){
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         history.setCreateBy(sysUser.getUsername());
@@ -46,6 +47,7 @@ public class NoteOpenHistoryServiceImpl extends ServiceImpl<NoteOpenHistoryMappe
         return history;
     }
 
+    @Override
     public List<NoteModel> queryNotes() {
         List<NoteModel> notes = new ArrayList<>();
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();

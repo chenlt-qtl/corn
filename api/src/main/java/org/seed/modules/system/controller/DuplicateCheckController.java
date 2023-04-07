@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.seed.common.api.vo.Result;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.system.mapper.SysDictMapper;
 import org.seed.modules.system.model.DuplicateCheckVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class DuplicateCheckController {
 	 */
 	@RequestMapping(value = "/check", method = RequestMethod.GET)
 	@ApiOperation("重复校验接口")
-	public Result<Object> doDuplicateCheck(DuplicateCheckVo duplicateCheckVo, HttpServletRequest request) {
+	public Result doDuplicateCheck(DuplicateCheckVo duplicateCheckVo, HttpServletRequest request) {
 		Long num = null;
 
 		log.info("----duplicate check------："+ duplicateCheckVo.toString());
@@ -49,11 +50,11 @@ public class DuplicateCheckController {
 
 		if (num == null || num == 0) {
 			// 该值可用
-			return Result.ok("该值可用！");
+			return ResultUtils.ok("该值可用！");
 		} else {
 			// 该值不可用
 			log.info("该值不可用，系统中已存在！");
-			return Result.error("该值不可用，系统中已存在！");
+			return ResultUtils.error("该值不可用，系统中已存在！");
 		}
 	}
 }

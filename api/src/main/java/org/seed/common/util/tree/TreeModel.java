@@ -10,13 +10,15 @@ public abstract class TreeModel<T>{
 
     static final long serialVersionUID = 1L;
 
-    private String key;
+    private Long key;
+
+    private Long id;
 
     private String title;
 
     private String name;
 
-    private String parentId;
+    private Long parentId;
 
     private Boolean isLeaf;
 

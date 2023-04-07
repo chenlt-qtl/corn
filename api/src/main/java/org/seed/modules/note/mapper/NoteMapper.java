@@ -30,7 +30,7 @@ public interface NoteMapper extends BaseMapper<Note> {
      * @param parentId
      * @return
      */
-    public List<Note> listAllChildren(@Param("createBy") String createBy, @Param("parentId") String parentId, @Param("text") String text, @Param("detail") boolean detail);
+    public List<Note> listAllChildren(@Param("createBy") String createBy, @Param("parentId") Long parentId, @Param("text") String text, @Param("detail") boolean detail);
 
     /**
      * 查询所有的note和text 包括自己

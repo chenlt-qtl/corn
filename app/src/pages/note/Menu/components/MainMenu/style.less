@@ -7,7 +7,7 @@
   .toolbar {
     flex-shrink: 0;
     text-align : center;
-    padding    : 10px 5px 24px 5px;
+    padding    : 10px 5px 20px 5px;
 
     :global {
       .ant-btn-round {
@@ -17,27 +17,30 @@
   }
 
   .menuItem {
-    padding    : 2px 20px;
+    padding    : 3px 20px;
     font-size  : 12px;
     display    : flex;
     align-items: center;
     cursor     : pointer;
+    border-left     : #fff 2px solid;
 
-    >i {
-      padding  : 5px 8px 4px 5px;
-      font-size: 16px;
+    :global {
+      .anticon {
+        padding  : 5px 8px 4px 5px;
+        font-size: 14px;
+      }
     }
   }
 
   .active {
     background-color: rgba(205, 205, 205, 0.4);
-    border-left     : #f39c12 2px solid;
+    border-color     : #f39c12;
   }
 
   .tree {
     overflow: auto;
     flex    : 1;
-    height: calc(~"100% - 128px");
+    height  : calc(~"100% - 128px");
 
     //修改树节点样式
     :global {

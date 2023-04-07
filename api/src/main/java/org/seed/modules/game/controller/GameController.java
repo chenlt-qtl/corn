@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.game.entity.Game;
 import org.seed.modules.game.service.IGameService;
 import org.seed.modules.word.entity.Word;
@@ -51,17 +53,16 @@ public class GameController {
      * @return
      */
     @GetMapping(value = "/list")
-    public Result<IPage<Game>> queryPageList(Game game,
-                                             @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                             @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                             HttpServletRequest req) {
-        Result<IPage<Game>> result = new Result<IPage<Game>>();
+    public Result queryPageList(Game game,
+                                @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                HttpServletRequest req) {
         QueryWrapper<Game> queryWrapper = QueryGenerator.initQueryWrapper(game, req.getParameterMap());
         Page<Game> page = new Page<Game>(pageNo, pageSize);
         IPage<Game> pageList = gameService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+
+        return ResultUtils.okData(pageList);
+
     }
 
     /**
@@ -71,17 +72,16 @@ public class GameController {
      * @return
      */
     @PostMapping(value = "/add")
-    public Result<Game> add(@RequestBody Game game) {
-        Result<Game> result = new Result<Game>();
+    public Result add(@RequestBody Game game) {
         try {
             gameService.save(game);
-            result.success("添加成功！");
+            return ResultUtils.ok("添加成功！");
         } catch (Exception e) {
             e.printStackTrace();
             log.info(e.getMessage());
-            result.error500("操作失败");
+            throw new CornException("操作失败");
         }
-        return result;
+
     }
 
     /**
@@ -91,20 +91,18 @@ public class GameController {
      * @return
      */
     @PutMapping(value = "/edit")
-    public Result<Game> edit(@RequestBody Game game) {
-        Result<Game> result = new Result<Game>();
+    public Result edit(@RequestBody Game game) {
         Game gameEntity = gameService.getById(game.getId());
         if (gameEntity == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             boolean ok = gameService.updateById(game);
-            //TODO 返回false说明什么？
-            if (ok) {
-                result.success("修改成功!");
-            }
+
+            return ResultUtils.ok("修改成功!");
+
         }
 
-        return result;
+
     }
 
     /**
@@ -114,19 +112,17 @@ public class GameController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public Result<Game> delete(@RequestParam(name = "id", required = true) String id) {
-        Result<Game> result = new Result<Game>();
+    public Result delete(@RequestParam(name = "id", required = true) String id) {
         Game game = gameService.getById(id);
         if (game == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             boolean ok = gameService.removeById(id);
-            if (ok) {
-                result.success("删除成功!");
-            }
+
+            return ResultUtils.ok("删除成功!");
+
         }
 
-        return result;
     }
 
     /**
@@ -136,16 +132,15 @@ public class GameController {
      * @return
      */
     @GetMapping(value = "/queryById")
-    public Result<Game> queryById(@RequestParam(name = "id", required = true) String id) {
-        Result<Game> result = new Result<Game>();
+    public Result queryById(@RequestParam(name = "id", required = true) String id) {
         Game game = gameService.getById(id);
         if (game == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
-            result.setResult(game);
-            result.setSuccess(true);
+            return ResultUtils.okData(game);
+
         }
-        return result;
+
     }
 
     /**
@@ -156,15 +151,14 @@ public class GameController {
      * @return
      */
     @GetMapping(value = "/level")
-    public Result<Map> getGameLevelInfo(String gameId, HttpServletRequest req) {
-        Result<Map> result = new Result();
+    public Result getGameLevelInfo(String gameId, HttpServletRequest req) {
         Map data = new HashMap();
         if (StringUtils.isBlank(gameId)) {
-            result.error500("Game id 是必填项！");
+            throw new CornException("Game id 是必填项！");
         }
         Game game = gameService.getById(gameId);
         if (game == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             int count = 0;
             if (game.getType().intValue() == 0) {//英文
@@ -176,12 +170,11 @@ public class GameController {
                 queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId + "'");
                 count = wordChineseService.count(queryWrapper);
             }
-            data.put("wordCount",count);
-            data.put("type",game.getType());
+            data.put("wordCount", count);
+            data.put("type", game.getType());
         }
-        result.setResult(data);
-        result.setSuccess(true);
-        return result;
+        return ResultUtils.okData(data);
+
 
     }
 

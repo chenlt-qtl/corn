@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.game.entity.Game;
 import org.seed.modules.game.entity.GameWordRel;
@@ -65,22 +67,21 @@ public class GameWordRelController {
      * @return
      */
     @GetMapping(value = "/list")
-    public Result<IPage<GameWordRel>> queryPageList(GameWordRel gameWordRel,
+    public Result queryPageList(GameWordRel gameWordRel,
                                                     @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                                     @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                                     HttpServletRequest req) {
-        Result<IPage<GameWordRel>> result = new Result<IPage<GameWordRel>>();
         if (StringUtils.isBlank(gameWordRel.getGameId())) {
-            result.error500("Game id 是必填项！");
+            throw new CornException("Game id 是必填项！");
         }
 
         QueryWrapper<GameWordRel> queryWrapper = QueryGenerator.initQueryWrapper(gameWordRel, req.getParameterMap());
         queryWrapper.eq("game_id", gameWordRel.getGameId());
         Page<GameWordRel> page = new Page<GameWordRel>(pageNo, pageSize);
         IPage<GameWordRel> pageList = gameWordRelService.page(page, queryWrapper);
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+
+        return ResultUtils.okData(pageList);
+
     }
 
 
@@ -91,11 +92,10 @@ public class GameWordRelController {
      * @return
      */
     @PostMapping(value = "/add/{gameId}")
-    public Result<String> add(@PathVariable(name = "gameId", required = true) String gameId, @RequestParam("articleIds") String articleIds) throws Exception {
-        Result<String> result = new Result<String>();
+    public Result add(@PathVariable(name = "gameId", required = true) String gameId, @RequestParam("articleIds") String articleIds) throws Exception {
         String msg = gameWordRelService.addRelByArticle(gameId, articleIds.split(","));
-        result.setResult(msg);
-        return result;
+        return ResultUtils.okData(msg);
+
     }
 
 

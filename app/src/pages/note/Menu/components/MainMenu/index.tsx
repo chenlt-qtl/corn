@@ -3,16 +3,17 @@ import styles from './style.less';
 import { connect } from 'umi';
 import EditFolderModal from '../../../components/EditFolderModal';
 import NoteTree from './NoteTree';
-import {  Modal, notification } from "antd"
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Modal, notification } from "antd"
+import { ExclamationCircleOutlined, ClockCircleOutlined, FolderOutlined, FolderOpenOutlined, StarOutlined } from '@ant-design/icons';
 import ChangeParentModal from '../../../components/ChangeParentModal';
 import { NoteNode } from '@/data/note'
 import { changeUrl } from '../../../utils'
 import { getFolderData } from '../../utils'
+import { getNode } from '../../utils';
 
 const { confirm } = Modal;
 
-const TreeMenu: React.FC = (props, ref) => {
+const MainMenu: React.FC = (props, ref) => {
 
     const [folderModalVisible, setFolderModalVisible] = useState<boolean>(false);
     const [parentModalVisible, setParentModalVisible] = useState<boolean>(false);
@@ -25,6 +26,18 @@ const TreeMenu: React.FC = (props, ref) => {
             setTreeData(getFolderData(props.note.noteTreeData));
         }
     }, [props.note.noteTreeData]);
+
+    useEffect(() => {
+        const { type } = props.match.params;
+        if (type == "folder") {
+            const { openedNote } = props.note;
+            if (openedNote.parentId) {
+                const parentNote = getNode(openedNote.parentId, props.note.noteTreeData);
+                onSelectedFolder(parentNote)
+            }
+        }
+
+    }, [props.match.params.type]);
 
     const handleRename = (node) => {
         setEditNode(node);
@@ -56,8 +69,10 @@ const TreeMenu: React.FC = (props, ref) => {
         });
     }
 
-    const onSelectedFolder = note=>{
-        props.dispatch({type:"note/refreshSelectedFolder",payload:note})
+    const onSelectedFolder = note => {
+        console.log(1626);
+        
+        props.dispatch({ type: "note/refreshSelectedFolder", payload: note })
     }
 
 
@@ -74,15 +89,21 @@ const TreeMenu: React.FC = (props, ref) => {
                 <div className={`${styles.menuItem} ${type == "fav" ? styles.active : ""}`} onClick={() => {
                     changeUrl(props, "type", "fav")
                 }}>
-                    {/* <StarOutlined /> */}
-                    <i className="fa fa-star-o"></i>
+                    <StarOutlined />
+                    {/* <i className="fa fa-star-o"></i> */}
                     收藏夹
+                </div>
+                <div className={`${styles.menuItem} ${type == "history" ? styles.active : ""}`} onClick={() => {
+                    changeUrl(props, "type", "history")
+                }}>
+                    <ClockCircleOutlined />
+                    最近打开
                 </div>
                 <div className={`${styles.menuItem} ${type == "folder" && !selectedFolder.id ? styles.active : ""}`} onClick={() => {
                     changeUrl(props, "type", "folder");
                     onSelectedFolder({})
                 }}>
-                    {type == "fav" ? <i className="fa fa-folder-o"></i> : <i className="fa fa-folder-open-o"></i>}
+                    {type == "folder" ? <FolderOpenOutlined /> : <FolderOutlined />}
                     文件夹
                 </div>
                 {type == "folder" ?
@@ -101,4 +122,4 @@ const TreeMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note }: { note: NoteModelState }) => ({ note }))(TreeMenu);
+export default connect(({ note }: { note: NoteModelState }) => ({ note }))(MainMenu);

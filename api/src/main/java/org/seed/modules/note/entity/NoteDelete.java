@@ -23,11 +23,11 @@ public class NoteDelete implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**noteId*/
 	@Excel(name = "noteId", width = 15)
-	private java.lang.String noteId;
+	private Long noteId;
 	/**name*/
 	@Excel(name = "name", width = 15)
 	private java.lang.String name;

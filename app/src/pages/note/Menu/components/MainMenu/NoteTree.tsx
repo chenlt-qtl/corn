@@ -21,11 +21,21 @@ const NoteTree: React.FC = (props, ref) => {
     }, [props.note.selectedFolder.id]);
 
     useEffect(() => {
+        const { selectedTreeKey } = props.note;
+        if (selectedTreeKey) {
+            const note = getNode(selectedTreeKey, treeData)
+            note && expandNote(note, true)
+        }
+
+    }, [props.note.selectedTreeKey]);
+
+    useEffect(() => {
         const { openedNote } = props.note;
 
         if (openedNote.parentId) {
             const parent = getNode(openedNote.parentId, treeData)
-            parent && onNodeSelect(null, parent)
+            parent && expandNote({ ...parent, key: parent.id }, true)
+            props.dispatch({ type: "note/refreshSelectedTreeKey", payload: openedNote.parentId })
         }
 
     }, [props.note.openedNote]);
@@ -48,16 +58,20 @@ const NoteTree: React.FC = (props, ref) => {
     const onNodeSelect = (e, node) => {
         e && e.stopPropagation();
         props.dispatch({ type: "note/refreshSelectedFolder", payload: node })
+        props.dispatch({ type: "note/refreshSelectedTreeKey", payload: node.id })
+        expandNote(node)
     }
 
     /**
      * 展开节点
      * @param node 
      */
-    const expandNote = node => {
+    const expandNote = (node, expand) => {
         if (node.id != "0") {
             let newExpandedKeys;
-            if (expandedKeys.includes(node.id)) {
+            if (expand) {
+                newExpandedKeys = [...getParentIds(node, []), node.id]
+            } else if (expandedKeys.includes(node.id)) {
                 newExpandedKeys = expandedKeys.filter(i => i != node.id);
             } else {
                 newExpandedKeys = [...getParentIds(node, []), node.id]
@@ -85,10 +99,11 @@ const NoteTree: React.FC = (props, ref) => {
 
 
     const render = function () {
-        const { selectedFolder } = props.note;
+        const { selectedTreeKey } = props.note;
+
         return (
             <Tree
-                selectedKeys={[selectedFolder.id]}
+                selectedKeys={[selectedTreeKey]}
                 blockNode
                 multiple
                 expandedKeys={expandedKeys}
