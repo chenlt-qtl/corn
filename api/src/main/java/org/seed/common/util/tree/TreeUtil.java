@@ -19,7 +19,7 @@ public class TreeUtil {
         Map<Long, TreeModel> allMap = new HashMap<>();
         List<TreeModel> result = new ArrayList<>();
         for (TreeModel model : list) {
-            allMap.put(model.getKey(), model);
+            allMap.put(model.getId(), model);
             if (parentId.equals(model.getParentId())) {
                 result.add(model);
             }

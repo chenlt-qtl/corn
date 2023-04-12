@@ -35,11 +35,22 @@ const Content = React.forwardRef((props, ref) => {
     }, [displayIndex])
 
     useEffect(() => {
-        if (props.note.openedNote.id) {
-            setTitle(props.note.openedNote.name)
+        const { openedNoteId } = props.note;
+        if (openedNoteId) {
+            props.dispatch({
+                type: 'note/openNote',
+                payload: openedNoteId,
+            })
         }
+    }, [props.note.openedNoteId])
 
-    }, [props.note.openedNote.id])
+
+    useEffect(() => {
+        const { openedNote } = props.note;
+        if (openedNote.id) {
+            setTitle(openedNote.name)
+        }
+    }, [props.note.openedNote])
 
     const handleChange = e => {
         setSaveStatus(1)

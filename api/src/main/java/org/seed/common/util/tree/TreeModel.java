@@ -10,7 +10,7 @@ public abstract class TreeModel<T>{
 
     static final long serialVersionUID = 1L;
 
-    private Long key;
+    private String key;
 
     private Long id;
 

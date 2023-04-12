@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, notification, Menu, Dropdown } from 'antd';
-import { ExclamationCircleOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, SwapOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, FileTextOutlined, FolderOutlined, DeleteOutlined, SwapOutlined, EllipsisOutlined, InboxOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { NoteItem } from '@/data/note';
 import { connect } from 'umi';
@@ -34,8 +34,13 @@ const NoteList: React.FC = (props, ref) => {
         if (note.isLeaf) {
             changeUrl(props, "id", note.id)
         } else {
-            props.onFoldClick && props.onFoldClick(note);
+            //选中文件夹
+            props.dispatch({
+                type: 'note/refreshSelectedType',
+                payload: note.id,
+            })
         }
+
 
     }
 
@@ -80,25 +85,26 @@ const NoteList: React.FC = (props, ref) => {
 
         return (
             <div className={styles.noteList} style={props.style}>
-                <div className={styles.list}>
-                    <ul> {
-                        sortData(data).map(note => {
-                            const { name, id, isLeaf } = note;
-                            const isActive = (activeId == id);
-                            return <li key={id} >
-                                <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => handleNoteClick(note)}>
-                                    {isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
-                                    <div className={styles.noteTitle} draggable={true} >&nbsp;&nbsp;{name}</div>
-                                    {noDelete ? "" :
-                                        <Dropdown overlay={operMenu(note)} trigger={['click']}>
-                                            <div className={styles.menu} onClick={e => e.stopPropagation()}>
-                                                <EllipsisOutlined />
-                                            </div></Dropdown>}
-                                </div>
-                            </li>
-                        })}
-                    </ul>
-                </div>
+                {data.length > 0 ?
+                    <div className={styles.list}>
+                        <ul> {
+                            sortData(data).map(note => {
+                                const { name, id, isLeaf } = note;
+                                const isActive = (activeId == id);
+                                return <li key={id} >
+                                    <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => handleNoteClick(note)}>
+                                        {isLeaf ? <FileTextOutlined /> : <FolderOutlined />}
+                                        <div className={styles.noteTitle} draggable={true} >&nbsp;&nbsp;{name}</div>
+                                        {noDelete ? "" :
+                                            <Dropdown overlay={operMenu(note)} trigger={['click']}>
+                                                <div className={styles.menu} onClick={e => e.stopPropagation()}>
+                                                    <EllipsisOutlined />
+                                                </div></Dropdown>}
+                                    </div>
+                                </li>
+                            })}
+                        </ul>
+                    </div> : <div className={styles.empty}><InboxOutlined /></div>}
             </div >
         );
     };

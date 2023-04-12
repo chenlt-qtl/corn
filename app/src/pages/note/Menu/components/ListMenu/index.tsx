@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Dropdown, Menu, Button, Input, Spin, Radio } from 'antd';
+import { Dropdown, Menu, Button, Input, Radio, message } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect, useModel } from 'umi';
 import { queryFav, pageSearchNote } from '@/services/note'
 import NoteList from './NoteList';
-import { SearchOutlined, InboxOutlined, DeleteOutlined } from '@ant-design/icons';
+import { SearchOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getNode } from '../../utils';
+import { getMenu } from '../../../utils'
 
 const ListMenu: React.FC = (props, ref) => {
 
@@ -15,25 +16,24 @@ const ListMenu: React.FC = (props, ref) => {
     const [sortType, setSortType] = useState<string>('default');
     const [searchStr, setSearchStr] = useState<string>("");
     const [listData, setListData] = useState<Object[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [range, setRange] = useState<number>(1);
     const [searchRecent, setSearchRecent] = useState<string[]>((localStorage.getItem("searchRecent" + currentUser.id) || "").split(","));
     const inputRef = useRef<Input | null>(null);
     const searchWinRef = useRef(null);
     const [showSearchWin, setShowSearchWin] = useState<boolean>(false);
-    const [afterSearch, setAfterSearch] = useState<boolean>(false);
+    const [listTitle, setListTitle] = useState<string>("");
 
     useEffect(() => {
-        getData();
-    }, [props.match.params.type]);
+        setSearchStr("")
+        props.note.selectedType && getData("");
+    }, [props.note.selectedType]);
 
     useEffect(() => {
-        const { type } = props.match.params;
-        type == "folder" && getData();
-    }, [props.note.selectedFolder.id]);
+        
+        const { selectedType } = props.note;
+        if (selectedType && (!isNaN(selectedType) || selectedType == "folder")) {
+            loadTreeData(searchStr)
+        }
 
-    useEffect(() => {
-        getData()
     }, [props.note.noteTreeData]);
 
     useEffect(() => {
@@ -53,77 +53,94 @@ const ListMenu: React.FC = (props, ref) => {
 
 
     const getData = async (searchStr: string) => {
-        if (afterSearch) {
-            return;
-        }
 
-        const { type } = props.match.params;
+        const { selectedType } = props.note;
 
         let listData = [];
-        setLoading(true);
-        let res;
 
-        if (type == "fav") {
+        const menu = getMenu(selectedType);
+        if (menu) {
+            setListTitle(menu.name);
+        }
 
-            res = await queryFav();
-            if (res && res.success) {
-                listData = res.result
-                if (searchStr) {
-                    listData = listData.filter(i => i.name.toLowerCase().includes(searchStr.toLowerCase()))
-                }
-            }
-        } else if (type == "folder") {
+        if (menu && menu.id != "folder") {
 
-            const { selectedFolder } = props.note;
-            if (!searchStr) {
-                if (!selectedFolder.id) {
-                    listData = props.note.noteTreeData || [];
-                } else {
-                    const parent = getNode(selectedFolder.id, props.note.noteTreeData);
-                    parent && (listData = parent.children);
-                }
-            } else {
-                const res = await pageSearchNote({ pageNo: 0, pageSize: 20, searchStr, parentId: range ? (selectedFolder.id || 0) : 0 });
+            if (selectedType == "fav") {
+                const res = await queryFav();
                 if (res && res.success) {
-                    listData = res.result.records
+                    listData = res.result
                 }
+            } else if (selectedType == "history") {
+                listData = props.note.openedNotes
             }
-        } else if (type == "history") {
-            listData = props.note.openedNotes;
             if (searchStr) {
                 listData = listData.filter(i => i.name.toLowerCase().includes(searchStr.toLowerCase()))
             }
+            setListData(listData.sort(i => i.isLeaf))
+        } else {
+            loadTreeData(searchStr)
         }
-
-        setLoading(false)
-        setListData(listData.sort(i => i.isLeaf))
         setSortType('default')
 
     }
 
+
+    const loadTreeData = async (searchStr: string) => {
+        if (props.note.noteTreeData.length == 0) {
+            return;
+        }
+        const { selectedType } = props.note;
+
+        let listData;
+        if (selectedType == "folder") {
+            if (!searchStr) {
+                listData = props.note.noteTreeData || [];
+            } else {
+                const res = await pageSearchNote({ pageNo: 0, pageSize: 20, searchStr, parentId: 0 });
+                if (res && res.success) {
+                    listData = res.result.records
+                }
+            }
+        } else {//其他树节点，从treedata上面过滤数据
+            const node = getNode(selectedType, props.note.noteTreeData);
+            if (node) {
+                listData = node.children;
+                if (searchStr) {
+                    listData = listData.filter(i => i.name.toLowerCase().includes(searchStr.toLowerCase()))
+                }
+                setListTitle(node.name);
+            } else {
+                message.error("不合法的文件夹ID:" + selectedType);
+                return;
+            }
+        }
+        setListData(listData.sort(i => i.isLeaf))
+    }
+
     const goBack = () => {
+        const { selectedType } = props.note;
+        const node = getNode(selectedType, props.note.noteTreeData);
 
-        const { selectedFolder } = props.note;
-
-        if (!selectedFolder.parentId || selectedFolder.parentId == "0") {
-            setSelectedNote({})
-        } else {
-            const parentNote = getNode(selectedFolder.parentId, props.note.noteTreeData);
-            setSelectedNote(parentNote)
+        if (node) {
+            let payload;
+            if (node.parentId) {
+                payload = node.parentId;
+            } else {//返回根节点
+                payload = "folder"
+            }
+            props.dispatch({
+                type: 'note/refreshSelectedType',
+                payload
+            })
         }
     }
 
-    const setSelectedNote = note => {
-        console.log(1619);
-        
-        props.dispatch({ type: "note/refreshSelectedFolder", payload: note })
-        props.dispatch({ type: "note/refreshSelectedTreeKey", payload: note.id })
-    }
-
+    //排序
     const handleSort = e => {
         setSortType(e.key)
     }
 
+    //更新搜索历史
     const updateSearchRecent = searchStr => {
         if (searchStr) {
             const set = new Set([searchStr, ...searchRecent.filter(a => a)])
@@ -137,24 +154,18 @@ const ListMenu: React.FC = (props, ref) => {
         }
     }
 
+    //搜索事件
     const handleSearch = async (searchStr) => {
 
         //更新搜索历史
         updateSearchRecent(searchStr)
-        const { id } = props.note.selectedFolder;
-        if (!range && id) {
-            console.log(1625);
-            
-            props.dispatch({ type: "note/refreshSelectedFolder", payload: {} })
-        }
-
-        searchStr ? setAfterSearch(true) : setAfterSearch(false)
         getData(searchStr);
         setShowSearchWin(false)
 
     }
 
 
+    //快捷历史搜索
     const searchHistory = str => {
         setSearchStr(str);
         handleSearch(str);
@@ -174,12 +185,8 @@ const ListMenu: React.FC = (props, ref) => {
         </Menu>
     );
 
-    const onRangeChange = e => {
-        setRange(e.target.value)
-    }
-
+    //清除搜索历史
     const cleanSearch = () => {
-
         setSearchRecent([]);
         localStorage.setItem("searchRecent" + props.user.id, "")
     }
@@ -187,8 +194,7 @@ const ListMenu: React.FC = (props, ref) => {
 
     const render = () => {
 
-        const { type } = props.match.params;
-        const { id, name } = props.note.selectedFolder;
+        const { selectedType } = props.note;
 
         return (
 
@@ -206,28 +212,15 @@ const ListMenu: React.FC = (props, ref) => {
                                 searchHistory(str)
                             }}>{str}</span>)}</span>
                         </div>
-                        {type == "folder" ? (<div className={styles.range}>
-                            <span className={styles.title}>搜索范围</span>
-                            <div className={styles.rangeRadio}>
-                                <Radio.Group onChange={onRangeChange} value={range}>
-                                    <Radio value={1}>当前文件夹  </Radio>
-                                    <Radio value={0}>全部笔记</Radio>
-                                </Radio.Group>
-                            </div>
-                        </div>) : ""}
-
                     </div>
                 </div>
-                {type == "folder" ?
-                    <div className={styles.toolbar}>
-                        {id ? <Button type="text" onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button> : ""}
-                        <span className={styles.title}>{name || "文件夹"}</span>
-                        <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
-                    </div> : ""}
-                {type ?
-                    <Spin spinning={loading} wrapperClassName={styles.list}>
-                        <NoteList {...props} data={listData} sortType={sortType} onFoldClick={setSelectedNote}></NoteList>
-                    </Spin> : <div className={styles.empty}><InboxOutlined /></div>}
+
+                <div className={styles.toolbar}>
+                    {!getMenu(selectedType) ? <Button type="text" onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button> : ""}
+                    <span className={styles.title}>{listTitle}</span>
+                    <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
+                </div>
+                <NoteList {...props} data={listData} sortType={sortType}></NoteList>
             </div >
 
         );
@@ -235,4 +228,4 @@ const ListMenu: React.FC = (props, ref) => {
     return render();
 };
 
-export default connect(({ note, loading }: { note: NoteModelState, loading }) => ({ note, loading }))(ListMenu);
+export default connect(({ note }: { note: NoteModelState }) => ({ note }))(ListMenu);

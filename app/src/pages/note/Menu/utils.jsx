@@ -21,17 +21,17 @@ export function getFolderData(nodes) {
  * @param {*} nodes 
  * @returns 
  */
-export function getNode(id, nodes) {
-    if (id) {
+export function getNode(key, nodes) {
+    if (key) {
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
-            if (node.id == id) {
+            if (node.key == key) {
                 return node;
             }
         }
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
-            const result = getNode(id, node.children)
+            const result = getNode(key, node.children)
             if (result) {
                 return result;
             }

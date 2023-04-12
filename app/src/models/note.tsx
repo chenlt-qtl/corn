@@ -6,9 +6,7 @@ export interface NoteState {
     openedNote: NoteItem;
     openedNotes: [];
     noteTreeData: NoteNode[];
-    listData:NoteItem[];
-    selectedFolder: NoteItem;
-    selectedTreeKey:string;
+    selectedType: string;
 }
 
 export interface NoteModelType {
@@ -27,9 +25,7 @@ export interface NoteModelType {
         refreshOpenedNote: Reducer<NoteState>;
         refreshOpenedNotes: Reducer<NoteState>;
         refreshNoteTreeData: Reducer<NoteState>;
-        refreshSelectedFolder: Reducer<NoteState>;
-        refreshSelectedTreeKey: Reducer<NoteState>;
-        refreshListData: Reducer<NoteState>;
+        refreshSelectedType: Reducer<NoteState>;
     };
 }
 
@@ -40,9 +36,8 @@ const NoteModel: NoteModelType = {
         openedNote: {},
         openedNotes: [],
         noteTreeData: [],
-        selectedFolder: {},
-        selectedTreeKey:"0",
-        listData:[],
+        selectedType: "",
+
     },
 
     effects: {
@@ -213,22 +208,12 @@ const NoteModel: NoteModelType = {
                 noteTreeData: payload
             }
         },
-        refreshSelectedFolder(state: NoteState, { payload }): NoteState {
+        refreshSelectedType(state: NoteState, { payload }): NoteState {
+            console.log(1504,payload);
+            
             return {
                 ...state,
-                selectedFolder: payload
-            }
-        },
-        refreshSelectedTreeKey(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                selectedTreeKey: payload
-            }
-        },
-        refreshListData(state: NoteState, { payload }): NoteState {
-            return {
-                ...state,
-                listData: payload
+                selectedType: String(payload || "")
             }
         },
     },

@@ -12,12 +12,7 @@ export default {
                     component: './note',
                 },
                 {
-                    path: '/note/:type',
-                    name: '笔记',
-                    component: './note',
-                },
-                {
-                    path: '/note/:type/:id',
+                    path: '/note/:id',
                     component: './note',
                 },
                 {

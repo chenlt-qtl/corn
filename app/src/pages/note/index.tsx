@@ -16,15 +16,24 @@ const Note: React.FC<{}> = (props) => {
       props.dispatch({
         type: 'note/openNote',
         payload: id,
-      }).then(() => {
-        props.dispatch({
-          type: 'note/refreshSelectedTreeKey',
-          payload: props.note.openedNote.parentId,
-        })
       })
     }
   }, [props.match.params.id])
 
+  useEffect(() => {
+    const { type = "folder" } = props.location.query;
+    const { selectedType } = props.note;
+    if (!selectedType || type != "folder" || isNaN(selectedType)) {
+      props.dispatch({
+        type: 'note/refreshSelectedType',
+        payload: type,
+      })
+    }
+  }, [props.location.query.type])
+
+  useEffect(() => {
+    props.dispatch({ type: 'note/getNoteTree' })
+  }, [])
 
   const getComponent = () => {
     const { isMobile } = props;

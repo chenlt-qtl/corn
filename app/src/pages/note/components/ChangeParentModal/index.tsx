@@ -19,7 +19,6 @@ const ChangeParent: React.FC = (props, ref) => {
             type: 'note/updateParent',
             payload: { id: node.id, parentId: newParentId }
         }).then(res => {
-            console.log(res);
             if (res) {
                 if (res.success) {
                     message.success("操作成功")
