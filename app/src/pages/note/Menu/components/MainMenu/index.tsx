@@ -56,23 +56,29 @@ const MainMenu: React.FC = (props, ref) => {
         });
     }
 
+    const getActiveMenuId = () => {
+        const { openedNote, listParentId } = props.note;
+
+        if (listParentId == "search") {
+            return openedNote.parentId
+        } else {
+            return listParentId;
+        }
+    }
+
     const render = function () {
-        const { selectedType } = props.note;
+        const { listParentId } = props.note;
+        const activeMenuId = getActiveMenuId();
+
         return (
 
             <div className={styles.content}>
                 <div className={styles.toolbar}>
-                    <EditFolderModal visible={folderModalVisible} parentId={selectedType} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
+                    <EditFolderModal visible={folderModalVisible} parentId={listParentId} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
                 </div>
                 {
-                    menuData.map(menu => <div key={menu.id} className={`${styles.menuItem} ${selectedType == menu.id ? styles.active : ""}`} onClick={() => {
-                        changeUrl(props, "type", menu.id)
-                        if (menu.id == "folder") {
-                            props.dispatch({
-                                type: 'note/refreshSelectedType',
-                                payload: "folder",
-                            })
-                        }
+                    menuData.filter(i => !i.hide).map(menu => <div key={menu.id} className={`${styles.menuItem} ${activeMenuId == menu.id ? styles.active : ""}`} onClick={() => {
+                        props.dispatch({ type: "note/refreshListParentId", payload: menu.id })
                     }}>
                         {menu.icon}
                         {menu.name}

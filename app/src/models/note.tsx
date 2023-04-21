@@ -7,6 +7,7 @@ export interface NoteState {
     openedNotes: [];
     noteTreeData: NoteNode[];
     selectedType: string;
+    listParentId: string;
 }
 
 export interface NoteModelType {
@@ -26,6 +27,7 @@ export interface NoteModelType {
         refreshOpenedNotes: Reducer<NoteState>;
         refreshNoteTreeData: Reducer<NoteState>;
         refreshSelectedType: Reducer<NoteState>;
+        refreshListParentId: Reducer<NoteState>;
     };
 }
 
@@ -37,6 +39,7 @@ const NoteModel: NoteModelType = {
         openedNotes: [],
         noteTreeData: [],
         selectedType: "",
+        listParentId: "0"
 
     },
 
@@ -209,11 +212,16 @@ const NoteModel: NoteModelType = {
             }
         },
         refreshSelectedType(state: NoteState, { payload }): NoteState {
-            console.log(1504,payload);
-            
+
             return {
                 ...state,
                 selectedType: String(payload || "")
+            }
+        },
+        refreshListParentId(state: NoteState, { payload }): NoteState {
+            return {
+                ...state,
+                listParentId: String(payload || "")
             }
         },
     },

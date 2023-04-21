@@ -4,30 +4,27 @@ import { DeleteOutlined, EditOutlined, EllipsisOutlined, SwapOutlined } from '@a
 import styles from './style.less';
 import { connect } from 'umi';
 import { getNode } from '../../utils';
-import { getMenu, changeUrl } from '../../../utils';
 
 const NoteTree: React.FC = (props, ref) => {
 
     const { treeData, onDelete } = props;
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-    const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
     useEffect(() => {
-        const { selectedType } = props.note;
+        const { listParentId } = props.note;
 
-        if (selectedType && !isNaN(selectedType)) {            
-            expandNote({ key: selectedType }, true)
-            setSelectedKeys([selectedType])
-        } else {            
-            setSelectedKeys([0])
+        if (listParentId != selectedKeys[0]) {
+            expandNote({ key: listParentId }, true)
+            setSelectedKeys([listParentId])
         }
 
-    }, [props.note.selectedType]);
+    }, [props.note.listParentId]);
 
     useEffect(() => {
-        const { parentId } = props.note.openedNote;
-        if (parentId) {
-            const key = String(parentId)
+        const { openedNote } = props.note;        
+        if (openedNote && openedNote.parentId != selectedKeys[0]) {
+            const key = String(openedNote.parentId)
             expandNote({ key }, true)
             setSelectedKeys([key])
         }
@@ -50,17 +47,10 @@ const NoteTree: React.FC = (props, ref) => {
 
     const onNodeSelect = (e, node) => {
         e && e.stopPropagation();
-        const { selectedType } = props.note;
+        expandNote({ key: node.key })
+        setSelectedKeys([node.key])
+        props.dispatch({ type: 'note/refreshListParentId', payload: node.key })
 
-        if (selectedType == node.key) {
-            expandNote(node)
-            setSelectedKeys([String(node.id)])
-        } else {
-            if ((isNaN(selectedType) && selectedType != "folder")) {
-                changeUrl(props, "type", "folder")
-            }
-            props.dispatch({ type: 'note/refreshSelectedType', payload: node.key })
-        }
     }
 
     /**

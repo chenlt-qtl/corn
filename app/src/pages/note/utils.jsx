@@ -27,18 +27,13 @@ export const decryptNote = note => {
     return result;
 }
 
-export const changeUrl = (props, name, value, newQuery = {}) => {
+export const changeUrl = (props, value, newQuery) => {
 
     const { location = {}, match = { params: {} } } = props;
-    const { type, id } = match.params;
-    const query = { ...(location.query || {}), ...newQuery }
+    const { id } = match.params;
+    const query = newQuery ? { ...(location.query || {}), ...newQuery } : location.query
 
-    let url = "/page/note";
-    if (name == "type") {
-        query.type = value
-    } else {
-        url += "/" + value;
-    }
+    let url = "/page/note/" + value;
 
     history.push({
         pathname: url,
@@ -48,10 +43,25 @@ export const changeUrl = (props, name, value, newQuery = {}) => {
 }
 
 
-export const menuData = [{ id: "fav", name: "收藏夹", icon: <StarOutlined /> }, { id: "history", name: "最近打开", icon: <ClockCircleOutlined /> }, { id: "folder", name: "文件夹", icon: <FolderOutlined /> }]
+export const menuData = [{ id: "fav", name: "收藏夹", icon: <StarOutlined /> },
+{ id: "history", name: "最近打开", icon: <ClockCircleOutlined /> },
+{ id: "0", name: "文件夹", icon: <FolderOutlined /> },
+{ id: "search", name: "搜索结果", hide: true }]
 
 
 export const getMenu = type => {
     const menu = menuData.filter(({ id }) => id == type)
     return menu[0]
+}
+
+export const isFolder = id => {
+    if (isNaN(id)) {
+        if (id == "search") {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
 }

@@ -37,7 +37,7 @@ const EditFolder: React.FC = (props, ref) => {
                 type: 'note/refreshOpenedNotes',
                 payload: { ...openedNotes, newNote }
             })
-            changeUrl(props, "id", "add")
+            changeUrl(props, "add")
 
         }
     }

@@ -12,24 +12,12 @@ const Note: React.FC<{}> = (props) => {
 
   useEffect(() => {
     const { id } = props.match.params;
-    if (id) {
-      props.dispatch({
-        type: 'note/openNote',
-        payload: id,
-      })
-    }
-  }, [props.match.params.id])
+    id && props.dispatch({
+      type: 'note/openNote',
+      payload: id,
+    })
 
-  useEffect(() => {
-    const { type = "folder" } = props.location.query;
-    const { selectedType } = props.note;
-    if (!selectedType || type != "folder" || isNaN(selectedType)) {
-      props.dispatch({
-        type: 'note/refreshSelectedType',
-        payload: type,
-      })
-    }
-  }, [props.location.query.type])
+  }, [props.match.params.id])
 
   useEffect(() => {
     props.dispatch({ type: 'note/getNoteTree' })

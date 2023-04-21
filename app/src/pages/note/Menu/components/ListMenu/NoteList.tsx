@@ -32,11 +32,11 @@ const NoteList: React.FC = (props, ref) => {
     const handleNoteClick = (note: NoteItem) => {
 
         if (note.isLeaf) {
-            changeUrl(props, "id", note.id)
+            changeUrl(props, note.id)
         } else {
             //选中文件夹
             props.dispatch({
-                type: 'note/refreshSelectedType',
+                type: 'note/refreshListParentId',
                 payload: note.id,
             })
         }
