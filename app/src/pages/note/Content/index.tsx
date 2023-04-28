@@ -169,19 +169,12 @@ const Content = React.forwardRef((props, ref) => {
                         <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>
                     </div>
                     : ""
-                    // (<div className={styles.tabPane}>
-                    //     <div className={styles.btn} >
-                    //         <div className={styles.toggler}>
-                    //             {togglerMenu.map(item => <Link key={item.type} to={{ pathname: history.location.pathname, search: "menuType=" + item.type, state: { abc: item.type } }}>
-                    //                 <span className={`iconfont ${menuType == item.type ? styles.active : ""}`}
-                    //                     dangerouslySetInnerHTML={{ __html: item.icon }}></span></Link>)}
-                    //         </div>
-                    //     </div>
-                    // </div>)
                 }
                 {id ? <>
                     <div className={styles.title}>
-                        {isMobile ? "" : <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>}
+                        {isMobile ? "" :
+                            <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>
+                        }
                         <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
                         {isMobile ? "" : <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>}
                     </div>

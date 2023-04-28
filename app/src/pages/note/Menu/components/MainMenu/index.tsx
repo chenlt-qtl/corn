@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from './style.less';
-import { connect } from 'umi';
+import { connect, Link, history } from 'umi';
 import EditFolderModal from '../../../components/EditFolderModal';
 import NoteTree from './NoteTree';
 import { Modal, notification } from "antd"
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ChangeParentModal from '../../../components/ChangeParentModal';
 import { NoteNode } from '@/data/note'
-import { changeUrl, menuData } from '../../../utils'
+import { menuData } from '../../../utils'
 import { getFolderData } from '../../utils'
 
 const { confirm } = Modal;
@@ -56,19 +56,13 @@ const MainMenu: React.FC = (props, ref) => {
         });
     }
 
-    const getActiveMenuId = () => {
-        const { openedNote, listParentId } = props.note;
+    const togglerMenu = [{ icon: '&#xe8bf;', type: 2 }, { icon: '&#xe88e;', type: 1 }]
 
-        if (listParentId == "search") {
-            return openedNote.parentId
-        } else {
-            return listParentId;
-        }
-    }
 
     const render = function () {
-        const { listParentId } = props.note;
-        const activeMenuId = getActiveMenuId();
+        const { listParentId, defaultTreeValue } = props.note;
+
+        const { onChangeMenuType } = props;
 
         return (
 
@@ -77,7 +71,7 @@ const MainMenu: React.FC = (props, ref) => {
                     <EditFolderModal visible={folderModalVisible} parentId={listParentId} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
                 </div>
                 {
-                    menuData.filter(i => !i.hide).map(menu => <div key={menu.id} className={`${styles.menuItem} ${activeMenuId == menu.id ? styles.active : ""}`} onClick={() => {
+                    menuData.filter(i => !i.hide).map(menu => <div key={menu.id} className={`${styles.menuItem} ${[listParentId, defaultTreeValue].includes(menu.id) ? styles.active : ""}`} onClick={() => {
                         props.dispatch({ type: "note/refreshListParentId", payload: menu.id })
                     }}>
                         {menu.icon}
@@ -93,6 +87,14 @@ const MainMenu: React.FC = (props, ref) => {
                         treeData={treeData}
                         {...props}
                     ></NoteTree>
+                </div>
+
+                <div className={styles.toggler}>
+                    {togglerMenu.map(item =>
+                        <div className={styles.btn} onClick={() => onChangeMenuType(item.type)}>
+                            <span className='iconfont' dangerouslySetInnerHTML={{ __html: item.icon }}></span>
+                        </div>
+                    )}
                 </div>
                 <ChangeParentModal treeData={treeData} node={editNode} onCancel={() => setParentModalVisible(false)} visible={parentModalVisible}></ChangeParentModal>
             </div >

@@ -33,13 +33,6 @@ const ListMenu: React.FC = (props, ref) => {
     }, [props.note.listParentId]);
 
     useEffect(() => {
-        const { listParentId, openedNote } = props.note;
-        if (openedNote && openedNote.parentId && !isNaN(listParentId)) {
-            props.dispatch({ type: 'note/refreshListParentId', payload: openedNote.parentId })
-        }
-    }, [props.note.openedNote]);
-
-    useEffect(() => {
 
         const { listParentId } = props.note;
         if (listParentId && !isNaN(listParentId)) {

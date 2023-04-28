@@ -22,7 +22,7 @@
     display    : flex;
     align-items: center;
     cursor     : pointer;
-    border-left     : #fff 2px solid;
+    border-left: #fff 2px solid;
 
     :global {
       .anticon {
@@ -34,7 +34,7 @@
 
   .active {
     background-color: rgba(205, 205, 205, 0.4);
-    border-color     : #f39c12;
+    border-color    : #f39c12;
   }
 
   .tree {
@@ -83,6 +83,22 @@
       }
     }
 
+  }
+
+  .toggler {
+    display : flex;
+    margin  : 0 auto;
+    width   : 100px;
+    position: relative;
+    bottom  : 0;
+    left    : 0;
+    right   : 0;
+
+    .btn {
+      display: inline-block;
+      padding: 0 7px;
+      cursor : pointer;
+    }
   }
 
 }

@@ -6,13 +6,25 @@ import MinMenu from './components/MinMenu';
 import ListMenu from './components/ListMenu';
 
 const Menu: React.FC = (props, ref) => {
+
+    //修改菜单类型
+    const changeMenuType = value => {
+        const { location } = props;
+        const query = { ...(location.query || {}), menuType: value }
+        history.push({
+            pathname: location.pathname,
+            query
+        })
+    }
+
+
     const render = function () {
         const { menuType = 3 } = history.location.query;
 
         return (
             <div className={`${styles.container} ${menuType == 1 ? styles.hide : styles.show}`}>
-                {menuType == 2 ? <MinMenu></MinMenu> :
-                    <MainMenu></MainMenu>}
+                {menuType == 2 ? <MinMenu onChangeMenuType={changeMenuType}></MinMenu> :
+                    <MainMenu onChangeMenuType={changeMenuType}></MainMenu>}
                 <ListMenu {...props}></ListMenu>
             </div>
 

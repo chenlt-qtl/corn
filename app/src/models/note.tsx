@@ -6,7 +6,7 @@ export interface NoteState {
     openedNote: NoteItem;
     openedNotes: [];
     noteTreeData: NoteNode[];
-    selectedType: string;
+    defaultTreeValue: string;
     listParentId: string;
 }
 
@@ -26,7 +26,7 @@ export interface NoteModelType {
         refreshOpenedNote: Reducer<NoteState>;
         refreshOpenedNotes: Reducer<NoteState>;
         refreshNoteTreeData: Reducer<NoteState>;
-        refreshSelectedType: Reducer<NoteState>;
+        refreshDefaultTreeValue: Reducer<NoteState>;
         refreshListParentId: Reducer<NoteState>;
     };
 }
@@ -38,7 +38,7 @@ const NoteModel: NoteModelType = {
         openedNote: {},
         openedNotes: [],
         noteTreeData: [],
-        selectedType: "",
+        defaultTreeValue: "",
         listParentId: "0"
 
     },
@@ -47,7 +47,7 @@ const NoteModel: NoteModelType = {
 
         *openNote({ payload }, { call, put, select }) {
 
-            const openedNotes = yield select(state => state.note.openedNotes);
+            const { openedNotes, listParentId } = yield select(state => state.note);
 
             let note;
             if (payload == "add") {
@@ -72,6 +72,18 @@ const NoteModel: NoteModelType = {
                 type: 'refreshOpenedNote',
                 payload: note,
             })
+
+            yield put({
+                type: 'refreshDefaultTreeValue',
+                payload: note.parentId||"0",
+            })
+
+            if (!listParentId) {
+                yield put({
+                    type: 'refreshListParentId',
+                    payload: note.parentId,
+                })
+            }
 
         },
         * updateNoteTitle({ payload }, { call, put, select }) {
@@ -211,11 +223,11 @@ const NoteModel: NoteModelType = {
                 noteTreeData: payload
             }
         },
-        refreshSelectedType(state: NoteState, { payload }): NoteState {
+        refreshDefaultTreeValue(state: NoteState, { payload }): NoteState {
 
             return {
                 ...state,
-                selectedType: String(payload || "")
+                defaultTreeValue: String(payload || "")
             }
         },
         refreshListParentId(state: NoteState, { payload }): NoteState {

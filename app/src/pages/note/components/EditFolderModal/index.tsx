@@ -4,13 +4,14 @@ import { PlusOutlined, FolderOutlined, FileMarkdownOutlined } from '@ant-design/
 import { connect } from 'umi';
 import HocMedia from "@/components/HocMedia";
 import { changeUrl } from '../../utils'
+import styles from './styles.less'
 
 const FormItem = Form.Item;
 let fold = {};
 
 const EditFolder: React.FC = (props, ref) => {
 
-    const { parentId } = props;
+    const { parentId, size } = props;
 
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [form] = Form.useForm();
@@ -65,12 +66,14 @@ const EditFolder: React.FC = (props, ref) => {
 
     const render = function () {
 
+        const small = size == "small";
+
         return (
 
             <div className={props.className}>
-                <div>
+                <div className={small ? styles.small : ""}>
                     <Dropdown overlay={menu} trigger={['click']}>
-                        <Button type="primary" shape="round" icon={<PlusOutlined />}>增加</Button>
+                        <Button type={small ? "link" : "primary"} shape="round" icon={<PlusOutlined />}>{small ? "" : "增加"}</Button>
                     </Dropdown>
                 </div>
                 <Modal title="请输入文件夹名称..." visible={isModalVisible} onOk={handleSaveFold}

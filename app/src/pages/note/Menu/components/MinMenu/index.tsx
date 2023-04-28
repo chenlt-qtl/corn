@@ -1,28 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './style.less';
 import { connect } from 'umi';
 import EditFolderModal from '../../../components/EditFolderModal';
-import { Button, Spin, Modal, notification } from "antd"
-import { CaretLeftOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { menuData, isFolder } from '../../../utils'
+import 'font-awesome/css/font-awesome.min.css';
 
 const MinMenu: React.FC = (props, ref) => {
 
     const [folderModalVisible, setFolderModalVisible] = useState<boolean>(false);
 
     const [editNode, setEditNode] = useState<object>({});
-    const [rootKey, setRootKey] = useState<string>("0")
-    const [selectedKey, setSelectedKey] = useState<string>(rootKey)
 
     const render = function () {
+        const { listParentId } = props.note;
+        const { onChangeMenuType } = props;
+        const activeId = isFolder(listParentId) ? "0" : listParentId;
+
 
         return (
             <div className={styles.content}>
                 <div className={styles.toolbar}>
-                    <Button className={styles.back} type='link' icon={<CaretLeftOutlined />} onClick={() => setRootKey("0")} disabled={rootKey == "0"}></Button>
-                    <EditFolderModal visible={folderModalVisible} parentId={selectedKey} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
+                    <EditFolderModal size="small" visible={folderModalVisible} parentId={listParentId} node={editNode} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
                 </div>
-                <div><span className="iconfont" dangerouslySetInnerHTML={{ __html: '&#xe8b1;' }}></span></div>
-                <div><span className="iconfont" dangerouslySetInnerHTML={{ __html: '&#xe8b1;' }}></span></div>
+                {
+                    menuData.filter(i => !i.hide).map(menu => <div key={menu.id} className={`${styles.menuItem} ${activeId == menu.id ? styles.active : ""}`} onClick={() => {
+                        props.dispatch({ type: "note/refreshListParentId", payload: menu.id })
+                    }}>
+                        {menu.icon}
+                    </div>)
+                }
+                <div className={`${styles.menuItem} ${styles.toggler}`} onClick={() => onChangeMenuType(3)}>
+                    <span className='iconfont' dangerouslySetInnerHTML={{ __html: '&#xe88c;' }}></span>
+                </div>
             </div>
         );
     };
