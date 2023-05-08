@@ -8,9 +8,12 @@ import { history } from 'umi';
  */
 export const encryptionNote = note => {
     const result = { ...note };
-    result.name = encryption(note.name);
-    result.text = encryption(note.text);
-    result.parents = encryption(note.parents);
+    try {
+        result.name = encryption(note.name);
+        result.text = encryption(note.text);
+    } catch (err) {
+        console.log('加密失败', err)
+    }
     return result;
 }
 
@@ -21,25 +24,13 @@ export const encryptionNote = note => {
  */
 export const decryptNote = note => {
     const result = { ...note };
-    result.name = decrypt(note.name);
-    result.text = decrypt(note.text);
-    result.parents = decrypt(note.parents);
+    try {
+        result.name = decrypt(note.name);
+        result.text = decrypt(note.text);
+    } catch (err) {
+        console.log('解密失败', err)
+    }
     return result;
-}
-
-export const changeUrl = (props, value, newQuery) => {
-
-    const { location = {}, match = { params: {} } } = props;
-    const { id } = match.params;
-    const query = newQuery ? { ...(location.query || {}), ...newQuery } : location.query
-
-    let url = "/page/note/" + value;
-
-    history.push({
-        pathname: url,
-        query
-    })
-
 }
 
 

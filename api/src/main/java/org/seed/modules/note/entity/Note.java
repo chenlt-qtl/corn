@@ -35,7 +35,9 @@ public class Note implements Serializable {
 	/**pId*/
 	@Excel(name = "parentId", width = 15)
 	private Long parentId;
-
+	/**parentIds*/
+	@Excel(name = "parentIds", width = 15)
+	private String parentIds;
 	/**tag*/
 	@Excel(name = "tag", width = 15)
 	private java.lang.String tag;

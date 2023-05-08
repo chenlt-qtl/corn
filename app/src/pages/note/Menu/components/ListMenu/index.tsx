@@ -97,11 +97,13 @@ const ListMenu: React.FC = (props, ref) => {
                 listData = node.children;
                 setListTitle(node.name);
             } else {
-                message.error("不合法的文件夹ID:" + listParentId);
-                return;
+                props.dispatch({
+                    type: 'note/refreshListParentId',
+                    payload: "0"
+                })
             }
         }
-        setListData(listData.sort(i => i.isLeaf))
+        listData && setListData(listData.sort(i => i.isLeaf))
     }
 
     const goBack = () => {
@@ -115,11 +117,19 @@ const ListMenu: React.FC = (props, ref) => {
             } else {//返回根节点
                 payload = "0"
             }
-            props.dispatch({
-                type: 'note/refreshListParentId',
-                payload
-            })
+            clickFolder(payload)
         }
+    }
+
+    const clickFolder = id => {
+        props.dispatch({
+            type: 'note/refreshListParentId',
+            payload: id
+        })
+        props.dispatch({
+            type: 'note/refreshDefaultTreeValue',
+            payload: id
+        })
     }
 
     //排序
@@ -198,7 +208,7 @@ const ListMenu: React.FC = (props, ref) => {
     const render = () => {
 
         const { listParentId } = props.note;
-        
+
 
         return (
 
@@ -231,7 +241,7 @@ const ListMenu: React.FC = (props, ref) => {
                     <span className={styles.title}>{listTitle}</span>
                     <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                 </div>
-                <NoteList {...props} data={listData} sortType={sortType}></NoteList>
+                <NoteList {...props} data={listData} sortType={sortType} onFolderClick={clickFolder}></NoteList>
             </div >
 
         );

@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Input, Button } from 'antd';
 import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, CloseCircleOutlined, ProfileOutlined, InboxOutlined } from '@ant-design/icons';
 import styles from './style.less';
-import { connect, Link, history } from 'umi';
+import { connect, history } from 'umi';
 import MarkDown from './MarkDown'
 import 'font-awesome/css/font-awesome.min.css';
 import HocMedia from "@/components/HocMedia";
-
+import lodash from 'lodash';
 
 let statusIcons = {
     '0': <CheckCircleTwoTone key="ok" twoToneColor="#52c41a" />,
@@ -20,37 +20,28 @@ const Content = React.forwardRef((props, ref) => {
 
     const titleInput = useRef();
     const [saveStatus, setSaveStatus] = useState<Number>(0);//0:已保存 1:未保存 2:正在保存
-    const [displayIndex, setDisplayIndex] = useState<number>(-1);
+    const [isEdit, setIsEdit] = useState<boolean>(false); //是否编辑状态
 
     const [title, setTitle] = useState<String>("");
 
     const [showToc, setShowToc] = useState<boolean>(true);
 
     useEffect(() => {
-        if (displayIndex) {//编辑
-            setShowToc(false)
-        } else {//view
-            setShowToc(true)
-        }
-    }, [displayIndex])
-
-    useEffect(() => {
-        const { openedNoteId } = props.note;
-        if (openedNoteId) {
-            props.dispatch({
-                type: 'note/openNote',
-                payload: openedNoteId,
-            })
-        }
-    }, [props.note.openedNoteId])
-
-
-    useEffect(() => {
+   
         const { openedNote } = props.note;
-        if (openedNote.id) {
+        if (!lodash.isEmpty(openedNote)) {
             setTitle(openedNote.name)
+            if (!openedNote.id) {//新增
+                setSaveStatus(1)
+                setIsEdit(true);
+                titleInput.current.focus();
+            } else {
+                setIsEdit(false);
+                setSaveStatus(0)
+            }
         }
-    }, [props.note.openedNote])
+
+    }, [props.note.openedNote.id])
 
     const handleChange = e => {
         setSaveStatus(1)
@@ -69,31 +60,34 @@ const Content = React.forwardRef((props, ref) => {
 
         setSaveStatus(2)
         noteToSave.name = title
+        noteToSave.text = text
 
         let method
-        if (type == 'title') {
-            method = 'note/updateNoteTitle'
+        if (noteToSave.id) {
+            if (type == 'title') {
+                method = 'note/updateNoteTitle'
+            } else {
+                method = 'note/updateNoteText'
+                noteToSave.text = text
+            }
         } else {
-            method = 'note/updateNoteText'
-            noteToSave.text = text
+            method = 'note/addNote'
         }
-
 
         props.dispatch({
             type: method,
             payload: noteToSave
         }).then(res => {
-            if (type == "title") {
-                // props.dispatch({
-                //     type: 'note/refreshListParam',
-                //     payload: { ...props.note.listParam },
-                // })
-            }
-            const { id } = props.match.params;
-            if (res) {
-                if (id == noteToSave.id) {
-                    setSaveStatus(0)
+            if (res.success) {
+                setSaveStatus(0)
+                if (!noteToSave.id) {//新增
+                    const { openedNotes } = props.note;
+                    console.log("1631");
+                    props.dispatch({ type: 'note/refreshOpenedNote', payload: res.result })
+                    props.dispatch({ type: 'note/refreshOpenedNotes', payload: [res.result, ...openedNotes] })
                 }
+            } else {
+                setSaveStatus(1)
             }
         })
 
@@ -125,21 +119,23 @@ const Content = React.forwardRef((props, ref) => {
     const getTitleBtn = () => {
         <Button type='text'><ProfileOutlined /></Button>
         const btns = [];
-        const { id } = props.match.params;
-        if (id) {
+        const { openedNote } = props.note;
+        if (openedNote) {
             if (props.note.openedNote.fav) {
                 btns.push(<Button key="noFav" onClick={handleChangeFav} type='text'><StarFilled className={styles.fav} /></Button>)
             } else {
                 btns.push(<Button key="fav" onClick={handleChangeFav} type='text'><StarOutlined /></Button>)
             }
-            if (!displayIndex) {
-                btns.push(<Button key="view" onClick={() => {
-                    setDisplayIndex(1);
-                }} type='text'><EditOutlined /></Button>)
+
+            if (isEdit) {
+                btns.push(<Button key="edit" onClick={() => {
+                    setIsEdit(false);
+                }} type='text'><EyeOutlined /></Button>)
+
             } else {
-                btns.push(<Button key="edit" type='text' onClick={() => {
-                    setDisplayIndex(0)
-                }} ><EyeOutlined /></Button>)
+                btns.push(<Button key="view" type='text' onClick={() => {
+                    setIsEdit(true)
+                }} ><EditOutlined /></Button>)
             }
             btns.push(statusIcons[saveStatus])
             return btns;
@@ -155,7 +151,7 @@ const Content = React.forwardRef((props, ref) => {
 
     const render = function () {
         const { isMobile } = props;
-        const { id } = props.match.params;
+        const { openedNote } = props.note;
 
         const { menuType = 3 } = history.location.query;
 
@@ -170,16 +166,16 @@ const Content = React.forwardRef((props, ref) => {
                     </div>
                     : ""
                 }
-                {id ? <>
+                {!lodash.isEmpty(openedNote) ? <>
                     <div className={styles.title}>
                         {isMobile ? "" :
-                            <Button type='text' onClick={() => setShowToc(!showToc)} disabled={!!displayIndex}><span className='iconfont'>&#xe7e3;</span></Button>
+                            <Button type='text' onClick={() => setShowToc(!showToc)} disabled={isEdit}><span className='iconfont'>&#xe7e3;</span></Button>
                         }
                         <Input maxLength={100} ref={titleInput} value={title} onBlur={e => handleBlur(e, 'title')} onInput={handleTitleChange}></Input>
                         {isMobile ? "" : <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>}
                     </div>
                     <div className={styles.content}>
-                        <MarkDown {...props} handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} displayIndex={displayIndex} saveContent={(text: string) => saveNote('content', text)}></MarkDown>
+                        <MarkDown {...props} handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} isEdit={isEdit} saveContent={(text: string) => saveNote('content', text)}></MarkDown>
                     </div></> : <div className={styles.empty}><InboxOutlined /></div>}
             </div>
         );

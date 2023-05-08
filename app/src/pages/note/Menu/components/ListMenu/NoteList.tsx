@@ -4,7 +4,6 @@ import { ExclamationCircleOutlined, FileTextOutlined, FolderOutlined, DeleteOutl
 import styles from './style.less';
 import { NoteItem } from '@/data/note';
 import { connect } from 'umi';
-import { changeUrl } from '../../../utils'
 
 const { confirm } = Modal;
 
@@ -30,18 +29,15 @@ const NoteList: React.FC = (props, ref) => {
 
 
     const handleNoteClick = (note: NoteItem) => {
-
+        const { onFolderClick } = props;
         if (note.isLeaf) {
-            changeUrl(props, note.id)
-        } else {
-            //选中文件夹
             props.dispatch({
-                type: 'note/refreshListParentId',
+                type: 'note/openNote',
                 payload: note.id,
             })
+        } else {
+            onFolderClick(note.id)
         }
-
-
     }
 
 
@@ -54,11 +50,12 @@ const NoteList: React.FC = (props, ref) => {
                 props.dispatch({
                     type: 'note/deleteNote',
                     payload: note.id,
-                }).then(() => {
-                    notification["info"]({
-                        message: '删除成功',
-                    });
-                    getData(1)
+                }).then(res => {
+                    if (res && res.success) {
+                        notification["info"]({
+                            message: '删除成功',
+                        });
+                    }
                 })
             }
         })

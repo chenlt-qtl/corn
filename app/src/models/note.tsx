@@ -1,4 +1,4 @@
-import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote, editOneFav, queryTreeMenu } from '@/services/note'
+import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote, editOneFav, queryTreeMenu, addNote } from '@/services/note'
 import { NoteItem, NoteNode } from '@/data/note';
 import { Effect, Reducer } from 'umi';
 
@@ -15,6 +15,7 @@ export interface NoteModelType {
     state: NoteState;
     effects: {
         openNote: Effect;
+        addNote: Effect;
         updateNoteTitle: Effect;
         updateNoteText: Effect;
         deleteNote: Effect;
@@ -38,7 +39,7 @@ const NoteModel: NoteModelType = {
         openedNote: {},
         openedNotes: [],
         noteTreeData: [],
-        defaultTreeValue: "",
+        defaultTreeValue: "0",
         listParentId: "0"
 
     },
@@ -50,87 +51,74 @@ const NoteModel: NoteModelType = {
             const { openedNotes, listParentId } = yield select(state => state.note);
 
             let note;
-            if (payload == "add") {
-                note = { id: "new", name: "新文档" }
-            } else {
-                let result = yield call(queryNoteById, payload);
-                if (result) {
-                    if (result.success) {
-                        note = result.result;
+
+            let result = yield call(queryNoteById, payload);
+            if (result) {
+                if (result.success) {
+                    note = result.result;
+                    yield put({
+                        type: 'refreshOpenedNotes',
+                        payload: [note, ...(openedNotes.filter(i => i.id != payload))],
+                    })
+
+                    console.log("openNote",note);
+                    
+                    yield put({
+                        type: 'refreshOpenedNote',
+                        payload: note,
+                    })
+
+                    yield put({
+                        type: 'refreshDefaultTreeValue',
+                        payload: note.parentId || "0",
+                    })
+
+                    if (listParentId == "0" && note.parentId) {
+                        yield put({
+                            type: 'refreshListParentId',
+                            payload: note.parentId,
+                        })
                     }
                 }
             }
 
-            if (openedNotes.filter(i => i.id == note.id).length == 0) {
-                yield put({
-                    type: 'refreshOpenedNotes',
-                    payload: [note, ...openedNotes]
-                })
+        },
+        * addNote({ payload }, { call, put, select }) {
+            let result = yield call(addNote, payload);
+            if (result && result.success) {
+                yield put({ type: 'getNoteTree' })//刷新树
             }
-
-            yield put({
-                type: 'refreshOpenedNote',
-                payload: note,
-            })
-
-            yield put({
-                type: 'refreshDefaultTreeValue',
-                payload: note.parentId||"0",
-            })
-
-            if (!listParentId) {
-                yield put({
-                    type: 'refreshListParentId',
-                    payload: note.parentId,
-                })
-            }
-
+            return result;
         },
         * updateNoteTitle({ payload }, { call, put, select }) {
             const openedNotes = yield select(state => state.note.openedNotes);
 
             let result = yield call(updateNoteTitle, payload);
-            if (result) {
-
-                const newData = result.result;
-
+            if (result && result.success) {
+                yield put({ type: 'getNoteTree' })//刷新树
                 //更新打开历史数据  
                 const newOpenedNotes = [...openedNotes]
-                const note = newOpenedNotes.filter(i => i.id == note.id)
-                if (note) {
-                    note.name = newData.name;
+                const note = newOpenedNotes.filter(i => i.id == payload.id)
+                if (note.length > 0) {
+                    note[0].name = payload.name;
                     yield put({
                         type: "refreshOpenedNotes",
                         payload: newOpenedNotes
                     });
                 }
-                //刷新openedNote
-                yield put({
-                    type: 'refreshOpenedNote',
-                    payload: newData,
-                })
-
                 return result;
             }
         },
         * updateNoteText({ payload }, { call, put, select }) {
             let result = yield call(updateNoteText, payload);
-            if (result) {
-                const newData = result.result;
-                //刷新openedNote
-                yield put({
-                    type: 'refreshOpenedNote',
-                    payload: newData,
-                })
-
-                return result;
-            }
+            return result;
         },
         * deleteNote({ payload }, { call, put, select }) {
-            const openedNotes = yield select(state => state.note.openedNotes);
-            const openedNote = yield select(state => state.note.openedNote);
+            const { openedNotes, openedNote } = yield select(state => state.note);
+
             let result = yield call(deleteNote, payload);
             if (result) {
+
                 let newOpenedNotes = [...openedNotes].filter(i => i.id = payload);
 
                 if (newOpenedNotes.length != openedNotes.length) {
@@ -140,13 +128,12 @@ const NoteModel: NoteModelType = {
                     });
                 }
 
-                if (openedNote.id == payload) {
+                if (openedNote && openedNote.id == payload) {
                     yield put({
-                        type: "openNote",
-                        payload: {}
+                        type: "refreshOpenedNote",payload:{}
                     });
                 }
-
+                yield put({ type: 'getNoteTree' })//刷新树
                 return result;
             }
         },
@@ -179,6 +166,7 @@ const NoteModel: NoteModelType = {
                 if (res) {
                     if (res.success) {
                         const note = res.result;
+                        console.log("editFav");
                         // 成功
                         yield put({
                             type: 'refreshOpenedNote',
@@ -206,6 +194,8 @@ const NoteModel: NoteModelType = {
     },
     reducers: {
         refreshOpenedNote(state: NoteState, { payload }): NoteState {
+            console.log("refreshOpenedNote",payload);
+            
             return {
                 ...state,
                 openedNote: payload

@@ -9,10 +9,12 @@ const NoteTree: React.FC = (props, ref) => {
 
     const { treeData, onDelete } = props;
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
 
     useEffect(() => {
         const { defaultTreeValue } = props.note;
         expandNote({ key: defaultTreeValue }, true)
+        setSelectedKeys([defaultTreeValue])
     }, [props.note.defaultTreeValue]);
 
     const handleExpand = (value) => {
@@ -32,6 +34,7 @@ const NoteTree: React.FC = (props, ref) => {
     const onNodeSelect = (e, node) => {
         e && e.stopPropagation();
         expandNote({ key: node.key })
+        setSelectedKeys([String(node.id)])
         props.dispatch({ type: 'note/refreshListParentId', payload: node.key })
 
     }
@@ -73,12 +76,11 @@ const NoteTree: React.FC = (props, ref) => {
 
 
     const render = function () {
-        const { defaultTreeValue } = props.note;
         return (
             <>
                 {
                     treeData.length > 0 ? <Tree
-                        selectedKeys={[defaultTreeValue]}
+                        selectedKeys={selectedKeys}
                         blockNode
                         multiple
                         expandedKeys={expandedKeys}
@@ -88,7 +90,7 @@ const NoteTree: React.FC = (props, ref) => {
                         onExpand={handleExpand}
                         titleRender={node => <div className={styles.treeNode} onClick={e => onNodeSelect(e, node)}>
                             <div className={styles.title}>&nbsp;{node.title}</div>
-                            {node.id == "0" ? "" : <div onClick={e => e.stopPropagation()}><Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown></div>}
+                            {node.id == "0" ? "" : <div className={styles.treeBtn} onClick={e => e.stopPropagation()}><Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown></div>}
                         </div>
                         }
                     /> : ""

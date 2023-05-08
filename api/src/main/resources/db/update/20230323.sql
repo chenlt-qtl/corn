@@ -27,6 +27,7 @@ update note_info_new,note_info set note_info_new.parent_id =  note_info.id_new w
 
 alter table note_info_new drop column id_old;
 alter table note_info_new drop column parent_id_old;
+alter table note_info_new add column parent_ids varchar(1000) DEFAULT NULL;
 
 update note_info set parent_id =0 where parent_id is null;
 
@@ -109,3 +110,22 @@ CREATE TABLE `note_open_history` (
   `update_by` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table note_info_delete add column `text` text;
+
+-- delimiter /
+-- DROP FUNCTION IF EXISTS `corn`.`getChild` /
+-- CREATE FUNCTION `getChild`(parentId INT)
+-- RETURNS VARCHAR(1000)
+-- BEGIN
+-- DECLARE ptemp varchar(1000);
+-- DECLARE ctemp varchar(1000);
+--        SET ptemp = '#';
+--        SET ctemp =cast(parentId as CHAR);
+--        WHILE ctemp is not null DO
+--              SET ptemp = concat(ptemp,',',ctemp);
+--             SELECT group_concat(id) INTO ctemp FROM note_info
+--             WHERE FIND_IN_SET(parent_id,ctemp)>0;
+--        END WHILE;
+--        RETURN ptemp;
+-- END;

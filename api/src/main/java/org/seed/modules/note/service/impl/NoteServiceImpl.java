@@ -53,13 +53,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     @Autowired
     private INoteHistoryService noteHistoryService;
 
-    @Override
-    public List<NoteModel> listNote(String createBy, String parentId, String isLeaf) {
-        return noteMapper.listSon(createBy, parentId, isLeaf);
-    }
 
     @Override
-    public List<NoteModel> getModelByIds(String[] ids) {
+    public List<NoteModel> getNoteModelByIds(String[] ids) {
         Collection<Note> notes = listByIds(Arrays.asList(ids));
         List<NoteModel> result = new ArrayList<>();
         for (Note note : notes) {
@@ -70,17 +66,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public List<Note> getNameByIds(String[] ids) {
-        return noteMapper.getNameByIds(ids);
-    }
-
-    @Override
     public List<NoteTreeModel> queryTreeMenu(String createBy, Long parentId, boolean withLeaf) {
-        Long rootId = parentId;
 
         QueryWrapper<Note> queryWrapper = new QueryWrapper();
         queryWrapper.select("id", "name", "parent_id", "is_leaf", "update_time");
         queryWrapper.eq("create_by", getUsername());
+        queryWrapper.likeRight("parent_ids", parentId + "/");
         if (!withLeaf) {
             //不要叶子
             queryWrapper.eq("is_leaf", 0);
@@ -93,26 +84,23 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         for (Note note : list) {
             NoteTreeModel model = new NoteTreeModel(note);
             model.encryption();//加密
-            if (parentId.equals(model.getKey())) {
-                rootId = model.getParentId();
-            }
             treeList.add(model);
         }
         // 调用wrapTreeDataToTreeList方法生成树状数据
-        return TreeUtil.wrapTreeDataToTreeList(treeList, rootId, false);
+        return TreeUtil.wrapTreeDataToTreeList(treeList, parentId, false);
     }
 
     @Override
-    public boolean updateText(NoteModel note, NoteContent content) {
-        content.setText(UpLoadUtil.parseText(uploadpath, note.getText(), content.getText()));
+    public boolean updateText(Note note, String text) {
+        NoteContent content = noteContentService.getById(note.getContentId());
+        content.setText(UpLoadUtil.parseText(uploadpath, text, content.getText()));
         noteContentService.saveOrUpdate(content);
-        noteHistoryService.addHistory(note);
-        return saveOrUpdate(note.toNote());
-
+        noteHistoryService.addHistory(new NoteModel(note, content));
+        return updateById(note);
     }
 
     @Override
-    public Note saveNote(NoteModel note) {
+    public Note addNote(NoteModel note) {
         try {
             if (note.getIsLeaf()) {
                 note.setText(UpLoadUtil.parseText(uploadpath, note.getText(), ""));
@@ -120,6 +108,14 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
                 note.setContentId(content.getId());
             }
             Note obj = note.toNote();
+
+            //设置parentIds
+            Note parent = getById(obj.getParentId());
+            if (parent == null) {
+                throw new CornException("找不到父节点");
+            }
+            obj.setParentIds(parent.getParentIds() + obj.getParentId() + "/");
+
             save(obj);
             return obj;
         } catch (DataIntegrityViolationException e) {
@@ -128,7 +124,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public IPage<Note> pageSearchNote(String parentId, String searchStr, boolean withLeaf, int pageNo, int pageSize) {
+    public IPage<Note> pageSearchNote(Long parentId, String searchStr, boolean withLeaf, int pageNo, int pageSize) {
         IPage<Note> result = new Page<>();
 
         Page<Note> page = new Page<>(pageNo, pageSize);
@@ -136,9 +132,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         if (!withLeaf) {
             queryWrapper.eq("is_leaf", 1);
         }
-        if (StringUtils.isNotBlank(parentId) && !"0".equals(parentId)) {
-            queryWrapper.eq("parent_id", parentId);
-        }
+
+        queryWrapper.like("parent_ids", parentId == 0L ? "0/%" : ("%/" + parentId + "/%"));
         queryWrapper.select("id", "name", "parent_id", "is_leaf");
         queryWrapper.eq("create_by", getUsername());
 
@@ -153,38 +148,59 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Transactional
     @Override
-    public void delete(String userName, String id) {
+    public void delete(String userName, Note note) {
         List<Long> deleteNoteIds = new ArrayList<>();//要删除的note
         List<Long> deleteContentIds = new ArrayList<>();//对应的content
         List<NoteDelete> noteDeleteList = new ArrayList<>();//保存到删除历史表的数据
 
+        //处理自己
+        NoteModel model;
+        deleteNoteIds.add(note.getId());
+        if (note.getContentId() != null) {
+            deleteContentIds.add(note.getContentId());
+            NoteContent noteContent = noteContentService.getById(note.getContentId());
+            model = new NoteModel(note, noteContent);
+        } else {
+            model = new NoteModel(note);
+        }
+        NoteDelete noteDelete = new NoteDelete(model);
+        noteDeleteList.add(noteDelete);
 
-        List<NoteModel> noteList = noteMapper.listAllChildrenDetail(userName, id);
+        //处理孩子
+        List<NoteModel> noteList = noteMapper.listAllChildrenDetail(userName, note.getParentIds()+note.getId()+"/");
         for (NoteModel noteModel : noteList) {
             deleteNoteIds.add(noteModel.getId());
             deleteContentIds.add(noteModel.getContentId());
-            NoteDelete noteDelete = new NoteDelete(noteModel);
+            noteDelete = new NoteDelete(noteModel);
             noteDeleteList.add(noteDelete);
         }
         noteDeleteService.saveBatch(noteDeleteList);
-        noteContentService.removeByIds(deleteContentIds);
+        if (!deleteContentIds.isEmpty()) {
+            noteContentService.removeByIds(deleteContentIds);
+        }
         this.removeByIds(deleteNoteIds);
-    }
-
-    @Override
-    public IPage<Note> getNewest(int pageNo, int pageSize) {
-
-        QueryWrapper<Note> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("create_by", getUsername());
-        queryWrapper.eq("is_leaf", 1);
-        queryWrapper.orderByDesc("update_time");
-
-        Page<Note> page = new Page<Note>(pageNo, pageSize);
-        return page(page, queryWrapper);
     }
 
     private String getUsername() {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         return sysUser.getUsername();
+    }
+
+    @Override
+    public boolean updateParent(Note note, Note parent) {
+        String parentIds = parent.getParentIds() + parent.getId() + "/";
+
+
+        List<Note> noteList = noteMapper.listAllChildren(getUsername(), note.getParentIds()+note.getId()+"/");
+
+        for (Note child : noteList) {
+            child.setParentIds(child.getParentIds().replace(note.getParentIds(), parentIds));
+        }
+
+        note.setParentId(parent.getId());
+        note.setParentIds(parentIds);
+        updateById(note);
+        return updateBatchById(noteList);
+
     }
 }

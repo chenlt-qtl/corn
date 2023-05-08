@@ -14,11 +14,11 @@ import java.util.List;
  */
 public interface INoteFavoriteService extends IService<NoteFavorite> {
 
-    public void edit(String noteIds);
+    void edit(String noteIds);
 
     void editOne(String noteId, Boolean isFav);
 
-    public List<NoteModel> queryNotes(String username);
+    List<NoteModel> queryNotes(String username);
 
-    public boolean queryIfFavorite(String noteId);
+    boolean queryIfFavorite(Long noteId);
 }

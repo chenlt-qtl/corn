@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button, Input, Radio } from 'antd';
 import styles from './styles.less';
 import { PlusOutlined } from '@ant-design/icons';
-import lodash from 'lodash';
 
 
 const SplicMp3: React.FC<{}> = (props) => {

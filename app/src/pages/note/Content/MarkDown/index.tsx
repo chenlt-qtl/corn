@@ -35,7 +35,8 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 const blankText = "## ";
 
 const MarkDown = React.forwardRef((props, ref) => {
-    const [value, setValue] = useState<string>("");
+    const [text, setText] = useState<string>("");//存放全部的文本
+    const [editText, setEditText] = useState<string>("");//存放正在被编辑的文本
     const [visible, setVisible] = useState<boolean>(false);
 
     const [htmlObjs, setHtmlObjs] = useState<Object[]>([]);
@@ -44,69 +45,19 @@ const MarkDown = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         const { openedNote } = props.note;
-        let text = "";
-        if (openedNote.id) {
-            text = openedNote.text || "";
-        }
-        processText(text);
-    }, [props.note.openedNote])
+        let text = openedNote.text || "";
+        setText(text);
+    }, [props.note.openedNote.id])
 
     useEffect(() => {
-        if (editKey == "new") {
-            setValue(blankText);
-        } else {
-            htmlObjs.forEach(item => {
-                if (item.id == editKey) {
-                    setValue(item.text);
-                }
-            })
-        }
-    }, [editKey])
+        processText(text)
+    }, [text])
 
     useEffect(() => {
-        const { displayIndex } = props;
-        if (displayIndex) {//编辑
-            const { openedNote } = props.note;
-            let text = "";
-            if (openedNote) {
-                text = openedNote.text || "";
-            }
-            setValue(text);
+        if (props.isEdit) {//非编辑不用操作
+            setEditText(text);
         }
-    }, [props.displayIndex])
-
-    //监听窗口关闭
-    useEffect(() => {
-
-        //关闭时保存数据
-        if (!visible) {
-            let text = "";
-            let isChange = false;
-            if (editKey == "new") {
-                if (value != blankText) {
-                    htmlObjs.push({ text: value })
-                    isChange = true;
-                }
-            }
-            htmlObjs.forEach(item => {
-                if (item.id == editKey) {
-                    if (value != item.text) {
-                        text += value;
-                        isChange = true;
-                    }
-                } else {
-                    text += item.text;
-                }
-                text += "\n";
-            })
-
-
-            if (isChange) {
-                saveContent(text);
-            }
-            setEditKey("");
-        }
-    }, [visible])
+    }, [props.isEdit])
 
 
     const renderer = new marked.Renderer();
@@ -118,8 +69,6 @@ const MarkDown = React.forwardRef((props, ref) => {
             return `<h${level}>${text}</h${level}>`;
 
         }
-
-
     };
 
 
@@ -138,10 +87,11 @@ const MarkDown = React.forwardRef((props, ref) => {
     })
 
 
+    //切割text内容
     const processText = (text: string) => {
 
         tocify.reset();
-        const { id } = props.match.params;
+        const { id } = props.note.openedNote;
 
         const separator = "\n## ";
         let index = text.indexOf(separator);
@@ -162,20 +112,19 @@ const MarkDown = React.forwardRef((props, ref) => {
         if (tempText.length > 0) {
             htmlObjs.push({ id: id + text.length, text: tempText, html: marked(tempText) });
         }
-
         setHtmlObjs(htmlObjs);
 
     }
 
     //内容修改时，更新右上图标状态，数据同步到value中
-    const handleEditorChange = ({ html, text }) => {
-        setValue(text);
+    const handleEditorChange = ({ text }) => {
+        setEditText(text);
         props.handleChange();
     }
 
     //保存数据，更新view视图
     const saveContent = text => {
-        processText(text);
+        setText(text)
         props.saveContent(text);
     }
 
@@ -199,42 +148,80 @@ const MarkDown = React.forwardRef((props, ref) => {
     }
 
 
-    const clickText = (textId) => {
-        const { id } = props.match.params;
+    const onTextDoubleclick = textId => {
+        const { id } = props.note.openedNote;
         if (id && !props.isMobile) {
             setEditKey(textId)
+            if (textId == "new") {
+                setEditText(blankText);
+            } else {
+                htmlObjs.forEach(item => {
+                    if (item.id == textId) {
+                        setEditText(item.text);
+                    }
+                })
+            }
             setVisible(true)
         }
     }
 
+    //窗口关闭
+    const onModalClose = () => {
+        let text = "";
+        let isChange = false;
+        if (editKey == "new") {
+            if (editText != blankText) {
+                htmlObjs.push({ text: editText })
+                isChange = true;
+            }
+        }
+        htmlObjs.forEach(item => {
+            if (item.id == editKey) {
+                if (editText != item.text) {
+                    text += editText;
+                    isChange = true;
+                }
+            } else {
+                text += item.text;
+            }
+            text += "\n";
+        })
+
+
+        if (isChange) {
+            setText(text)
+            saveContent(text);
+        }
+        setVisible(false);
+    }
 
 
     const render = function () {
-        const { displayIndex, showToc, setShowToc, isMobile } = props;
+        const { isEdit, showToc, setShowToc, isMobile } = props;
 
         return (
             <>
                 <div className={styles.md_container}>
-                    {!isMobile && showToc ? <div className={styles.md_toc}>
+                    {(!isMobile && showToc && !isEdit) ? <div className={styles.md_toc}>
                         <div className={styles.md_title}><CloseOutlined onClick={() => { setShowToc(false) }} /></div>
                         {tocify && tocify.render()}
                     </div> : ""}
                     <div className={`${styles.md_content} ${styles.md_md}`}>
-                        {displayIndex == 1 ?
+                        {isEdit ?
                             <MdEditor
-                                value={value}
+                                value={editText}
                                 renderHTML={renderHTML}
                                 onChange={handleEditorChange}
                                 onImageUpload={handleImageUpload}
-                                onBlur={() => saveContent(value)}
+                                onBlur={() => saveContent(editText)}
                                 style={{ height: '100%' }}
                                 config={{ view: { menu: true, html: isMobile ? false : true, md: true } }}
                             />
                             : <div className={styles.md_view}>
                                 {htmlObjs.length > 0 && htmlObjs.map(item =>
-                                    <div key={item.id} dangerouslySetInnerHTML={{ __html: item.html }} onDoubleClick={() => clickText(item.id)}></div>
+                                    <div key={item.id} dangerouslySetInnerHTML={{ __html: item.html }} onDoubleClick={() => onTextDoubleclick(item.id)}></div>
                                 )}
-                                <div className={styles.md_restSpace} onDoubleClick={() => clickText("new")}></div>
+                                <div className={styles.md_restSpace} onDoubleClick={() => onTextDoubleclick("new")}></div>
                             </div>}
                     </div>
                 </div>
@@ -246,11 +233,11 @@ const MarkDown = React.forwardRef((props, ref) => {
                     closable={false}
                     width={1000}
                     maskClosable={true}
-                    onCancel={() => setVisible(false)}
+                    onCancel={onModalClose}
                 >
                     <div className={styles.md_md}>
                         <MdEditor
-                            value={value}
+                            value={editText}
                             renderHTML={text => marked(text)}
                             onChange={handleEditorChange}
                             onImageUpload={handleImageUpload}

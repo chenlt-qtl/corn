@@ -33,10 +33,7 @@ public class NoteDelete implements Serializable {
 	private java.lang.String name;
 	/**parentId*/
 	@Excel(name = "parentId", width = 15)
-	private java.lang.String parentId;
-	/**parentIds*/
-	@Excel(name = "parentIds", width = 15)
-	private java.lang.String parentIds;
+	private Long parentId;
 	/**text*/
 	@Excel(name = "text", width = 15)
 	private java.lang.Object text;

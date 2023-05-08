@@ -12,10 +12,6 @@ export default {
                     component: './note',
                 },
                 {
-                    path: '/note/:id',
-                    component: './note',
-                },
-                {
                     path: '/word',
                     name: '英语',
                     component: './word',

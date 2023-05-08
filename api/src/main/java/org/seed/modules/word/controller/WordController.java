@@ -12,7 +12,6 @@ import org.seed.common.util.ResultUtils;
 import org.seed.modules.word.entity.Word;
 import org.seed.modules.word.model.WordVo;
 import org.seed.modules.word.service.*;
-import org.seed.modules.word.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

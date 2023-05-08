@@ -8,7 +8,6 @@ export interface NoteItem {
   source?: string;
   parentId?:string;
   parentIds?:string;
-  parents?:string;
   status?: number;
   updateTime?: Date;
   createTime?: Date;

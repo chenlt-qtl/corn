@@ -11,24 +11,15 @@ import { Spin } from "antd"
 const Note: React.FC<{}> = (props) => {
 
   useEffect(() => {
-    const { id } = props.match.params;
-    id && props.dispatch({
-      type: 'note/openNote',
-      payload: id,
-    })
-
-  }, [props.match.params.id])
-
-  useEffect(() => {
     props.dispatch({ type: 'note/getNoteTree' })
   }, [])
 
   const getComponent = () => {
     const { isMobile } = props;
-    const { id } = props.match.params;
+    const { openedNote } = props.note;
 
     if (isMobile) {
-      if (id) {
+      if (openedNote) {
         return <Content {...props}></Content>;
       } else {
         return <ListMenu {...props}></ListMenu>;

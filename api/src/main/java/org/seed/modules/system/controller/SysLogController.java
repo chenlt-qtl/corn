@@ -11,7 +11,6 @@ import org.seed.common.system.query.QueryGenerator;
 import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.system.entity.SysLog;
-import org.seed.modules.system.entity.SysRole;
 import org.seed.modules.system.service.ISysLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

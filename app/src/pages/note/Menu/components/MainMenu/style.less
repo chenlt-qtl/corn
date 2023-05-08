@@ -3,6 +3,8 @@
   width       : 230px;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   overflow    : hidden;
+  transition  : all .3s;
+
 
   .toolbar {
     flex-shrink: 0;
@@ -65,6 +67,8 @@
       display      : flex;
       font-size    : 12px;
       padding-right: 7px;
+      position     : relative;
+      overflow: hidden;
 
       .treeMenu {
         display: none;
@@ -75,11 +79,15 @@
         overflow     : hidden;
         text-overflow: ellipsis;
         white-space  : nowrap;
+        word-break: break-all;
 
         >span {
           display: inline-block;
           margin : 0 5px;
         }
+      }
+      .treeBtn{
+        flex-shrink: 0;
       }
     }
 
@@ -100,5 +108,26 @@
       cursor : pointer;
     }
   }
+}
 
+.min {
+  width           : 40px;
+  background-color: #f9f9f9;
+
+  .toolbar {
+    padding: 10px 5px;
+  }
+
+  .menuItem {
+    padding        : 12px 0;
+    justify-content: center;
+    cursor         : pointer;
+
+    :global {
+      .anticon {
+        padding  : 0;
+        font-size: 14px;
+      }
+    }
+  }
 }

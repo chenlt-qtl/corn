@@ -12,7 +12,6 @@ public class NoteModel extends Note {
 
     private static final long serialVersionUID = 1L;
 
-    private java.lang.String parents;
     private java.lang.String text;
     private boolean isFav;
 
@@ -38,13 +37,11 @@ public class NoteModel extends Note {
     public void decrypt() {
         this.setText(BtoaEncode.decrypt(this.getText()));
         this.setName(BtoaEncode.decrypt(this.getName()));
-        this.setParents(BtoaEncode.decrypt(this.getParents()));
 
     }
 
     public void encryption() {
         this.setText(BtoaEncode.encryption(this.getText()));
         this.setName(BtoaEncode.encryption(this.getName()));
-        this.setParents(BtoaEncode.encryption(this.getParents()));
     }
 }
