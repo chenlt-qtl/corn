@@ -1,0 +1,31 @@
+.container {
+
+    display       : flex;
+    flex-direction: column;
+
+    .table {
+        height         : 200px;
+        flex-shrink    : 0;
+        display        : flex;
+        justify-content: space-between;
+        flex-direction : column;
+
+        .page {
+            text-align: right;
+        }
+    }
+
+    .content {
+        flex: 1;
+        min-height: 300px;
+    }
+
+    .empty {
+        display        : flex;
+        align-items    : center;
+        justify-content: center;
+        height         : 100%;
+        font-size      : 40px;
+        color          : #ccc;
+      }
+}

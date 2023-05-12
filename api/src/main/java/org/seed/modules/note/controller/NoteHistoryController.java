@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/noteHistory/noteHistory")
+@RequestMapping("/noteHistory")
 @Slf4j
 public class NoteHistoryController {
     @Autowired
@@ -32,18 +32,20 @@ public class NoteHistoryController {
     /**
      * 分页列表查询
      *
-     * @param noteHistory
      * @param pageNo
      * @param pageSize
      * @param req
      * @return
      */
-    @GetMapping(value = "/list")
-    public Result queryPageList(NoteHistory noteHistory,
-                                  @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                  HttpServletRequest req) {
-        QueryWrapper<NoteHistory> queryWrapper = QueryGenerator.initQueryWrapper(noteHistory, req.getParameterMap());
+    @GetMapping("")
+    public Result queryPageList(@RequestParam Long noteId,
+                                @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                HttpServletRequest req) {
+        QueryWrapper<NoteHistory> queryWrapper = new QueryWrapper();
+        queryWrapper.select("id","create_time");
+
+        queryWrapper.eq("note_id",noteId);
         Page<NoteHistory> page = new Page<NoteHistory>(pageNo, pageSize);
         IPage<NoteHistory> pageList = noteHistoryService.page(page, queryWrapper);
         return ResultUtils.okData(pageList);
@@ -110,8 +112,8 @@ public class NoteHistoryController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/queryById")
-    public Result queryById(@RequestParam(name = "id", required = true) String id) {
+    @GetMapping(value = "/{id}")
+    public Result queryById(@PathVariable(name = "id", required = true) Long id) {
         NoteHistory noteHistory = noteHistoryService.getById(id);
         if (noteHistory == null) {
             return ResultUtils.error("未找到对应实体");

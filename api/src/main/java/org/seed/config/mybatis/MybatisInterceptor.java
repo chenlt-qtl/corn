@@ -86,7 +86,7 @@ public class MybatisInterceptor implements Interceptor {
 		Field[] fields = null;
 		if (parameter instanceof ParamMap) {
 			ParamMap<?> p = (ParamMap<?>) parameter;
-			parameter = p.get("param1");
+			parameter = p.get("et");
 			fields = parameter.getClass().getDeclaredFields();
 		} else {
 			fields = parameter.getClass().getDeclaredFields();

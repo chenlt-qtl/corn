@@ -88,8 +88,9 @@ const NoteTree: React.FC = (props, ref) => {
                         showIcon
                         autoExpandParent={false}
                         onExpand={handleExpand}
+                        fieldNames={{ title: "name" }}
                         titleRender={node => <div className={styles.treeNode} onClick={e => onNodeSelect(e, node)}>
-                            <div className={styles.title}>&nbsp;{node.title}</div>
+                            <div className={styles.title}>&nbsp;{node.name}</div>
                             {node.id == "0" ? "" : <div className={styles.treeBtn} onClick={e => e.stopPropagation()}><Dropdown overlay={operMenu(node)} trigger={['click']}><div className="noteTreeMenu" ><EllipsisOutlined /></div></Dropdown></div>}
                         </div>
                         }

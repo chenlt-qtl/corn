@@ -61,8 +61,6 @@ const NoteModel: NoteModelType = {
                         payload: [note, ...(openedNotes.filter(i => i.id != payload))],
                     })
 
-                    console.log("openNote",note);
-                    
                     yield put({
                         type: 'refreshOpenedNote',
                         payload: note,
@@ -130,7 +128,7 @@ const NoteModel: NoteModelType = {
 
                 if (openedNote && openedNote.id == payload) {
                     yield put({
-                        type: "refreshOpenedNote",payload:{}
+                        type: "refreshOpenedNote", payload: {}
                     });
                 }
                 yield put({ type: 'getNoteTree' })//刷新树
@@ -152,6 +150,7 @@ const NoteModel: NoteModelType = {
                         payload: note
                     });
                 }
+                yield put({ type: 'getNoteTree' })//刷新树
             }
             return result;
         },
@@ -194,8 +193,6 @@ const NoteModel: NoteModelType = {
     },
     reducers: {
         refreshOpenedNote(state: NoteState, { payload }): NoteState {
-            console.log("refreshOpenedNote",payload);
-            
             return {
                 ...state,
                 openedNote: payload
@@ -214,7 +211,6 @@ const NoteModel: NoteModelType = {
             }
         },
         refreshDefaultTreeValue(state: NoteState, { payload }): NoteState {
-
             return {
                 ...state,
                 defaultTreeValue: String(payload || "")

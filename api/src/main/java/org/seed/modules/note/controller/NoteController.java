@@ -139,11 +139,11 @@ public class NoteController {
             return ResultUtils.error("未找到对应实体");
         } else {
             Note parent = noteService.getById(parentId);
-            if (!noteEntity.getParentId().equals(parentId) && !id.equals(parentId) || parent == null) {
+            if (noteEntity.getParentId().equals(parentId) || id.equals(parentId) || parent == null) {
+                return ResultUtils.error("父节点不合法");
+            } else {
                 noteService.updateParent(noteEntity, parent);
                 return ResultUtils.ok();
-            } else {
-                return ResultUtils.error("父节点不合法");
             }
         }
 

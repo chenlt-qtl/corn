@@ -7,6 +7,7 @@ import MarkDown from './MarkDown'
 import 'font-awesome/css/font-awesome.min.css';
 import HocMedia from "@/components/HocMedia";
 import lodash from 'lodash';
+import HistoryModal from '../components/HistoryModal'
 
 let statusIcons = {
     '0': <CheckCircleTwoTone key="ok" twoToneColor="#52c41a" />,
@@ -25,9 +26,11 @@ const Content = React.forwardRef((props, ref) => {
     const [title, setTitle] = useState<String>("");
 
     const [showToc, setShowToc] = useState<boolean>(true);
+    const [historyModalVisible, setHistoryModalVisible] = useState<boolean>(true);
+
 
     useEffect(() => {
-   
+
         const { openedNote } = props.note;
         if (!lodash.isEmpty(openedNote)) {
             setTitle(openedNote.name)
@@ -152,6 +155,8 @@ const Content = React.forwardRef((props, ref) => {
     const render = function () {
         const { isMobile } = props;
         const { openedNote } = props.note;
+        console.log(openedNote);
+
 
         const { menuType = 3 } = history.location.query;
 
@@ -177,6 +182,7 @@ const Content = React.forwardRef((props, ref) => {
                     <div className={styles.content}>
                         <MarkDown {...props} handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} isEdit={isEdit} saveContent={(text: string) => saveNote('content', text)}></MarkDown>
                     </div></> : <div className={styles.empty}><InboxOutlined /></div>}
+                <HistoryModal noteId={3243} visible={historyModalVisible}></HistoryModal>
             </div>
         );
     };

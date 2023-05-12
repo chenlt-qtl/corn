@@ -199,7 +199,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
         note.setParentId(parent.getId());
         note.setParentIds(parentIds);
-        updateById(note);
+        noteList.add(note);
         return updateBatchById(noteList);
 
     }
