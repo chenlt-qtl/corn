@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.seed.common.api.vo.Result;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.BtoaEncode;
 import org.seed.common.util.ResultUtils;
 import org.seed.modules.note.entity.NoteHistory;
 import org.seed.modules.note.service.INoteHistoryService;
@@ -118,6 +119,7 @@ public class NoteHistoryController {
         if (noteHistory == null) {
             return ResultUtils.error("未找到对应实体");
         } else {
+            noteHistory.setText(BtoaEncode.encryption(noteHistory.getText()));
             return ResultUtils.okData(noteHistory);
         }
     }

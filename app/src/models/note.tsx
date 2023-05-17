@@ -56,10 +56,13 @@ const NoteModel: NoteModelType = {
             if (result) {
                 if (result.success) {
                     note = result.result;
-                    yield put({
-                        type: 'refreshOpenedNotes',
-                        payload: [note, ...(openedNotes.filter(i => i.id != payload))],
-                    })
+                    const notes = openedNotes.filter(i => i.id == payload)
+                    if (notes.length == 0) {
+                        yield put({
+                            type: 'refreshOpenedNotes',
+                            payload: [note, ...openedNotes],
+                        })
+                    }
 
                     yield put({
                         type: 'refreshOpenedNote',
@@ -71,7 +74,7 @@ const NoteModel: NoteModelType = {
                         payload: note.parentId || "0",
                     })
 
-                    if (listParentId == "0" && note.parentId) {
+                    if (!isNaN(listParentId) && note.parentId) {
                         yield put({
                             type: 'refreshListParentId',
                             payload: note.parentId,

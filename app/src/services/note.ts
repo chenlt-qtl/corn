@@ -160,7 +160,7 @@ export async function getHistory(id: number) {
 
   return request('/api/noteHistory/' + id).then(res => {
     if (res) {
-      res.result = decrypt(res.result);
+      res.result.text = decrypt(res.result.text);
     }
     return res;
   })

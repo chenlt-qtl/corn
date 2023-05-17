@@ -76,7 +76,7 @@ const NoteList: React.FC = (props, ref) => {
 
     const render = function () {
 
-        const { id: activeId } = props.match.params;
+        const { openedNote } = props.note;
 
         const { data, noDelete } = props;
 
@@ -87,7 +87,7 @@ const NoteList: React.FC = (props, ref) => {
                         <ul> {
                             sortData(data).map(note => {
                                 const { name, id, isLeaf } = note;
-                                const isActive = (activeId == id);
+                                const isActive = (openedNote.id == id);
                                 return <li key={id} >
                                     <div className={`${styles.menuItem} ${isActive ? styles.active : ''}`} onClick={() => handleNoteClick(note)}>
                                         {isLeaf ? <FileTextOutlined /> : <FolderOutlined />}

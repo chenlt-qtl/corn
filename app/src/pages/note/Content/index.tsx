@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Input, Button } from 'antd';
-import { ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, CloseCircleOutlined, ProfileOutlined, InboxOutlined } from '@ant-design/icons';
+import { Input, Button, Tabs, Dropdown, Menu } from 'antd';
+import { CloseCircleOutlined, ExclamationCircleTwoTone, CheckCircleTwoTone, LoadingOutlined, EyeOutlined, EditOutlined, StarOutlined, StarFilled, HistoryOutlined, ProfileOutlined, InboxOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect, history } from 'umi';
 import MarkDown from './MarkDown'
@@ -15,6 +15,8 @@ let statusIcons = {
     '2': <LoadingOutlined key="saving" />
 }
 
+const { TabPane } = Tabs;
+
 const group = 'group';
 
 const Content = React.forwardRef((props, ref) => {
@@ -26,7 +28,7 @@ const Content = React.forwardRef((props, ref) => {
     const [title, setTitle] = useState<String>("");
 
     const [showToc, setShowToc] = useState<boolean>(true);
-    const [historyModalVisible, setHistoryModalVisible] = useState<boolean>(true);
+    const [historyModalVisible, setHistoryModalVisible] = useState<boolean>(false);
 
 
     useEffect(() => {
@@ -85,7 +87,6 @@ const Content = React.forwardRef((props, ref) => {
                 setSaveStatus(0)
                 if (!noteToSave.id) {//新增
                     const { openedNotes } = props.note;
-                    console.log("1631");
                     props.dispatch({ type: 'note/refreshOpenedNote', payload: res.result })
                     props.dispatch({ type: 'note/refreshOpenedNotes', payload: [res.result, ...openedNotes] })
                 }
@@ -140,11 +141,61 @@ const Content = React.forwardRef((props, ref) => {
                     setIsEdit(true)
                 }} ><EditOutlined /></Button>)
             }
+            if (openedNote.id) {
+                btns.push(<Button key="history" onClick={() => {
+                    setHistoryModalVisible(true);
+                }} type='text'><HistoryOutlined /></Button>)
+            }
             btns.push(statusIcons[saveStatus])
             return btns;
         }
     }
 
+    const handleActiveNote = (key: string) => {
+
+        const { openedNote } = props.note;
+        if (openedNote.id != key) {
+            props.dispatch({
+                type: 'note/openNote',
+                payload: key,
+            })
+        }
+    }
+
+    const closeNotes = (key: string) => {
+
+        let newOpenedNotes = [];
+        const { openedNote, openedNotes } = props.note;
+
+        if (key == "other") {//关闭其他
+            newOpenedNotes = [openedNote]
+        } else if (key == "all") {//关闭所有
+            props.dispatch({
+                type: 'note/refreshOpenedNote',
+                payload: {}
+            })
+        } else {//关闭单个
+            newOpenedNotes = [...openedNotes].filter(item => item.id != key);
+            if (openedNote.id == key) {
+                props.dispatch({
+                    type: 'note/refreshOpenedNote',
+                    payload: {}
+                })
+            }
+        }
+
+        props.dispatch({
+            type: 'note/refreshOpenedNotes',
+            payload: newOpenedNotes,
+        })
+    }
+
+    const menu = (
+        <Menu onClick={e => closeNotes(e.key)}>
+            <Menu.Item key="other">关闭其他</Menu.Item>
+            <Menu.Item key="all">关闭所有</Menu.Item>
+        </Menu>
+    );
 
     const togglerMenu = [
         { icon: '&#xe88c;', type: 3 },
@@ -154,9 +205,7 @@ const Content = React.forwardRef((props, ref) => {
 
     const render = function () {
         const { isMobile } = props;
-        const { openedNote } = props.note;
-        console.log(openedNote);
-
+        const { openedNote, openedNotes } = props.note;
 
         const { menuType = 3 } = history.location.query;
 
@@ -169,7 +218,32 @@ const Content = React.forwardRef((props, ref) => {
                         {/* <Dropdown.Button overlay={menu1}>Actions</Dropdown.Button> */}
                         <div className={styles.buttons}>{getTitleBtn()?.map(i => i)}</div>
                     </div>
-                    : ""
+                    : (openedNotes.length > 0 ? (<div className={styles.tabPane}>
+                        <div className={styles.tab}>
+                            <Tabs
+                                hideAdd
+                                size='small'
+                                onTabClick={handleActiveNote}
+                                activeKey={String(openedNote.id)}
+                                onEdit={closeNotes}
+                                type="editable-card"
+                            >
+                                {openedNotes.map(note => (
+                                    <TabPane tab={note.name} key={note.id}>
+                                    </TabPane>
+                                ))}
+                            </Tabs>
+                        </div>
+                        <div className={styles.btn} >
+                            <Dropdown
+                                overlay={menu}
+                            >
+                                <div className={styles.closeBtn}>
+                                    <CloseCircleOutlined />
+                                </div>
+                            </Dropdown>
+                        </div>
+                    </div>) : "")
                 }
                 {!lodash.isEmpty(openedNote) ? <>
                     <div className={styles.title}>
@@ -182,7 +256,7 @@ const Content = React.forwardRef((props, ref) => {
                     <div className={styles.content}>
                         <MarkDown {...props} handleChange={handleChange} showToc={showToc} setShowToc={setShowToc} isEdit={isEdit} saveContent={(text: string) => saveNote('content', text)}></MarkDown>
                     </div></> : <div className={styles.empty}><InboxOutlined /></div>}
-                <HistoryModal noteId={3243} visible={historyModalVisible}></HistoryModal>
+                <HistoryModal noteId={openedNote.id} visible={historyModalVisible} onCancel={() => setHistoryModalVisible(false)}></HistoryModal>
             </div>
         );
     };

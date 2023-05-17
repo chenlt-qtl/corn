@@ -29,7 +29,7 @@ public class NoteHistory implements Serializable {
 	private Long noteId;
 	/**text*/
 	@Excel(name = "text", width = 15)
-	private java.lang.Object text;
+	private String text;
 	/**createBy*/
 	@Excel(name = "createBy", width = 15)
 	private java.lang.String createBy;

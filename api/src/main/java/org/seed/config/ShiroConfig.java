@@ -66,11 +66,11 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/**/*.woff", "anon");
 		filterChainDefinitionMap.put("/**/*.woff2", "anon");
 		filterChainDefinitionMap.put("/**/*.ttf", "anon");
-		filterChainDefinitionMap.put("/druid/**", "anon");
-		filterChainDefinitionMap.put("/swagger-ui.html", "anon");
-		filterChainDefinitionMap.put("/swagger**/**", "anon");
+//		filterChainDefinitionMap.put("/druid/**", "anon");
+//		filterChainDefinitionMap.put("/swagger-ui.html", "anon");
+//		filterChainDefinitionMap.put("/swagger**/**", "anon");
 		filterChainDefinitionMap.put("/webjars/**", "anon");
-		filterChainDefinitionMap.put("/v2/**", "anon");
+//		filterChainDefinitionMap.put("/v2/**", "anon");
 		
 		//性能监控
 		filterChainDefinitionMap.put("/actuator/metrics/**", "anon");
