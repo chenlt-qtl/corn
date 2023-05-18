@@ -117,6 +117,7 @@ jeecg :
 logging:
   level:
     root: INFO
+    org.seed.modules: DEBUG
   root:
     file-name: api
     appender: RollingFile
