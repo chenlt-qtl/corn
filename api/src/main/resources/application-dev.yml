@@ -19,9 +19,6 @@ jeecg:
     #lucene索引目录
     index: E://corn//index
 logging:
-  level:
-    root: INFO
-    org.seed.modules: DEBUG
   root:
     appender: Console
     path: .
