@@ -30,7 +30,6 @@ const MainMenu: React.FC = (props, ref) => {
     }, [props.note.noteTreeData]);
 
     const handleRename = (node) => {
-        console.log("node",node);
         setEditNode(node);
         setFolderModalVisible(true);
     }
@@ -41,8 +40,8 @@ const MainMenu: React.FC = (props, ref) => {
     }
 
     const onAddFolder = () => {
-        const { listParentId } = props.note;
-        setEditNode({ parentId: listParentId, isLeaf: false })
+        const { listParent: { id } } = props.note;
+        setEditNode({ parentId: id, isLeaf: false })
         setFolderModalVisible(true)
     }
 
@@ -70,12 +69,12 @@ const MainMenu: React.FC = (props, ref) => {
 
 
     const render = function () {
-        const { listParentId, defaultTreeValue } = props.note;
+        const { listParent: { id }, defaultTreeValue } = props.note;
 
         const { onChangeMenuType } = props;
         const min = menuType === 2;
 
-        const activeIds = min ? [isFolder(listParentId) ? "0" : listParentId] : [listParentId, defaultTreeValue]
+        const activeIds = min ? [isFolder(id) ? "0" : id] : [id, defaultTreeValue]
 
 
         return (
@@ -87,7 +86,7 @@ const MainMenu: React.FC = (props, ref) => {
                 </div>
                 {
                     menuData.filter(i => !i.hide).map(menu => <div key={menu.id} className={`${styles.menuItem} ${min ? styles.minMenuItem : ""} ${activeIds.includes(menu.id) ? styles.active : ""}`} onClick={() => {
-                        props.dispatch({ type: "note/refreshListParentId", payload: menu.id })
+                        props.dispatch({ type: "note/refreshListParent", payload: { id: menu.id } })
                         props.dispatch({ type: "note/refreshDefaultTreeValue", payload: menu.id == "0" ? "0" : "" })
                     }}>
                         {menu.icon}

@@ -24,18 +24,19 @@ const ListMenu: React.FC = (props, ref) => {
     const [searchStr, setSearchStr] = useState<string>("");
 
     useEffect(() => {
-        const { listParentId } = props.note;
-        const menu = getMenu(listParentId);
+        const { listParent: { id } } = props.note;
+
+        const menu = getMenu(id);
         if (menu) {
             setListTitle(menu.name);
         }
-        listParentId != "search" && getData(menu);
-    }, [props.note.listParentId]);
+        id != "search" && getData(menu);
+    }, [props.note.listParent]);
 
     useEffect(() => {
 
-        const { listParentId } = props.note;
-        if (listParentId && !isNaN(listParentId)) {
+        const { listParent: { id } } = props.note;
+        if (id && !isNaN(id)) {
             loadTreeData()
         }
 
@@ -59,18 +60,18 @@ const ListMenu: React.FC = (props, ref) => {
 
     const getData = async (menu) => {
 
-        const { listParentId } = props.note;
+        const { listParent: { id } } = props.note;
 
         let listData = [];
 
         if (menu && menu.id != "0") {
 
-            if (listParentId == "fav") {
+            if (id == "fav") {
                 const res = await queryFav();
                 if (res && res.success) {
                     listData = res.result
                 }
-            } else if (listParentId == "history") {
+            } else if (id == "history") {
                 listData = props.note.openedNotes
             }
             setListData(listData.sort(i => i.isLeaf))
@@ -87,19 +88,19 @@ const ListMenu: React.FC = (props, ref) => {
             return;
         }
 
-        const { listParentId } = props.note;
+        const { listParent: { id } } = props.note;
         let listData;
-        if (listParentId == "0") {
+        if (id == "0") {
             listData = props.note.noteTreeData;
         } else {//其他树节点，从treedata上面过滤数据
-            const node = getNode(listParentId, props.note.noteTreeData);
+            const node = getNode(id, props.note.noteTreeData);
             if (node) {
                 listData = node.children;
                 setListTitle(node.name);
             } else {
                 props.dispatch({
-                    type: 'note/refreshListParentId',
-                    payload: "0"
+                    type: 'note/refreshListParent',
+                    payload: { id: "0" }
                 })
             }
         }
@@ -107,8 +108,8 @@ const ListMenu: React.FC = (props, ref) => {
     }
 
     const goBack = () => {
-        const { listParentId } = props.note;
-        const node = getNode(listParentId, props.note.noteTreeData);
+        const { listParent: { id } } = props.note;
+        const node = getNode(id, props.note.noteTreeData);
 
         if (node) {
             let payload;
@@ -123,8 +124,8 @@ const ListMenu: React.FC = (props, ref) => {
 
     const clickFolder = id => {
         props.dispatch({
-            type: 'note/refreshListParentId',
-            payload: id
+            type: 'note/refreshListParent',
+            payload: { id }
         })
         props.dispatch({
             type: 'note/refreshDefaultTreeValue',
@@ -154,16 +155,16 @@ const ListMenu: React.FC = (props, ref) => {
     //搜索事件
     const handleSearch = async (searchStr) => {
 
-        const { listParentId } = props.note;
+        const { listParent: { id } } = props.note;
         let newListData
         //更新搜索历史
         updateSearchRecent(searchStr)
-        if (!isNaN(listParentId)) {
-            props.dispatch({ type: 'note/refreshListParentId', payload: "search" })
+        if (!isNaN(id)) {
+            props.dispatch({ type: 'note/refreshListParent', payload: { id: "search" } })
         }
 
 
-        if (isFolder(listParentId) && !range) { //全部文件夹搜索
+        if (isFolder(id) && !range) { //全部文件夹搜索
             const res = await pageSearchNote({ pageNo: 0, pageSize: 20, searchStr, parentId: 0 });
             if (res && res.success) {
                 newListData = res.result.records
@@ -207,7 +208,7 @@ const ListMenu: React.FC = (props, ref) => {
 
     const render = () => {
 
-        const { listParentId } = props.note;
+        const { listParent: { id } } = props.note;
 
 
         return (
@@ -224,7 +225,7 @@ const ListMenu: React.FC = (props, ref) => {
                                 searchHistory(str)
                             }}>{str}</span>)}</span>
                         </div>
-                        {isFolder(listParentId) ? (<div className={styles.range}>
+                        {isFolder(id) ? (<div className={styles.range}>
                             <span className={styles.title}>搜索范围</span>
                             <div className={styles.rangeRadio}>
                                 <Radio.Group onChange={e => setRange(e.target.value)} value={range}>
@@ -237,7 +238,7 @@ const ListMenu: React.FC = (props, ref) => {
                 </div>
 
                 <div className={styles.toolbar}>
-                    {!getMenu(listParentId) ? <Button type="text" onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button> : ""}
+                    {!getMenu(id) ? <Button type="text" onClick={() => goBack()}><span className='iconfont'>&#xe7c3;</span></Button> : ""}
                     <span className={styles.title}>{listTitle}</span>
                     <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                 </div>

@@ -35,7 +35,7 @@ const NoteTree: React.FC = (props, ref) => {
         e && e.stopPropagation();
         expandNote({ key: node.key })
         setSelectedKeys([String(node.id)])
-        props.dispatch({ type: 'note/refreshListParentId', payload: node.key })
+        props.dispatch({ type: 'note/refreshListParent', payload: { id: node.key } })
 
     }
 

@@ -11,9 +11,9 @@ const AddBtn: React.FC = (props, ref) => {
 
 
     const handleAddNote = ({ key }) => {
-        const { listParentId } = props.note;
+        const { listParent:{id} } = props.note;
 
-        if (!listParentId || isNaN(listParentId)) {
+        if (!id || isNaN(id)) {
             message.error("请选中要增加的文件夹")
             return
         }
@@ -22,7 +22,7 @@ const AddBtn: React.FC = (props, ref) => {
         } else {
             props.dispatch({
                 type: 'note/refreshOpenedNote',
-                payload: { name: "新文档", text: "", isLeaf: true, parentId: listParentId }
+                payload: { name: "新文档", text: "", isLeaf: true, parentId: id }
             })
 
 

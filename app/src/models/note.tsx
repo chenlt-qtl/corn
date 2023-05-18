@@ -7,7 +7,7 @@ export interface NoteState {
     openedNotes: [];
     noteTreeData: NoteNode[];
     defaultTreeValue: string;
-    listParentId: string;
+    listParent: NoteItem;
 }
 
 export interface NoteModelType {
@@ -28,7 +28,7 @@ export interface NoteModelType {
         refreshOpenedNotes: Reducer<NoteState>;
         refreshNoteTreeData: Reducer<NoteState>;
         refreshDefaultTreeValue: Reducer<NoteState>;
-        refreshListParentId: Reducer<NoteState>;
+        refreshListParent: Reducer<NoteState>;
     };
 }
 
@@ -40,15 +40,14 @@ const NoteModel: NoteModelType = {
         openedNotes: [],
         noteTreeData: [],
         defaultTreeValue: "0",
-        listParentId: "0"
-
+        listParent: {},
     },
 
     effects: {
 
         *openNote({ payload }, { call, put, select }) {
 
-            const { openedNotes, listParentId } = yield select(state => state.note);
+            const { openedNotes, listParent } = yield select(state => state.note);
 
             let note;
 
@@ -74,10 +73,10 @@ const NoteModel: NoteModelType = {
                         payload: note.parentId || "0",
                     })
 
-                    if (!isNaN(listParentId) && note.parentId) {
+                    if (!isNaN(listParent.id) && note.parentId && listParent.id != note.parentId) {
                         yield put({
-                            type: 'refreshListParentId',
-                            payload: note.parentId,
+                            type: 'refreshListParent',
+                            payload: { id: note.parentId },
                         })
                     }
                 }
@@ -158,7 +157,7 @@ const NoteModel: NoteModelType = {
             return result;
         },
         * editFav({ payload }, { call, put, select }) {
-
+            const listParent = yield select(state => state.note.listParent);
             let result = yield call(editOneFav, payload);
             if (result) {
 
@@ -168,12 +167,19 @@ const NoteModel: NoteModelType = {
                 if (res) {
                     if (res.success) {
                         const note = res.result;
-                        console.log("editFav");
                         // 成功
                         yield put({
                             type: 'refreshOpenedNote',
                             payload: note
                         })
+
+
+                        if (listParent.id == "fav") {
+                            yield put({
+                                type: "refreshListParent",
+                                payload: { id: "fav" }
+                            });
+                        }
                     }
                 }
                 return result;
@@ -219,10 +225,10 @@ const NoteModel: NoteModelType = {
                 defaultTreeValue: String(payload || "")
             }
         },
-        refreshListParentId(state: NoteState, { payload }): NoteState {
+        refreshListParent(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                listParentId: String(payload || "")
+                listParent: payload
             }
         },
     },
