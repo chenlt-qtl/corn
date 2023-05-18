@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, message, Card, Tree } from 'antd';
 import { connect } from 'umi';
 import HocMedia from "@/components/HocMedia";
@@ -8,27 +8,31 @@ const ChangeParent: React.FC = (props, ref) => {
 
     const { treeData, node, onCancel, visible } = props;
 
-    const [newParentId, setNewParentId] = useState<String>("");
+    const [newParentId, setNewParentId] = useState<number>();
 
     useEffect(() => {
         setNewParentId(node.parentId)
     }, [node])
 
     const handleChangeParent = () => {
-        props.dispatch({
-            type: 'note/updateParent',
-            payload: { id: node.key || node.id, parentId: newParentId }
-        }).then(res => {
-            console.log(res);
-            if (res) {
-                if (res.success) {
-                    message.success("操作成功")
-                    onCancel()
-                } else {
-                    message.error(res.message)
+
+        if (newParentId == node.parentId || node.id == newParentId) {
+            message.error("父节点不能是自己或者原父节点")
+        } else {
+            props.dispatch({
+                type: 'note/updateParent',
+                payload: { id: node.id, parentId: newParentId }
+            }).then(res => {
+                if (res) {
+                    if (res.success) {
+                        message.success("操作成功")
+                        onCancel()
+                    } else {
+                        message.error(res.message)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     const onSelect = ([_, id]) => {
@@ -51,6 +55,7 @@ const ChangeParent: React.FC = (props, ref) => {
                             treeData={treeData}
                             autoExpandParent={false}
                             onSelect={onSelect}
+                            fieldNames={{ title: "name" }}
                         />
                     </Card>
                 </article>

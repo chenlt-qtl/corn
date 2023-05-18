@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.task.entity.Task;
@@ -54,14 +56,13 @@ public class TaskController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<TaskVo>> queryPageList(Task task,
+	public Result queryPageList(Task task,
 											   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 											   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 											   @RequestParam(name="timeRange",required = false) String timeRange,
 											   @RequestParam(name="statusArr",required = false) Integer[] statusArr,
 											   @RequestParam(name="searchKey",required = false) String searchKey,
 											   HttpServletRequest req) {
-		Result<IPage<TaskVo>> result = new Result<IPage<TaskVo>>();
 		QueryWrapper<Task> queryWrapper = QueryGenerator.initQueryWrapper(task, req.getParameterMap());
 		queryWrapper.eq("p_id","0");
 
@@ -89,9 +90,9 @@ public class TaskController {
 
 		Page<Task> page = new Page<Task>(pageNo, pageSize);
 		IPage<TaskVo> pageList = taskService.pageWithChild(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+
+		return ResultUtils.okData(pageList);
+
 	}
 	
 	/**
@@ -100,17 +101,16 @@ public class TaskController {
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result<Task> add(@RequestBody Task task) {
-		Result<Task> result = new Result<Task>();
+	public Result add(@RequestBody Task task) {
 		try {
 			taskService.saveTask(task);
-			result.success("添加成功！");
+			return ResultUtils.ok("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			result.error500("操作失败");
+			throw new CornException("操作失败");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -119,21 +119,16 @@ public class TaskController {
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<Task> edit(@RequestBody Task task) {
-		Result<Task> result = new Result<Task>();
+	public Result edit(@RequestBody Task task) {
 		Task taskEntity = taskService.getById(task.getId());
 		if(taskEntity==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = taskService.updateTask(task,taskEntity);
-			//TODO 返回false说明什么？
-			if(ok) {
-				result.success("修改成功!");
-				result.setResult(task);
-			}
+			return ResultUtils.ok("修改成功!");
 		}
 		
-		return result;
+
 	}
 	
 	/**
@@ -142,17 +137,16 @@ public class TaskController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result<Task> delete(@RequestParam(name="id",required=true) String id) {
-		Result<Task> result = new Result<Task>();
+	public Result delete(@RequestParam(name="id",required=true) String id) {
 		Task task = taskService.getById(id);
 		if(task==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			taskService.delTask(task);
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
 		
-		return result;
+
 	}
 	
 	/**
@@ -161,15 +155,14 @@ public class TaskController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/deleteBatch")
-	public Result<Task> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<Task> result = new Result<Task>();
+	public Result deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
+			throw new CornException("参数不识别！");
 		}else {
 			//this.taskService.removeByIds(Arrays.asList(ids.split(",")));
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -178,17 +171,16 @@ public class TaskController {
 	 * @return
 	 */
 	@GetMapping(value = "/queryById")
-	public Result<Task> queryById(@RequestParam(name="id",required=true) String id) {
-		Result<Task> result = new Result<Task>();
+	public Result queryById(@RequestParam(name="id",required=true) String id) {
 		Task task = taskService.getById(id);
 		if(task==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			task.setComment(UpLoadUtil.dbToReal(task.getComment(),"html"));
-			result.setResult(task);
-			result.setSuccess(true);
+			return ResultUtils.okData(task);
+
 		}
-		return result;
+
 	}
 
   /**
@@ -231,7 +223,7 @@ public class TaskController {
    * @return
    */
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-  public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
+  public Result importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
       Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
       for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
@@ -245,10 +237,10 @@ public class TaskController {
               for (Task taskExcel : listTasks) {
                   taskService.save(taskExcel);
               }
-              return Result.ok("文件导入成功！数据行数：" + listTasks.size());
+              return ResultUtils.ok("文件导入成功！数据行数：" + listTasks.size());
           } catch (Exception e) {
               log.error(e.getMessage());
-              return Result.error("文件导入失败！");
+              return ResultUtils.error("文件导入失败！");
           } finally {
               try {
                   file.getInputStream().close();
@@ -257,7 +249,7 @@ public class TaskController {
               }
           }
       }
-      return Result.ok("文件导入失败！");
+      return ResultUtils.ok("文件导入失败！");
   }
 
 }

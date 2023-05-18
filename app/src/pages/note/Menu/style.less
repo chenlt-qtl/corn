@@ -1,0 +1,21 @@
+.container {
+  display      : flex;
+  border-radius: 5px;
+  background   : #fff;
+  box-shadow   : 5px 5px 10px rgba(0, 0, 0, 0.2),
+    -5px -5px 10px rgba(255, 255, 255, 0.1),
+    inset 5px 5px 10px rgba(255, 255, 255, 0.1),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.1);
+  margin     : 15px;
+  transition : .3s;
+  overflow   : hidden;
+  flex-shrink: 0;
+}
+
+.hide {
+  width: 0;
+}
+
+.show {
+  width: auto;
+}

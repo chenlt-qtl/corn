@@ -1,0 +1,65 @@
+.content {
+  height: 100%;
+  width: 230px;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.content .toolbar {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 10px 5px 20px 5px;
+}
+.content .toolbar :global .ant-btn-round {
+  border-radius: 5px;
+}
+.content .menuItem {
+  padding: 3px 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-left: #fff 2px solid;
+}
+.content .menuItem :global .anticon {
+  padding: 5px 8px 4px 5px;
+  font-size: 14px;
+}
+.content .active {
+  background-color: rgba(205, 205, 205, 0.4);
+  border-color: #f39c12;
+}
+.content .tree {
+  overflow: auto;
+  flex: 1;
+  height: calc(100% - 128px);
+}
+.content .tree :global .ant-tree,
+.content .tree :global .ant-tree .ant-tree-node-content-wrapper {
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.65);
+}
+.content .tree :global .ant-tree .ant-tree-treenode {
+  padding-left: 20px;
+}
+.content .tree :global .ant-tree-treenode-selected {
+  background-color: rgba(205, 205, 205, 0.4);
+  border-left: #f39c12 2px solid;
+}
+.content .tree .treeNode {
+  display: flex;
+  font-size: 12px;
+  padding-right: 7px;
+}
+.content .tree .treeNode .treeMenu {
+  display: none;
+}
+.content .tree .treeNode .title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.content .tree .treeNode .title > span {
+  display: inline-block;
+  margin: 0 5px;
+}

@@ -1,0 +1,133 @@
+.content {
+  height      : 100%;
+  width       : 230px;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  overflow    : hidden;
+  transition  : all .3s;
+
+
+  .toolbar {
+    flex-shrink: 0;
+    text-align : center;
+    padding    : 10px 5px 20px 5px;
+
+    :global {
+      .ant-btn-round {
+        border-radius: 5px;
+      }
+    }
+  }
+
+  .menuItem {
+    padding    : 3px 20px;
+    font-size  : 12px;
+    display    : flex;
+    align-items: center;
+    cursor     : pointer;
+    border-left: #fff 2px solid;
+
+    :global {
+      .anticon {
+        padding  : 5px 8px 4px 5px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .active {
+    background-color: rgba(205, 205, 205, 0.4);
+    border-color    : #f39c12;
+  }
+
+  .tree {
+    overflow: auto;
+    flex    : 1;
+    height  : calc(~"100% - 128px");
+
+    //修改树节点样式
+    :global {
+
+      .ant-tree,
+      .ant-tree .ant-tree-node-content-wrapper {
+        background-color: transparent;
+        color           : rgba(0, 0, 0, 0.65);
+      }
+
+      .ant-tree .ant-tree-treenode {
+        padding-left: 20px;
+      }
+
+      .ant-tree-treenode-selected {
+        background-color: rgba(205, 205, 205, 0.4);
+        border-left     : #f39c12 2px solid;
+      }
+    }
+
+    .treeNode {
+      display      : flex;
+      font-size    : 12px;
+      padding-right: 7px;
+      position     : relative;
+      overflow: hidden;
+
+      .treeMenu {
+        display: none;
+      }
+
+      .title {
+        flex         : 1;
+        overflow     : hidden;
+        text-overflow: ellipsis;
+        white-space  : nowrap;
+        word-break: break-all;
+
+        >span {
+          display: inline-block;
+          margin : 0 5px;
+        }
+      }
+      .treeBtn{
+        flex-shrink: 0;
+      }
+    }
+
+  }
+
+  .toggler {
+    display : flex;
+    margin  : 0 auto;
+    width   : 100px;
+    position: relative;
+    bottom  : 0;
+    left    : 0;
+    right   : 0;
+
+    .btn {
+      display: inline-block;
+      padding: 0 7px;
+      cursor : pointer;
+    }
+  }
+}
+
+.min {
+  width           : 40px;
+  background-color: #f9f9f9;
+
+  .toolbar {
+    padding: 10px 5px;
+  }
+
+  .menuItem {
+    padding        : 12px 0;
+    justify-content: center;
+    cursor         : pointer;
+
+    :global {
+      .anticon {
+        padding  : 0;
+        font-size: 14px;
+      }
+    }
+  }
+}

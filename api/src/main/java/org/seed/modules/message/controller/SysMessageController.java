@@ -9,7 +9,9 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.message.entity.SysMessage;
 import org.seed.modules.message.service.ISysMessageService;
@@ -55,17 +57,16 @@ public class SysMessageController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<SysMessage>> queryPageList(SysMessage sysMessage,
+	public Result queryPageList(SysMessage sysMessage,
 												   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 												   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 												   HttpServletRequest req) {
-		Result<IPage<SysMessage>> result = new Result<IPage<SysMessage>>();
 		QueryWrapper<SysMessage> queryWrapper = QueryGenerator.initQueryWrapper(sysMessage, req.getParameterMap());
 		Page<SysMessage> page = new Page<SysMessage>(pageNo, pageSize);
 		IPage<SysMessage> pageList = sysMessageService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+
+		return ResultUtils.okData(pageList);
+
 	}
 	
 	/**
@@ -74,17 +75,16 @@ public class SysMessageController {
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result<SysMessage> add(@RequestBody SysMessage sysMessage) {
-		Result<SysMessage> result = new Result<SysMessage>();
+	public Result add(@RequestBody SysMessage sysMessage) {
 		try {
 			sysMessageService.save(sysMessage);
-			result.success("添加成功！");
+			return ResultUtils.ok("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			result.error500("操作失败");
+			throw new CornException("操作失败");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -93,20 +93,17 @@ public class SysMessageController {
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<SysMessage> edit(@RequestBody SysMessage sysMessage) {
-		Result<SysMessage> result = new Result<SysMessage>();
+	public Result edit(@RequestBody SysMessage sysMessage) {
 		SysMessage sysMessageEntity = sysMessageService.getById(sysMessage.getId());
 		if(sysMessageEntity==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = sysMessageService.updateById(sysMessage);
-			//TODO 返回false说明什么？
-			if(ok) {
-				result.success("修改成功!");
-			}
+			return ResultUtils.ok("修改成功!");
+
 		}
 		
-		return result;
+
 	}
 	
 	/**
@@ -115,19 +112,14 @@ public class SysMessageController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result<SysMessage> delete(@RequestParam(name="id",required=true) String id) {
-		Result<SysMessage> result = new Result<SysMessage>();
+	public Result delete(@RequestParam(name="id",required=true) String id) {
 		SysMessage sysMessage = sysMessageService.getById(id);
 		if(sysMessage==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = sysMessageService.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
-			}
+			return ResultUtils.ok("删除成功!");
 		}
-		
-		return result;
 	}
 	
 	/**
@@ -136,15 +128,14 @@ public class SysMessageController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/deleteBatch")
-	public Result<SysMessage> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<SysMessage> result = new Result<SysMessage>();
+	public Result deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
+			throw new CornException("参数不识别！");
 		}else {
 			this.sysMessageService.removeByIds(Arrays.asList(ids.split(",")));
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -153,16 +144,15 @@ public class SysMessageController {
 	 * @return
 	 */
 	@GetMapping(value = "/queryById")
-	public Result<SysMessage> queryById(@RequestParam(name="id",required=true) String id) {
-		Result<SysMessage> result = new Result<SysMessage>();
+	public Result queryById(@RequestParam(name="id",required=true) String id) {
 		SysMessage sysMessage = sysMessageService.getById(id);
 		if(sysMessage==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
-			result.setResult(sysMessage);
-			result.setSuccess(true);
+			return ResultUtils.okData(sysMessage);
+
 		}
-		return result;
+
 	}
 
   /**
@@ -205,7 +195,7 @@ public class SysMessageController {
    * @return
    */
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-  public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
+  public Result importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
       Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
       for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
@@ -219,10 +209,10 @@ public class SysMessageController {
               for (SysMessage sysMessageExcel : listSysMessages) {
                   sysMessageService.save(sysMessageExcel);
               }
-              return Result.ok("文件导入成功！数据行数：" + listSysMessages.size());
+              return ResultUtils.ok("文件导入成功！数据行数：" + listSysMessages.size());
           } catch (Exception e) {
               log.error(e.getMessage());
-              return Result.error("文件导入失败！");
+              return ResultUtils.error("文件导入失败！");
           } finally {
               try {
                   file.getInputStream().close();
@@ -231,7 +221,7 @@ public class SysMessageController {
               }
           }
       }
-      return Result.ok("文件导入失败！");
+      return ResultUtils.ok("文件导入失败！");
   }
 
 }

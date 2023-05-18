@@ -15,8 +15,9 @@ import Menu from './components/menu'
 import Card from './components/card'
 import Button3D from './components/button3D';
 import SunLoading from './components/sunLoading'
+import Resize from './components/Resize';
 const ExamList: React.FC<{}> = () => {
-    const [activeKey, setActiveKey] = useState<number>(14);
+    const [activeKey, setActiveKey] = useState<number>(15);
 
 
     const items = [
@@ -34,6 +35,7 @@ const ExamList: React.FC<{}> = () => {
         { id: 12, name: "卡片翻动效果", component: <Card></Card> },
         { id: 13, name: "3D按钮", component: <Button3D></Button3D> },
         { id: 14, name: "太阳加载", component: <SunLoading></SunLoading> },
+        { id: 15, name: "调整大小", component: <Resize></Resize> },
     ];
 
 

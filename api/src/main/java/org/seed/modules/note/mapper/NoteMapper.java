@@ -14,35 +14,24 @@ import java.util.List;
  * @version： V1.0
  */
 public interface NoteMapper extends BaseMapper<Note> {
-    /**
-     * 只查询子note
-     *
-     * @param createBy
-     * @param parentId
-     * @return
-     */
-    public List<NoteModel> listSon(@Param("createBy") String createBy, @Param("parentId") String parentId, @Param("isLeaf") String isLeaf);
 
     /**
      * 查询所有 包括自己
      *
      * @param createBy
-     * @param parentId
+     * @param parentIds
      * @return
      */
-    public List<Note> listAllChildren(@Param("createBy") String createBy, @Param("parentId") String parentId, @Param("text") String text, @Param("detail") boolean detail);
+    public List<Note> listAllChildren(@Param("createBy") String createBy, @Param("parentIds") String parentIds);
 
     /**
      * 查询所有的note和text 包括自己
      *
      * @param createBy
-     * @param parentId
+     * @param parentIds
      * @return
      */
-    public List<NoteModel> listAllChildrenDetail(@Param("createBy") String createBy, @Param("parentId") String parentId);
-
-
-    public List<Note> getNameByIds(@Param("ids") String[] ids);
+    public List<NoteModel> listAllChildrenDetail(@Param("createBy") String createBy, @Param("parentIds") String parentIds);
 
     public List<Note> getByIds(@Param("ids") String[] ids);
 

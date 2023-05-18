@@ -2,6 +2,7 @@ package org.seed.common.exception;
 
 import org.apache.shiro.authz.AuthorizationException;
 import org.seed.common.api.vo.Result;
+import org.seed.common.util.ResultUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,14 +24,14 @@ public class CornExceptionHandler {
 	 * 处理自定义异常
 	 */
 	@ExceptionHandler(CornException.class)
-	public Result<?> handleRRException(CornException e){
+	public Result handleRRException(CornException e){
 		log.error(e.getMessage(), e);
-		return Result.error(e.getMessage());
+		return ResultUtils.error(e.getMessage());
 	}
 
 	@ExceptionHandler(Exception.class)
-	public Result<?> handleException(Exception e){
+	public Result handleException(Exception e){
 		log.error(e.getMessage(), e);
-		return Result.error(e.getMessage());
+		return ResultUtils.error(e.getMessage());
 	}
 }

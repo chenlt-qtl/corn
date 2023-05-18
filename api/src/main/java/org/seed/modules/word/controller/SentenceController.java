@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.modules.word.entity.Article;
 import org.seed.modules.word.entity.Sentence;
@@ -38,9 +40,8 @@ public class SentenceController {
      * 根据文章查询句子 分页
      */
     @GetMapping(value = "/listByArticle")
-    public Result<IPage<Sentence>> queryByArticle(String articleId, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        Result<IPage<Sentence>> result = new Result<IPage<Sentence>>();
+    public Result queryByArticle(String articleId, @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         QueryWrapper<Sentence> queryWrapper = new QueryWrapper<Sentence>();
         queryWrapper.eq("article_id", articleId);
         queryWrapper.orderByAsc("idx");
@@ -50,9 +51,9 @@ public class SentenceController {
             a.setPicture(UpLoadUtil.dbToReal(a.getPicture()));
             a.setMp3(UpLoadUtil.dbToReal(a.getMp3()));
         }
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+
+        return ResultUtils.okData(pageList);
+
     }
 
     /**
@@ -62,20 +63,18 @@ public class SentenceController {
      * @return
      */
     @PutMapping(value = "/edit")
-    public Result<Sentence> edit(@RequestBody Sentence sentence) {
-        Result<Sentence> result = new Result<Sentence>();
+    public Result edit(@RequestBody Sentence sentence) {
         Sentence sentenceEntity = sentenceService.getById(sentence.getId());
         if (sentenceEntity == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             boolean ok = sentenceService.updateById(sentence);
-            //TODO 返回false说明什么？
-            if (ok) {
-                result.success("修改成功!");
-            }
+
+            return ResultUtils.ok("修改成功!");
+
         }
 
-        return result;
+
     }
 
     /**
@@ -85,19 +84,18 @@ public class SentenceController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public Result<Sentence> delete(@RequestParam(name = "id", required = true) String id) {
-        Result<Sentence> result = new Result<Sentence>();
+    public Result delete(@RequestParam(name = "id", required = true) String id) {
         Sentence sentence = sentenceService.getById(id);
         if (sentence == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             boolean ok = sentenceService.removeById(id);
-            if (ok) {
-                result.success("删除成功!");
-            }
+
+            return ResultUtils.ok("删除成功!");
+
         }
 
-        return result;
+
     }
 
     /**
@@ -107,25 +105,22 @@ public class SentenceController {
      * @return
      */
     @DeleteMapping(value = "/deleteBatch")
-    public Result<Sentence> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
-        Result<Sentence> result = new Result<Sentence>();
+    public Result deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
         if (ids == null || "".equals(ids.trim())) {
-            result.error500("参数不识别！");
+            throw new CornException("参数不识别！");
         } else {
             this.sentenceService.removeByIds(Arrays.asList(ids.split(",")));
-            result.success("删除成功!");
+            return ResultUtils.ok("删除成功!");
         }
-        return result;
+
     }
 
 
     @PostMapping("/save")
     public Result saveSentence(@RequestBody ArticalVo articleVo) {
         sentenceService.saveSentences(articleVo.getId(), articleVo.getType(), articleVo.getSentences());
-        articleWordRelService.saveRels(articleVo.getId(),articleVo.getType(), articleVo.getAddWordNames(), articleVo.getRemoveWordNames());//保存文章与单词的关联
-        Result<Article> result = new Result();
-        result.setSuccess(true);
-        return result;
+        articleWordRelService.saveRels(articleVo.getId(), articleVo.getType(), articleVo.getAddWordNames(), articleVo.getRemoveWordNames());//保存文章与单词的关联
+        return ResultUtils.ok();
     }
 
 }

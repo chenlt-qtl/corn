@@ -22,6 +22,8 @@ import org.apache.http.util.EntityUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.quartz.CronExpression;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.controller.CommonController;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.modules.word.entity.IcibaSentence;
@@ -46,13 +48,19 @@ public class ParseIciba {
     private final static Logger logger = LoggerFactory.getLogger(ParseIciba.class);
     private final static String KEY = "C772DB1F60B2839AD948507D91E7B04A";
 
-    public static Map getWordFromIciba(String wordName, String uploadpath) throws Exception {
+    public static Map getWordFromIciba(String wordName, String uploadpath) {
         Map detailMap = new HashMap();
-        HttpRequestBase httpRequest = new HttpGet("http://dict-co.iciba.com/api/dictionary.php?w=" + wordName + "&key=" + KEY);
-        CloseableHttpResponse response = HttpClientFactory.getHttpClient().execute(httpRequest);
-        int status = response.getStatusLine().getStatusCode();
-        if (status == 200) {
-            detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(), "UTF-8"), uploadpath, wordName);
+        try {
+
+
+            HttpRequestBase httpRequest = new HttpGet("http://dict-co.iciba.com/api/dictionary.php?w=" + wordName + "&key=" + KEY);
+            CloseableHttpResponse response = HttpClientFactory.getHttpClient().execute(httpRequest);
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+                detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(), "UTF-8"), uploadpath, wordName);
+            }
+        } catch (Exception e) {
+            throw new CornException(e.getMessage());
         }
         return detailMap;
     }
@@ -133,7 +141,6 @@ public class ParseIciba {
             result.put("icibaSentence", isList);
             result.put("word", word);
         }
-
         return result;
     }
 

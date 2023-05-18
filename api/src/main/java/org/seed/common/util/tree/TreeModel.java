@@ -12,11 +12,13 @@ public abstract class TreeModel<T>{
 
     private String key;
 
+    private Long id;
+
     private String title;
 
     private String name;
 
-    private String parentId;
+    private Long parentId;
 
     private Boolean isLeaf;
 

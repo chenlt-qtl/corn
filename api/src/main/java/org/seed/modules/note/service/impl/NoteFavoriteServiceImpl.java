@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * @Description: 收藏夹
  * @author： jeecg-boot
- * @date：   2021-01-04
+ * @date： 2021-01-04
  * @version： V1.0
  */
 @Service
@@ -31,12 +31,12 @@ public class NoteFavoriteServiceImpl extends ServiceImpl<NoteFavoriteMapper, Not
     private INoteService noteService;
 
     @Override
-    public void edit(String noteIds){
+    public void edit(String noteIds) {
 
         //删除旧的
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("create_by",sysUser.getUsername());
+        queryWrapper.eq("create_by", sysUser.getUsername());
         this.remove(queryWrapper);
 
         //增加新的
@@ -46,37 +46,37 @@ public class NoteFavoriteServiceImpl extends ServiceImpl<NoteFavoriteMapper, Not
     }
 
     @Override
-    public void editOne(String noteId, Boolean isFav){
+    public void editOne(String noteId, Boolean isFav) {
 
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("create_by",sysUser.getUsername());
+        queryWrapper.eq("create_by", sysUser.getUsername());
 
         NoteFavorite noteFavorite = this.getOne(queryWrapper);
 
-        if(noteFavorite == null){
+        if (noteFavorite == null) {
             noteFavorite = new NoteFavorite();
-            if(isFav){
+            if (isFav) {
                 noteFavorite.setNoteIds(noteId);
             }
-        }else {
+        } else {
             String noteIds = noteFavorite.getNoteIds();
             List<String> idList = new ArrayList<>(Arrays.asList(noteIds.split(",")));
-            if(isFav){
-                if(!noteIds.contains(noteId)){
+            if (isFav) {
+                if (!noteIds.contains(noteId)) {
                     idList.add(noteId);
                 }
-                noteFavorite.setNoteIds(StringUtils.join(idList,","));
-            }else{//删除收藏
+                noteFavorite.setNoteIds(StringUtils.join(idList, ","));
+            } else {//删除收藏
 
-                if(noteIds.contains(noteId)){
+                if (noteIds.contains(noteId)) {
                     List<String> newIds = new ArrayList<>();
-                    for(String id:idList){
-                        if(!id.equals(noteId)){
+                    for (String id : idList) {
+                        if (!id.equals(noteId)) {
                             newIds.add(id);
                         }
                     }
-                    noteFavorite.setNoteIds(StringUtils.join(newIds,","));
+                    noteFavorite.setNoteIds(StringUtils.join(newIds, ","));
                 }
             }
 
@@ -88,13 +88,13 @@ public class NoteFavoriteServiceImpl extends ServiceImpl<NoteFavoriteMapper, Not
     @Override
     public List<NoteModel> queryNotes(String username) {
         QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("create_by",username);
+        queryWrapper.eq("create_by", username);
 
         NoteFavorite noteFavorite = getOne(queryWrapper);
-        if(noteFavorite != null){
+        if (noteFavorite != null) {
             String noteIds = noteFavorite.getNoteIds();
-            if(StringUtils.isNotBlank(noteIds)){
-                return noteService.getModelByIds(noteIds.split(","));
+            if (StringUtils.isNotBlank(noteIds)) {
+                return noteService.getNoteModelByIds(noteIds.split(","));
             }
         }
         return new ArrayList<>();
@@ -102,19 +102,20 @@ public class NoteFavoriteServiceImpl extends ServiceImpl<NoteFavoriteMapper, Not
 
     /**
      * 查询是否收藏
+     *
      * @param noteId
      * @return
      */
     @Override
-    public boolean queryIfFavorite(String noteId) {
+    public boolean queryIfFavorite(Long noteId) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<NoteFavorite> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("create_by",sysUser.getUsername());
+        queryWrapper.eq("create_by", sysUser.getUsername());
         NoteFavorite noteFavorite = getOne(queryWrapper);
-        if(noteFavorite != null && StringUtils.isNotBlank(noteId)){
+        if (noteFavorite != null && noteId != null) {
             String noteIds = noteFavorite.getNoteIds();
-            if(StringUtils.isNotBlank(noteIds)){
-                return noteIds.contains(noteId);
+            if (StringUtils.isNotBlank(noteIds)) {
+                return noteIds.contains(noteId.toString());
             }
         }
         return false;

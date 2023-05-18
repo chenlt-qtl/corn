@@ -187,10 +187,11 @@ public class oConvertUtils {
 			for (int i = 0; i < len; i++) {
 				result[i] = new Integer(object[i].trim());
 			}
-			return result;
+
 		} catch (NumberFormatException e) {
 			return null;
 		}
+		return result;
 	}
 
 	public static String getString(String s) {

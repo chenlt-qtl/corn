@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface IWordService extends IService<Word> {
 
-    Word getWord(String wordName) throws Exception;
+    Word getWord(String wordName) ;
 
     IPage<Map> pageSearchWord(String wordName, int pageNo, int pageSize);
 

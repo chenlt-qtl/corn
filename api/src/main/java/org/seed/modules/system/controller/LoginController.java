@@ -7,10 +7,12 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.seed.common.api.vo.Result;
 import org.seed.common.constant.CommonConstant;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.api.ISysBaseAPI;
 import org.seed.common.util.BtoaEncode;
 import org.seed.common.util.PasswordUtil;
 import org.seed.common.util.RedisUtil;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.shiro.authc.util.JwtUtil;
 import org.seed.modules.shiro.vo.DefContants;
 import org.seed.modules.system.entity.SysUser;
@@ -49,22 +51,19 @@ public class LoginController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ApiOperation("登录接口")
-	public Result<JSONObject> login(@RequestBody SysLoginModel sysLoginModel) {
-		Result<JSONObject> result = new Result<JSONObject>();
+	public Result login(@RequestBody SysLoginModel sysLoginModel) {
 		String username = BtoaEncode.decrypt(sysLoginModel.getUsername());
 		String password = BtoaEncode.decrypt(sysLoginModel.getPassword());
 		SysUser sysUser = sysUserService.getUserByName(username);
 		if(sysUser==null) {
-			result.error500("该用户不存在");
 			sysBaseAPI.addLog("登录失败，用户名:"+username+"不存在！", CommonConstant.LOG_TYPE_1, null);
-			return result;
+			throw new CornException("该用户不存在");
 		}else {
 			//密码验证
 			String userpassword = PasswordUtil.encrypt(username, password, sysUser.getSalt());
 			String syspassword = sysUser.getPassword();
 			if(!syspassword.equals(userpassword)) {
-				result.error500("用户名或密码错误");
-				return result;
+				throw new CornException("用户名或密码错误");
 			}
 			//生成token
 			String token = JwtUtil.sign(username, syspassword);
@@ -75,11 +74,9 @@ public class LoginController {
 			JSONObject obj = new JSONObject();
 			obj.put("token", token);
 			obj.put("userInfo", sysUser);
-			result.setResult(obj);
-			result.success("登录成功");
 			sysBaseAPI.addLog("用户名: "+username+",登录成功！", CommonConstant.LOG_TYPE_1, null);
+			return ResultUtils.okData(obj);
 		}
-		return result;
 	}
 	
 	/**
@@ -87,7 +84,7 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "/logout")
-	public Result<Object> logout(HttpServletRequest request,HttpServletResponse response) {
+	public Result logout(HttpServletRequest request,HttpServletResponse response) {
 		//用户退出逻辑
 		Subject subject = SecurityUtils.getSubject();
 		SysUser sysUser = (SysUser)subject.getPrincipal();
@@ -100,7 +97,7 @@ public class LoginController {
 	    redisUtil.del(CommonConstant.PREFIX_USER_TOKEN + token);
 	    //清空用户角色缓存
 	    redisUtil.del(CommonConstant.PREFIX_USER_ROLE + sysUser.getUsername());
-		return Result.ok("退出登录成功！");
+		return ResultUtils.ok();
 	}
 	
 	/**
@@ -108,8 +105,7 @@ public class LoginController {
 	 * @return
 	 */
 	@GetMapping("loginfo")
-	public Result<JSONObject> loginfo() {
-		Result<JSONObject> result = new Result<JSONObject>();
+	public Result loginfo() {
 		JSONObject obj = new JSONObject();
 		// 获取系统访问记录
 		Long totalVisitCount = logService.findTotalVisitCount();
@@ -118,9 +114,7 @@ public class LoginController {
 		obj.put("todayVisitCount", todayVisitCount);
 		Long todayIp = logService.findTodayIp();
 		obj.put("todayIp", todayIp);
-		result.setResult(obj);
-		result.success("登录成功");
-		return result;
+		return ResultUtils.okData(obj);
 	}
 
 }

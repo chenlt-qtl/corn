@@ -22,8 +22,8 @@ public class NoteFavorite implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**noteIds*/
 	@Excel(name = "noteIds", width = 15)
 	private java.lang.String noteIds;

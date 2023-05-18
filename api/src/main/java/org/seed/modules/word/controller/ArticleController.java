@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.modules.system.entity.SysUser;
 import org.seed.modules.word.entity.Article;
@@ -55,12 +57,11 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/list")
-    public Result<IPage<Article>> queryPageList(Article article,
-                                                @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                                HttpServletRequest req) {
+    public Result queryPageList(Article article,
+                                @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                HttpServletRequest req) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        Result<IPage<Article>> result = new Result<IPage<Article>>();
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("create_by", sysUser.getUsername()).
                 orderByDesc("create_time");
@@ -77,9 +78,9 @@ public class ArticleController {
             a.setPicture(UpLoadUtil.dbToReal(a.getPicture()));
             a.setMp3(UpLoadUtil.dbToReal(a.getMp3()));
         }
-        result.setSuccess(true);
-        result.setResult(pageList);
-        return result;
+
+        return ResultUtils.okData(pageList);
+
     }
 
     /**
@@ -89,19 +90,18 @@ public class ArticleController {
      * @return
      */
     @PostMapping(value = "/add")
-    public Result<Article> add(@RequestBody Article article) {
-        Result<Article> result = new Result<Article>();
+    public Result add(@RequestBody Article article) {
         try {
             article.setPicture(UpLoadUtil.realToDb(article.getPicture()));
             article.setMp3(UpLoadUtil.realToDb(article.getMp3()));
             articleService.save(article);
-            result.success("添加成功！");
+            return ResultUtils.ok("添加成功！");
         } catch (Exception e) {
             e.printStackTrace();
             log.info(e.getMessage());
-            result.error500("操作失败");
+            throw new CornException("操作失败");
         }
-        return result;
+
     }
 
     /**
@@ -111,22 +111,19 @@ public class ArticleController {
      * @return
      */
     @PutMapping(value = "/edit")
-    public Result<Article> edit(@RequestBody Article article) {
-        Result<Article> result = new Result<Article>();
+    public Result edit(@RequestBody Article article) {
         Article articleEntity = articleService.getById(article.getId());
         if (articleEntity == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             article.setPicture(UpLoadUtil.realToDb(article.getPicture()));
             article.setMp3(UpLoadUtil.realToDb(article.getMp3()));
             boolean ok = articleService.updateById(article);
-            //TODO 返回false说明什么？
-            if (ok) {
-                result.success("修改成功!");
-            }
+            return ResultUtils.ok("修改成功!");
+
         }
 
-        return result;
+
     }
 
     /**
@@ -136,11 +133,10 @@ public class ArticleController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public Result<Article> delete(@RequestParam(name = "id", required = true) String id) {
-        Result<Article> result = new Result<Article>();
+    public Result delete(@RequestParam(name = "id", required = true) String id) {
         Article article = articleService.getById(id);
         if (article == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             //删除图片mp3
             UpLoadUtil.delImg(uploadpath, article.getMp3());
@@ -150,17 +146,17 @@ public class ArticleController {
 
 
             QueryWrapper<ArticleWordRel> wrapper = new QueryWrapper<>();
-            wrapper.eq("article_id",id);
+            wrapper.eq("article_id", id);
             articleWordRelService.remove(wrapper);
 
             QueryWrapper<Sentence> sentenceWrapper = new QueryWrapper<>();
-            sentenceWrapper.eq("article_id",id);
+            sentenceWrapper.eq("article_id", id);
             sentenceService.remove(sentenceWrapper);
 
-            result.success("删除成功!");
+            return ResultUtils.ok("删除成功!");
         }
 
-        return result;
+
     }
 
     /**
@@ -170,8 +166,7 @@ public class ArticleController {
      * @return
      */
     @GetMapping(value = "/queryById")
-    public Result<Map> queryById(@RequestParam(name = "id", required = true) String id) {
-        Result<Map> result = new Result<Map>();
+    public Result queryById(@RequestParam(name = "id", required = true) String id) {
         Map map = new HashMap();
         Article article = articleService.getById(id);
 
@@ -183,15 +178,15 @@ public class ArticleController {
 //		map.put("sentences",sentencesList);
 
         if (article == null) {
-            result.error500("未找到对应实体");
+            throw new CornException("未找到对应实体");
         } else {
             article.setPicture(UpLoadUtil.dbToReal(article.getPicture()));
             article.setMp3(UpLoadUtil.dbToReal(article.getMp3()));
             map.put("article", article);
-            result.setResult(map);
-            result.setSuccess(true);
+            return ResultUtils.okData(map);
+
         }
-        return result;
+
     }
 
 }

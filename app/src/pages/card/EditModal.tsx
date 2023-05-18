@@ -33,8 +33,6 @@ const EditModal = React.forwardRef((props: editProps, ref) => {
 
 
     useEffect(() => {
-        console.log(data.value);
-
         if (data.value) {
             const json = JSON.parse(data.value)
             const { tabs } = json;

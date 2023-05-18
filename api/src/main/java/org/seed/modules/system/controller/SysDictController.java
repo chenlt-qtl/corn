@@ -13,20 +13,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
-import org.seed.modules.demo.test.entity.JeecgOrderCustomer;
-import org.seed.modules.demo.test.entity.JeecgOrderMain;
 import org.seed.modules.system.entity.SysDict;
 import org.seed.modules.system.entity.SysDictItem;
 import org.seed.modules.system.model.SysDictTree;
 import org.seed.modules.system.service.ISysDictItemService;
 import org.seed.modules.system.service.ISysDictService;
 import org.seed.modules.system.vo.SysDictPage;
-import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +42,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -68,9 +64,8 @@ public class SysDictController {
 	private ISysDictItemService sysDictItemService;
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public Result<IPage<SysDict>> queryPageList(SysDict sysDict,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+	public Result queryPageList(SysDict sysDict,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
-		Result<IPage<SysDict>> result = new Result<IPage<SysDict>>();
 		QueryWrapper<SysDict> queryWrapper = QueryGenerator.initQueryWrapper(sysDict, req.getParameterMap());
 		Page<SysDict> page = new Page<SysDict>(pageNo, pageSize);
 		IPage<SysDict> pageList = sysDictService.page(page, queryWrapper);
@@ -78,9 +73,8 @@ public class SysDictController {
 		log.info("查询当前页数量："+pageList.getSize());
 		log.info("查询结果数量："+pageList.getRecords().size());
 		log.info("数据总数："+pageList.getTotal());
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+		return ResultUtils.okData(pageList);
+
 	}
 
 	/**
@@ -93,9 +87,8 @@ public class SysDictController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/treeList", method = RequestMethod.GET)
-	public Result<List<SysDictTree>> treeList(SysDict sysDict,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+	public Result treeList(SysDict sysDict,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
-		Result<List<SysDictTree>> result = new Result<>();
 		LambdaQueryWrapper<SysDict> query = new LambdaQueryWrapper<>();
 		// 构造查询条件
 		String dictName = sysDict.getDictName();
@@ -109,9 +102,9 @@ public class SysDictController {
 		for (SysDict node : list) {
 			treeList.add(new SysDictTree(node));
 		}
-		result.setSuccess(true);
-		result.setResult(treeList);
-		return result;
+
+		return ResultUtils.okData(treeList);
+
 	}
 
 	/**
@@ -121,17 +114,16 @@ public class SysDictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getDictItems/{dictCode}", method = RequestMethod.GET)
-	public Result<List<Map<String, Object>>> getDictItems(@PathVariable String dictCode) {
+	public Result getDictItems(@PathVariable String dictCode) {
 		log.info(" dictCode : "+ dictCode);
-		Result<List<Map<String,Object>>> result = new Result<List<Map<String,Object>>>();
 		List<Map<String,Object>> ls = null;
 		try {
 			if(dictCode.indexOf(",")!=-1) {
 				//关联表字典（举例：sys_user,realname,id）
 				String[] params = dictCode.split(",");
 				if(params.length!=3) {
-					result.error500("字典Code格式不正确！");
-					return result;
+					throw new CornException("字典Code格式不正确！");
+
 				}
 				ls = sysDictService.queryTableDictItemsByCode(params[0],params[1],params[2]);
 			}else {
@@ -139,16 +131,14 @@ public class SysDictController {
 				 ls = sysDictService.queryDictItemsByCode(dictCode);
 			}
 
-			 result.setSuccess(true);
-			 result.setResult(ls);
-			 log.info(result.toString());
+			 return ResultUtils.okData(ls);
 		} catch (Exception e) {
 			log.info(e.getMessage());
-			result.error500("操作失败");
-			return result;
+			throw new CornException("操作失败");
+
 		}
 
-		return result;
+
 	}
 
 	/**
@@ -157,20 +147,19 @@ public class SysDictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getDictText/{dictCode}/{key}", method = RequestMethod.GET)
-	public Result<String> getDictItems(@PathVariable("dictCode") String dictCode, @PathVariable("key") String key) {
+	public Result getDictItems(@PathVariable("dictCode") String dictCode, @PathVariable("key") String key) {
 		log.info(" dictCode : "+ dictCode);
-		Result<String> result = new Result<String>();
 		String text = null;
 		try {
 			text = sysDictService.queryDictTextByKey(dictCode, key);
-			 result.setSuccess(true);
-			 result.setResult(text);
+
+			 return ResultUtils.okData(text);
 		} catch (Exception e) {
 			log.info(e.getMessage());
-			result.error500("操作失败");
-			return result;
+			throw new CornException("操作失败");
+
 		}
-		return result;
+
 	}
 
 	/**
@@ -179,18 +168,17 @@ public class SysDictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public Result<SysDict> add(@RequestBody SysDict sysDict) {
-		Result<SysDict> result = new Result<SysDict>();
+	public Result add(@RequestBody SysDict sysDict) {
 		try {
 			sysDict.setCreateTime(new Date());
 			sysDictService.save(sysDict);
-			result.success("保存成功！");
+			return ResultUtils.ok("保存成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			result.error500("操作失败");
+			throw new CornException("操作失败");
 		}
-		return result;
+
 	}
 
 	/**
@@ -199,20 +187,17 @@ public class SysDictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
-	public Result<SysDict> edit(@RequestBody SysDict sysDict) {
-		Result<SysDict> result = new Result<SysDict>();
+	public Result edit(@RequestBody SysDict sysDict) {
 		SysDict sysdict = sysDictService.getById(sysDict.getId());
 		if(sysdict==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			sysDict.setUpdateTime(new Date());
 			boolean ok = sysDictService.updateById(sysDict);
-			//TODO 返回false说明什么？
-			if(ok) {
-				result.success("编辑成功!");
-			}
+			return ResultUtils.ok("编辑成功!");
+
 		}
-		return result;
+
 	}
 
 	/**
@@ -222,19 +207,17 @@ public class SysDictController {
 	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	@CacheEvict(value="dictCache", allEntries=true)
-	public Result<SysDict> delete(@RequestParam(name="id",required=true) String id) {
-		Result<SysDict> result = new Result<SysDict>();
+	public Result delete(@RequestParam(name="id",required=true) String id) {
 		SysDict sysDict = sysDictService.getById(id);
 		if(sysDict==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			sysDict.setDelFlag(2);
 			boolean ok = sysDictService.updateById(sysDict);
-			if(ok) {
-				result.success("删除成功!");
-			}
+			return ResultUtils.ok("删除成功!");
+
 		}
-		return result;
+
 	}
 
 	/**
@@ -244,10 +227,9 @@ public class SysDictController {
 	 */
 	@RequestMapping(value = "/deleteBatch", method = RequestMethod.DELETE)
 	@CacheEvict(value="dictCache", allEntries=true)
-	public Result<SysDict> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<SysDict> result = new Result<SysDict>();
+	public Result deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
+			throw new CornException("参数不识别！");
 		}else {
 			String[] id=ids.split(",");
 			for(int i=0;i<id.length;i++) {
@@ -255,9 +237,9 @@ public class SysDictController {
 				sysDict.setDelFlag(2);
 				sysDictService.updateById(sysDict);
 			}
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
-		return result;
+
 	}
 
 	/**
@@ -306,48 +288,6 @@ public class SysDictController {
 		// 导出数据列表
 		mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
 		return mv;
-	}
-
-	/**
-	 * 通过excel导入数据
-	 *
-	 * @param request
-	 * @param
-	 * @return
-	 */
-	@RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-	public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
-			MultipartFile file = entity.getValue();// 获取上传文件对象
-			ImportParams params = new ImportParams();
-			params.setTitleRows(2);
-			params.setHeadRows(2);
-			params.setNeedSave(true);
-			try {
-				List<SysDictPage> list = ExcelImportUtil.importExcel(file.getInputStream(), SysDictPage.class, params);
-				for (SysDictPage page : list) {
-					SysDict po = new SysDict();
-					BeanUtils.copyProperties(page, po);
-					if(page.getDelFlag()==null){
-					    po.setDelFlag(1);
-                    }
-					sysDictService.saveMain(po, page.getSysDictItemList());
-				}
-				return Result.ok("文件导入成功！");
-			} catch (Exception e) {
-				log.error(e.toString());
-				return Result.ok("文件导入失败！");
-			} finally {
-				try {
-					file.getInputStream().close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return Result.ok("文件导入失败！");
 	}
 
 }

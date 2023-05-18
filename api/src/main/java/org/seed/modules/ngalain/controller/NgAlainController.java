@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.ngalain.service.NgAlainService;
 import org.seed.modules.system.entity.SysUser;
 import org.seed.modules.system.service.ISysDictService;
@@ -47,16 +49,13 @@ public class NgAlainController {
     @RequestMapping(value = "/getDictItems/{dictCode}", method = RequestMethod.GET)
     public Object getDictItems(@PathVariable String dictCode) {
         log.info(" dictCode : "+ dictCode);
-        Result<List<Map<String,Object>>> result = new Result<List<Map<String,Object>>>();
         List<Map<String,Object>> ls = null;
         try {
             ls = sysDictService.queryDictItemsByCode(dictCode);
-            result.setSuccess(true);
-            result.setResult(ls);
         } catch (Exception e) {
             log.info(e.getMessage());
-            result.error500("操作失败");
-            return result;
+            throw new CornException("操作失败");
+
         }
         List<JSONObject> dictlist=new ArrayList<>();
         for (Map<String, Object> l : ls) {
@@ -69,7 +68,7 @@ public class NgAlainController {
             dict.put("label",l.get("text"));
             dictlist.add(dict);
         }
-        return dictlist;
+        return ResultUtils.okData(dictlist);
     }
     @RequestMapping(value = "/getDictItemsByTable/{table}/{key}/{value}", method = RequestMethod.GET)
     public Object getDictItemsByTable(@PathVariable String table,@PathVariable String key,@PathVariable String value) {

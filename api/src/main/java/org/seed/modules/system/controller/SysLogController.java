@@ -6,10 +6,11 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.system.entity.SysLog;
-import org.seed.modules.system.entity.SysRole;
 import org.seed.modules.system.service.ISysLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,9 +49,8 @@ public class SysLogController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public Result<IPage<SysLog>> queryPageList(SysLog syslog,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+	public Result queryPageList(SysLog syslog,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
-		Result<IPage<SysLog>> result = new Result<IPage<SysLog>>();
 		QueryWrapper<SysLog> queryWrapper = QueryGenerator.initQueryWrapper(syslog, req.getParameterMap());
 		Page<SysLog> page = new Page<SysLog>(pageNo, pageSize);
 		//日志关键词
@@ -67,9 +67,9 @@ public class SysLogController {
 		log.info("查询当前页数量："+pageList.getSize());
 		log.info("查询结果数量："+pageList.getRecords().size());
 		log.info("数据总数："+pageList.getTotal());
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+
+		return ResultUtils.okData(pageList);
+
 	}
 	
 	/**
@@ -78,18 +78,16 @@ public class SysLogController {
 	 * @return
 	 */
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-	public Result<SysLog> delete(@RequestParam(name="id",required=true) String id) {
-		Result<SysLog> result = new Result<SysLog>();
+	public Result delete(@RequestParam(name="id",required=true) String id) {
 		SysLog sysLog = sysLogService.getById(id);
 		if(sysLog==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = sysLogService.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
-			}
+			return ResultUtils.ok("删除成功!");
+
 		}
-		return result;
+
 	}
 	
 	/**
@@ -98,19 +96,18 @@ public class SysLogController {
 	 * @return
 	 */
 	@RequestMapping(value = "/deleteBatch", method = RequestMethod.DELETE)
-	public Result<SysRole> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<SysRole> result = new Result<SysRole>();
+	public Result deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
+			throw new CornException("参数不识别！");
 		}else {
 			if("allclear".equals(ids)) {
 				this.sysLogService.removeAll();
-				result.success("清除成功!");
+				return ResultUtils.ok("清除成功!");
 			}
 			this.sysLogService.removeByIds(Arrays.asList(ids.split(",")));
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
-		return result;
+
 	}
 	
 	

@@ -26,7 +26,9 @@ function queryTreeMenu(req: Request, res: Response) {
 
 function queryById(req: Request, res: Response) {
   const result = {"success":true,"message":"操作成功！","code":0,"result":{"id":"3214b99f4142f0dcf2896a13a0a5cbb6","name":"jenkins","parentId":"e64d05ad89b54474a052ef7cc000114d","parentIds":"0/45bea53a5e595cfacb9202e22b4f0896/e64d05ad89b54474a052ef7cc000114d","text":"<p>http://42.192.15.59:8081/</p>\n<p>admin/123456</p>","tag":null,"source":null,"createTime":"2020-11-26 14:19:47","createBy":"damu","updateTime":"2020-11-26 14:19:47","updateBy":"damu","parents":"corn/配置"},"timestamp":1606810502017};
-  return res.json(result);
+  return setTimeout(() => {
+    res.json(result);
+  }, 50000); 
 }
 
 function addOpenHistory(req: Request, res: Response) {

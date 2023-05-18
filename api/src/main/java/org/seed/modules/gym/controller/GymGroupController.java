@@ -9,7 +9,9 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.gym.entity.GymGroup;
 import org.seed.modules.gym.service.IGymGroupService;
@@ -55,17 +57,15 @@ public class GymGroupController {
 	 * @return
 	 */
 	@GetMapping(value = "/list")
-	public Result<IPage<GymGroup>> queryPageList(GymGroup gymGroup,
+	public Result queryPageList(GymGroup gymGroup,
 												 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 												 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 												 HttpServletRequest req) {
-		Result<IPage<GymGroup>> result = new Result<IPage<GymGroup>>();
 		QueryWrapper<GymGroup> queryWrapper = QueryGenerator.initQueryWrapper(gymGroup, req.getParameterMap());
 		Page<GymGroup> page = new Page<GymGroup>(pageNo, pageSize);
 		IPage<GymGroup> pageList = gymGroupService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
+		return ResultUtils.okData(pageList);
+
 	}
 	
 	/**
@@ -74,17 +74,16 @@ public class GymGroupController {
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result<GymGroup> add(@RequestBody GymGroup gymGroup) {
-		Result<GymGroup> result = new Result<GymGroup>();
+	public Result add(@RequestBody GymGroup gymGroup) {
 		try {
 			gymGroupService.save(gymGroup);
-			result.success("添加成功！");
+			return ResultUtils.ok("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			result.error500("操作失败");
+			throw new CornException("操作失败");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -93,20 +92,17 @@ public class GymGroupController {
 	 * @return
 	 */
 	@PutMapping(value = "/edit")
-	public Result<GymGroup> edit(@RequestBody GymGroup gymGroup) {
-		Result<GymGroup> result = new Result<GymGroup>();
+	public Result edit(@RequestBody GymGroup gymGroup) {
 		GymGroup gymGroupEntity = gymGroupService.getById(gymGroup.getId());
 		if(gymGroupEntity==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = gymGroupService.updateById(gymGroup);
-			//TODO 返回false说明什么？
-			if(ok) {
-				result.success("修改成功!");
-			}
+			return ResultUtils.ok("修改成功!");
+
 		}
 		
-		return result;
+
 	}
 	
 	/**
@@ -115,19 +111,14 @@ public class GymGroupController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result<GymGroup> delete(@RequestParam(name="id",required=true) String id) {
-		Result<GymGroup> result = new Result<GymGroup>();
+	public Result delete(@RequestParam(name="id",required=true) String id) {
 		GymGroup gymGroup = gymGroupService.getById(id);
 		if(gymGroup==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
 			boolean ok = gymGroupService.removeById(id);
-			if(ok) {
-				result.success("删除成功!");
-			}
+			return ResultUtils.ok("删除成功!");
 		}
-		
-		return result;
 	}
 	
 	/**
@@ -136,15 +127,14 @@ public class GymGroupController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/deleteBatch")
-	public Result<GymGroup> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		Result<GymGroup> result = new Result<GymGroup>();
+	public Result deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		if(ids==null || "".equals(ids.trim())) {
-			result.error500("参数不识别！");
+			throw new CornException("参数不识别！");
 		}else {
 			this.gymGroupService.removeByIds(Arrays.asList(ids.split(",")));
-			result.success("删除成功!");
+			return ResultUtils.ok("删除成功!");
 		}
-		return result;
+
 	}
 	
 	/**
@@ -153,16 +143,15 @@ public class GymGroupController {
 	 * @return
 	 */
 	@GetMapping(value = "/queryById")
-	public Result<GymGroup> queryById(@RequestParam(name="id",required=true) String id) {
-		Result<GymGroup> result = new Result<GymGroup>();
+	public Result queryById(@RequestParam(name="id",required=true) String id) {
 		GymGroup gymGroup = gymGroupService.getById(id);
 		if(gymGroup==null) {
-			result.error500("未找到对应实体");
+			throw new CornException("未找到对应实体");
 		}else {
-			result.setResult(gymGroup);
-			result.setSuccess(true);
+			return ResultUtils.okData(gymGroup);
+
 		}
-		return result;
+
 	}
 
   /**
@@ -205,7 +194,7 @@ public class GymGroupController {
    * @return
    */
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-  public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
+  public Result importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
       Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
       for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
@@ -219,10 +208,10 @@ public class GymGroupController {
               for (GymGroup gymGroupExcel : listGymGroups) {
                   gymGroupService.save(gymGroupExcel);
               }
-              return Result.ok("文件导入成功！数据行数：" + listGymGroups.size());
+              return ResultUtils.ok("文件导入成功！数据行数：" + listGymGroups.size());
           } catch (Exception e) {
               log.error(e.getMessage());
-              return Result.error("文件导入失败！");
+              return ResultUtils.error("文件导入失败！");
           } finally {
               try {
                   file.getInputStream().close();
@@ -231,7 +220,7 @@ public class GymGroupController {
               }
           }
       }
-      return Result.ok("文件导入失败！");
+      return ResultUtils.ok("文件导入失败！");
   }
 
 }

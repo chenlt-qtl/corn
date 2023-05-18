@@ -2,7 +2,9 @@ package org.seed.common.system.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.seed.common.api.vo.Result;
+import org.seed.common.exception.CornException;
 import org.seed.common.util.Base64Utils;
+import org.seed.common.util.ResultUtils;
 import org.seed.common.util.UpLoadUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.AntPathMatcher;
@@ -53,25 +55,25 @@ public class CommonController {
                     String imgData = data.split(",")[1];
                     String[] path = UpLoadUtil.getFilePaths(uploadpath, NOTE, "." + type, null);
                     if (Base64Utils.GenerateImage(imgData, path[0])) {
-                        return Result.ok(path[1], UpLoadUtil.dbToReal(path[1]));
+                        return ResultUtils.ok(path[1], UpLoadUtil.dbToReal(path[1]));
                     }
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
-                return Result.error(e.getMessage());
+                return ResultUtils.error(e.getMessage());
             }
         }
-        return Result.error("没有找到图片信息");
+        return ResultUtils.error("没有找到图片信息");
     }
 
     @PostMapping(value = "/uploadImg/word")
-    public Result<String> uploadWordImg(HttpServletRequest request) {
+    public Result uploadWordImg(HttpServletRequest request) {
         return upload(request, WORD_IMG);
     }
 
     @PostMapping(value = "/uploadMp3/word")
-    public Result<String> uploadMp3(HttpServletRequest request) {
+    public Result uploadMp3(HttpServletRequest request) {
         return upload(request, WORD_MP3);
     }
 
@@ -127,8 +129,7 @@ public class CommonController {
 
     }
 
-    private Result<String> upload(HttpServletRequest request, String dir) {
-        Result<String> result = new Result<>();
+    private Result upload(HttpServletRequest request, String dir) {
         try {
 
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
@@ -138,15 +139,12 @@ public class CommonController {
             String[] path = UpLoadUtil.getFilePaths(uploadpath, dir, orgName.substring(orgName.indexOf(".")), null);
             File savefile = new File(path[0]);
             FileCopyUtils.copy(mf.getBytes(), savefile);
-            result.setMessage(path[1]);
-            result.setSuccess(true);
-            result.setResult(UpLoadUtil.dbToReal(path[1]));
+            return ResultUtils.ok(path[1],UpLoadUtil.dbToReal(path[1]));
         } catch (IOException e) {
-            result.setSuccess(false);
-            result.setMessage(e.getMessage());
             e.printStackTrace();
+            throw new CornException(e);
         }
-        return result;
+
     }
 
     /**

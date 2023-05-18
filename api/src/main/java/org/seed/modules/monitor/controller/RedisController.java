@@ -2,6 +2,7 @@ package org.seed.modules.monitor.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.seed.common.api.vo.Result;
+import org.seed.common.util.ResultUtils;
 import org.seed.modules.monitor.domain.RedisInfo;
 import org.seed.modules.monitor.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,10 @@ public class RedisController {
      * @throws Exception
      */
     @GetMapping("info")
-    public Result<?> getRedisInfo() throws Exception {
+    public Result getRedisInfo() throws Exception {
         List<RedisInfo> infoList = this.redisService.getRedisInfo();
         log.info(infoList.toString());
-        return Result.ok(infoList);
+        return ResultUtils.okData(infoList);
     }
 
     @GetMapping("keysSize")

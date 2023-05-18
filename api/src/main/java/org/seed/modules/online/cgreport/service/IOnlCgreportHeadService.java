@@ -23,7 +23,7 @@ public interface IOnlCgreportHeadService extends IService<OnlCgreportHead> {
 	 * @param values
 	 * @return
 	 */
-	Result<?> editAll(OnlCgreportModel values);
+	Result editAll(OnlCgreportModel values);
 
 	/**
 	 * 执行SQL语句

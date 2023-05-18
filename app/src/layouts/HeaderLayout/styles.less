@@ -1,49 +1,47 @@
-.container{
-  display: flex;
-  flex-direction: column;
-}
+@import url('../../style/common.less');
 
-.main {
-  height: calc(100vh - 75px);
-  width : 100vw;
+.container {
+  .header {
+    color          : #777777;
+    font-family    : "Poppins", sans-serif;
+    font-size      : 14px;
+    font-weight    : 300;
+    line-height    : 1.625em;
+    padding        : 12px 20px;
+    font-family    : "Work Sans", arial, sans-serif;
+    letter-spacing : 2px;
+    display        : flex;
+    justify-content: space-between;
+    height         : @screenNavHeight;
+    overflow       : hidden;
+    box-sizing     : border-box;
+  }
 
-  :global {
-    .is-mobile {
-      height: 100%;
-    }
+  .main {
+    height: calc(100vh - @screenNavHeight);
+    width : 100vw;
   }
 }
 
-.header {
-  
-  color          : #777777;
-  font-family    : "Poppins", sans-serif;
-  font-size      : 14px;
-  font-weight    : 300;
-  line-height    : 1.625em;
-  padding        : 24px;
-  font-family    : "Work Sans", arial, sans-serif;
-  letter-spacing : 2px;
-  display        : flex;
-  justify-content: space-between;
-}
 
 .logo {
   display: flex;
-  img{
-    height: 25px;
-    width: 25px;
+
+  img {
+    height: 20px;
+    width : 20px;
   }
+
   a {
     padding-left: 10px;
-    color      : #000;
-    font-size  : 22px;
-    font-weight: 400;
+    color       : #000;
+    font-size   : 18px;
+    font-weight : 400;
   }
 }
 
-.title{
-  font-size: 14px;
+.title {
+  font-size  : 14px;
   font-weight: 600;
 }
 
@@ -82,7 +80,7 @@
         text-shadow    : 0px 0px 3px rgba(0, 0, 0, 0.25);
 
         &:hover {
-          transform: scale(1.1)
+          transform: scale(1.05)
         }
       }
     }
@@ -96,9 +94,8 @@
 
 .menuBtn {
   position     : absolute;
-  top          : 9px;
+  top          : 0;
   right        : 21px;
-  z-index      : 2;
   background   : #78e08f;
   width        : 38px;
   height       : 38px;
@@ -119,7 +116,7 @@
   width             : 100%;
   height            : 100%;
   background        : #78e08f;
-  clip-path         : circle(12px at calc(~"100% - 40px") 26px);
+  clip-path         : circle(12px at calc(~"100% - 40px") 18px);
   // clip-path      : circle(75%);
   transition        : all .3s ease-in-out;
   display           : flex;
@@ -169,17 +166,32 @@
   clip-path: circle(75%);
 }
 
-//手机样式
-.isMobile {
-  height: 100%;
-  .header {
-    padding: 12px 24px;
-  }
+// //手机样式
+// .isMobile {
+//   height: 100%;
 
-  .logo {
+//   .header {
+//     padding: 12px 24px;
+//   }
 
-    a {
-      display: none;
+//   .logo {
+
+//     a {
+//       display: none;
+//     }
+//   }
+// }
+
+@media screen and (max-width: @screen-lg) {
+  .container {
+    .main {
+      height: calc(100vh - @mobileNavHeight);
+
+    }
+
+    .header {
+      height: @mobileNavHeight;
+      padding        : 7px;
     }
   }
 }

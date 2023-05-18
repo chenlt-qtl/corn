@@ -46,7 +46,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     private String uploadpath;
 
     @Override
-    public Word getWord(String wordName) throws Exception {
+    public Word getWord(String wordName) {
         String lowerCase = wordName.toLowerCase();//转小写
         List<Word> list = wordMapper.selectByMap(new HashMap() {{
             this.put("word_name", lowerCase);

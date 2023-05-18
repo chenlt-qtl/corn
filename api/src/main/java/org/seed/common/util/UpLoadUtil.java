@@ -335,8 +335,8 @@ public class UpLoadUtil {
         String result[] = getImgUrls("# 6666\n" +
                 "## 55\n" +
                 "### **ccc**\n" +
-                "![](baseUrl/note/damu/20210616/1623823893226.png)\n","md");
-        for(String str:result) {
+                "![](baseUrl/note/damu/20210616/1623823893226.png)\n", "md");
+        for (String str : result) {
             System.out.println(str);
         }
 
