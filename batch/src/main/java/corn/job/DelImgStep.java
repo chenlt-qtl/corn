@@ -10,14 +10,20 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.orm.JpaNativeQueryProvider;
+import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManagerFactory;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Configuration
@@ -32,6 +38,15 @@ public class DelImgStep {
     @Autowired
     private ImgUtil imgUtil;
 
+    Pattern imgPattern = Pattern.compile("(.png|.jpg|.jpeg)$", Pattern.CASE_INSENSITIVE);
+
+
+    /**
+     * 原始图片存放位置，删除多余的图片
+     */
+    @Value(value = "${corn.path.origin-img}")
+    private String originImgPath;
+
     /**
      * 一个简单基础的Step主要分为三个部分
      * ItemReader : 用于读取数据
@@ -39,8 +54,8 @@ public class DelImgStep {
      * ItemWriter : 用于写数据
      */
     @Bean("delImg")
-    public Step getBackupImgStep() {
-        return stepBuilderFactory.get("backupImgStep")
+    public Step getDelImgStep() {
+        return stepBuilderFactory.get("delImgStep")
                 .<NoteContent, List<String>>chunk(100)
                 .faultTolerant().retryLimit(3).retry(Exception.class).skipLimit(100).skip(Exception.class)
                 .reader(getDataReader())
@@ -79,27 +94,34 @@ public class DelImgStep {
         };
     }
 
-    private ItemReader<NoteContent> getDataReader() {
-        JpaPagingItemReader<NoteContent> reader = new JpaPagingItemReader<>();
-        try {
-            JpaNativeQueryProvider<NoteContent> queryProvider = new JpaNativeQueryProvider<>();
-            queryProvider.setSqlQuery("select * from note_content");
-            queryProvider.setEntityClass(NoteContent.class);
-            queryProvider.afterPropertiesSet();
-
-            reader.setEntityManagerFactory(emf);
-            //设置每页读取的记录数
-            reader.setPageSize(100);
-            //设置数据提供者
-            reader.setQueryProvider(queryProvider);
-            reader.afterPropertiesSet();
-            // 所有ItemReader和ItemWriter实现都会在ExecutionContext提交之前将其当前状态存储在其中,
-            // 如果不希望这样做,可以设置setSaveState(false)
-            reader.setSaveState(true);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private ItemReader<String> getDataReader() {
+        FlatFileItemReader<String> reader = new FlatFileItemReader<>();
+        List result = new ArrayList();
+        getDirs(originImgPath, result);
+        reader.setr
         return reader;
+    }
+
+
+    private void getDirs(String path, List<String> pathList) {
+        File file = new File(path);
+        String[] list = file.list();
+        if (list != null) {
+            for (String name : list) {
+                if (imgPattern.matcher(name).find()) {
+                    pathList.add(path + File.separator + name);
+                } else {
+                    getDirs(path + File.separator + name, pathList);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        DelImgStep delImgStep = new DelImgStep();
+        List result = new ArrayList();
+        delImgStep.getDirs("E:\\corn\\backup\\originImg\\note\\damu", result);
+        result.forEach(i -> System.out.println(i));
+
     }
 }

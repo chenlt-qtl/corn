@@ -69,12 +69,12 @@ const MainMenu: React.FC = (props, ref) => {
 
 
     const render = function () {
-        const { listParent: { id }, defaultTreeValue } = props.note;
+        const { listParent: { id }, treeSelectKey } = props.note;
 
         const { onChangeMenuType } = props;
         const min = menuType === 2;
 
-        const activeIds = min ? [isFolder(id) ? "0" : id] : [id, defaultTreeValue]
+        const activeIds = min ? [isFolder(id) ? "0" : id] : [id, treeSelectKey]
 
 
         return (
@@ -87,7 +87,7 @@ const MainMenu: React.FC = (props, ref) => {
                 {
                     menuData.filter(i => !i.hide).map(menu => <div key={menu.id} className={`${styles.menuItem} ${min ? styles.minMenuItem : ""} ${activeIds.includes(menu.id) ? styles.active : ""}`} onClick={() => {
                         props.dispatch({ type: "note/refreshListParent", payload: { id: menu.id } })
-                        props.dispatch({ type: "note/refreshDefaultTreeValue", payload: menu.id == "0" ? "0" : "" })
+                        props.dispatch({ type: "note/refreshTreeSelectKey", payload: menu.id == "0" ? "0" : "" })
                     }}>
                         {menu.icon}
                         {min ? "" : menu.name}

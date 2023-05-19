@@ -11,9 +11,9 @@ const AddBtn: React.FC = (props, ref) => {
 
 
     const handleAddNote = ({ key }) => {
-        const { listParent:{id} } = props.note;
+        const { listParent: { id } } = props.note;
 
-        if (!id || isNaN(id)) {
+        if (id == undefined || isNaN(id)) {
             message.error("请选中要增加的文件夹")
             return
         }

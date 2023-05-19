@@ -17,7 +17,8 @@ spring:
       enabled: false
 corn:
   path:
-    backup: E:\backup\img\
+    backup: E://corn//backup//img
+    origin-img: E://corn//backup//originImg
     resource: http://42.192.15.59/upload/
     #lucene索引目录
     index: E://corn//index

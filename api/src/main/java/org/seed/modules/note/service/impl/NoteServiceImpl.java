@@ -110,11 +110,15 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             Note obj = note.toNote();
 
             //设置parentIds
-            Note parent = getById(obj.getParentId());
-            if (parent == null) {
-                throw new CornException("找不到父节点");
+            if (obj.getParentId() == 0L) {
+                obj.setParentIds("0/");
+            } else {
+                Note parent = getById(obj.getParentId());
+                if (parent == null) {
+                    throw new CornException("找不到父节点");
+                }
+                obj.setParentIds(parent.getParentIds() + obj.getParentId() + "/");
             }
-            obj.setParentIds(parent.getParentIds() + obj.getParentId() + "/");
 
             save(obj);
             return obj;
@@ -167,7 +171,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         noteDeleteList.add(noteDelete);
 
         //处理孩子
-        List<NoteModel> noteList = noteMapper.listAllChildrenDetail(userName, note.getParentIds()+note.getId()+"/");
+        List<NoteModel> noteList = noteMapper.listAllChildrenDetail(userName, note.getParentIds() + note.getId() + "/");
         for (NoteModel noteModel : noteList) {
             deleteNoteIds.add(noteModel.getId());
             deleteContentIds.add(noteModel.getContentId());
@@ -191,7 +195,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
         String parentIds = parent.getParentIds() + parent.getId() + "/";
 
 
-        List<Note> noteList = noteMapper.listAllChildren(getUsername(), note.getParentIds()+note.getId()+"/");
+        List<Note> noteList = noteMapper.listAllChildren(getUsername(), note.getParentIds() + note.getId() + "/");
 
         for (Note child : noteList) {
             child.setParentIds(child.getParentIds().replace(note.getParentIds(), parentIds));

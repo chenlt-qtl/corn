@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Configuration
+@Component
 public class BackupImgStep {
 
     @Autowired
@@ -39,7 +39,7 @@ public class BackupImgStep {
      * ItemProcessor : 用于处理数据
      * ItemWriter : 用于写数据
      */
-    @Bean("backupImg")
+    @Bean
     public Step getBackupImgStep() {
         return stepBuilderFactory.get("backupImgStep")
                 .<NoteContent, List<String>>chunk(100)

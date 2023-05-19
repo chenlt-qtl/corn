@@ -128,7 +128,7 @@ const ListMenu: React.FC = (props, ref) => {
             payload: { id }
         })
         props.dispatch({
-            type: 'note/refreshDefaultTreeValue',
+            type: 'note/refreshTreeSelectKey',
             payload: id
         })
     }

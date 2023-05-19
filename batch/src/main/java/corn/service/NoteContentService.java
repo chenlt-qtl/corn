@@ -39,10 +39,10 @@ public class NoteContentService {
         // 在运行一个job的时候需要添加至少一个参数，这个参数最后会被写到batch_job_execution_params表中，
         // 不添加这个参数的话，job不会运行，并且这个参数在表中中不能重复，若设置的参数已存在表中，则会抛出异常，
         // 所以这里才使用时间戳作为参数
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
 
-//        JobParameters jobParameters = new JobParametersBuilder().addString("date", sdf.format(new Date())).toJobParameters();
-        JobParameters jobParameters = new JobParametersBuilder().addLong("date", System.currentTimeMillis()).toJobParameters();
+        JobParameters jobParameters = new JobParametersBuilder().addDate("date",new Date()).toJobParameters();
+
         //获取JOB并运行
         Job job = backupImgJob.dataHandleJob();
         JobExecution execution = jobLauncher.run(job,jobParameters);
@@ -52,5 +52,19 @@ public class NoteContentService {
     public void removeUselessContent(){
         log.info("删除无用的content");
         noteContentMapper.deleteUseless();
+    }
+
+    public void runCreateIndex() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+        log.info("执行备份任务。。。");
+        // 在运行一个job的时候需要添加至少一个参数，这个参数最后会被写到batch_job_execution_params表中，
+        // 不添加这个参数的话，job不会运行，并且这个参数在表中中不能重复，若设置的参数已存在表中，则会抛出异常，
+        // 所以这里才使用时间戳作为参数
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+
+        JobParameters jobParameters = new JobParametersBuilder().addString("date", sdf.format(new Date())).toJobParameters();
+        //获取JOB并运行
+        Job job = backupImgJob.dataHandleJob();
+        JobExecution execution = jobLauncher.run(job,jobParameters);
+        log.info("备份任务结束，状态:{}",execution.getStatus());
     }
 }

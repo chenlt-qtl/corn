@@ -5,7 +5,7 @@
  * @returns 
  */
 export function getFolderData(nodes) {
-    return nodes.map(node => {
+    return nodes.filter(i => !i.isLeaf).map(node => {
         let children;
         if (node.children) {
             const folders = [...node.children.filter(i => !i.isLeaf)]

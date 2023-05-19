@@ -17,9 +17,11 @@ spring:
       enabled: false
 corn:
   path:
-    backup: E:\backup\img\
+    backup: /root/file/backup
+    origin-img: /root/file/upload
     resource: http://42.192.15.59/upload/
-
+    #lucene索引目录
+    index: /root/file/index
 #mybatis plus 设置
 mybatis-plus:
   mapper-locations: classpath*:corn/mapper/xml/*Mapper.xml

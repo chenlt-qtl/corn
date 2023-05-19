@@ -9,13 +9,11 @@ const NoteTree: React.FC = (props, ref) => {
 
     const { treeData, onDelete } = props;
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-    const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
 
     useEffect(() => {
-        const { defaultTreeValue } = props.note;
-        expandNote({ key: defaultTreeValue }, true)
-        setSelectedKeys([defaultTreeValue])
-    }, [props.note.defaultTreeValue]);
+        const { treeSelectKey } = props.note;
+        expandNote({ key: treeSelectKey }, true)
+    }, [props.note.treeSelectKey]);
 
     const handleExpand = (value) => {
         setExpandedKeys(value);
@@ -34,8 +32,8 @@ const NoteTree: React.FC = (props, ref) => {
     const onNodeSelect = (e, node) => {
         e && e.stopPropagation();
         expandNote({ key: node.key })
-        setSelectedKeys([String(node.id)])
         props.dispatch({ type: 'note/refreshListParent', payload: { id: node.key } })
+        props.dispatch({ type: 'note/refreshTreeSelectKey', payload: node.key })
 
     }
 
@@ -76,11 +74,12 @@ const NoteTree: React.FC = (props, ref) => {
 
 
     const render = function () {
+        const { treeSelectKey } = props.note;
         return (
             <>
                 {
                     treeData.length > 0 ? <Tree
-                        selectedKeys={selectedKeys}
+                        selectedKeys={[treeSelectKey]}
                         blockNode
                         multiple
                         expandedKeys={expandedKeys}

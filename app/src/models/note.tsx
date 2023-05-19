@@ -6,7 +6,7 @@ export interface NoteState {
     openedNote: NoteItem;
     openedNotes: [];
     noteTreeData: NoteNode[];
-    defaultTreeValue: string;
+    treeSelectKey: string;
     listParent: NoteItem;
 }
 
@@ -27,7 +27,7 @@ export interface NoteModelType {
         refreshOpenedNote: Reducer<NoteState>;
         refreshOpenedNotes: Reducer<NoteState>;
         refreshNoteTreeData: Reducer<NoteState>;
-        refreshDefaultTreeValue: Reducer<NoteState>;
+        refreshTreeSelectKey: Reducer<NoteState>;
         refreshListParent: Reducer<NoteState>;
     };
 }
@@ -39,7 +39,7 @@ const NoteModel: NoteModelType = {
         openedNote: {},
         openedNotes: [],
         noteTreeData: [],
-        defaultTreeValue: "0",
+        treeSelectKey: "0",
         listParent: {},
     },
 
@@ -69,7 +69,7 @@ const NoteModel: NoteModelType = {
                     })
 
                     yield put({
-                        type: 'refreshDefaultTreeValue',
+                        type: 'refreshTreeSelectKey',
                         payload: note.parentId || "0",
                     })
 
@@ -219,10 +219,10 @@ const NoteModel: NoteModelType = {
                 noteTreeData: payload
             }
         },
-        refreshDefaultTreeValue(state: NoteState, { payload }): NoteState {
+        refreshTreeSelectKey(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                defaultTreeValue: String(payload || "")
+                treeSelectKey: String(payload || "")
             }
         },
         refreshListParent(state: NoteState, { payload }): NoteState {
