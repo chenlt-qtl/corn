@@ -22,121 +22,121 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * mybatis拦截器，自动注入创建人、创建时间、修改人、修改时间
- * @author scott
- * @date  2019-01-19
  *
+ * @author scott
+ * @date 2019-01-19
  */
 @Slf4j
 @Component
-@Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
+@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class MybatisInterceptor implements Interceptor {
 
-	@Override
-	public Object intercept(Invocation invocation) throws Throwable {
-		MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-		String sqlId = mappedStatement.getId();
-		log.debug("------sqlId------" + sqlId);
-		SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
-		Object parameter = invocation.getArgs()[1];
-		log.debug("------sqlCommandType------" + sqlCommandType);
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+        String sqlId = mappedStatement.getId();
+        log.debug("------sqlId------" + sqlId);
+        SqlCommandType sqlCommandType = mappedStatement.getSqlCommandType();
+        Object parameter = invocation.getArgs()[1];
+        log.debug("------sqlCommandType------" + sqlCommandType);
 
-		if (parameter == null) {
-			return invocation.proceed();
-		}
-		if (SqlCommandType.INSERT == sqlCommandType) {
-			Field[] fields = parameter.getClass().getDeclaredFields();
-			for (Field field : fields) {
-				log.debug("------field.name------" + field.getName());
-				try {
-					if ("createBy".equals(field.getName())) {
-						field.setAccessible(true);
-						Object local_createBy = field.get(parameter);
-						field.setAccessible(false);
-						if (local_createBy == null || local_createBy.equals("")) {
-							String createBy = "jeecg-boot";
-							// 获取登录用户信息
-							SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-							if (sysUser != null) {
-								// 登录账号
-								createBy = sysUser.getUsername();
-							}
-							if (!oConvertUtils.isEmpty(createBy)) {
-								field.setAccessible(true);
-								field.set(parameter, createBy);
-								field.setAccessible(false);
-							}
-						}
-					}
-					// 注入创建时间
-					if ("createTime".equals(field.getName())) {
-						field.setAccessible(true);
-						Object local_createDate = field.get(parameter);
-						field.setAccessible(false);
-						if (local_createDate == null || local_createDate.equals("")) {
-							field.setAccessible(true);
-							field.set(parameter, new Date());
-							field.setAccessible(false);
-						}
-					}
-				} catch (Exception e) {
-				}
-			}
-		}
+        if (parameter == null || SqlCommandType.DELETE == sqlCommandType) {
+            return invocation.proceed();
+        }
+        if (SqlCommandType.INSERT == sqlCommandType) {
+            Field[] fields = parameter.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                log.debug("------field.name------" + field.getName());
+                try {
+                    if ("createBy".equals(field.getName())) {
+                        field.setAccessible(true);
+                        Object local_createBy = field.get(parameter);
+                        field.setAccessible(false);
+                        if (local_createBy == null || local_createBy.equals("")) {
+                            String createBy = "jeecg-boot";
+                            // 获取登录用户信息
+                            SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+                            if (sysUser != null) {
+                                // 登录账号
+                                createBy = sysUser.getUsername();
+                            }
+                            if (!oConvertUtils.isEmpty(createBy)) {
+                                field.setAccessible(true);
+                                field.set(parameter, createBy);
+                                field.setAccessible(false);
+                            }
+                        }
+                    }
+                    // 注入创建时间
+                    if ("createTime".equals(field.getName())) {
+                        field.setAccessible(true);
+                        Object local_createDate = field.get(parameter);
+                        field.setAccessible(false);
+                        if (local_createDate == null || local_createDate.equals("")) {
+                            field.setAccessible(true);
+                            field.set(parameter, new Date());
+                            field.setAccessible(false);
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
 
-		Field[] fields = null;
-		if (parameter instanceof ParamMap) {
-			ParamMap<?> p = (ParamMap<?>) parameter;
-			parameter = p.get("et");
-			fields = parameter.getClass().getDeclaredFields();
-		} else {
-			fields = parameter.getClass().getDeclaredFields();
-		}
+        Field[] fields = null;
+        if (parameter instanceof ParamMap) {
+            ParamMap<?> p = (ParamMap<?>) parameter;
+            parameter = p.get("et");
+            fields = parameter.getClass().getDeclaredFields();
+        } else {
+            fields = parameter.getClass().getDeclaredFields();
+        }
 
-		for (Field field : fields) {
-			log.debug("------field.name------" + field.getName());
-			try {
-				if ("updateBy".equals(field.getName())) {
-					field.setAccessible(true);
-					Object local_updateBy = field.get(parameter);
-					field.setAccessible(false);
-					String updateBy = "jeecg-boot";
-					// 获取登录用户信息
-					SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-					if (sysUser != null) {
-						// 登录账号
-						updateBy = sysUser.getUsername();
-					}
-					if (!oConvertUtils.isEmpty(updateBy)) {
-						field.setAccessible(true);
-						field.set(parameter, updateBy);
-						field.setAccessible(false);
-					}
+        for (Field field : fields) {
+            log.debug("------field.name------" + field.getName());
+            try {
+                if ("updateBy".equals(field.getName())) {
+                    field.setAccessible(true);
+                    Object local_updateBy = field.get(parameter);
+                    field.setAccessible(false);
+                    String updateBy = "jeecg-boot";
+                    // 获取登录用户信息
+                    SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+                    if (sysUser != null) {
+                        // 登录账号
+                        updateBy = sysUser.getUsername();
+                    }
+                    if (!oConvertUtils.isEmpty(updateBy)) {
+                        field.setAccessible(true);
+                        field.set(parameter, updateBy);
+                        field.setAccessible(false);
+                    }
 
-				}
-				if ("updateTime".equals(field.getName())) {
-					field.setAccessible(true);
-					Object local_updateDate = field.get(parameter);
-					field.setAccessible(false);
-					field.setAccessible(true);
-					field.set(parameter, new Date());
-					field.setAccessible(false);
+                }
+                if ("updateTime".equals(field.getName())) {
+                    field.setAccessible(true);
+                    Object local_updateDate = field.get(parameter);
+                    field.setAccessible(false);
+                    field.setAccessible(true);
+                    field.set(parameter, new Date());
+                    field.setAccessible(false);
 
-				}
-			} catch (Exception e) {
-			}
-		}
+                }
+            } catch (Exception e) {
+            }
+        }
+        
+        return invocation.proceed();
+    }
 
-		return invocation.proceed();
-	}
+    @Override
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
 
-	@Override
-	public Object plugin(Object target) {
-		return Plugin.wrap(target, this);
-	}
-
-	@Override
-	public void setProperties(Properties properties) {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public void setProperties(Properties properties) {
+        // TODO Auto-generated method stub
+    }
 
 }

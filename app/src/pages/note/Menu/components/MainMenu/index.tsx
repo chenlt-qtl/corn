@@ -48,7 +48,7 @@ const MainMenu: React.FC = (props, ref) => {
 
     const handleDelete = (node) => {
         confirm({
-            title: `确定要删除 ${node.title}?`,
+            title: `确定要删除 ${node.name}?`,
             icon: <ExclamationCircleOutlined />,
             onOk() {
 
