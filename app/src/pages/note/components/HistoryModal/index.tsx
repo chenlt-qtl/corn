@@ -13,16 +13,15 @@ const HistoryModal: React.FC = (props, ref) => {
     const [historyData, setHistoryData] = useState<object[]>([]);
     const [text, setText] = useState<string>("");
     const [total, setTotal] = useState<number>(0);
-    const [current, setCurrent] = useState<number>(1);
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (props.visible) {
-            initData();
+            getListData(1);
         }
     }, [props.visible])
 
-    const initData = async () => {
+    const getListData = async (current:number) => {
         setLoading(true)
         const res = await getHistorys({ noteId, pageNo: current, pageSize: 10 });
         setLoading(false)
@@ -41,9 +40,8 @@ const HistoryModal: React.FC = (props, ref) => {
         }
     }
 
-    const onPageChange = page => {
-        console.log(page);
-
+    const onPageChange = (page:number) => {
+        getListData(page);
     }
 
     const render = function () {
@@ -61,7 +59,7 @@ const HistoryModal: React.FC = (props, ref) => {
                             />
                         </div>
                         <div className={styles.page}>
-                            <Pagination defaultCurrent={current} onChange={onPageChange} total={total} onChange={page => setCurrent(page)} />
+                            <Pagination defaultCurrent={1} onChange={onPageChange} total={total} />
                         </div>
 
                         <div className={styles.content}>
