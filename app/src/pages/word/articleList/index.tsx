@@ -103,7 +103,7 @@ const ArticleList: React.FC<{}> = () => {
                             }
                         >
                             <List.Item.Meta
-                                title={<Link to={`/word/${item.id}`}>{item.title}</Link>}
+                                title={<Link to={`/page/article/${item.id}`}>{item.title}</Link>}
                             />
                         </List.Item>
                     )}

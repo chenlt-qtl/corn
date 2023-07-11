@@ -7,6 +7,7 @@ import ImgUpload from '../components/ImgUpload'
 import Mp3Upload from '../components/Mp3Upload'
 import { brReg, DisplaySentence, splipSentences, timeIntervalReg as reg } from '@/utils/wordUtils'
 import { connect, WordState } from 'umi';
+import Mp3Time from './Mp3Time';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -17,24 +18,25 @@ export interface SentenceProps {
     sentence: SentenceItem;
     articleId: string;
     modalVisible: boolean;
+    hasArticleMp3: boolean;//文章有没有mp3文件
+    onPlay: (object) => void;
     onCancel: (reload: boolean) => void;
 }
 
 
 const formLayout = {
-    labelCol: { span: 3 },
-    wrapperCol: { span: 18 },
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
 };
 
 const SentenceEditModal: React.FC<SentenceProps> = (props) => {
-    const { modalVisible, onCancel, sentence = {}, articleId, single } = props;
+    const { modalVisible, onCancel, sentence = {}, articleId, single, hasArticleMp3, onPlay } = props;
 
     const [currentStep, setCurrentStep] = useState<number>(0);
     const [selectWords, setSelectWords] = useState<string[]>([]);
     const [sentences, setSentences] = useState<DisplaySentence[]>([]);
-    const [picture, setPicture] = useState<string>('');
-    const [mp3, setMp3] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
+
 
     const [form] = Form.useForm();
 
@@ -42,11 +44,6 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
         form.setFieldsValue(sentence);
         setCurrentStep(0);
         setSelectWords([...props.word.wordNames]);
-        if (sentence.id) {
-            const { picture = '', mp3 = '' } = sentence;
-            setPicture(picture);
-            setMp3(mp3);
-        }
     }, [modalVisible])
 
     const handleNext = async () => {
@@ -55,9 +52,12 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
 
         if (currentStep === 0) {
             setCurrentStep(currentStep + 1);
-            setSentences(splipSentences(formValue.content.replace(reg,"").split(brReg), 0));
+            setSentences(splipSentences(formValue.content.replace(reg, "").split(brReg), 0));
         } else {//提交 
             setLoading(true);
+
+            const { mp3, mp3Time, picture } = formValue;
+
             const article: ArticleItem = { id: articleId, type: 0 };
             article.sentences = sentences.map(sentence => {
                 return {
@@ -77,6 +77,7 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
             if (single && article.sentences[0]) {
                 mp3 && (article.sentences[0].mp3 = mp3);
                 picture && (article.sentences[0].picture = picture);
+                mp3Time && (article.sentences[0].mp3Time = mp3Time);
                 if (sentence.id) {
                     article.sentences[0].id = sentence.id;
                 }
@@ -104,14 +105,6 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
         }
         setSelectWords([...selectWords]);
     }
-
-    const handleImgChange = (value: string) => {
-        setPicture(value);
-    };
-
-    const handleMp3Change = (value: string) => {
-        setMp3(value);
-    };
 
     const renderFooter = () => {
         if (currentStep === 1) {
@@ -157,44 +150,41 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
                     {...formLayout}
                     form={form}
                 >
-                    {currentStep === 0 ?
-                        <>
-                            <FormItem name="content" label="内容"
-                                rules={[{ required: true, message: '请输入内容！' }]}>
-                                <TextArea rows={single ? 4 : 10}></TextArea>
+
+                    <div style={{ display: currentStep == 0 ? "block" : "none" }}>
+                        <FormItem name="content" label="内容"
+                            rules={[{ required: true, message: '请输入内容！' }]}>
+                            <TextArea rows={single ? 4 : 10}></TextArea>
+                        </FormItem>
+                        {/* 批量和单个增加表单不一样 */}
+                        {single ? <>
+                            <FormItem name="picture" label="图片">
+                                <ImgUpload></ImgUpload>
                             </FormItem>
-                            {/* 批量和单个增加表单不一样 */}
-                            {single ? <>
-                                <FormItem name="picture" label="图片">
-                                    <ImgUpload
-                                        picture={picture}
-                                        onChange={handleImgChange}
-                                    >
-                                    </ImgUpload>
-                                </FormItem>
-                                <FormItem name="mp3" label="音频">
-                                    <Mp3Upload mp3={mp3}
-                                        onChange={handleMp3Change}></Mp3Upload>
-                                </FormItem>
-                            </> : <span className={styles.tip}>不同句子请用回车分隔</span>}
+                            <FormItem name="mp3" label="音频">
+                                <Mp3Upload></Mp3Upload>
+                            </FormItem>
+                            {hasArticleMp3 ? <FormItem name="mp3Time" label="音频时间">
+                                <Mp3Time onPlay={onPlay} />
+                            </FormItem> : ""}
+                        </> : <span className={styles.tip}>不同句子请用回车分隔</span>}
 
-                        </> :
-                        <div className={styles.words}>
-                            {
-                                sentences.map(item =>
-                                (<p key={++key}>
-                                    {item.allWords.map(({ text, isWord }) => {
-                                        return isWord ? <span key={++key} className={selectWords.includes(text.toLowerCase()) ? styles.selected : null}
-                                            onClick={() => { handleClickWord(text) }} >{text}</span> :
-                                            <Fragment key={++key}>{text}{brReg.test(text) ? <br key={++key} /> : ''}</Fragment>
-                                    }
+                    </div>
+                    <div style={{ display: currentStep == 0 ? "none" : "block" }} className={styles.words}>
+                        {
+                            sentences.map(item =>
+                            (<p key={++key}>
+                                {item.allWords.map(({ text, isWord }) => {
+                                    return isWord ? <span key={++key} className={selectWords.includes(text.toLowerCase()) ? styles.selected : null}
+                                        onClick={() => { handleClickWord(text) }} >{text}</span> :
+                                        <Fragment key={++key}>{text}{brReg.test(text) ? <br key={++key} /> : ''}</Fragment>
+                                }
 
-                                    )}
-                                </p>)
-                                )
-                            }
-                        </div>
-                    }
+                                )}
+                            </p>)
+                            )
+                        }
+                    </div>
                 </Form>
             </Spin>
         </Modal>

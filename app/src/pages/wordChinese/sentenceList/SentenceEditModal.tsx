@@ -168,13 +168,13 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
                             {single ? <>
                                 <FormItem name="picture" label="图片">
                                     <ImgUpload
-                                        picture={picture}
+                                        value={picture}
                                         onChange={handleImgChange}
                                     >
                                     </ImgUpload>
                                 </FormItem>
                                 <FormItem name="mp3" label="音频">
-                                    <Mp3Upload mp3={mp3}
+                                    <Mp3Upload value={mp3}
                                         onChange={handleMp3Change}></Mp3Upload>
                                 </FormItem>
                             </> : <span className={styles.tip}>不同句子请用回车分隔</span>}

@@ -4,14 +4,14 @@ import { Upload, message } from 'antd';
 import 'font-awesome/css/font-awesome.min.css';
 
 interface Mp3UploadProps {
-  mp3: string;
+  value: string;
   onChange: (value: string) => void;
   type?: string;
 }
 
 const Mp3Upload= React.forwardRef((props:Mp3UploadProps, ref) => {
 
-  const { mp3, type, onChange } = props;
+  const { value, type, onChange } = props;
 
   const [loading, setLoading] = useState<boolean>(false);
   const [paused, setPaused] = useState<boolean>(true);
@@ -78,11 +78,11 @@ const Mp3Upload= React.forwardRef((props:Mp3UploadProps, ref) => {
         beforeUpload={beforeMp3Upload}
         onChange={handleMp3Change}
       >
-        {mp3 ? (paused ? <i style={iconStyle} className="fa fa-play" onClick={e => { play(e, false) }}></i> :
+        {value ? (paused ? <i style={iconStyle} className="fa fa-play" onClick={e => { play(e, false) }}></i> :
           <i style={iconStyle} className="fa fa-pause" onClick={e => { play(e, true) }}></i>) : mp3UploadButton}
       </Upload>
       <audio ref={player}>
-        <source src={mp3} type="audio/mpeg" />
+        <source src={value} type="audio/mpeg" />
                   您的浏览器不支持 audio 元素。
             </audio>
     </>

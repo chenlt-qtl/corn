@@ -4,13 +4,13 @@ import { Upload,message } from 'antd';
 
 
 interface ImgUploadProps {
-  picture: string;
+  value: string;
   onChange:(value: string) => void;
 }
 
 const ImgUpload: React.FC<ImgUploadProps> = (props) => {
 
-  const { picture,onChange } = props;
+  const { value,onChange } = props;
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -56,7 +56,7 @@ const ImgUpload: React.FC<ImgUploadProps> = (props) => {
         beforeUpload={beforeImgUpload}
         onChange={handleImgChange}
       >
-        {picture ? <img src={picture} alt="avatar" style={{ width: '100%' }} /> : imgUploadButton}
+        {value ? <img src={value} alt="avatar" style={{ width: '100%' }} /> : imgUploadButton}
       </Upload>
     </>
   )

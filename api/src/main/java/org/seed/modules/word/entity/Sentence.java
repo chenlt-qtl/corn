@@ -37,6 +37,9 @@ public class Sentence implements Serializable {
 	@Excel(name = "mp3", width = 15)
 	private java.lang.String mp3;
 
+	//mp3时间，格式（startTime,endTime）,单位秒
+	private java.lang.String mp3Time;
+
 	@Excel(name = "picture", width = 15)
 	private java.lang.String picture;
 

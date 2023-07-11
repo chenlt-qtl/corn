@@ -22,9 +22,14 @@ export default {
                     component: './word/articleList',
                 },
                 {
-                    path: '/word/:id',
+                    path: '/article/:id',
+                    name: '英语',
                     component: './word/articleDetail',
                 },
+                // {
+                //     path: '/word/:id',
+                //     component: './word/articleDetail',
+                // },
                 {
                     path: '/splicMp3',
                     name: '切割',

@@ -64,6 +64,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
             player = player1.current;//没有播放源的用player1
             player2.current!.pause();
         }
+        //单位秒
         player.currentTime = currentTime;
         player.play();
         if (duration >= 0) {
@@ -87,7 +88,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
             payload: id
         }).then((res) => {
             if (res) {
-                history.push('/word');
+                history.push('/page/article/list');
             }
         })
     }
@@ -98,7 +99,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                 <header className={styles.header}>
                     <div className={styles.title}><h1>{article.title}</h1></div>
                     <div className={styles.toolbar}>
-                        <Link to="/word"><ArrowLeftOutlined /></Link>
+                        <Link to="/page/article/list"><ArrowLeftOutlined /></Link>
                         <EditOutlined onClick={openEditModel} />
                         <Popconfirm
                             title="确认要删除这篇文章?"

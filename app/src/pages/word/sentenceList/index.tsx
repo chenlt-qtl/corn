@@ -105,7 +105,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
             return true;
         }
 
-        if (articleMp3 && reg.test(sentence.content!)) {
+        if (articleMp3 && sentence.mp3Time) {
             return true;
         }
         return false;
@@ -117,16 +117,33 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
             play(sentence.mp3)
         } else {
 
-            const matcher = sentence.content.match(reg);
+            let startTime;//开始时间(秒)
+            let duration;//持续时间(秒)
 
-            const [, , startMin, startSecond, , endMin, endSecond] = [...matcher];
-            console.log(startMin, startSecond, endMin, endSecond);
+            //如果数据库里有存时间，就使用数据库时间
+            if (sentence.mp3Time) {
+                const mp3Time = sentence.mp3Time;
+                const timeArr = mp3Time.split(",");
+                if (timeArr.length == 2) {
+                    startTime = timeArr[0]
+                    duration = timeArr[1]
+                }
+
+            }
+
+            //从歌词里匹配
+            if (!startTime) {
+                const matcher = sentence.content.match(reg);
+
+                const [startMin, startSecond, endMin, endSecond] = [...matcher];
+
+                startTime = Number.parseInt(startMin) * 60 + Number.parseFloat(startSecond);
+                const endTime = Number.parseInt(endMin) * 60 + Number.parseFloat(endSecond);
+                duration = endTime - startTime;
+            }
 
 
-            const startTime = Number.parseInt(startMin) * 60 + Number.parseFloat(startSecond);
-            const endTime = Number.parseInt(endMin) * 60 + Number.parseFloat(endSecond);
-
-            play(articleMp3, startTime, endTime - startTime);
+            play(null, startTime, duration);
 
         }
     }
@@ -176,13 +193,14 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                         actions={getActions(item)}
                     >
                         <pre>{transSentence(item.content)}
-                            {hasMp3(item) ? (<><i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => playMp3(item)}></i>
-                            <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => playMp3(item)}></i></>) : ''}</pre>
+                            {hasMp3(item) ? <i className={`fa fa-volume-up ${styles.trumpet}`} onClick={() => playMp3(item)}></i>
+                                : ''}</pre>
                     </List.Item>
                 )}
             />
 
-            {edit ? <SentenceEditModal articleId={articleId} sentence={sentence} single={single}
+            {edit ? <SentenceEditModal articleId={articleId} sentence={sentence} single={single} hasArticleMp3={!!articleMp3}
+                onPlay={playMp3}
                 onCancel={(reload) => {
                     reload && getSentence();
                     reload && getWords();

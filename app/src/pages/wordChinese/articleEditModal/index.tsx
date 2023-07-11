@@ -97,7 +97,7 @@ const ArticleEditModal = React.forwardRef((props: EditModalProps, ref) => {
                     name="picture"
                 >
                     <ImgUpload
-                        picture={picture}
+                        value={picture}
                         onChange={handleImgChange}
                     >
                     </ImgUpload>
@@ -106,7 +106,7 @@ const ArticleEditModal = React.forwardRef((props: EditModalProps, ref) => {
                     label="音频"
                     name="mp3"
                 >
-                    <Mp3Upload mp3={mp3}
+                    <Mp3Upload value={mp3}
                         onChange={handleMp3Change}></Mp3Upload>
                 </Form.Item>
                 <Form.Item

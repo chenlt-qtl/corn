@@ -1,0 +1,45 @@
+.mp3Time {
+    display    : flex;
+    align-items: center;
+    position   : relative;
+
+    .hyphen {
+        background-color: rgba(0, 0, 0, 0.5);
+        width           : 5px;
+        height          : 1px;
+        margin          : 0 5px;
+    }
+
+
+    input {
+        width: 100px;
+    }
+
+
+
+    //调整弹出窗
+    .adjust {
+        position  : absolute;
+        top       : 34px;
+        height    : 0;
+        overflow  : hidden;
+        transition: .3s;
+        &:focus-within {
+            height: 38px;
+        }
+    }
+
+    .content {
+        border : solid 1px rgba(0, 0, 0, 0.2);
+        padding: 5px 10px;
+        height : 100%;
+
+        :global {
+            .ant-btn {
+                padding  : 2px 4px;
+                font-size: 12px;
+                height   : auto;
+            }
+        }
+    }
+}

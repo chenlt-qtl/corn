@@ -1,0 +1,1 @@
+alter table word_sentence add column `mp3_time` varchar(50) after mp3;

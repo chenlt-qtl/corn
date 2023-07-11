@@ -33,6 +33,7 @@ export interface SentenceItem {
     content?: string;
     idx?: number;
     mp3?: string;
+    mp3Time?: string;
     comment?: string;
     picture?: string;
     status?: number;

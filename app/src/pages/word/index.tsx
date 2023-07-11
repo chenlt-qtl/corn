@@ -62,7 +62,7 @@ const WordIndex: React.FC<{}> = (props) => {
                                     <div className={styles.wi_menu}>
                                         <div className={styles.wi_item}>
                                             <ContainerOutlined />
-                                            <Link to="/article/list">文章列表</Link>
+                                            <Link to="/page/article/list">文章列表</Link>
                                         </div>
                                         <div className={styles.wi_item}>
                                             <ReadOutlined />
