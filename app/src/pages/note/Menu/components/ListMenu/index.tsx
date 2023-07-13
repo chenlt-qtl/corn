@@ -13,7 +13,7 @@ const ListMenu: React.FC = (props, ref) => {
 
     const { initialState: { currentUser } } = useModel('@@initialState');
 
-    const [sortType, setSortType] = useState<string>('default');
+    const [sortType, setSortType] = useState<string>('name');
     const [listData, setListData] = useState<Object[]>([]);
     const [searchRecent, setSearchRecent] = useState<string[]>((localStorage.getItem("searchRecent" + currentUser.id) || "").split(","));
     const searchWinRef = useRef(null);
@@ -78,7 +78,7 @@ const ListMenu: React.FC = (props, ref) => {
         } else {
             loadTreeData()
         }
-        setSortType('default')
+        setSortType('name')
 
     }
 
@@ -187,9 +187,6 @@ const ListMenu: React.FC = (props, ref) => {
 
     const sortMenu = (
         <Menu onClick={handleSort}>
-            <Menu.Item key="default">
-                默认排序
-            </Menu.Item>
             <Menu.Item key="date">
                 按时间排序
             </Menu.Item>

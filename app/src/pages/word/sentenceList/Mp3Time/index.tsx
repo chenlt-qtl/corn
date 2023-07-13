@@ -42,7 +42,7 @@ const Mp3Time: React.FC = (props) => {
         }
     }
 
-    const changeTime = (time: number) => {
+    const addTime = (time: number) => {
         if (focusField == "start") {
             let newStartTime = startTime + time;
             newStartTime = newStartTime > 0 ? newStartTime : 0;
@@ -66,18 +66,33 @@ const Mp3Time: React.FC = (props) => {
         }
     }
 
+    const changeTime = value => {
+        if (focusField == "start") {
+            let newStartTime = value;
+            newStartTime = newStartTime > 0 ? newStartTime : 0;
+            let duration = endTime > newStartTime ? (endTime - newStartTime) : 0
+            onChange(`${newStartTime},${duration}`)
+        } else {
+            let newEndTime = value;
+            newEndTime = newEndTime > 0 ? newEndTime : 0;
+            let duration = newEndTime > startTime ? (newEndTime - startTime) : 0
+            onChange(`${startTime},${duration}`)
+        }
+
+    }
+
     return (
         <div className={styles.mp3Time} ref={container}>
-            <InputNumber value={startTime} onFocus={() => onFocus("start")}></InputNumber >
+            <InputNumber onChange={changeTime} value={startTime} onFocus={() => onFocus("start")}></InputNumber >
             <div className={styles.hyphen} />
-            <InputNumber value={endTime} onFocus={() => onFocus("end")}></InputNumber >
-            <Button type="link"><i className="fa fa-volume-up" onClick={() => onPlay({mp3Time:value})}></i></Button>
+            <InputNumber onChange={changeTime} value={endTime} onFocus={() => onFocus("end")}></InputNumber >
+            <Button type="link"><i className="fa fa-volume-up" onClick={() => onPlay({ mp3Time: value })}></i></Button>
             <div className={styles.adjust} style={{ height: height + "px", left: left + "px" }}>
                 <div className={styles.content}>
-                    <Button type="link" onClick={() => changeTime(1)}>+1s</Button>
-                    <Button type="link" onClick={() => changeTime(5)}>+5s</Button>
-                    <Button type="link" onClick={() => changeTime(-1)} danger>-1s</Button>
-                    <Button type="link" onClick={() => changeTime(-5)} danger>-5s</Button>
+                    <Button type="link" onClick={() => addTime(1)}>+1s</Button>
+                    <Button type="link" onClick={() => addTime(5)}>+5s</Button>
+                    <Button type="link" onClick={() => addTime(-1)} danger>-1s</Button>
+                    <Button type="link" onClick={() => addTime(-5)} danger>-5s</Button>
                 </div>
             </div>
         </div>

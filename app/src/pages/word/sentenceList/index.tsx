@@ -5,10 +5,8 @@ import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
 import { SentenceItem } from '@/data/word';
 import SentenceEditModal from './SentenceEditModal';
-import { splipSentences, timeIntervalReg as reg } from '@/utils/wordUtils'
+import { splipSentences, timeIntervalReg as reg ,getMp3Time} from '@/utils/wordUtils'
 import { connect, WordState } from 'umi';
-
-
 
 export interface SentenceListProps {
     articleId: string
@@ -63,6 +61,9 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
     }
 
     const openEditModel = (item: SentenceItem, single: boolean) => {
+        if(!item.mp3Time){
+            item.mp3Time = getMp3Time(item.content||"")
+        }
         setSentence(item);
         setEditModalVisible(true);
         setSingle(single);
@@ -116,35 +117,16 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
         if (sentence.mp3) {
             play(sentence.mp3)
         } else {
-
-            let startTime;//开始时间(秒)
-            let duration;//持续时间(秒)
-
             //如果数据库里有存时间，就使用数据库时间
             if (sentence.mp3Time) {
                 const mp3Time = sentence.mp3Time;
                 const timeArr = mp3Time.split(",");
                 if (timeArr.length == 2) {
-                    startTime = timeArr[0]
-                    duration = timeArr[1]
+                    const startTime = timeArr[0]
+                    const duration = timeArr[1]
+                    play(null, startTime, duration);
                 }
-
             }
-
-            //从歌词里匹配
-            if (!startTime) {
-                const matcher = sentence.content.match(reg);
-
-                const [startMin, startSecond, endMin, endSecond] = [...matcher];
-
-                startTime = Number.parseInt(startMin) * 60 + Number.parseFloat(startSecond);
-                const endTime = Number.parseInt(endMin) * 60 + Number.parseFloat(endSecond);
-                duration = endTime - startTime;
-            }
-
-
-            play(null, startTime, duration);
-
         }
     }
 
