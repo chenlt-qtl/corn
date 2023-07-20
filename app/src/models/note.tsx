@@ -111,6 +111,15 @@ const NoteModel: NoteModelType = {
         },
         * updateNoteText({ payload }, { call, put, select }) {
             let result = yield call(updateNoteText, payload);
+            if (result && result.success) {
+
+                //更新打开的数据  
+                yield put({
+                    type: "refreshOpenedNote",
+                    payload: payload
+                });
+
+            }
             return result;
         },
         * deleteNote({ payload }, { call, put, select }) {
