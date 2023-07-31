@@ -7,19 +7,34 @@ import tokenInterceptor from '@/utils/Interceptor';
 
 import defaultSettings from '../config/defaultSettings';
 
+
+const freePathReg = [/^\/all\/read/]
+
+const isFreeUrl = (pathname="") => {
+  if (pathname == '/user/login') {
+    return true;
+  } else {
+    const path = freePathReg.find(reg => pathname.match(reg))
+    return !!path;
+    
+  }
+}
+
+
 export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser;
   settings?: LayoutSettings;
 }> {
-  // 如果是登录页面，不执行
-  if (history.location.pathname !== '/user/login') {
+  // 如果是不需要登录页面或者登录页面，不执行
+  const { pathname } = history.location;
+  if (!isFreeUrl(pathname)) {
     try {
       const res = await queryCurrent();
       if (!res.success) {
         history.push('/user/login');
       } else {
         return {
-          currentUser:res["result"],
+          currentUser: res["result"],
           settings: defaultSettings,
         };
       }

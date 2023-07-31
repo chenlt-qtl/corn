@@ -1,0 +1,97 @@
+import React, { useState, useEffect, useRef } from 'react';
+import styles from './styles.less'
+import { getArticle } from "@/services/read"
+import prev from '@/assets/fanhui.svg'
+import next from '@/assets/xiayibu.svg'
+import point from '@/assets/pointdown.svg'
+import { stringify } from 'qs';
+import { Spin } from 'antd';
+
+
+const Read = (props, ref) => {
+
+    const { ids = "", index = 0 } = props.location.query;
+    const idArr = ids.split(",")
+    const id = idArr[index]
+
+
+    const player = useRef();
+    const source = useRef();
+
+    const [picture, setPicture] = useState<String>();
+    const [tops, setTops] = useState<[number]>([0, 0]);
+    const [mp3Times, setMp3Times] = useState<[String]>(["", ""]);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        getData();
+    }, [id])
+
+    const getData = async () => {
+        setLoading(true)
+        const res = await getArticle(id)
+        const { article, sentences, read } = res.result;
+        source.current.src = article.mp3;
+        player.current.load();
+
+        setPicture(article.picture)
+        setTops((read.position || ",").split(","))
+
+        const mp3Times = [];
+        const { records } = sentences;
+        records.map(record => mp3Times.push(record.mp3Time))
+        setMp3Times(mp3Times)
+        setLoading(false)
+    }
+
+    const play = i => {
+        player.current.pause();
+        console.log(mp3Times[i]);
+
+        const times = mp3Times[i].split(",")
+        const rate = 0.7;
+
+        //单位秒
+        player.current.currentTime = times[0];
+        player.current.play();
+        player.current.playbackRate = rate;
+
+        setTimeout(() => {
+            player.current.pause();
+        }, parseInt(times[1]) / rate * 1000)
+
+    }
+
+    const goNext = () => {
+        const { pathname, query } = props.location;
+        props.history.push(pathname + "?" + stringify({ ...query, index: parseInt(index) + 1 }))
+    }
+
+
+    const render = function () {
+
+        return (
+            <div className={styles.container}>
+                <audio ref={player}>
+                    <source ref={source} type="audio/mpeg" />
+                    您的浏览器不支持 audio 元素。
+                </audio>
+                <Spin spinning={loading}>
+                    <div className={styles.tip}><img src={point}></img>请点读</div>
+
+                    {index != 0 ? <div className={styles.prev} onClick={() => props.history.go(-1)}><img src={prev}></img></div> : ""}
+                    {index < idArr.length - 1 ? <div className={styles.next} onClick={goNext}><img src={next}></img></div> : ""}
+
+                    {mp3Times.map((i, index) => <div key={index}>
+                        <div onClick={() => play(index)} className={styles.mask} style={{ top: tops[index] + "px", height: index == 0 ? (tops[1] - tops[0]) + "px" : "100%" }}></div>
+                    </div>)}
+                    <img src={picture} className={styles.bgImg}></img>
+                </Spin>
+
+            </div>
+        );
+    };
+    return render();
+};
+
+export default Read;
