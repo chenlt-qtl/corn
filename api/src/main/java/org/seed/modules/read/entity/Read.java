@@ -1,53 +1,38 @@
-package org.seed.modules.word.entity;
+package org.seed.modules.read.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.seed.common.util.UpLoadUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
 /**
- * @Description: word_sentence
+ * @Description: 点读
  * @author： jeecg-boot
- * @date：   2019-08-22
+ * @date：   2023-07-30
  * @version： V1.0
  */
 @Data
-@TableName("word_sentence")
-public class Sentence implements Serializable {
+@TableName("`read`")
+public class Read implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**articleId*/
 	@Excel(name = "articleId", width = 15)
-	private Long articleId;
-	/**content*/
-	@Excel(name = "content", width = 15)
-	private java.lang.String content;
+	private java.lang.Integer articleId;
 
-	@Excel(name = "mp3", width = 15)
-	private java.lang.String mp3;
+	private java.lang.Integer nextArticleId;
 
-	//mp3时间，格式（startTime,endTime）,单位秒
-	private java.lang.String mp3Time;
-
-	@Excel(name = "picture", width = 15)
-	private java.lang.String picture;
-
-	@Excel(name = "idx", width = 15)
-	private int idx;
-	/**status*/
-	@Excel(name = "status", width = 15)
-	private java.lang.String status;
+	/**position*/
+	@Excel(name = "position", width = 15)
+	private java.lang.String position;
 	/**createTime*/
 	@Excel(name = "createTime", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
@@ -64,5 +49,4 @@ public class Sentence implements Serializable {
 	/**updateBy*/
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
-
 }

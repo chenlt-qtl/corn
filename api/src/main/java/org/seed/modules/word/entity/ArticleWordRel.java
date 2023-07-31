@@ -26,7 +26,7 @@ public class ArticleWordRel implements Serializable {
 	private java.lang.String id;
 	/**sentenceId*/
 	@Excel(name = "articleId", width = 15)
-	private java.lang.String articleId;
+	private Long articleId;
 	/**wordId*/
 	@Excel(name = "wordId", width = 15)
 	private java.lang.String wordId;

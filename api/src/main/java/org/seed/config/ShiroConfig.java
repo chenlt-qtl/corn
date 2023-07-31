@@ -66,6 +66,7 @@ public class ShiroConfig {
 		filterChainDefinitionMap.put("/**/*.woff", "anon");
 		filterChainDefinitionMap.put("/**/*.woff2", "anon");
 		filterChainDefinitionMap.put("/**/*.ttf", "anon");
+		filterChainDefinitionMap.put("/api/read/**", "anon");
 //		filterChainDefinitionMap.put("/druid/**", "anon");
 //		filterChainDefinitionMap.put("/swagger-ui.html", "anon");
 //		filterChainDefinitionMap.put("/swagger**/**", "anon");

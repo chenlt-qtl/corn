@@ -44,7 +44,8 @@ public class SentenceServiceImpl extends ServiceImpl<SentenceMapper, Sentence> i
         return sentences;
     }
 
-    public void saveSentences(String articleId, int type, List<SentenceVo> sentences) {
+    @Override
+    public void saveSentences(Long articleId, int type, List<SentenceVo> sentences) {
 
         if (sentences.size() == 1 && sentences.get(0).getId() != null) {//修改
             SentenceVo sentenceVo = sentences.get(0);

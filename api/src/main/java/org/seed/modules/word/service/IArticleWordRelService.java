@@ -13,17 +13,17 @@ import java.util.List;
  */
 public interface IArticleWordRelService extends IService<ArticleWordRel> {
 
-    void saveRels(String articleId, int type, String[] addWordNames, String[] removeWordNames);
+    void saveRels(Long articleId, int type, String[] addWordNames, String[] removeWordNames);
 
-    void saveRels(String articleId, String wordId);
+    void saveRels(Long articleId, String wordId);
 
-    ArticleWordRel getRel(String articleId, String wordId);
+    ArticleWordRel getRel(Long articleId, String wordId);
 
-    void removeByWordNames(String articleId, String[] wordNames);
+    void removeByWordNames(Long articleId, String[] wordNames);
 
-    List<String> getRemoveWordIds(String articleId, List<String> wordIds);
+    List<String> getRemoveWordIds(Long articleId, List<String> wordIds);
 
-    void removeRelByArticle(String articleId, String[] wordNames);
+    void removeRelByArticle(Long articleId, String[] wordNames);
 
     void removeAricleRel(ArticleWordRel articleWordRel);
 }

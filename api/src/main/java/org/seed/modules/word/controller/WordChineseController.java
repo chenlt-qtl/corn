@@ -242,13 +242,13 @@ public class WordChineseController {
      * @return
      */
     @GetMapping(value = "/queryByWordName")
-    public Result queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = false) String articleId) throws Exception {
+    public Result queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = false) Long articleId) throws Exception {
 
         WordChineseVo wordChineseVo = new WordChineseVo(wordChineseService.getWord(wordName));
         String wordId = wordChineseVo.getId();
 
         wordChineseVo.setRelWithUser(wordUserService.getRel(wordId) != null);
-        if (StringUtils.isNotBlank(articleId)) {
+        if (articleId != null) {
             wordChineseVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
         }
 

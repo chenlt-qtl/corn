@@ -14,8 +14,8 @@ import java.util.List;
  */
 public interface ArticleWordRelMapper extends BaseMapper<ArticleWordRel> {
 
-    void removeByWordName(@Param("articleId") String articleId, @Param("removeWordNames") String[] removeWordNames);
+    void removeByWordName(@Param("articleId") Long articleId, @Param("removeWordNames") String[] removeWordNames);
 
-    List<String> getUsedWordIds(@Param("articleId") String articleId, @Param("userName") String userName, @Param("wordIds") List<String> wordIds);
+    List<String> getUsedWordIds(@Param("articleId") Long articleId, @Param("userName") String userName, @Param("wordIds") List<String> wordIds);
 
 }

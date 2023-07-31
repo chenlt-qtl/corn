@@ -32,18 +32,18 @@ public class ArticleWordRelController {
     /**
      * 分页列表查询
      *
-     * @param ArticleWordRel
+     * @param articleWordRel
      * @param pageNo
      * @param pageSize
      * @param req
      * @return
      */
     @GetMapping(value = "/list")
-    public Result queryPageList(ArticleWordRel ArticleWordRel,
+    public Result queryPageList(ArticleWordRel articleWordRel,
                                 @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                 HttpServletRequest req) {
-        QueryWrapper<ArticleWordRel> queryWrapper = QueryGenerator.initQueryWrapper(ArticleWordRel, req.getParameterMap());
+        QueryWrapper<ArticleWordRel> queryWrapper = QueryGenerator.initQueryWrapper(articleWordRel, req.getParameterMap());
         Page<ArticleWordRel> page = new Page<ArticleWordRel>(pageNo, pageSize);
         IPage<ArticleWordRel> pageList = ArticleWordRelService.page(page, queryWrapper);
 
@@ -94,7 +94,7 @@ public class ArticleWordRelController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public Result delete(@RequestParam(name = "wordId", required = true) String wordId, @RequestParam(name = "articleId", required = true) String articleId) {
+    public Result delete(@RequestParam(name = "wordId", required = true) String wordId, @RequestParam(name = "articleId", required = true) Long articleId) {
         ArticleWordRel articleWordRel = ArticleWordRelService.getRel(articleId, wordId);
         if (articleWordRel == null) {
             throw new CornException("未找到对应实体");

@@ -223,18 +223,18 @@ public class WordController {
      * @return
      */
     @GetMapping(value = "/queryByWordName")
-    public Result queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = false) String articleId) {
+    public Result queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = false) Long articleId) {
 
-            WordVo wordVo = new WordVo(wordService.getWord(wordName));
-            String wordId = wordVo.getId();
+        WordVo wordVo = new WordVo(wordService.getWord(wordName));
+        String wordId = wordVo.getId();
 
-            wordVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
-            wordVo.setSentences(sentenceService.getSentencesByWord(wordName));
-            wordVo.setRelWithUser(wordUserService.getRel(wordId) != null);
-            if (StringUtils.isNotBlank(articleId)) {
-                wordVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
-            }
-            return ResultUtils.okData(wordVo);
+        wordVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
+        wordVo.setSentences(sentenceService.getSentencesByWord(wordName));
+        wordVo.setRelWithUser(wordUserService.getRel(wordId) != null);
+        if (articleId != null) {
+            wordVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
+        }
+        return ResultUtils.okData(wordVo);
 
     }
 

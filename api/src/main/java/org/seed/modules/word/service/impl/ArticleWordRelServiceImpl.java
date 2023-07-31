@@ -43,7 +43,7 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     private IWordChineseService wordChineseService;
 
     @Override
-    public void saveRels(String articleId,int type, String[] addWordNames, String[] removeWordNames) {
+    public void saveRels(Long articleId,int type, String[] addWordNames, String[] removeWordNames) {
         if (removeWordNames.length > 0) {
             removeRelByArticle(articleId, removeWordNames);//删除与文章、用户的关联
         }
@@ -91,7 +91,7 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     }
 
     @Override
-    public void saveRels(String articleId, String wordId) {
+    public void saveRels(Long articleId, String wordId) {
 
 
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
@@ -114,7 +114,7 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     }
 
     @Override
-    public ArticleWordRel getRel(String articleId, String wordId) {
+    public ArticleWordRel getRel(Long articleId, String wordId) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<ArticleWordRel> wrapper = new QueryWrapper();
         wrapper.eq("article_id", articleId);
@@ -128,12 +128,12 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     }
 
     @Override
-    public void removeByWordNames(String articleId, String[] wordNames) {
+    public void removeByWordNames(Long articleId, String[] wordNames) {
         articleWordRelMapper.removeByWordName(articleId, wordNames);
     }
 
     @Override
-    public void removeRelByArticle(String articleId, String[] wordNames) {
+    public void removeRelByArticle(Long articleId, String[] wordNames) {
         removeByWordNames(articleId, wordNames);
         QueryWrapper<Word> wordWrapper = new QueryWrapper();
         wordWrapper.in("word_name", wordNames);
@@ -163,7 +163,7 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
      * @return
      */
     @Override
-    public List<String> getRemoveWordIds(String articleId, List<String> wordIds) {
+    public List<String> getRemoveWordIds(Long articleId, List<String> wordIds) {
 
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         List<String> usedWordIds = articleWordRelMapper.getUsedWordIds(articleId, sysUser.getUsername(), wordIds);//查出正在使用的wordId

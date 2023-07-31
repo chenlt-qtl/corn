@@ -22,8 +22,8 @@ public class Article implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 
 	private Integer type;
 	/**title*/

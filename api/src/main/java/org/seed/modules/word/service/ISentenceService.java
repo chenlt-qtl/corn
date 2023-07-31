@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface ISentenceService extends IService<Sentence> {
 
-    void saveSentences(String articleId, int type, List<SentenceVo> sentences);
+    void saveSentences(Long articleId, int type, List<SentenceVo> sentences);
 
     List<Sentence> getSentencesByWord(@Param("wordName") String wordName);
 }
