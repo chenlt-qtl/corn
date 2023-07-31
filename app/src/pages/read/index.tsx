@@ -7,12 +7,13 @@ import point from '@/assets/pointdown.svg'
 import { stringify } from 'qs';
 import { Spin } from 'antd';
 
-
+let timeoutIndex = 0;
 const Read = (props, ref) => {
 
     const { ids = "", index = 0 } = props.location.query;
     const idArr = ids.split(",")
     const id = idArr[index]
+    
 
 
     const player = useRef();
@@ -29,6 +30,7 @@ const Read = (props, ref) => {
     }, [id])
 
     const getData = async () => {
+        setActiveIndex(-1)
         setLoading(true)
         const res = await getArticle(id)
         const { article, sentences, read } = res.result;
@@ -48,6 +50,9 @@ const Read = (props, ref) => {
 
     const play = i => {
 
+        console.log("timeoutIndex",timeoutIndex);
+        
+        clearTimeout(timeoutIndex)
         setActiveIndex(i)
         player.current.pause();
 
@@ -59,9 +64,13 @@ const Read = (props, ref) => {
         player.current.play();
         player.current.playbackRate = rate;
 
-        setTimeout(() => {
+        timeoutIndex = setTimeout(() => {
             player.current.pause();
+            console.log("pause");
+            
         }, parseInt(times[1]) / rate * 1000)
+        console.log(111,timeoutIndex);
+        
 
     }
 
