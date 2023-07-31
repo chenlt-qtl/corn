@@ -19,9 +19,10 @@ const Read = (props, ref) => {
     const source = useRef();
 
     const [picture, setPicture] = useState<String>();
-    const [tops, setTops] = useState<[number]>([0, 0]);
-    const [mp3Times, setMp3Times] = useState<[String]>(["", ""]);
+    const [positions, setPositions] = useState<[]>();
+    const [mp3Times, setMp3Times] = useState<[String]>();
     const [loading, setLoading] = useState<boolean>(false);
+    const [activeIndex, setActiveIndex] = useState<number>(-1);
 
     useEffect(() => {
         getData();
@@ -35,7 +36,8 @@ const Read = (props, ref) => {
         player.current.load();
 
         setPicture(article.picture)
-        setTops((read.position || ",").split(","))
+        
+        setPositions((read.position || "").split("|"))
 
         const mp3Times = [];
         const { records } = sentences;
@@ -45,8 +47,9 @@ const Read = (props, ref) => {
     }
 
     const play = i => {
+
+        setActiveIndex(i)
         player.current.pause();
-        console.log(mp3Times[i]);
 
         const times = mp3Times[i].split(",")
         const rate = 0.7;
@@ -82,9 +85,12 @@ const Read = (props, ref) => {
                     {index != 0 ? <div className={styles.prev} onClick={() => props.history.go(-1)}><img src={prev}></img></div> : ""}
                     {index < idArr.length - 1 ? <div className={styles.next} onClick={goNext}><img src={next}></img></div> : ""}
 
-                    {mp3Times.map((i, index) => <div key={index}>
-                        <div onClick={() => play(index)} className={styles.mask} style={{ top: tops[index] + "px", height: index == 0 ? (tops[1] - tops[0]) + "px" : "100%" }}></div>
-                    </div>)}
+                    {(mp3Times || []).map((i, index) => {
+                        const positionArr = positions[index].split(",");
+                        return <div key={index}>
+                            <div onClick={() => play(index)} className={`${styles.mask} ${index==activeIndex?styles.active:""}`} style={{ top: positionArr[0], height: positionArr[1] }}></div>
+                        </div>
+                    })}
                     <img src={picture} className={styles.bgImg}></img>
                 </Spin>
 
