@@ -29,8 +29,8 @@ CREATE TABLE `word_article_new` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into word_article_new(`id_old`,`parent_id`,`parent_ids`,`type`,`picture`,`mp3`,`title`,`comment`,`status`,`create_time`,`create_by`,`update_time`,`update_by`)
-select `id`,`parent_id`,`parent_ids`,`type`,`picture`,`mp3`,`title`,`comment`,`status`,`create_time`,`create_by`,`update_time`,`update_by` from word_article ;
+insert into word_article_new(`id_old`,`type`,`picture`,`mp3`,`title`,`comment`,`status`,`create_time`,`create_by`,`update_time`,`update_by`)
+select `id`,`type`,`picture`,`mp3`,`title`,`comment`,`status`,`create_time`,`create_by`,`update_time`,`update_by` from word_article ;
 
 
 alter table word_article add column id_new bigint(20);
@@ -44,3 +44,5 @@ update word_article_word_rel,word_article set word_article_word_rel.article_id=w
 
 drop table word_article;
 rename table word_article_new to word_article;
+
+--已执行
