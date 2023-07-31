@@ -28,8 +28,6 @@ public class Read implements Serializable {
 	@Excel(name = "articleId", width = 15)
 	private java.lang.Integer articleId;
 
-	private java.lang.Integer nextArticleId;
-
 	/**position*/
 	@Excel(name = "position", width = 15)
 	private java.lang.String position;

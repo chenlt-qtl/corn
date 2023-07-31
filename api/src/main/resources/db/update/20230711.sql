@@ -3,7 +3,6 @@ alter table word_sentence add column `mp3_time` varchar(50) after mp3;
 CREATE TABLE `read` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `article_id` bigint(20) DEFAULT NULL,
-  `next_article_id` bigint(20) DEFAULT NULL,
   `position` varchar (200) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `create_by` varchar(32) DEFAULT NULL,
