@@ -4,6 +4,7 @@ import { getArticle } from "@/services/read"
 import prev from '@/assets/fanhui.svg'
 import next from '@/assets/xiayibu.svg'
 import point from '@/assets/pointdown.svg'
+import test from '@/assets/微信截图_20230731150835.png'
 import { stringify } from 'qs';
 import { Spin } from 'antd';
 
