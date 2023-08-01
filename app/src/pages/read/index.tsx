@@ -4,7 +4,6 @@ import { getArticle } from "@/services/read"
 import prev from '@/assets/fanhui.svg'
 import next from '@/assets/xiayibu.svg'
 import point from '@/assets/pointdown.svg'
-import test from '@/assets/微信截图_20230731150835.png'
 import { stringify } from 'qs';
 import { Spin } from 'antd';
 import { doPlay } from '@/utils/wordUtils'
@@ -84,7 +83,7 @@ const Read = (props, ref) => {
                             <div onClick={() => onPlay(index)} className={`${styles.mask} ${index == activeIndex ? styles.active : ""}`} style={{ top: positionArr[0], height: positionArr[1] }}></div>
                         </div>
                     })}
-                    <img src={test} className={styles.bgImg}></img>
+                    <img src={picture} className={styles.bgImg}></img>
                 </Spin>
 
             </div>
