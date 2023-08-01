@@ -1,8 +1,11 @@
 // https://umijs.org/config/
 import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
+import CompressionWebpackPlugin from 'compression-webpack-plugin';
 import proxy from './proxy';
 import menus from './menu';
+
+const prodGzipList = ['js', 'css']
 
 const { REACT_APP_ENV } = process.env;
 
@@ -61,5 +64,15 @@ export default defineConfig({
   },
   define: {
     publicPath: REACT_APP_ENV == "dev" ? "http://localhost:89" : "http://42.192.15.59"
+  },
+  chainWebpack: config => {
+    config.plugin('compression-webpack-plugin').use(
+      new CompressionWebpackPlugin({
+        algorithm: 'gzip',//指定生成gzip格式
+        test: new RegExp('\\.(' + prodGzipList.join('|') + ')$'),//匹配哪些格式文件需要压缩
+        threshold: 10240,//对超过10K的数据进行压缩
+        minRatio: 0.6//压缩比例，值为0 ~ 1
+      })
+    )
   }
 });
