@@ -8,6 +8,8 @@ import WordList from '../wordList';
 import SentenceList from '../sentenceList';
 import WordDetailModal from '../wordDetailModal';
 import { Link, history, connect } from 'umi';
+import { doPlay } from '@/utils/wordUtils'
+
 
 export interface ArticleDetailProps {
     match: object
@@ -51,27 +53,22 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
         setEditModalVisible(true);
     }
 
-    const play = (src: string, currentTime: number = 0, duration: number = -1) => {
+    const play = (src: string, startTime: number = 0, endTime: number = 0) => {
         let player;
         
         if (src) {
-
             player = player2.current;//有播放源的用player2
             player1.current!.pause();
             source.current!.src = src;
             player.load();
+            
         } else {
             player = player1.current;//没有播放源的用player1
             player2.current!.pause();
         }
-        //单位秒
-        player.currentTime = currentTime;
-        player.play();
-        if (duration >= 0) {
-            setTimeout(() => {
-                player.pause();
-            }, duration * 1000)
-        }
+        
+        doPlay(player,startTime,endTime,1)
+
     }
 
     

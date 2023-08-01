@@ -5,7 +5,7 @@ import styles from './styles.less';
 import { PlusCircleOutlined, EditOutlined, PlayCircleOutlined, DeleteOutlined, FileAddOutlined } from '@ant-design/icons';
 import { SentenceItem } from '@/data/word';
 import SentenceEditModal from './SentenceEditModal';
-import { splipSentences, timeIntervalReg as reg ,getMp3Time} from '@/utils/wordUtils'
+import { splipSentences, timeIntervalReg as reg, getMp3Time } from '@/utils/wordUtils'
 import { connect, WordState } from 'umi';
 
 export interface SentenceListProps {
@@ -61,8 +61,8 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
     }
 
     const openEditModel = (item: SentenceItem, single: boolean) => {
-        if(!item.mp3Time){
-            item.mp3Time = getMp3Time(item.content||"")
+        if (!item.mp3Time) {
+            item.mp3Time = getMp3Time(item.content || "")
         }
         setSentence(item);
         setEditModalVisible(true);
@@ -83,10 +83,15 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
     }
 
     const getActions = (item: SentenceItem): React.ReactNode[] => {
-        const actions = [
-            <EditOutlined onClick={() => { openEditModel(item, true) }} />,];
+
+        const actions = [<>{item.idx}</>,
+        <EditOutlined onClick={() => { openEditModel(item, true) }} />,];
         if (item.mp3) {
             actions.push(<PlayCircleOutlined />);
+        }
+        if (item.mp3Time) {
+            const timeArr = item.mp3Time.split(",")
+            actions.push(<>Mp3 Time: {timeArr[0]} - {parseFloat(timeArr[1]) + parseInt(timeArr[0])}</>)
         }
         actions.push(
             <Popconfirm
@@ -122,9 +127,7 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
                 const mp3Time = sentence.mp3Time;
                 const timeArr = mp3Time.split(",");
                 if (timeArr.length == 2) {
-                    const startTime = timeArr[0]
-                    const duration = timeArr[1]
-                    play(null, startTime, duration);
+                    play(null, timeArr[0], timeArr[1]);
                 }
             }
         }

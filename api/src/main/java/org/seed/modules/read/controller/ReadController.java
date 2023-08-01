@@ -89,7 +89,7 @@ public class ReadController {
 	 * @param read
 	 * @return
 	 */
-	@PutMapping(value = "/{id}")
+	@PutMapping
 	public Result edit(@RequestBody Read read) {
 		Read readEntity = readService.getById(read.getId());
 		if(readEntity==null) {

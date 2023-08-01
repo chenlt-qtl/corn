@@ -18,7 +18,7 @@ const Mp3Time: React.FC = (props) => {
             const timeArr = value.split(",")
             if (timeArr.length == 2) {
                 const startTime = parseInt(timeArr[0])
-                const duration = parseInt(timeArr[1])
+                const duration = parseFloat(timeArr[1])
                 setStartTime(startTime)
                 setEndTime(startTime + duration)
             }

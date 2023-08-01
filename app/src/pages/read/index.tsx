@@ -7,6 +7,7 @@ import point from '@/assets/pointdown.svg'
 import test from '@/assets/微信截图_20230731150835.png'
 import { stringify } from 'qs';
 import { Spin } from 'antd';
+import { doPlay } from '@/utils/wordUtils'
 
 let timeoutIndex = 0;
 const Read = (props, ref) => {
@@ -14,7 +15,7 @@ const Read = (props, ref) => {
     const { ids = "", index = 0 } = props.location.query;
     const idArr = ids.split(",")
     const id = idArr[index]
-    
+
 
 
     const player = useRef();
@@ -39,7 +40,7 @@ const Read = (props, ref) => {
         player.current.load();
 
         setPicture(article.picture)
-        
+
         setPositions((read.position || "").split("|"))
 
         const mp3Times = [];
@@ -49,29 +50,11 @@ const Read = (props, ref) => {
         setLoading(false)
     }
 
-    const play = i => {
+    const onPlay = i => {
 
-        console.log("timeoutIndex",timeoutIndex);
-        
-        clearTimeout(timeoutIndex)
         setActiveIndex(i)
-        player.current.pause();
-
         const times = mp3Times[i].split(",")
-        const rate = 0.7;
-
-        //单位秒
-        player.current.currentTime = times[0];
-        player.current.play();
-        player.current.playbackRate = rate;
-
-        timeoutIndex = setTimeout(() => {
-            player.current.pause();
-            console.log("pause");
-            
-        }, parseInt(times[1]) / rate * 1000)
-        console.log(111,timeoutIndex);
-        
+        doPlay(player.current,times[0],times[1],0.7)
 
     }
 
@@ -98,10 +81,10 @@ const Read = (props, ref) => {
                     {(mp3Times || []).map((i, index) => {
                         const positionArr = positions[index].split(",");
                         return <div key={index}>
-                            <div onClick={() => play(index)} className={`${styles.mask} ${index==activeIndex?styles.active:""}`} style={{ top: positionArr[0], height: positionArr[1] }}></div>
+                            <div onClick={() => onPlay(index)} className={`${styles.mask} ${index == activeIndex ? styles.active : ""}`} style={{ top: positionArr[0], height: positionArr[1] }}></div>
                         </div>
                     })}
-                    <img src={picture} className={styles.bgImg}></img>
+                    <img src={test} className={styles.bgImg}></img>
                 </Spin>
 
             </div>

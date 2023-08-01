@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Form, Input, Modal, Steps, Button, Spin } from 'antd';
+import { Form, Input, Modal, Steps, Button, Spin, InputNumber } from 'antd';
 import styles from './styles.less';
 import { SentenceItem, ArticleItem } from '@/data/word';
 import { saveSentence } from '@/services/article';
@@ -56,7 +56,7 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
         } else {//提交 
             setLoading(true);
 
-            const { mp3, mp3Time, picture } = formValue;
+            const { mp3, mp3Time, picture, idx } = formValue;
 
             const article: ArticleItem = { id: articleId, type: 0 };
             article.sentences = sentences.map(sentence => {
@@ -78,6 +78,7 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
                 mp3 && (article.sentences[0].mp3 = mp3);
                 picture && (article.sentences[0].picture = picture);
                 mp3Time && (article.sentences[0].mp3Time = mp3Time);
+                article.sentences[0].idx = idx;
                 if (sentence.id) {
                     article.sentences[0].id = sentence.id;
                 }
@@ -163,6 +164,9 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
                             </FormItem>
                             <FormItem name="mp3" label="音频">
                                 <Mp3Upload></Mp3Upload>
+                            </FormItem>
+                            <FormItem name="idx" label="序号">
+                                <InputNumber></InputNumber>
                             </FormItem>
                             {hasArticleMp3 ? <FormItem name="mp3Time" label="音频时间">
                                 <Mp3Time onPlay={onPlay} />

@@ -69,3 +69,40 @@ export const getMp3Time = (sentence: string) => {
     }
 }
 
+
+let timer;
+/**
+ * 根据时间播放音频
+ * @param player  播放器
+ * @param startTimeStr  开始时间
+ * @param endTimeStr 结束时间
+ * @param rate 播放速度
+ */
+export const doPlay = (player, startTimeStr = "0", durationStr = "0", rate) => {
+
+    console.log("times", startTimeStr, durationStr);
+
+    //先重置
+    clearTimeout(timer)
+    player.pause();
+
+    const startTime = parseInt(startTimeStr)//秒
+    const duration = parseFloat(durationStr)//毫秒
+
+    player.currentTime = startTime;
+    player.playbackRate = rate;//速率
+
+    player.play();
+
+    if (duration) {
+
+        const realDuration = duration / rate;
+        console.log("duration", realDuration);
+
+        timer = setTimeout(() => {
+            player.pause();
+        }, realDuration * 1000)
+    }
+
+}
+
