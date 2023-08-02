@@ -99,7 +99,7 @@ const Read = (props, ref) => {
                 <Spin spinning={loading}>
                     <div className={styles.content}>
                         <div className={styles.tip}><img src={point}></img>请点读</div>
-                        <div className={styles.picture}>
+                        <div className={styles.picture} style={{background:'url('+picture+")"}}>
                         {(mp3Times || []).map((i, index) => {
                             const positionArr = positions[index].split(",");
                             return <div key={index} onClick={() => onPlay(index)}
@@ -107,8 +107,8 @@ const Read = (props, ref) => {
                                 style={{ top: positionArr[0], height: positionArr[1] }}></div>
                         })}
                         </div>
-                        <img src={picture} className={styles.bgImg}>
-                        </img>
+                        {/* <img src={picture} className={styles.bgImg}>
+                        </img> */}
                     </div>
                 </Spin>
                 <div className={styles.toolbar}>
