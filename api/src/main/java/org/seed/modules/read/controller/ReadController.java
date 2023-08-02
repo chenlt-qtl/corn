@@ -102,6 +102,32 @@ public class ReadController {
 		
 
 	}
+
+	/**
+	 *  编辑
+	 * @param read
+	 * @return
+	 */
+	@PutMapping("/article")
+	public Result editByArticle(@RequestBody Read read) {
+
+		if(read.getArticleId()==null){
+			throw new CornException("请输入articelId");
+		}
+		QueryWrapper<Read> queryWrapper = new QueryWrapper<Read>();
+		queryWrapper.eq("article_id",read.getArticleId());
+		Read readEntity = readService.getOne(queryWrapper);
+
+		if(readEntity==null) {
+			throw new CornException("未找到对应实体");
+		}else {
+			read.setId(readEntity.getId());
+			boolean ok = readService.updateById(read);
+			return ResultUtils.ok("修改成功!");
+		}
+
+
+	}
 	
 	/**
 	  *   通过id删除
