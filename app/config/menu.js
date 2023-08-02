@@ -88,7 +88,7 @@ export default {
                     component: './game/play/cnGame',
                 },
                 {
-                    path: '/read',
+                    path: '/read/:mId',
                     component: './read',
                 },
             ]

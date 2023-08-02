@@ -1,3 +1,4 @@
+//最外面的壳
 .container {
     margin     : 0 auto;
     max-width  : 600px;
@@ -6,13 +7,21 @@
     height     : 100vh;
     font-family: "微软雅黑";
 
+    //图片部分
+    .content {
+        height        : 100vh;
+        padding-bottom: 60px;
+        overflow      : auto;
+        position      : relative;
+    }
+
     .mask {
         position: absolute;
         width   : 95%;
         z-index : 1;
         cursor  : pointer;
-        border: 3px solid #ccc;
-        left: 2%;
+        border  : 3px solid #ccc;
+        left    : 2%;
     }
 
     .tip {
@@ -32,38 +41,82 @@
 
     }
 
-    .next,
-    .prev {
-        img {
-            width: 3rem;
-        }
-    }
 
-    
-
-    .prev {
-        position: absolute;
-        left    : 40%;
-        top     : 1.2%;
-        cursor  : pointer;
-        z-index: 1;
-    }
-
-    .next {
-        position: absolute;
-        left    : 52%;
-        top     : 1.2%;
-        cursor  : pointer;
-        z-index: 1;
-
-    }
-
-    .bgImg{
+    .bgImg {
         width: 100%;
     }
 
-    .active{
-        border-color: rgba(243, 131, 3, 0.8);
+    .active {
+        border-color    : rgba(243, 131, 3, 0.8);
         background-color: rgba(243, 131, 3, 0.1);
+    }
+
+    .toolbar {
+        z-index        : 99;
+        position       : absolute;
+        bottom         : 0;
+        left           : 0;
+        right          : 0;
+        height         : 60px;
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+        gap            : 20px;
+
+        .btnDiv {
+            width     : 50px;
+            text-align: center;
+        }
+
+        .label {
+            margin-top : 5px;
+            font-weight: 600;
+        }
+    }
+
+
+}
+
+//菜单的内容
+.menuContent {
+    p {
+        width          : 230px;
+        display        : flex;
+        justify-content: space-between;
+        cursor         : pointer;
+        padding        : 5px;
+        border-bottom  : 1px solid #eee;
+        margin-bottom  : 0;
+
+        .title{
+            width: 300px;
+            text-align: right;
+        }
+
+        .subTitle {
+            color    : rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+        }
+    }
+
+    p:last-of-type {
+        border: none;
+    }
+
+    .activeMenu {
+        color: #c0392b;
+
+        .subTitle {
+            color: #c0392b;
+        }
+    }
+
+    .activeMenu::before {
+        content: "";
+        display: block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: #c0392b;
     }
 }
