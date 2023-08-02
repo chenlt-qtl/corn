@@ -7,6 +7,12 @@
     height     : 100vh;
     font-family: "微软雅黑";
 
+    :global{
+        .ant-spin-nested-loading{
+            z-index: 99;
+        }
+    }
+
     //图片部分
     .content {
         height        : 100vh;
@@ -79,7 +85,7 @@
 
 //菜单的内容
 .menuContent {
-    p {
+    >div {
         width          : 230px;
         display        : flex;
         justify-content: space-between;
@@ -87,19 +93,22 @@
         padding        : 5px;
         border-bottom  : 1px solid #eee;
         margin-bottom  : 0;
+        position: relative;
+        padding-left: 40px;
+        font-size: 22px;
 
         .title{
-            width: 300px;
             text-align: right;
         }
 
         .subTitle {
             color    : rgba(0, 0, 0, 0.3);
-            font-size: 14px;
+            font-size: 18px;
+            line-height: 32px;
         }
     }
 
-    p:last-of-type {
+    >div:last-of-type {
         border: none;
     }
 
@@ -109,14 +118,12 @@
         .subTitle {
             color: #c0392b;
         }
+
+        .caret{
+            position: absolute;
+            top:5px;
+            left:0;
+        }
     }
 
-    .activeMenu::before {
-        content: "";
-        display: block;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background-color: #c0392b;
-    }
 }

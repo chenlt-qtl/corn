@@ -2,16 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './styles.less'
 import { getArticle } from "@/services/read"
 import point from '@/assets/pointdown.svg'
-import { stringify } from 'qs';
 import { Spin, Button, Popover } from 'antd';
 import { doPlay } from '@/utils/wordUtils'
-import { MenuOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { MenuOutlined, LeftOutlined, RightOutlined, CaretRightOutlined } from '@ant-design/icons';
 
-const menuData = [{ ids: [32, 33], subTitle: "an,an,an,ang" }, { ids: [33, 34], subTitle: "ag,ank,an,ang" }]
+const menuData = [
+    { ids: [32, 33, 34, 35], subTitle: "at,an,ap,ad" },
+    { ids: [36, 37, 38, 39], subTitle: "am,ag,ash,amp" },
+    { ids: [40, 41, 42, 43], subTitle: "and,ack,ant,ed" },
+]
 
 const Read = (props, ref) => {
 
-    let { mId } = props.match.params;
+    let { mId = 0 } = props.match.params;
 
     if (mId >= menuData.length) {
         mId = 0;
@@ -30,11 +33,11 @@ const Read = (props, ref) => {
     const [index, setIndex] = useState<number>(0);
 
     useEffect(() => {
-        console.log("index", index);
-        getData();
-    }, [index])
+        setIndex(0)
+        getData(0);
+    }, [mId])
 
-    const getData = async () => {
+    const getData = async (index: number) => {
         setActiveIndex(-1)
         setLoading(true)
         const res = await getArticle(ids[index])
@@ -63,19 +66,22 @@ const Read = (props, ref) => {
 
     const content = (
         <div className={styles.menuContent}>
-            {menuData.map((menu, index) => <p key={index} onClick={() => onMenuClick(index)} className={mId==index?styles.activeMenu:""}>
+            {menuData.map((menu, index) => <div key={index} onClick={() => onMenuClick(index)} className={mId == index ? styles.activeMenu : ""}>
+                {mId == index ? <div className={styles.caret}><CaretRightOutlined /></div> : ""}
                 <div className={styles.title}>M{index + 1}</div>
-                 <span className={styles.subTitle}>{menu.subTitle}</span>
-                 </p>)}
+                <div className={styles.subTitle}>{menu.subTitle}</div>
+            </div>)}
         </div>
     );
 
     const onMenuClick = (moduleId: number) => {
+        props.history.push("/all/read/" + moduleId);
 
     }
 
     const go = (index: number) => {
         setIndex(index)
+        getData(index);
     }
 
 

@@ -91,6 +91,10 @@ export default {
                     path: '/read/:mId',
                     component: './read',
                 },
+                {
+                    path: '/read',
+                    component: './read',
+                },
             ]
         }
     ]
