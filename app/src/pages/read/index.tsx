@@ -64,6 +64,7 @@ const Read = (props, ref) => {
 
     }
 
+    //菜单
     const content = (
         <div className={styles.menuContent}>
             {menuData.map((menu, index) => <div key={index} onClick={() => onMenuClick(index)} className={mId == index ? styles.activeMenu : ""}>
@@ -74,11 +75,13 @@ const Read = (props, ref) => {
         </div>
     );
 
+    //菜单点击事件
     const onMenuClick = (moduleId: number) => {
         props.history.push("/all/read/" + moduleId);
 
     }
 
+    //翻页
     const go = (index: number) => {
         setIndex(index)
         getData(index);
@@ -96,14 +99,16 @@ const Read = (props, ref) => {
                 <Spin spinning={loading}>
                     <div className={styles.content}>
                         <div className={styles.tip}><img src={point}></img>请点读</div>
-
+                        <div className={styles.picture}>
                         {(mp3Times || []).map((i, index) => {
                             const positionArr = positions[index].split(",");
-                            return <div key={index}>
-                                <div onClick={() => onPlay(index)} className={`${styles.mask} ${index == activeIndex ? styles.active : ""}`} style={{ top: positionArr[0], height: positionArr[1] }}></div>
-                            </div>
+                            return <div key={index} onClick={() => onPlay(index)}
+                                className={`${styles.mask} ${index == activeIndex ? styles.active : ""}`}
+                                style={{ top: positionArr[0], height: positionArr[1] }}></div>
                         })}
-                        <img src={picture} className={styles.bgImg}></img>
+                        </div>
+                        <img src={picture} className={styles.bgImg}>
+                        </img>
                     </div>
                 </Spin>
                 <div className={styles.toolbar}>
