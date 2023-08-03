@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './styles.less'
 import { getArticle } from "@/services/read"
-import point from '@/assets/pointdown.svg'
 import { Spin, Button, Popover } from 'antd';
 import { doPlay } from '@/utils/wordUtils'
 import { MenuOutlined, LeftOutlined, RightOutlined, CaretRightOutlined } from '@ant-design/icons';
@@ -16,7 +15,7 @@ const Read = (props, ref) => {
 
     let { mId = 0 } = props.match.params;
 
-    if (mId >= menuData.length) {
+    if (mId * 1 >= menuData.length) {
         mId = 0;
     }
 
@@ -98,17 +97,19 @@ const Read = (props, ref) => {
                 </audio>
                 <Spin spinning={loading}>
                     <div className={styles.content}>
-                        <div className={styles.tip}><img src={point}></img>请点读</div>
-                        <div className={styles.picture} style={{background:'url('+picture+")"}}>
-                        {(mp3Times || []).map((i, index) => {
-                            const positionArr = positions[index].split(",");
-                            return <div key={index} onClick={() => onPlay(index)}
-                                className={`${styles.mask} ${index == activeIndex ? styles.active : ""}`}
-                                style={{ top: positionArr[0], height: positionArr[1] }}></div>
-                        })}
+                        <div className={styles.picture}>
+                            {/*点读区域absolute*/}
+                                {(mp3Times || []).map((i, index) => {
+                                    const positionArr = positions[index].split(",");
+                                    return <div key={index} onClick={() => onPlay(index)}
+                                        className={`${styles.mask} ${index == activeIndex ? styles.active : ""}`}
+                                        style={{ top: positionArr[0], height: positionArr[1] }}></div>
+                                })}
+
+                                {/**真正有占空间的元素 */}
+                            <img src={picture}></img>
                         </div>
-                        {/* <img src={picture} className={styles.bgImg}>
-                        </img> */}
+                        {/*  */}
                     </div>
                 </Spin>
                 <div className={styles.toolbar}>
