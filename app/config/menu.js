@@ -88,6 +88,10 @@ export default {
                     component: './game/play/cnGame',
                 },
                 {
+                    path: '/read/:mId',
+                    component: './read',
+                },
+                {
                     path: '/read',
                     component: './read',
                 },
