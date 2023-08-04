@@ -2,7 +2,7 @@ import { Modal, Row, Col, message } from 'antd';
 import React, { useState, useEffect } from 'react';
 import styles from './styles.less'
 import { useRef } from 'react';
-import { get } from "@/services/card"
+import { get } from "@/services/system"
 import EditModal from './editModal';
 
 const staticData = [3, 2, 1, -1, -2, -3]

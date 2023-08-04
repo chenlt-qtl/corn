@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, message, Button } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { update } from '@/services/card';
+import { update } from '@/services/system';
 
 
 

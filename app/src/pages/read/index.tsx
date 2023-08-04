@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './styles.less';
-import { getArticle } from '@/services/read';
+import { getArticle, getMenu } from '@/services/read';
 import { Spin, Button, Popover } from 'antd';
 import { doPlay } from '@/utils/wordUtils';
 import { MenuOutlined, LeftOutlined, RightOutlined, CaretRightOutlined } from '@ant-design/icons';
@@ -10,7 +10,11 @@ const menuData = [
     { ids: [36, 37, 38, 39], subTitle: 'am,ag,ash,amp' },
     { ids: [40, 41, 42, 43], subTitle: 'and,ack,ant,ed' },
     { ids: [44, 45, 46, 47], subTitle: 'en,et,eck,ell' },
+    { ids: [48, 49, 50, 51], subTitle: 'end,est,ip,it' },
 ];
+
+console.log(JSON.stringify(menuData));
+
 
 const Read = (props, ref) => {
     let { mId = 0 } = props.match.params;
@@ -32,6 +36,22 @@ const Read = (props, ref) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [activeIndex, setActiveIndex] = useState<number>(-1);
     const [index, setIndex] = useState<number>(0);
+
+    useEffect(() => {
+        getMenuData()
+    }, [])
+
+    const getMenuData = async () => {
+        const res = await getMenu();
+        if (res.success) {
+
+            const menuData = JSON.parse(res.result.value);
+            console.log(menuData);
+            
+
+        }
+
+    }
 
     useEffect(() => {
         setIndex(0);

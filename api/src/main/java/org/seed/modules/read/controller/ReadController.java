@@ -11,6 +11,8 @@ import org.seed.common.util.ResultUtils;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.modules.read.entity.Read;
 import org.seed.modules.read.service.IReadService;
+import org.seed.modules.system.entity.SysData;
+import org.seed.modules.system.service.ISysDataService;
 import org.seed.modules.word.entity.Article;
 import org.seed.modules.word.entity.Sentence;
 import org.seed.modules.word.service.IArticleService;
@@ -42,22 +44,24 @@ public class ReadController {
 
 	@Autowired
 	private ISentenceService sentenceService;
-	
+
+	@Autowired
+	private ISysDataService sysDataService;
 	/**
 	  * 分页列表查询
 	 * @param read
-	 * @param pageNo
-	 * @param pageSize
+	 * @param current
+	 * @param size
 	 * @param req
 	 * @return
 	 */
 	@GetMapping
 	public Result queryPageList(Read read,
-									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+									  @RequestParam(name="current", defaultValue="1") Integer current,
+									  @RequestParam(name="size", defaultValue="10") Integer size,
 									  HttpServletRequest req) {
 		QueryWrapper<Read> queryWrapper = QueryGenerator.initQueryWrapper(read, req.getParameterMap());
-		Page<Read> page = new Page<Read>(pageNo, pageSize);
+		Page<Read> page = new Page<Read>(current, size);
 		IPage<Read> pageList = readService.page(page, queryWrapper);
 
 		return ResultUtils.okData(pageList);
@@ -211,6 +215,24 @@ public class ReadController {
 			map.put("article", article);
 			map.put("sentences", pageList);
 			return ResultUtils.okData(map);
+		}
+
+	}
+
+	/**
+	 * 查询菜单数据
+	 * @return
+	 */
+	@GetMapping(value = "/menu")
+	public Result getMenuData() {
+		QueryWrapper<SysData> queryWrapper = new QueryWrapper();
+		queryWrapper.eq("code", "read-master");
+		SysData sysData = sysDataService.getOne(queryWrapper);
+		if(sysData==null) {
+			throw new CornException("未找到对应实体");
+		}else {
+			return ResultUtils.okData(sysData);
+
 		}
 
 	}
