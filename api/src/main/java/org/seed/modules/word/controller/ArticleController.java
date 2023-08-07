@@ -53,14 +53,12 @@ public class ArticleController {
      * @param article
      * @param pageNo
      * @param pageSize
-     * @param req
      * @return
      */
     @GetMapping(value = "/list")
     public Result queryPageList(Article article,
                                 @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
-                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                                HttpServletRequest req) {
+                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("create_by", sysUser.getUsername()).
