@@ -4,10 +4,6 @@ import { Spin } from 'antd';
 import Toolbar from '@/components/Read/Toolbar';
 import PointPicture from '@/components/Read/PointPicture';
 
-
-console.log("menuData",JSON.stringify(menuData));
-
-
 const Read = (props, ref) => {
 
 
