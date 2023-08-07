@@ -1,0 +1,30 @@
+//图片部分
+.content {
+    height        : 100vh;
+    padding-bottom: 60px;
+    overflow      : auto;
+
+    .picture {
+        position: relative;
+
+        img {
+            width: 100%;
+        }
+    }
+}
+
+//点读的区域
+.mask {
+    position: absolute;
+    width   : 95%;
+    z-index : 1;
+    cursor  : pointer;
+    border  : 3px solid #ccc;
+    left    : 2%;
+}
+
+//点中区域
+.active {
+    border-color    : rgba(243, 131, 3, 0.8);
+    background-color: rgba(243, 131, 3, 0.1);
+}

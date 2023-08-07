@@ -7,13 +7,14 @@ import { getMenu } from '@/services/read';
 import styles from "./styles.less"
 
 
-function Toolbar() {
-    let { mId = 0 } = props.match.params;
-    const [ids, setIds] = useState<[]>([]);
-    const [index, setIndex] = useState<number>(0);
-    const [ids, setIds] = useState<[]>([]);
+const Toolbar = (props, ref) => {
 
-    let menuData = [];
+    const { setArticleId } = props;
+
+    const [articleIds, setArticleIds] = useState<[]>([]);
+    const [articleIndex, setArticleIndex] = useState<number>(0);
+    const [menuData, setMenuData] = useState<[]>([]);
+    const [menuIndex, setMenuIndex] = useState<number>(-1);
 
     useEffect(() => {
         getMenuData()
@@ -23,33 +24,41 @@ function Toolbar() {
         const res = await getMenu();
         if (res.success) {
 
-            menuData = JSON.parse(res.result.value);
-            if (mId * 1 >= menuData.length) {
-                mId = 0;
-            }
-            console.log(mId, menuData[mId].ids);
-
-            setIds(menuData[mId].ids)
+            const menuData = JSON.parse(res.result.value);
+            setMenuData(menuData)
+            changeMenuIndex(menuData)
         }
 
     }
 
     useEffect(() => {
-        if (ids.length > 0) {
-            setIndex(0);
-            getData(0);
+        changeMenuIndex(menuData)
+    }, [props.match.params.menuIndex])
+
+    const changeMenuIndex = (menuData: []) => {
+        let menuIndex = props.match.params.menuIndex || 0;
+        if (menuIndex * 1 >= menuData.length) {
+            menuIndex = 0;
         }
-    }, [mId]);
+        setMenuIndex(menuIndex)
+        if (menuData.length > 0) {
+            const articleIds = menuData[menuIndex].ids || [];
+            setArticleIds(articleIds)
+            console.log("articleIds", articleIds);
+
+            articleIds.length > 0 && setArticleId(articleIds[0])
+        }
+    }
 
     //菜单点击事件
-    const onMenuClick = (moduleId: number) => {
-        props.history.push('/all/read/' + moduleId);
+    const onMenuClick = (menuIndex: number) => {
+        props.history.push('/all/read/' + menuIndex);
     };
 
     //翻页
     const go = (index: number) => {
-        setIndex(index);
-        getData(index);
+        setArticleIndex(index);
+        setArticleId(articleIds[index])
     };
 
     //菜单
@@ -59,9 +68,9 @@ function Toolbar() {
                 <div
                     key={index}
                     onClick={() => onMenuClick(index)}
-                    className={mId == index ? styles.activeMenu : ''}
+                    className={menuIndex == index ? styles.activeMenu : ''}
                 >
-                    {mId == index ? (
+                    {menuIndex == index ? (
                         <div className={styles.caret}>
                             <CaretRightOutlined />
                         </div>
@@ -86,10 +95,10 @@ function Toolbar() {
 
             <div className={styles.btnDiv}>
                 <Button
-                    onClick={() => go(index - 1)}
+                    onClick={() => go(articleIndex - 1)}
                     type="primary"
                     shape="circle"
-                    disabled={index == 0}
+                    disabled={articleIndex == 0}
                     icon={<LeftOutlined />}
                 />
                 <div className={styles.label}>上一页</div>
@@ -97,10 +106,10 @@ function Toolbar() {
 
             <div className={styles.btnDiv}>
                 <Button
-                    onClick={() => go(index + 1)}
+                    onClick={() => go(articleIndex + 1)}
                     type="primary"
                     shape="circle"
-                    disabled={index >= ids.length - 1}
+                    disabled={articleIndex >= articleIds.length - 1}
                     icon={<RightOutlined />}
                 />
                 <div className={styles.label}>下一页</div>
