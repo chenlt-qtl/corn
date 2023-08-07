@@ -8,15 +8,14 @@ const Read = (props, ref) => {
 
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [articleId, setArticleId] = useState<number>(0);
 
     const render = function () {
 
         return (
             <div className={styles.container}>
                 <Spin spinning={loading}>
-                    <PointPicture articleId={articleId} setLoading={setLoading}></PointPicture>
-                    <Toolbar setArticleId={setArticleId}></Toolbar>
+                    <PointPicture setLoading={setLoading}></PointPicture>
+                    <Toolbar></Toolbar>
                 </Spin>
 
             </div>

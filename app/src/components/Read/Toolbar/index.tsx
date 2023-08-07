@@ -141,5 +141,5 @@ export default connect(({ read: { rate } }) => (
     { rate })
     , dispatch => ({
         setRate: value => dispatch({ type: "read/refreshRate", payload: value }),
-        setArticle: value => dispatch({ type: "read/refreshArticleId", payload: value })
+        setArticleId: value => dispatch({ type: "read/refreshArticleId", payload: value })
     }))(withRouter(Toolbar));

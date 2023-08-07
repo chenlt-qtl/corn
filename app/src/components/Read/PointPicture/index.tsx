@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './styles.less';
 import { getArticle } from '@/services/read';
 import { doPlay } from '@/utils/wordUtils';
-
+import { connect } from 'umi';
 
 
 const PointPicture = props => {
 
 
-    const { articleId, setLoading } = props;
+    const { articleId, setLoading, rate } = props;
 
     const player = useRef();
     const source = useRef();
@@ -49,7 +49,7 @@ const PointPicture = props => {
     const onPlay = (i) => {
         setActiveIndex(i);
         const times = mp3Times[i].split(',');
-        doPlay(player.current, times[0], times[1], 0.7);
+        doPlay(player.current, times[0], times[1], rate);
     };
 
     const render = function () {
@@ -85,4 +85,4 @@ const PointPicture = props => {
     return render();
 };
 
-export default PointPicture;
+export default connect(({ rate, articleId }) => ({ rate, articleId }))(PointPicture);
