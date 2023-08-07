@@ -55,9 +55,9 @@ public class SentenceServiceImpl extends ServiceImpl<SentenceMapper, Sentence> i
             Sentence sentence = getById(sentenceVo.getId());
             sentenceVo.transSentence(sentence);
             updateById(sentence);
-            if(type == 0) {
+            if (type == 0) {
                 wordService.saveWord(sentenceVo);
-            }else{
+            } else {
                 wordChineseService.saveWord(sentenceVo);
             }
         } else {
@@ -68,7 +68,11 @@ public class SentenceServiceImpl extends ServiceImpl<SentenceMapper, Sentence> i
                 }
                 Sentence sentence = sentenceVo.toSentence();
                 sentence.setArticleId(articleId);
-                sentence.setIdx(++i);
+                if (sentenceVo.getIdx() != 0) {
+                    sentence.setIdx(sentenceVo.getIdx());
+                } else {
+                    sentence.setIdx(++i);
+                }
                 save(sentence);
 
                 sentenceVo.setId(sentence.getId());
