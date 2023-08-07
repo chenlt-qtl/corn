@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router-dom'
 import { MenuOutlined, LeftOutlined, RightOutlined, CaretRightOutlined } from '@ant-design/icons';
 import { Button, Popover } from 'antd';
+import { connect } from 'umi';
 
 import { getMenu } from '@/services/read';
 import styles from "./styles.less"
 
 
-const Toolbar = (props, ref) => {
+const Toolbar = props => {
 
-    const { setArticleId } = props;
+    const { setRate, setArticleId } = props;
 
     const [articleIds, setArticleIds] = useState<[]>([]);
     const [articleIndex, setArticleIndex] = useState<number>(0);
@@ -61,6 +62,14 @@ const Toolbar = (props, ref) => {
         setArticleId(articleIds[index])
     };
 
+    const changeRate = () => {
+        const rateArr = [1, 0.7, 0.5]
+        const { rate } = props;
+        const index = rateArr.indexOf(rate)
+        let newIndex = index === 0 ? 2 : index - 1;
+        setRate(rateArr[newIndex])
+    }
+
     //菜单
     const content = (
         <div className={styles.menuContent}>
@@ -95,6 +104,15 @@ const Toolbar = (props, ref) => {
 
             <div className={styles.btnDiv}>
                 <Button
+                    onClick={changeRate}
+                    type="primary"
+                    shape="circle"
+                >{props.rate}</Button>
+                <div className={styles.label}>语速</div>
+            </div>
+
+            <div className={styles.btnDiv}>
+                <Button
                     onClick={() => go(articleIndex - 1)}
                     type="primary"
                     shape="circle"
@@ -119,4 +137,9 @@ const Toolbar = (props, ref) => {
 }
 
 
-export default withRouter(Toolbar)
+export default connect(({ read: { rate } }) => (
+    { rate })
+    , dispatch => ({
+        setRate: value => dispatch({ type: "read/refreshRate", payload: value }),
+        setArticle: value => dispatch({ type: "read/refreshArticleId", payload: value })
+    }))(withRouter(Toolbar));
