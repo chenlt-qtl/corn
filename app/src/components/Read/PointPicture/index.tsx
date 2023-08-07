@@ -85,4 +85,4 @@ const PointPicture = props => {
     return render();
 };
 
-export default connect(({ rate, articleId }) => ({ rate, articleId }))(PointPicture);
+export default connect(({ read: { rate, articleId } }) => ({ rate, articleId }))(PointPicture);
