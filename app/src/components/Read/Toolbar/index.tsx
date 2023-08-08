@@ -45,10 +45,9 @@ const Toolbar = props => {
         if (menuData.length > 0) {
             const articleIds = menuData[menuIndex].ids || [];
             setArticleIds(articleIds)
-            console.log("articleIds", articleIds);
-
             articleIds.length > 0 && setArticleId(articleIds[0])
         }
+        setArticleIndex(0)
     }
 
     //菜单点击事件
