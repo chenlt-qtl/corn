@@ -5,16 +5,21 @@
   overflow    : hidden;
   transition  : all .3s;
 
-
   .toolbar {
     flex-shrink: 0;
     text-align : center;
     padding    : 10px 5px 20px 5px;
+    display: flex;
+    justify-content: space-between;
 
     :global {
       .ant-btn-round {
         border-radius: 5px;
       }
+    }
+
+    .menuToggle {
+      padding :0 5px;
     }
   }
 
@@ -68,7 +73,7 @@
       font-size    : 12px;
       padding-right: 7px;
       position     : relative;
-      overflow: hidden;
+      overflow     : hidden;
 
       .treeMenu {
         display: none;
@@ -79,14 +84,15 @@
         overflow     : hidden;
         text-overflow: ellipsis;
         white-space  : nowrap;
-        word-break: break-all;
+        word-break   : break-all;
 
         >span {
           display: inline-block;
           margin : 0 5px;
         }
       }
-      .treeBtn{
+
+      .treeBtn {
         flex-shrink: 0;
       }
     }
@@ -116,6 +122,7 @@
 
   .toolbar {
     padding: 10px 5px;
+    flex-direction: column;
   }
 
   .menuItem {

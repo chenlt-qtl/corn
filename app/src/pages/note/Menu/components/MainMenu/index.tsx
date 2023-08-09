@@ -4,7 +4,7 @@ import { connect } from 'umi';
 import EditFolderModal from '../../../components/EditFolderModal';
 import AddBtn from '../../../components/AddBtn';
 import NoteTree from './NoteTree';
-import { Modal, notification } from "antd"
+import { Button, Modal, notification } from "antd"
 import { ExclamationCircleOutlined, MenuOutlined } from '@ant-design/icons';
 import ChangeParentModal from '../../../components/ChangeParentModal';
 import { NoteNode } from '@/data/note'
@@ -64,14 +64,15 @@ const MainMenu: React.FC = (props, ref) => {
             }
         });
     }
+    const toggleMenu = () => {
+        props.onChangeMenuType(menuType === 3 ? 2 : 3)
+    }
 
     const togglerMenu = [{ icon: '&#xe8bf;', type: 2 }, { icon: '&#xe88e;', type: 1 }]
 
 
     const render = function () {
         const { listParent: { id }, treeSelectKey } = props.note;
-
-        const { onChangeMenuType } = props;
         const min = menuType === 2;
 
         const activeIds = min ? [isFolder(id) ? "0" : id] : [id, treeSelectKey]
@@ -81,8 +82,9 @@ const MainMenu: React.FC = (props, ref) => {
 
             <div className={`${styles.content} ${min ? styles.min : ""}`}>
                 <div className={styles.toolbar}>
-                    <MenuOutlined />
+                    <Button type="text" className={styles.menuToggle} onClick={toggleMenu}><MenuOutlined /></Button>
                     <AddBtn size={min ? "small" : ""} onAddFolder={onAddFolder}></AddBtn>
+                    <div></div>
                     <EditFolderModal data={editNode} visible={folderModalVisible} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
                 </div>
                 {
@@ -103,14 +105,6 @@ const MainMenu: React.FC = (props, ref) => {
                         {...props}
                     ></NoteTree>
                 </div>
-
-                    <div className={styles.toggler}>
-                        {togglerMenu.map(item =>
-                            <div key={item.type} className={styles.btn} onClick={() => onChangeMenuType(item.type)}>
-                                <span className='iconfont' dangerouslySetInnerHTML={{ __html: item.icon }}></span>
-                            </div>
-                        )}
-                    </div>
                     <ChangeParentModal treeData={treeData} node={editNode} onCancel={() => setParentModalVisible(false)} visible={parentModalVisible}></ChangeParentModal>
                 </>}
             </div >
