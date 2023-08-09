@@ -1,44 +1,52 @@
 .container {
 
-    --ruler       : 16px;
-    --color-bg    : #EBECF0;
-    --color-shadow: #BABECC;
-    --color-white : #FFF;
+  --ruler: 16px;
+  --color-bg: #EBECF0;
+  --color-shadow: #BABECC;
+  --color-white: #FFF;
 
-    flex            : 1;
-    display         : flex;
-    flex-direction  : column;
-    justify-content : center;
-    align-self      : center;
-    padding         : 20px;
-    background-color: var(--color-bg);
-    font-family     : "MicroSoft YaHei";
-    font-size       : var(--ruler);
-    letter-spacing  : -0.2px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+  padding: 20px;
+  background-color: var(--color-bg);
+  font-family: "MicroSoft YaHei";
+  font-size: var(--ruler);
+  letter-spacing: -0.2px;
 
-    ul {
-        padding: 0;
+  ul {
+    padding: 0;
+  }
+
+  .question {
+    text-align: center;
+  }
+
+  .answer {
+    li {
+      margin: 10px 20px;
+      text-align: center;
+      font-size: var(--ruler);
+      border-radius: calc(var(--ruler)*20);
+      padding: var(--ruler);
+      background-color: var(--color-bg);
+      text-shadow: 1px 1px 0 var(--color-white);
+
+      margin-right: calc(var(--ruler)/2);
+      box-shadow: 2px 2px 5px var(--color-shadow);
+      box-sizing: border-box;
+      transition: all 0.2s ease-in-out;
+
     }
 
-    .question {
-        text-align: center;
+    .green{
+        background-color: rgba(100, 255, 100, 0.3);
     }
 
-    .answer {
-        li {
-            margin          : 10px 20px;
-            text-align      : center;
-            font-size       : var(--ruler);
-            border-radius   : calc(var(--ruler)*20);
-            padding         : var(--ruler);
-            background-color: var(--color-bg);
-            text-shadow     : 1px 1px 0 var(--color-white);
-
-            margin-right: calc(var(--ruler)/2);
-            box-shadow  :  2px 2px 5px var(--color-shadow);
-            box-sizing: border-box;
-            transition: all 0.2s ease-in-out;
-
-        }
+    .red{
+        background-color: rgba(255, 100, 100, 0.3);
     }
+  }
 }

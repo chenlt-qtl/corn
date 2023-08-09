@@ -8,7 +8,7 @@ import tokenInterceptor from '@/utils/Interceptor';
 import defaultSettings from '../config/defaultSettings';
 
 
-const freePathReg = [/^\/all\/read/]
+const freePathReg = [/^\/all\/read/,/^\/all\/game/]
 
 const isFreeUrl = (pathname="") => {
   if (pathname == '/user/login') {
