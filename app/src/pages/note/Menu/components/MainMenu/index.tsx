@@ -5,7 +5,7 @@ import EditFolderModal from '../../../components/EditFolderModal';
 import AddBtn from '../../../components/AddBtn';
 import NoteTree from './NoteTree';
 import { Modal, notification } from "antd"
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, MenuOutlined } from '@ant-design/icons';
 import ChangeParentModal from '../../../components/ChangeParentModal';
 import { NoteNode } from '@/data/note'
 import { menuData, isFolder } from '../../../utils'
@@ -81,6 +81,7 @@ const MainMenu: React.FC = (props, ref) => {
 
             <div className={`${styles.content} ${min ? styles.min : ""}`}>
                 <div className={styles.toolbar}>
+                    <MenuOutlined />
                     <AddBtn size={min ? "small" : ""} onAddFolder={onAddFolder}></AddBtn>
                     <EditFolderModal data={editNode} visible={folderModalVisible} onCancel={() => setFolderModalVisible(false)}></EditFolderModal>
                 </div>

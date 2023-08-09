@@ -15,6 +15,7 @@ const ArticleList: React.FC<{}> = () => {
     const [total, setTotal] = useState<number>(0);
     const [pageNo, setPageNo] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(5);
+    const [searchStr, setSearchStr] = useState<string>("");
     const [createModalVisible, handleModalVisible] = useState<boolean>(false);
     const createForm = useRef();
 
@@ -25,10 +26,10 @@ const ArticleList: React.FC<{}> = () => {
 
     useEffect(() => {
         getTableData();
-    }, [pageNo, pageSize])
+    }, [pageNo, pageSize, searchStr])
 
     const getTableData = () => {
-        getArticleList({ type: 0, pageSize, pageNo }).then(res => {
+        getArticleList({ type: 0, pageSize, pageNo, title: searchStr }).then(res => {
             if (res) {
                 setListData(res.result.records);
                 setTotal(res.result.total);
@@ -65,10 +66,16 @@ const ArticleList: React.FC<{}> = () => {
         return actions;
     }
 
+    const handleSearch = value => {
+        setPageNo(1)
+        setSearchStr(value)
+
+    }
+
     return (
         <>
             <div className={styles.content}>
-                <Search placeholder="input search text" style={{ width: 200, marginRight: '20px' }} />
+                <Search placeholder="input search text" onSearch={handleSearch} style={{ width: 200, marginRight: '20px' }} />
                 <Button shape="circle" type="primary" onClick={handleAdd}>
                     <PlusOutlined />
                 </Button>

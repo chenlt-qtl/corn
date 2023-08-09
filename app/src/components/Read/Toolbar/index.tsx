@@ -42,6 +42,7 @@ const Toolbar = props => {
             menuIndex = 0;
         }
         setMenuIndex(menuIndex)
+        setArticleIndex(0)//重置文章位置
         if (menuData.length > 0) {
             const articleIds = menuData[menuIndex].ids || [];
             setArticleIds(articleIds)
