@@ -95,6 +95,10 @@ export default {
                     path: '/read',
                     component: './read',
                 },
+                {
+                    path: '/game',
+                    component: './Game',
+                },
             ]
         }
     ]
