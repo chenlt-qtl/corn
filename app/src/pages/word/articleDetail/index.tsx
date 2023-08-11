@@ -48,6 +48,11 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
         })
     }
 
+    useEffect(() => {
+        //mp3有变化 先播放一下
+        article.mp3 && doPlay(player1.current, "0", "0.0001", 1);
+    }, [article.mp3])
+
     const openEditModel = () => {
         createForm.current.setFormValue(article);
         setEditModalVisible(true);
@@ -55,23 +60,23 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
 
     const play = (src: string, startTime: number = 0, endTime: number = 0) => {
         let player;
-        
+
         if (src) {
             player = player2.current;//有播放源的用player2
             player1.current!.pause();
             source.current!.src = src;
             player.load();
-            
+
         } else {
             player = player1.current;//没有播放源的用player1
             player2.current!.pause();
         }
-        
-        doPlay(player,startTime,endTime,1)
+
+        doPlay(player, startTime, endTime, 1)
 
     }
 
-    
+
     const onSearchWord = (wordName: string) => {
         if (wordName) {
             setWordName(wordName);
