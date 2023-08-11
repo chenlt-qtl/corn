@@ -43,8 +43,9 @@ const PointPicture = props => {
         const { records } = sentences;
         records.map(record => mp3Times.push(record.mp3Time));
         setMp3Times(mp3Times);
+        setLoading(false)
         player.addEventListener("loadeddata", () => {
-            setLoading(false)
+            console.log("loadeddata");
         })
 
     };

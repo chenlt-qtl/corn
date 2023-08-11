@@ -99,7 +99,7 @@ export const doPlay = (player, startTimeStr = "0", durationStr = "0", rate) => {
         const realDuration = duration / rate;
         console.log("duration", realDuration);
 
-        player.addEventListener("play",()=>{
+        player.addEventListener("play", () => {
             timer = setTimeout(() => {
                 player.pause();
             }, realDuration * 1000)
