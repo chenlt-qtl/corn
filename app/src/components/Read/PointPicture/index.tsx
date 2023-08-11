@@ -44,9 +44,8 @@ const PointPicture = props => {
         records.map(record => mp3Times.push(record.mp3Time));
         setMp3Times(mp3Times);
         setLoading(false)
-        player.addEventListener("loadeddata", () => {
-            console.log("loadeddata");
-        })
+        //先播放一下
+        doPlay(player, "0", "0.0001", 1);
 
     };
 
