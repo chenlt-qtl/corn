@@ -80,8 +80,6 @@ let timer;
  */
 export const doPlay = (player, startTimeStr = "0", durationStr = "0", rate) => {
 
-    console.log("times", startTimeStr, durationStr);
-
     //先重置
     clearTimeout(timer)
     player.pause();

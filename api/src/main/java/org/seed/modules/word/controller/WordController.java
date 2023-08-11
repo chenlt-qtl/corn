@@ -76,7 +76,7 @@ public class WordController {
      * @param req
      * @return
      */
-    @GetMapping(value = "/listByGame")
+    @GetMapping(value = "/game/{gameId}")
     public Result listByGame(@PathVariable String gameId,
                              @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                              @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
@@ -87,7 +87,7 @@ public class WordController {
 
         Word word = new Word();
         QueryWrapper<Word> queryWrapper = QueryGenerator.initQueryWrapper(word, req.getParameterMap());
-        queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId);
+        queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId + "'");
         Page<Word> page = new Page<Word>(pageNo, pageSize);
         IPage<Word> pageList = wordService.page(page, queryWrapper);
 

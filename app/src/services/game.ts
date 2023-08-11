@@ -29,7 +29,7 @@ export async function updateGame(params: GameItem) {
 }
 
 export async function getEnWordByGame(params: WordListParam) {
-    return request('/api/word/word/listByGame?' + stringify(params));
+    return request('/api/word/word/game/' + params.gameId + "?" + stringify(params));
 }
 
 export async function getCnWordByGame(params: WordListParam) {
@@ -47,16 +47,16 @@ export async function relWithWords({ id, articleIds }) {
     });
 }
 
-export async function getGameLevelInfo(gameId:string) {
+export async function getGameLevelInfo(gameId: string) {
     return request('/api/game/game/level?gameId=' + gameId);
 }
 
-export async function getEnWordByGameLevel(gameId:string) {
-    return request('/api/word/word/listByGameLevel/'+gameId);
+export async function getEnWordByGameLevel(gameId: string) {
+    return request('/api/word/word/listByGameLevel/' + gameId);
 }
 
-export async function getCnWordByGameLevel(gameId:string) {
-    return request('/api/wordChinese/listByGameLevel/'+gameId);
+export async function getCnWordByGameLevel(gameId: string) {
+    return request('/api/wordChinese/listByGameLevel/' + gameId);
 }
 
 export async function getRandWord() {
