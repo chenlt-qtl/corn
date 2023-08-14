@@ -27,5 +27,6 @@ public class SentenceVo extends Sentence{
         sentence.setMp3(UpLoadUtil.realToDb(this.getMp3()));
         sentence.setMp3Time(this.getMp3Time());
         sentence.setIdx(this.getIdx());
+        sentence.setAcceptation(this.getAcceptation());
     }
 }
