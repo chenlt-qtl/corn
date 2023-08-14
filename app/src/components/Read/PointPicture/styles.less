@@ -1,39 +1,67 @@
 //图片部分
 .content {
-    height        : 100vh;
-    padding-bottom: 60px;
-    overflow      : auto;
+  height: 100vh;
+  padding-bottom: 60px;
+  overflow: auto;
+  position: relative;
 
-    .picture {
-        position: relative;
+  .picture {
+    position: relative;
 
-        img {
-            width: 100%;
-        }
+    img {
+      width: 100%;
     }
-
-    // :global {
-    //     .ant-message-notice-content {
-    //         background-color: #f6ffed;
-    //         border          : 1px solid #b7eb8f
-    //     }
-    // }
+  }
 }
 
 //点读的区域
 .mask {
-    position: absolute;
-    width   : 95%;
-    z-index : 1;
-    cursor  : pointer;
-    border  : 3px solid #ccc;
-    left    : 2%;
+  position: absolute;
+  width: 95%;
+  z-index: 1;
+  cursor: pointer;
+  border: 3px solid #ccc;
+  left: 2%;
 }
 
 
+//中文区域
+.chineseWin {
+  position: absolute;
+  top: -2px;
+  left: 20px;
+  right: 20px;
+  transition: .5s;
+  z-index: 2;
+  overflow: hidden;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+
+  .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+  }
+
+  .chinese {
+    padding: 5px 10px;
+    text-align: center;
+  }
+
+}
+
+
+.show {
+  max-height: 300px;
+}
+
+.hide {
+  max-height: 0;
+}
 
 //点中区域
 .active {
-    border-color    : rgba(243, 131, 3, 0.8);
-    background-color: rgba(243, 131, 3, 0.1);
+  border-color: rgba(243, 131, 3, 0.8);
+  background-color: rgba(243, 131, 3, 0.1);
 }
