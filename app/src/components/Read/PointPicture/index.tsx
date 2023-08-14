@@ -59,7 +59,7 @@ const PointPicture = props => {
         doPlay(player, times[0], times[1], rate);
         const sentence = sentenceList[i]
         setChinese(sentence.acceptation)
-        setChineseVisible(true)
+        sentence.acceptation ? setChineseVisible(true) : setChineseVisible(false)
     };
 
     const render = function () {
