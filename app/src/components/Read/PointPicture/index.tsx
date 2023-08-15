@@ -6,10 +6,10 @@ import { doPlay } from '@/utils/wordUtils';
 import Chinese from '../Chinese'
 
 let sentenceList;
+let player = new Audio();
 const PointPicture = props => {
 
-    const { articleId, setLoading, rate } = props;
-    const player = new Audio();
+    const { articleId, setLoading, rate } = props
 
     const [picture, setPicture] = useState<String>();
     const [positions, setPositions] = useState<[]>();
@@ -30,7 +30,6 @@ const PointPicture = props => {
         //状态复位
         setLoading(true);
         setActiveIndex(-1);
-        player.pause();
 
         //获取数据
         const res = await getArticle(articleId);
