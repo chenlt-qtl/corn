@@ -3,21 +3,19 @@ import { connect } from 'umi';
 import styles from './styles.less';
 import { getArticle } from '@/services/read';
 import { doPlay } from '@/utils/wordUtils';
-import { CloseOutlined } from '@ant-design/icons';
+import Chinese from '../Chinese'
 
-let player;
-let sentenceList;//保存句子信息，取中文的时候用
-
+let sentenceList;
 const PointPicture = props => {
 
     const { articleId, setLoading, rate } = props;
+    const player = new Audio();
 
     const [picture, setPicture] = useState<String>();
     const [positions, setPositions] = useState<[]>();
     const [mp3Times, setMp3Times] = useState<[String]>();
     const [activeIndex, setActiveIndex] = useState<number>(-1);
     const [chinese, setChinese] = useState<String>("");
-    const [chineseVisible, setChineseVisible] = useState<boolean>(false);
 
     useEffect(() => {
         getData();
@@ -29,8 +27,12 @@ const PointPicture = props => {
             return;
         }
 
+        //状态复位
         setLoading(true);
         setActiveIndex(-1);
+        player.pause();
+
+        //获取数据
         const res = await getArticle(articleId);
         const { article, sentences, read } = res.result;
         sentenceList = sentences;
@@ -40,7 +42,7 @@ const PointPicture = props => {
         setPositions((read.position || '').split('|'));
 
         //加载mp3
-        player = new Audio(article.mp3)
+        player.src = article.mp3;
         player.load();
 
         const mp3Times = [];
@@ -57,9 +59,7 @@ const PointPicture = props => {
         setActiveIndex(i);
         const times = mp3Times[i].split(',');
         doPlay(player, times[0], times[1], rate);
-        const sentence = sentenceList[i]
-        setChinese(sentence.acceptation)
-        sentence.acceptation ? setChineseVisible(true) : setChineseVisible(false)
+        setChinese(sentenceList[i].acceptation)
     };
 
     const render = function () {
@@ -82,10 +82,7 @@ const PointPicture = props => {
                     {/**真正有占空间的元素 */}
                     <img src={picture}></img>
                 </div>
-                <div className={`${styles.chineseWin} ${chineseVisible ? styles.show : styles.hide}`} >
-                    <CloseOutlined className={styles.close} onClick={() => setChineseVisible(false)} />
-                    <div className={styles.chinese}>{chinese}</div>
-                </div>
+                <Chinese chinese={chinese}></Chinese>
             </div>
         );
     };
