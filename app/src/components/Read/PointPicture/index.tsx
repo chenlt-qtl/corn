@@ -16,6 +16,7 @@ const PointPicture = props => {
     const [mp3Times, setMp3Times] = useState<[String]>();
     const [activeIndex, setActiveIndex] = useState<number>(-1);
     const [chinese, setChinese] = useState<String>("");
+    const [chineseVisible, setChineseVisible] = useState<boolean>(true)
 
     useEffect(() => {
         getData();
@@ -74,14 +75,15 @@ const PointPicture = props => {
                                 onClick={() => onAreaClick(index)}
                                 className={`${styles.mask} ${index == activeIndex ? styles.active : ''}`}
                                 style={{ top: positionArr[0], height: positionArr[1] }}
-                            ></div>
+                            >
+                                {index == activeIndex ? <Chinese chinese={chinese} visible={chineseVisible} setVisible={setChineseVisible}></Chinese> : null}
+                            </div>
                         );
                     })}
 
                     {/**真正有占空间的元素 */}
                     <img src={picture}></img>
                 </div>
-                <Chinese chinese={chinese}></Chinese>
             </div>
         );
     };
