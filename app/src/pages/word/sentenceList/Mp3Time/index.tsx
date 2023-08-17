@@ -84,7 +84,7 @@ const Mp3Time: React.FC = (props) => {
 
     //改变速度
     const changeRate = () => {
-        const rates = [0.7, 1, 1.5]
+        const rates = [0.7, 1, 1.5, 1.8]
         const index = rates.indexOf(rate);
         setRate(rates[index == rates.length - 1 ? 0 : index + 1])
 

@@ -120,14 +120,14 @@ const SentenceList: React.FC<SentenceListProps> = (props) => {
 
     const playMp3 = (sentence: SentenceItem, rate: number) => {
         if (sentence.mp3) {
-            play(sentence.mp3, null, null, rate)
+            play(sentence.mp3, undefined, undefined, rate)
         } else {
             //如果数据库里有存时间，就使用数据库时间
             if (sentence.mp3Time) {
                 const mp3Time = sentence.mp3Time;
                 const timeArr = mp3Time.split(",");
                 if (timeArr.length == 2) {
-                    play(null, timeArr[0], timeArr[1], rate);
+                    play(undefined, timeArr[0], timeArr[1], rate);
                 }
             }
         }

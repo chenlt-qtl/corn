@@ -78,7 +78,7 @@ let timer;
  * @param endTimeStr 结束时间
  * @param rate 播放速度
  */
-export const doPlay = (player, startTimeStr = "0", durationStr = "0", rate) => {
+export const doPlay = (player, startTimeStr = "0", durationStr = "0", rate = 1) => {    
 
     console.log("times", startTimeStr, durationStr);
 
