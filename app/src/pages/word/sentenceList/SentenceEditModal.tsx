@@ -41,6 +41,7 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
     const [form] = Form.useForm();
 
     useEffect(() => {
+        form.resetFields();
         form.setFieldsValue(sentence);
         setCurrentStep(0);
         setSelectWords([...props.word.wordNames]);
@@ -55,9 +56,6 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
             setSentences(splipSentences(formValue.content.replace(reg, "").split(brReg), 0));
         } else {//提交 
             setLoading(true);
-
-            const { mp3, mp3Time, picture, idx } = formValue;
-
             const article: ArticleItem = { id: articleId, type: 0 };
             article.sentences = sentences.map(sentence => {
                 return {
@@ -74,11 +72,8 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
             })
             article.addWordNames = selectWords.filter(word => !wordNames.includes(word));
             article.removeWordNames = wordNames.filter(word => !selectWords.includes(word));
-            if (single && article.sentences[0]) {
-                mp3 && (article.sentences[0].mp3 = mp3);
-                picture && (article.sentences[0].picture = picture);
-                mp3Time && (article.sentences[0].mp3Time = mp3Time);
-                article.sentences[0].idx = idx;
+            if (single && article.sentences) {
+                article.sentences[0] = formValue;
                 if (sentence.id) {
                     article.sentences[0].id = sentence.id;
                 }
@@ -167,6 +162,9 @@ const SentenceEditModal: React.FC<SentenceProps> = (props) => {
                             </FormItem>
                             <FormItem name="idx" label="序号">
                                 <InputNumber></InputNumber>
+                            </FormItem>
+                            <FormItem name="acceptation" label="释义">
+                                <TextArea></TextArea>
                             </FormItem>
                             {hasArticleMp3 ? <FormItem name="mp3Time" label="音频时间">
                                 <Mp3Time onPlay={onPlay} />

@@ -34,6 +34,8 @@ public class Sentence implements Serializable {
 	@Excel(name = "content", width = 15)
 	private java.lang.String content;
 
+	private java.lang.String acceptation;
+
 	@Excel(name = "mp3", width = 15)
 	private java.lang.String mp3;
 
