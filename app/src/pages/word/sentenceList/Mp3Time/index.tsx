@@ -11,6 +11,7 @@ const Mp3Time: React.FC = (props) => {
     const [endTime, setEndTime] = useState<number>(0);
     const [height, setHeight] = useState<number>(0);
     const [left, setLeft] = useState<number>(0);
+    const [rate, setRate] = useState<number>(1);
     const container = useRef();
 
     useEffect(() => {
@@ -81,12 +82,21 @@ const Mp3Time: React.FC = (props) => {
 
     }
 
+    //改变速度
+    const changeRate = () => {
+        const rates = [0.7, 1, 1.5]
+        const index = rates.indexOf(rate);
+        setRate(rates[index == rates.length - 1 ? 0 : index + 1])
+
+    }
+
     return (
         <div className={styles.mp3Time} ref={container}>
             <InputNumber onChange={changeTime} value={startTime} onFocus={() => onFocus("start")}></InputNumber >
             <div className={styles.hyphen} />
             <InputNumber onChange={changeTime} value={endTime} onFocus={() => onFocus("end")}></InputNumber >
-            <Button type="link"><i className="fa fa-volume-up" onClick={() => onPlay({ mp3Time: value })}></i></Button>
+            <Button type="link"><i className="fa fa-volume-up" onClick={() => onPlay({ mp3Time: value }, rate)}></i></Button>
+            <Button type="link" onClick={changeRate}>X{rate}</Button>
             <div className={styles.adjust} style={{ height: height + "px", left: left + "px" }}>
                 <div className={styles.content}>
                     <Button type="link" onClick={() => addTime(1)}>+1s</Button>

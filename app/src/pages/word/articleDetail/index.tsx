@@ -58,7 +58,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
         setEditModalVisible(true);
     }
 
-    const play = (src: string, startTime: number = 0, endTime: number = 0) => {
+    const play = (src: string, startTime: number = 0, endTime: number = 0, rate: number = 1) => {
         let player;
 
         if (src) {
@@ -72,7 +72,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
             player2.current!.pause();
         }
 
-        doPlay(player, startTime, endTime, 1)
+        doPlay(player, startTime, endTime, rate)
 
     }
 
