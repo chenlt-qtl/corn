@@ -26,7 +26,7 @@ public class Read implements Serializable {
 	private Long id;
 	/**articleId*/
 	@Excel(name = "articleId", width = 15)
-	private java.lang.Integer articleId;
+	private Long articleId;
 
 	/**position*/
 	@Excel(name = "position", width = 15)

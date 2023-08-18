@@ -76,12 +76,12 @@ public class ReadController {
 	@PostMapping
 	public Result add(@RequestBody Read read) {
 		try {
-			readService.save(read);
+			readService.add(read);
 			return ResultUtils.ok("添加成功！");
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
-			throw new CornException("操作失败");
+			throw new CornException(e.getMessage());
 		}
 
 	}
@@ -97,7 +97,7 @@ public class ReadController {
 		if(readEntity==null) {
 			throw new CornException("未找到对应实体");
 		}else {
-			boolean ok = readService.updateById(read);
+			boolean ok = readService.update(read);
 			return ResultUtils.ok("修改成功!");
 
 		}
@@ -124,7 +124,7 @@ public class ReadController {
 			throw new CornException("未找到对应实体");
 		}else {
 			read.setId(readEntity.getId());
-			boolean ok = readService.updateById(read);
+			boolean ok = readService.update(read);
 			return ResultUtils.ok("修改成功!");
 		}
 

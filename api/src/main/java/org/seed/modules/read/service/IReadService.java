@@ -1,7 +1,7 @@
 package org.seed.modules.read.service;
 
-import org.seed.modules.read.entity.Read;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.seed.modules.read.entity.Read;
 
 /**
  * @Description: 点读
@@ -10,5 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @version： V1.0
  */
 public interface IReadService extends IService<Read> {
+    boolean update(Read read);
 
+    Read add(Read read);
 }

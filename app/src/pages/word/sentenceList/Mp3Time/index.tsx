@@ -11,7 +11,7 @@ const Mp3Time: React.FC = (props) => {
     const [endTime, setEndTime] = useState<number>(0);
     const [height, setHeight] = useState<number>(0);
     const [left, setLeft] = useState<number>(0);
-    const [rate, setRate] = useState<number>(1);
+    const [rate, setRate] = useState<number>(3);
     const container = useRef();
 
     useEffect(() => {
