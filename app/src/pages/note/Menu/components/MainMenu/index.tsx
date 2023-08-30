@@ -73,7 +73,7 @@ const MainMenu: React.FC = (props, ref) => {
 
     const render = function () {
         const { listParent: { id }, treeSelectKey } = props.note;
-        const min = menuType === 2;
+        const min = menuType == 2;
 
         const activeIds = min ? [isFolder(id) ? "0" : id] : [id, treeSelectKey]
 
