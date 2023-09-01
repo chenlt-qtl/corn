@@ -17,20 +17,6 @@ export default {
                     component: './word',
                 },
                 {
-                    path: '/article/list',
-                    name: '英语',
-                    component: './word/articleList',
-                },
-                {
-                    path: '/article/:id',
-                    name: '英语',
-                    component: './word/articleDetail',
-                },
-                // {
-                //     path: '/word/:id',
-                //     component: './word/articleDetail',
-                // },
-                {
                     path: '/splicMp3',
                     name: '切割',
                     component: './splicMp3',

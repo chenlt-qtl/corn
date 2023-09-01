@@ -1,4 +1,4 @@
-import { StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined, UnorderedListOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { List, Button, Input, Popconfirm } from 'antd';
 import { Link } from 'umi';
 import React, { useState, useEffect, useRef } from 'react';
@@ -14,10 +14,11 @@ const ArticleList: React.FC<{}> = () => {
     const [listData, setListData] = useState<ArticleItem[]>([]);
     const [total, setTotal] = useState<number>(0);
     const [pageNo, setPageNo] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(5);
+    const [pageSize, setPageSize] = useState<number>(20);
     const [searchStr, setSearchStr] = useState<string>("");
     const [createModalVisible, handleModalVisible] = useState<boolean>(false);
     const createForm = useRef();
+    const [showPic, setShowPic] = useState<boolean>(false);
 
     useEffect(() => {
         getTableData();
@@ -75,13 +76,24 @@ const ArticleList: React.FC<{}> = () => {
     return (
         <>
             <div className={styles.content}>
-                <Search placeholder="input search text" onSearch={handleSearch} style={{ width: 200, marginRight: '20px' }} />
-                <Button shape="circle" type="primary" onClick={handleAdd}>
-                    <PlusOutlined />
-                </Button>
-
+                <div className={styles.bar}>
+                    <div>
+                        <Search placeholder="input search text" onSearch={handleSearch} style={{ width: 200, marginRight: '20px' }} />
+                        <Button shape="circle" type="primary" onClick={handleAdd}>
+                            <PlusOutlined />
+                        </Button>
+                    </div>
+                    <div>
+                        <Button type="link" onClick={()=>setShowPic(false)} className={showPic ? styles.noActive : ""}>
+                            <UnorderedListOutlined />
+                        </Button>
+                        <Button type="link" onClick={()=>setShowPic(true)} className={showPic ? "" : styles.noActive}>
+                            <AppstoreOutlined />
+                        </Button>
+                    </div>
+                </div>
                 <List
-                    itemLayout="vertical"
+                    itemLayout={showPic?"vertical":"horizontal"}
                     size="large"
                     pagination={{
                         onChange: page => {
@@ -102,7 +114,7 @@ const ArticleList: React.FC<{}> = () => {
                         <List.Item
                             key={item.id}
                             actions={getActions(item)}
-                            extra={item.picture ?
+                            extra={item.picture && showPic ?
                                 <img
                                     width={100}
                                     src={item.picture}
