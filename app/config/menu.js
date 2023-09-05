@@ -56,12 +56,6 @@ export default {
                     component: './food',
                     name: '食谱',
                 },
-                {
-                    path: '/card',
-                    component: './card',
-                    name: '卡片',
-                }
-
             ]
         },
         {
@@ -81,6 +75,11 @@ export default {
                     path: '/read',
                     component: './read',
                 },
+                {
+                    path: '/card',
+                    component: './card',
+                    name: '卡片',
+                }
             ]
         }
     ]

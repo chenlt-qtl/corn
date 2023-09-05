@@ -48,6 +48,69 @@
 
     font-weight: 600;
 
+    //顶部帐户信息
+    .account {
+        display        : flex;
+        justify-content: space-between;
+        gap            : 20px;
+
+
+        .cardNumber {
+            display: flex;
+            gap: 30px;
+            padding-left: 20px;
+
+            .numberItem {
+                display       : flex;
+                flex-direction: column;
+                h5{
+                    font-size: 14px;
+                    color: #6D7587;
+                    margin-bottom: 0;
+                }
+                h2{
+
+                }
+            }
+        }
+
+        .btns {
+            button {
+                .btn();
+                padding    : 5px 15px;
+                margin-left: 20px;
+            }
+
+            .radio1 {
+                margin-right              : 0;
+                border-top-right-radius   : 0;
+                border-bottom-right-radius: 0;
+            }
+
+            .radio2 {
+                border-top-left-radius   : 0;
+                border-bottom-left-radius: 0;
+                margin                   : 0;
+                box-shadow               : 7px 7px 15px rgba(55, 84, 170, .15),
+                    inset 0px 0px 4px rgba(255, 255, 255, 0),
+                    inset 7px 7px 15px rgba(55, 84, 170, .15),
+                    inset -7px -7px 20px rgba(255, 255, 255, 1),
+                    0px 0px 4px rgba(255, 255, 255, .2);
+            }
+
+            .active {
+                color           : #fff;
+                background-color: #78e08f;
+                box-shadow      : 7px 7px 15px rgba(55, 84, 170, .15),
+                    inset 0px 0px 4px rgba(255, 255, 255, 0),
+                    inset 7px 7px 15px rgba(55, 84, 170, .15),
+                    0px 0px 4px rgba(255, 255, 255, .2);
+            }
+        }
+
+
+    }
+
     section {
         .add {
             .add()
