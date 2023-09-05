@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, message, Button } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { update } from '@/services/system';
+import { updateSysData } from '@/services/system';
 
 
 
@@ -62,7 +62,7 @@ const EditModal = React.forwardRef((props: editProps, ref) => {
         const value: string[] = [];
         Object.keys(formData).map(key => value[key] = formData[key])
 
-        const res = await update({ ...data, value: JSON.stringify({ tabs, value }) });
+        const res = await updateSysData({ ...data, value: JSON.stringify({ tabs, value }) });
         setConfirmLoading(false);
         if (res && res.success) {
             message.success("操作成功")
