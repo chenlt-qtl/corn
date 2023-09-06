@@ -1,4 +1,4 @@
-import { StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined, UnorderedListOutlined, AppstoreOutlined } from '@ant-design/icons';
+import { StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined, UnorderedListOutlined, AppstoreOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { List, Button, Input, Popconfirm } from 'antd';
 import { Link } from 'umi';
 import React, { useState, useEffect, useRef } from 'react';
@@ -6,6 +6,7 @@ import { ArticleItem } from '@/data/word';
 import { getArticleList, removeArticle } from '@/services/article';
 import styles from './styles.less'
 import ArticleEditModal from '../articleEditModal'
+import FolderListModal from '../components/Folder/FolderListModal'
 
 const { Search } = Input;
 
@@ -19,6 +20,8 @@ const ArticleList: React.FC<{}> = () => {
     const [createModalVisible, handleModalVisible] = useState<boolean>(false);
     const createForm = useRef();
     const [showPic, setShowPic] = useState<boolean>(false);
+    const [folderVisible, setFolderVisible] = useState<boolean>(false);
+    
 
     useEffect(() => {
         getTableData();
@@ -77,23 +80,24 @@ const ArticleList: React.FC<{}> = () => {
         <>
             <div className={styles.content}>
                 <div className={styles.bar}>
-                    <div>
-                        <Search placeholder="input search text" onSearch={handleSearch} style={{ width: 200, marginRight: '20px' }} />
+                    <div style={{display:"flex",gap:"20px"}}>
+                        <Search placeholder="input search text" onSearch={handleSearch} style={{ width: 200}} />
                         <Button shape="circle" type="primary" onClick={handleAdd}>
                             <PlusOutlined />
                         </Button>
+                        <Button onClick={()=>setFolderVisible(true)}>文件夹<EllipsisOutlined /></Button>
                     </div>
                     <div>
-                        <Button type="link" onClick={()=>setShowPic(false)} className={showPic ? styles.noActive : ""}>
+                        <Button type="link" onClick={() => setShowPic(false)} className={showPic ? styles.noActive : ""}>
                             <UnorderedListOutlined />
                         </Button>
-                        <Button type="link" onClick={()=>setShowPic(true)} className={showPic ? "" : styles.noActive}>
+                        <Button type="link" onClick={() => setShowPic(true)} className={showPic ? "" : styles.noActive}>
                             <AppstoreOutlined />
                         </Button>
                     </div>
                 </div>
                 <List
-                    itemLayout={showPic?"vertical":"horizontal"}
+                    itemLayout={showPic ? "vertical" : "horizontal"}
                     size="large"
                     pagination={{
                         onChange: page => {
@@ -130,6 +134,9 @@ const ArticleList: React.FC<{}> = () => {
             </div>
             <ArticleEditModal ref={createForm} onCancel={(reload: boolean) => { reload && getTableData(); handleModalVisible(false) }} modalVisible={createModalVisible}>
             </ArticleEditModal>
+
+            <FolderListModal onCancel={(reload: boolean) => { reload && getTableData(); setFolderVisible(false) }} visible={folderVisible}>
+            </FolderListModal>
         </>
     );
 };

@@ -10,6 +10,8 @@ import WordDetail from './wordDetailModal/WordDetail';
 const { TabPane } = Tabs;
 const WordIndex: React.FC<{}> = (props) => {
 
+    const { history } = props;
+
     const [left, setLeft] = useState<string>("0");
     const [searchStr, setSearchStr] = useState<string>("");
 
@@ -36,13 +38,13 @@ const WordIndex: React.FC<{}> = (props) => {
         return (
             <div className={styles.wi_container}>
 
-                <div className={styles.wi_searchBar} style={showDetail?{marginBottom:"0px"}:{}}>
+                <div className={styles.wi_searchBar} style={showDetail ? { marginBottom: "0px" } : {}}>
                     {showDetail ? <Button size='large' onClick={() => setShowDetail(false)} type="link"><HomeOutlined /></Button> : ""}
                     <Input
                         size={showDetail ? "middle" : "large"}
                         placeholder="Search..."
                         prefix={<SearchOutlined className="site-form-item-icon" />}
-                        value={searchStr} onChange={e => setSearchStr((e.target.value||"").trim())} onPressEnter={onSearch}
+                        value={searchStr} onChange={e => setSearchStr((e.target.value || "").trim())} onPressEnter={onSearch}
 
                     />
                 </div>
@@ -60,9 +62,9 @@ const WordIndex: React.FC<{}> = (props) => {
                             <div className={styles.wi_menus}>
                                 <div className={styles.wi_trans} style={{ left: left }}>
                                     <div className={styles.wi_menu}>
-                                        <div className={styles.wi_item}>
+                                        <div className={styles.wi_item} onClick={()=>history.push("/page/article/list") }>
                                             <ContainerOutlined />
-                                            <Link to="/page/article/list">文章列表</Link>
+                                            文章列表
                                         </div>
                                         <div className={styles.wi_item}>
                                             <ReadOutlined />

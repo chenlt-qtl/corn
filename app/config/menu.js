@@ -13,8 +13,16 @@ export default {
                 },
                 {
                     path: '/word',
-                    name: '英语',
+                    name: '学习',
                     component: './word',
+                },
+                {
+                    path: '/article/list',
+                    component: './word/articleList',
+                },
+                {
+                    path: '/article/:id',
+                    component: './word/articleDetail',
                 },
                 {
                     path: '/splicMp3',
