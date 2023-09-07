@@ -1,0 +1,53 @@
+@mainColor: #F28086;
+@green    : #53AC68;
+@bgColor  : #F6F4F5;
+@fontColor: #1E1B1D;
+
+.whiteBox() {
+    background-color: #fff;
+    border-radius   : 10px;
+    box-shadow      : 0 2px 8px #f0f1f2;
+    padding         : 20px;
+}
+
+.mainBox() {
+    background-color: #F28086;
+    color           : #fff;
+    border-radius   : 10px;
+    box-shadow      : 0 2px 8px #f0f1f2;
+    padding         : 20px;
+}
+
+
+.button() {
+    :global {
+        .ant-btn-round {
+            border-radius: 10px;
+            height       : 40px;
+        }
+
+        .ant-btn:active {
+            border-color: @mainColor;
+        }
+
+        .ant-btn:hover,
+        .ant-btn:focus {
+            border-color: @mainColor;
+            color       : @mainColor;
+        }
+        .ant-btn{
+            border: none;
+            box-shadow: none;
+        }
+
+    }
+}
+
+.priButton() {
+    background-color: @mainColor;
+    color           : #fff;
+
+    &:hover {
+        color: #fff;
+    }
+}

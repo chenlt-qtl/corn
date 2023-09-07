@@ -1,0 +1,61 @@
+@import '../../card.less';
+
+.items {
+    margin: 0 20px;
+
+    ul {
+        padding  : 0;
+        display  : flex;
+        flex-wrap: wrap;
+        gap      : 10px;
+    }
+
+    li {
+        .whiteBox();
+        flex          : 1;
+        display       : flex;
+        flex-direction: column;
+        gap           : 10px;
+        font-weight   : bold;
+
+        .label {
+            font-size: 12px;
+            color    : #777;
+
+        }
+
+        img {
+            width: 100px;
+        }
+
+        .toolbar {
+            display        : flex;
+            justify-content: space-between;
+            align-items    : center;
+            font-size      : 16px;
+            padding-top: 5px;
+            color:@mainColor;
+
+            .price {
+                padding-left: 5px;
+            }
+
+            .button();
+
+            .btn {
+                .priButton();
+                font-size: 18px;
+            }
+
+            :global {
+                .ant-btn-round {
+                    height : 30px;
+                    padding: 0 8px;
+                }
+            }
+
+
+        }
+    }
+
+}

@@ -79,7 +79,15 @@ export default {
                     path: '/card',
                     component: './card',
                     name: '卡片',
-                }
+                },
+                {
+                    path: '/card/bank',
+                    component: './card/Bank',
+                },
+                {
+                    path: '/card/superMarket',
+                    component: './card/SuperMarket',
+                },
             ]
         }
     ]
