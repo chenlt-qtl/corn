@@ -1,0 +1,19 @@
+@import '../../card.less';
+
+.tabs {
+    padding: 0 20px;
+    display: flex;
+    color  : #aaa;
+    gap    : 20px;
+
+    li {
+        padding: 3px 10px;
+        cursor : pointer;
+    }
+
+    .active {
+        color        : @mainColor;
+        font-weight  : 500;
+        border-bottom: 1px solid @mainColor;
+    }
+}

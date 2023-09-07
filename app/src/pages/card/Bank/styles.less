@@ -1,0 +1,69 @@
+@import '../card.less';
+
+.container {
+    color           : @fontColor;
+    background-color: @bgColor;
+    height          : 100vh;
+    max-width       : 500px;
+    margin          : 0 auto;
+
+    .body {
+        padding       : 20px 0;
+        display       : flex;
+        flex-direction: column;
+        gap           : 10px;
+    }
+}
+
+.result {
+    .whiteBox();
+
+    ul {
+        display  : flex;
+        flex-wrap: wrap;
+        gap      : 10px;
+    }
+
+    .button {
+        background-color: @bgColor;
+        border-radius   : 10px;
+        padding         : 5px 15px;
+        font-size       : 14px;
+        font-weight     : bold;
+        cursor          : pointer;
+    }
+}
+
+.btns {
+    display    : flex;
+    padding-top: 10px;
+    gap        : 10px;
+    .button();
+
+    .sum {
+        width: 70%;
+        .priButton();
+    }
+}
+
+.static {
+    display  : flex;
+    gap      : 10px;
+    flex-wrap: wrap;
+    padding  : 10px 20px 0 20px;
+    justify-content: space-between;
+
+    .staticBtn {
+        .whiteBox();
+        padding: 4px 16px;
+        cursor: pointer;
+    }
+}
+
+.add {
+    color: @mainColor;
+}
+
+.sub {
+    color: @green;
+}
