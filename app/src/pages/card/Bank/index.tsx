@@ -205,7 +205,7 @@ const Bank: React.FC<{}> = () => {
                             onClick={() => subItem(index)}>{formatTitle(item)}</li>)}
                     </ul>
                     <section className={styles.btns}>
-                        <Button onClick={save} shape="round" className={styles.sum}>保存</Button>
+                        <Button onClick={save} shape="round" className={styles.sum}>保存({result.reduce((total, cur) => total + cur.value * 1, 0)})</Button>
                         <Button onClick={clean} shape="round">清空</Button>
                     </section>
                 </div>
