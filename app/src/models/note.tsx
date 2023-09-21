@@ -196,7 +196,7 @@ const NoteModel: NoteModelType = {
         },
         *getNoteTree(_, { call, put }) {
 
-            let res = yield call(queryTreeMenu, "0", true);
+            let res = yield call(queryTreeMenu, true);
             if (res) {
                 if (res.success) {
                     // 成功

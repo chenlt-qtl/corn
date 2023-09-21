@@ -51,7 +51,6 @@ const ChangeParent: React.FC = (props, ref) => {
                             blockNode
                             multiple
                             showIcon={false}
-                            defaultExpandedKeys={(node.parentIds || "").split("/")}
                             treeData={treeData}
                             autoExpandParent={false}
                             onSelect={onSelect}

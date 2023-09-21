@@ -64,14 +64,13 @@ public class NoteController {
     /**
      * 查询树目录
      *
-     * @param parentId
      * @param withLeaf
      * @return
      */
     @RequestMapping(value = "/queryTreeMenu", method = RequestMethod.GET)
-    public Result queryTree(Long parentId, boolean withLeaf) {
+    public Result queryTree(boolean withLeaf) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        List<NoteTreeModel> list = noteService.queryTreeMenu(sysUser.getUsername(), parentId, withLeaf);
+        List<NoteTreeModel> list = noteService.queryTreeMenu(sysUser.getUsername(), withLeaf);
         return ResultUtils.okData(list);
 
     }

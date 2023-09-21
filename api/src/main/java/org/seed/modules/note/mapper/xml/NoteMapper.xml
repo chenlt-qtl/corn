@@ -2,20 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.seed.modules.note.mapper.NoteMapper">
 
-    <select id="listAllChildren" resultType="org.seed.modules.note.entity.Note">
-        SELECT n.*
-        FROM note_info n
-        WHERE n.create_by = #{createBy,jdbcType=VARCHAR}
-        and parent_ids like concat(#{parentIds},"%")
-    </select>
-
-    <select id="listAllChildrenDetail" resultType="org.seed.modules.note.model.NoteModel">
-        SELECT n.id,n.name,n.parent_id,n.is_leaf,n.tag,n.source,n.content_id,c.text
-        FROM note_info n left join note_content c on n.content_id = c.id
-        WHERE n.create_by = #{createBy}
-        and parent_ids like concat(#{parentIds},"%")
-    </select>
-
     <select id="getByIds" resultType="org.seed.modules.note.entity.Note">
         SELECT *
         FROM note_info n
@@ -23,6 +9,12 @@
         <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
             <![CDATA[ #{id} ]]>
         </foreach>
+    </select>
+
+    <select id="getChildren" resultType="org.seed.modules.note.entity.Note">
+        SELECT *
+        FROM note_info
+        where parent_id=#{parentId}
     </select>
 
     <select id="getNoteCount" resultType="int">

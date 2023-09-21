@@ -4,8 +4,8 @@ import { decryptNote, encryptionNote } from '@/pages/note/utils';
 import { decrypt } from '@/utils/utils';
 
 //树形数据结构
-export async function queryTreeMenu(id: string, withLeaf: boolean) {
-  return request('/api/note/queryTreeMenu?parentId=' + id + "&withLeaf=" + withLeaf).then(result => {
+export async function queryTreeMenu(withLeaf: boolean) {
+  return request('/api/note/queryTreeMenu?withLeaf=' + withLeaf).then(result => {
     if (result.success) {
       result.result = handleChildren(result.result);
       function handleChildren(notes) {//解密

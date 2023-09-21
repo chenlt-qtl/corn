@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.seed.modules.note.model.NoteModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.jeecgframework.poi.excel.annotation.Excel;
@@ -60,7 +61,7 @@ public class NoteDelete implements Serializable {
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
 
-	public NoteDelete(Note note){
+	public NoteDelete(NoteModel note){
 		BeanUtils.copyProperties(note,this);
 		this.setNoteId(note.getId());
 		this.setId(null);

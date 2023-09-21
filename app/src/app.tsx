@@ -79,6 +79,7 @@ const errorHandler = (error: error) => {
       message: '网络异常',
     });
   }
+  return data; //把错误信息返回给前端
 };
 
 export const request: RequestConfig = {

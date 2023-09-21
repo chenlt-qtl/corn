@@ -66,12 +66,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public List<NoteTreeModel> queryTreeMenu(String createBy, Long parentId, boolean withLeaf) {
+    public List<NoteTreeModel> queryTreeMenu(String createBy, boolean withLeaf) {
 
         QueryWrapper<Note> queryWrapper = new QueryWrapper();
         queryWrapper.select("id", "name", "parent_id", "is_leaf", "update_time");
         queryWrapper.eq("create_by", getUsername());
-        queryWrapper.likeRight("parent_ids", parentId + "/");
         if (!withLeaf) {
             //不要叶子
             queryWrapper.eq("is_leaf", 0);
@@ -87,7 +86,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             treeList.add(model);
         }
         // 调用wrapTreeDataToTreeList方法生成树状数据
-        return TreeUtil.wrapTreeDataToTreeList(treeList, parentId, false);
+        return TreeUtil.wrapTreeDataToTreeList(treeList, 0L, false);
     }
 
     @Override
@@ -108,18 +107,6 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
                 note.setContentId(content.getId());
             }
             Note obj = note.toNote();
-
-            //设置parentIds
-            if (obj.getParentId() == 0L) {
-                obj.setParentIds("0/");
-            } else {
-                Note parent = getById(obj.getParentId());
-                if (parent == null) {
-                    throw new CornException("找不到父节点");
-                }
-                obj.setParentIds(parent.getParentIds() + obj.getParentId() + "/");
-            }
-
             save(obj);
             return obj;
         } catch (DataIntegrityViolationException e) {
@@ -129,7 +116,6 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Override
     public IPage<Note> pageSearchNote(Long parentId, String searchStr, boolean withLeaf, int pageNo, int pageSize) {
-        IPage<Note> result = new Page<>();
 
         Page<Note> page = new Page<>(pageNo, pageSize);
         QueryWrapper<Note> queryWrapper = new QueryWrapper();
@@ -137,7 +123,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             queryWrapper.eq("is_leaf", 1);
         }
 
-        queryWrapper.like("parent_ids", parentId == 0L ? "0/%" : ("%/" + parentId + "/%"));
+        queryWrapper.eq("parent_id", parentId);
         queryWrapper.select("id", "name", "parent_id", "is_leaf");
         queryWrapper.eq("create_by", getUsername());
 
@@ -145,7 +131,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
             queryWrapper.and(wrapper -> wrapper.like("name", searchStr).or()
                     .exists("select 1 from note_content  where note_content.id=note_info.content_id and note_content.text like '%" + searchStr + "%'"));
         }
-        result = this.page(page, queryWrapper);
+        IPage<Note> result = this.page(page, queryWrapper);
 
         return result;
     }
@@ -153,36 +139,26 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     @Transactional
     @Override
     public void delete(String userName, Note note) {
-        List<Long> deleteNoteIds = new ArrayList<>();//要删除的note
-        List<Long> deleteContentIds = new ArrayList<>();//对应的content
-        List<NoteDelete> noteDeleteList = new ArrayList<>();//保存到删除历史表的数据
 
-        //处理自己
-        NoteModel model;
-        deleteNoteIds.add(note.getId());
+        //检查是否有子节点
+        List<Note> children = noteMapper.getChildren(note.getId());
+        if(!children.isEmpty()){
+            throw new CornException("删除的文件夹有子文件，请先删除子文件");
+        }
+
+        //保存历史
+        NoteModel model = new NoteModel(note);
         if (note.getContentId() != null) {
-            deleteContentIds.add(note.getContentId());
             NoteContent noteContent = noteContentService.getById(note.getContentId());
-            model = new NoteModel(note, noteContent);
-        } else {
-            model = new NoteModel(note);
+            model.setText(noteContent.getText());
         }
-        NoteDelete noteDelete = new NoteDelete(model);
-        noteDeleteList.add(noteDelete);
+        noteDeleteService.save(new NoteDelete(model));
 
-        //处理孩子
-        List<NoteModel> noteList = noteMapper.listAllChildrenDetail(userName, note.getParentIds() + note.getId() + "/");
-        for (NoteModel noteModel : noteList) {
-            deleteNoteIds.add(noteModel.getId());
-            deleteContentIds.add(noteModel.getContentId());
-            noteDelete = new NoteDelete(noteModel);
-            noteDeleteList.add(noteDelete);
+        //删除数据
+        if (note.getContentId()!=null) {
+            noteContentService.removeById(note.getContentId());
         }
-        noteDeleteService.saveBatch(noteDeleteList);
-        if (!deleteContentIds.isEmpty()) {
-            noteContentService.removeByIds(deleteContentIds);
-        }
-        this.removeByIds(deleteNoteIds);
+        this.removeById(note.getId());
     }
 
     private String getUsername() {
@@ -192,19 +168,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
 
     @Override
     public boolean updateParent(Note note, Note parent) {
-        String parentIds = parent.getParentIds() + parent.getId() + "/";
-
-
-        List<Note> noteList = noteMapper.listAllChildren(getUsername(), note.getParentIds() + note.getId() + "/");
-
-        for (Note child : noteList) {
-            child.setParentIds(child.getParentIds().replace(note.getParentIds(), parentIds));
-        }
-
         note.setParentId(parent.getId());
-        note.setParentIds(parentIds);
-        noteList.add(note);
-        return updateBatchById(noteList);
+        return updateById(note);
 
     }
 }

@@ -55,11 +55,12 @@ const MainMenu: React.FC = (props, ref) => {
                 props.dispatch({
                     type: 'note/deleteNote',
                     payload: node.id,
-                }).then(() => {
-                    notification["info"]({
-                        message: '删除成功',
-                    });
-                    // loadTreeData();
+                }).then(res => {
+                    if (res.success) {
+                        notification["info"]({
+                            message: '删除成功',
+                        });
+                    }
                 });
             }
         });

@@ -18,7 +18,7 @@ const Search: React.FC = (props, ref) => {
 
     useEffect(() => {
 
-        queryTreeMenu("0", false).then(({ result }) => setNoteTree(result))
+        queryTreeMenu(false).then(({ result }) => setNoteTree(result))
 
     }, []);
 
