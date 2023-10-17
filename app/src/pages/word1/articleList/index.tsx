@@ -1,26 +1,22 @@
 import React, { useState } from 'react';
 import { connect, WordState } from 'umi';
 import { Input, Tabs, Button } from 'antd';
-import { SearchOutlined, ContainerOutlined, ReadOutlined, ExperimentOutlined, HomeOutlined } from '@ant-design/icons';
+import { SearchOutlined, ContainerOutlined, HomeOutlined } from '@ant-design/icons';
 import styles from './styles.less';
 import { Link } from 'umi'
-import WordDetail from '@/pages/word1/wordDetailModal/WordDetail';
+import WordDetail from '../wordDetailModal/WordDetail';
 
 const data = {
-    "en": [
-        { title: "文章列表", url: "/page/word/en/list" },
-        { title: "生词本", url: "" },
-        { title: "背单词", url: "" },
-    ], "cn": [
-        { title: "文章列表", url: "/page/word/cn/list" },
-        { title: "生词本", url: "" },
-        { title: "认生字", url: "" },
-    ],
+    "en": [{ title: "文章列表", url: "/page/article/list" },
+    { title: "生字本", url: "" },
+    { title: "背单词", url: "" }],
+    "cn": [{ title: "文章列表", url: "/page/wordChinese" },
+    { title: "生字本", url: "" },
+    { title: "认生字", url: "" }],
 }
 
-
 const { TabPane } = Tabs;
-const Study: React.FC<{}> = (props) => {
+const WordIndex: React.FC<{}> = (props) => {
 
     const [left, setLeft] = useState<string>("0");
     const [searchStr, setSearchStr] = useState<string>("");
@@ -72,16 +68,20 @@ const Study: React.FC<{}> = (props) => {
                             <div className={styles.wi_menus}>
                                 <div className={styles.wi_trans} style={{ left: left }}>
                                     <div className={styles.wi_menu}>
-                                        {data["en"].map(({ title, url }) => <Link to={url}><div className={styles.wi_item}>
-                                            <ContainerOutlined />
-                                            {title}
-                                        </div></Link>)}
+                                        {data["en"].map(({ title, url }) => <Link to={url}>
+                                            <div className={styles.wi_item}>
+                                                <ContainerOutlined />
+                                                {title}
+                                            </div>
+                                        </Link>)}
                                     </div>
                                     <div className={styles.wi_menu}>
-                                        {data["cn"].map(({ title, url }) => <Link to={url}><div className={styles.wi_item}>
-                                            <ContainerOutlined />
-                                            {title}
-                                        </div></Link>)}
+                                        {data["cn"].map(({ title, url }) => <Link to={url}>
+                                            <div className={styles.wi_item}>
+                                                <ContainerOutlined />
+                                                {title}
+                                            </div>
+                                        </Link>)}
                                     </div>
                                 </div>
                             </div>
@@ -96,4 +96,4 @@ const Study: React.FC<{}> = (props) => {
 
 export default connect(({ word, loading }: { word: WordState, loading }) => (
     { word, loading })
-)(Study);
+)(WordIndex);

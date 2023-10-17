@@ -25,6 +25,9 @@ public class Article implements Serializable {
 	@TableId(type = IdType.AUTO)
 	private Long id;
 
+	/**
+	 * 0:英语  1:中文
+	 */
 	private Integer type;
 	/**title*/
 	@Excel(name = "title", width = 15)

@@ -15,13 +15,13 @@ public interface IArticleWordRelService extends IService<ArticleWordRel> {
 
     void saveRels(Long articleId, int type, String[] addWordNames, String[] removeWordNames);
 
-    void saveRels(Long articleId, String wordId);
+    void saveRels(Long articleId, Long wordId);
 
-    ArticleWordRel getRel(Long articleId, String wordId);
+    ArticleWordRel getRel(Long articleId, Long wordId);
 
     void removeByWordNames(Long articleId, String[] wordNames);
 
-    List<String> getRemoveWordIds(Long articleId, List<String> wordIds);
+    List<Long> getRemoveWordIds(Long articleId, List<Long> wordIds);
 
     void removeRelByArticle(Long articleId, String[] wordNames);
 

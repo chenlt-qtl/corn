@@ -2,7 +2,7 @@ package org.seed.modules.word.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.seed.modules.word.entity.Word;
+import org.seed.modules.word.entity.WordEnglist;
 import org.seed.modules.word.model.SentenceVo;
 
 import java.util.List;
@@ -14,9 +14,9 @@ import java.util.Map;
  * @date： 2019-08-22
  * @version： V1.0
  */
-public interface IWordService extends IService<Word> {
+public interface IWordEnglistService extends IService<WordEnglist> {
 
-    Word getWord(String wordName) ;
+    WordEnglist getWord(String wordName) ;
 
     IPage<Map> pageSearchWord(String wordName, int pageNo, int pageSize);
 

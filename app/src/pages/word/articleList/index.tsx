@@ -1,36 +1,30 @@
-import { StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined, UnorderedListOutlined, AppstoreOutlined } from '@ant-design/icons';
+import { StarOutlined, PlayCircleOutlined, PlusOutlined, DeleteOutlined, LeftOutlined } from '@ant-design/icons';
 import { List, Button, Input, Popconfirm } from 'antd';
 import { Link } from 'umi';
 import React, { useState, useEffect, useRef } from 'react';
 import { ArticleItem } from '@/data/word';
 import { getArticleList, removeArticle } from '@/services/article';
 import styles from './styles.less'
-import ArticleEditModal from '../articleEditModal'
+import ArticleEditModal from '../components/ArticleEditModal'
 
 const { Search } = Input;
 
-const ArticleList: React.FC<{}> = () => {
+const ArticleList: React.FC<{}> = props => {
+
+    const { match: { params: { type: typeStr } }, history } = props;
+    const type = typeStr == "cn" ? 1 : 0;
+
 
     const [listData, setListData] = useState<ArticleItem[]>([]);
     const [total, setTotal] = useState<number>(0);
-    const [pageNo, setPageNo] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(20);
-    const [searchStr, setSearchStr] = useState<string>("");
     const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-    const createForm = useRef();
-    const [showPic, setShowPic] = useState<boolean>(false);
 
     useEffect(() => {
         getTableData();
     }, [])
 
-
-    useEffect(() => {
-        getTableData();
-    }, [pageNo, pageSize, searchStr])
-
     const getTableData = () => {
-        getArticleList({ type: 0, pageSize, pageNo, title: searchStr }).then(res => {
+        getArticleList({ type }).then(res => {
             if (res) {
                 setListData(res.result.records);
                 setTotal(res.result.total);
@@ -45,7 +39,6 @@ const ArticleList: React.FC<{}> = () => {
     }
 
     const handleAdd = () => {
-        createForm.current.setFormValue({});
         handleModalVisible(true);
     }
 
@@ -67,46 +60,24 @@ const ArticleList: React.FC<{}> = () => {
         return actions;
     }
 
-    const handleSearch = value => {
-        setPageNo(1)
-        setSearchStr(value)
-
-    }
-
     return (
         <>
             <div className={styles.content}>
-                <div className={styles.bar}>
-                    <div>
-                        <Search placeholder="input search text" onSearch={handleSearch} style={{ width: 200, marginRight: '20px' }} />
-                        <Button shape="circle" type="primary" onClick={handleAdd}>
-                            <PlusOutlined />
-                        </Button>
-                    </div>
-                    <div>
-                        <Button type="link" onClick={()=>setShowPic(false)} className={showPic ? styles.noActive : ""}>
-                            <UnorderedListOutlined />
-                        </Button>
-                        <Button type="link" onClick={()=>setShowPic(true)} className={showPic ? "" : styles.noActive}>
-                            <AppstoreOutlined />
-                        </Button>
-                    </div>
-                </div>
+                <Button type="link" onClick={() => history.go(-1)}>
+                    <LeftOutlined />
+                </Button>
+                <Search placeholder="input search text" style={{ width: 200, marginRight: '20px' }} />
+                <Button shape="circle" type="primary" onClick={handleAdd}>
+                    <PlusOutlined />
+                </Button>
+
                 <List
-                    itemLayout={showPic?"vertical":"horizontal"}
+                    itemLayout="vertical"
                     size="large"
                     pagination={{
                         onChange: page => {
-                            setPageNo(page);
                         },
-                        showSizeChanger: true,
-                        onShowSizeChange: (current, pageSize) => {
-
-                            setPageSize(pageSize);
-                            setPageNo(current);
-                        },
-                        showTotal: total => `共 ${total} 条`,
-                        pageSize,
+                        pageSize: 5,
                         total
                     }}
                     dataSource={listData}
@@ -114,7 +85,7 @@ const ArticleList: React.FC<{}> = () => {
                         <List.Item
                             key={item.id}
                             actions={getActions(item)}
-                            extra={item.picture && showPic ?
+                            extra={item.picture ?
                                 <img
                                     width={100}
                                     src={item.picture}
@@ -122,13 +93,16 @@ const ArticleList: React.FC<{}> = () => {
                             }
                         >
                             <List.Item.Meta
-                                title={<Link to={`/page/article/${item.id}`}>{item.title}</Link>}
+                                title={<Link to={`/page/word/article/${item.id}`}>{item.title}</Link>}
                             />
                         </List.Item>
                     )}
                 />
             </div>
-            <ArticleEditModal ref={createForm} onCancel={(reload: boolean) => { reload && getTableData(); handleModalVisible(false) }} modalVisible={createModalVisible}>
+            <ArticleEditModal onCancel={(reload: boolean) => {
+                reload && getTableData();
+                handleModalVisible(false)
+            }} modalVisible={createModalVisible}>
             </ArticleEditModal>
         </>
     );

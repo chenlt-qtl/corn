@@ -13,9 +13,9 @@ import java.util.List;
  */
 public interface IWordUserService extends IService<WordUser> {
 
-    void saveRel(String wordId);
+    void saveRel(Long wordId);
 
-    WordUser getRel(String wordId);
+    WordUser getRel(Long wordId);
 
-    void removeByWordIds(List<String> wordIds);
+    void removeByWordIds(List<Long> wordIds);
 }

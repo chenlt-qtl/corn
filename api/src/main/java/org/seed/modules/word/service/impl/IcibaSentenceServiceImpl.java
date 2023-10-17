@@ -22,7 +22,7 @@ import java.util.List;
 public class IcibaSentenceServiceImpl extends ServiceImpl<IcibaSentenceMapper, IcibaSentence> implements IIcibaSentenceService {
 
     @Override
-    public List<IcibaSentence> getByWordId(String wordId) {
+    public List<IcibaSentence> getByWordId(Long wordId) {
         Collection<IcibaSentence> icibaSentence = listByMap(new HashMap<String, Object>() {{
             put("word_id", wordId);
         }});

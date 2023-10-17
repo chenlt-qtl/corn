@@ -3,11 +3,11 @@ import { getArticle } from '@/services/article';
 import { Modal, Button, Popconfirm } from 'antd';
 import styles from './styles.less';
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import ArticleEditModal from '../components/ArticleEditModal';
-// import WordList from '../wordList';
-// import SentenceList from '../sentenceList';
-// import WordDetailModal from '../wordDetailModal';
-import { Link, history, connect } from 'umi'; 
+import ArticleEditModal from '../articleEditModal';
+import WordList from '../wordList';
+import SentenceList from '../sentenceList';
+import WordDetailModal from '../wordDetailModal';
+import { Link, history, connect } from 'umi';
 import { doPlay } from '@/utils/wordUtils'
 
 
@@ -17,7 +17,6 @@ export interface ArticleDetailProps {
 
 
 const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
-    const {history} = props;
     const { id } = props.match.params;
     const [article, setArticle] = useState<object>({});
     const [imgModalVisible, setImgModalVisible] = useState<boolean>(false);
@@ -102,7 +101,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                 <header className={styles.header}>
                     <div className={styles.title}><h1>{article.title}</h1></div>
                     <div className={styles.toolbar}>
-                        <Button type='link' onClick={()=>history.go(-1)}><ArrowLeftOutlined /></Button>
+                        <Link to="/page/article/list"><ArrowLeftOutlined /></Link>
                         <EditOutlined onClick={openEditModel} />
                         <Popconfirm
                             title="确认要删除这篇文章?"
@@ -137,8 +136,8 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                         </a> : ''}
                 </div>
 
-                {/* <SentenceList articleId={id} articleMp3={article.mp3} onSearchWord={onSearchWord} setSenteceNum={setSentenceNum} setWordsNum={setWordsNum} play={play} edit={true}></SentenceList>
-                <WordList articleId={id} onSearchWord={onSearchWord} setWordsNum={setWordsNum}></WordList> */}
+                <SentenceList articleId={id} articleMp3={article.mp3} onSearchWord={onSearchWord} setSenteceNum={setSentenceNum} setWordsNum={setWordsNum} play={play} edit={true}></SentenceList>
+                <WordList articleId={id} onSearchWord={onSearchWord} setWordsNum={setWordsNum}></WordList>
 
             </main>
             <Modal title="查看图片" width={660} visible={imgModalVisible}
@@ -161,7 +160,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = (props) => {
                 您的浏览器不支持 audio 元素。
             </audio>
 
-            {/* <WordDetailModal wordName={wordName} articleId={id} isModalVisible={wordModalVisible} hideWordModal={() => setWordModalVisible(false)} /> */}
+            <WordDetailModal wordName={wordName} articleId={id} isModalVisible={wordModalVisible} hideWordModal={() => setWordModalVisible(false)} />
 
         </>
     );

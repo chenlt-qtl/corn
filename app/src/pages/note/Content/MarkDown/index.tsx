@@ -3,7 +3,7 @@ import styles from './md.less';
 import { connect } from 'umi';
 import { Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { uploadImg } from '@/services/note'
+import { uploadNoteImg } from '@/services/note'
 import HocMedia from "@/components/HocMedia";
 
 
@@ -35,6 +35,8 @@ const plugins = ['header', 'font-bold', 'font-italic', 'font-underline', 'font-s
 const blankText = "## ";
 
 const MarkDown = React.forwardRef((props, ref) => {
+    const { id } = props.note.openedNote;
+
     const [text, setText] = useState<string>("");//存放全部的文本
     const [editText, setEditText] = useState<string>("");//存放正在被编辑的文本
     const [visible, setVisible] = useState<boolean>(false);
@@ -47,7 +49,7 @@ const MarkDown = React.forwardRef((props, ref) => {
         const { openedNote } = props.note;
         let text = openedNote.text || "";
         setText(text);
-    }, [props.note.openedNote.id])
+    }, [id])
 
     useEffect(() => {
         processText(text)
@@ -91,7 +93,7 @@ const MarkDown = React.forwardRef((props, ref) => {
     const processText = (text: string) => {
 
         tocify.reset();
-        const { id } = props.note.openedNote;
+
 
         const separator = "\n## ";
         let index = text.indexOf(separator);
@@ -131,7 +133,7 @@ const MarkDown = React.forwardRef((props, ref) => {
     const handleImageUpload = (file, callback) => {
         const reader = new FileReader()
         reader.onload = async () => {
-            let result = await uploadImg(reader.result)
+            let result = await uploadNoteImg(reader.result, id)
             if (result.success) {
                 callback(result.result)
             } else {
@@ -149,7 +151,6 @@ const MarkDown = React.forwardRef((props, ref) => {
 
 
     const onTextDoubleclick = textId => {
-        const { id } = props.note.openedNote;
         if (id && !props.isMobile) {
             setEditKey(textId)
             if (textId == "new") {

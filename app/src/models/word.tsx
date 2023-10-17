@@ -1,4 +1,4 @@
-import { getWordByArticle, queryByWordName } from '@/pages/word/service'
+import { getWordByArticle, queryByWordName } from '@/services/word'
 import {addWordUserRel, removeWordUserRel, addArticleWordRel, removeArticleWordRel} from "@/services/article"
 
 import { WordItem } from '@/data/word';

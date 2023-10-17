@@ -94,7 +94,7 @@ public class ArticleWordRelController {
      * @return
      */
     @DeleteMapping(value = "/delete")
-    public Result delete(@RequestParam(name = "wordId", required = true) String wordId, @RequestParam(name = "articleId", required = true) Long articleId) {
+    public Result delete(@RequestParam(name = "wordId", required = true) Long wordId, @RequestParam(name = "articleId", required = true) Long articleId) {
         ArticleWordRel articleWordRel = ArticleWordRelService.getRel(articleId, wordId);
         if (articleWordRel == null) {
             throw new CornException("未找到对应实体");

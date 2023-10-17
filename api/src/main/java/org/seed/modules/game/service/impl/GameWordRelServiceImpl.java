@@ -8,7 +8,7 @@ import org.seed.modules.game.mapper.GameWordRelMapper;
 import org.seed.modules.game.service.IGameService;
 import org.seed.modules.game.service.IGameWordRelService;
 import org.seed.modules.word.service.IWordChineseService;
-import org.seed.modules.word.service.IWordService;
+import org.seed.modules.word.service.IWordEnglistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class GameWordRelServiceImpl extends ServiceImpl<GameWordRelMapper, GameW
     IGameService gameService;
 
     @Autowired
-    private IWordService wordService;
+    private IWordEnglistService wordEnglishService;
 
     @Autowired
     private IWordChineseService wordChineseService;
@@ -56,7 +56,7 @@ public class GameWordRelServiceImpl extends ServiceImpl<GameWordRelMapper, GameW
         for (String articleId : articleIds) {
             List<Map> words;
             if (game.getType().intValue() == 0) {
-                words = wordService.searchWordByArticle(articleId);
+                words = wordEnglishService.searchWordByArticle(articleId);
             } else {
                 words = wordChineseService.searchWordByArticle(articleId);
             }

@@ -1,0 +1,71 @@
+.wi_container {
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 36px;
+}
+.wi_container .wi_searchBar {
+  padding: 10px 0;
+  width: 400px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 50px;
+}
+.wi_container .wi_searchBar :global .ant-input-prefix {
+  margin-right: 14px;
+}
+.wi_container .wi_searchBar :global .ant-input-affix-wrapper {
+  border-radius: 10px;
+}
+.wi_container .wi_tab :global .ant-tabs-tab {
+  padding: 16px 50px;
+  font-weight: 700;
+  font-size: 16px;
+}
+.wi_container .wi_menus {
+  display: flex;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+}
+.wi_container .wi_menus .wi_trans {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 200%;
+  display: flex;
+  transition: 0.5s;
+}
+.wi_container .wi_menus .wi_menu {
+  display: flex;
+  justify-items: space-evenly;
+  width: 50%;
+  padding-top: 30px;
+}
+.wi_container .wi_menus .wi_menu a {
+  flex: 1;
+}
+.wi_container .wi_menus .wi_menu .wi_item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 20px;
+  align-items: baseline;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  transition: 0.3s;
+  margin: 50px 100px;
+  padding: 50px 40px;
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.4);
+}
+.wi_container .wi_menus .wi_menu .wi_item :global .anticon {
+  font-size: 24px;
+}
+.wi_container .wi_menus .wi_menu .wi_item a {
+  color: rgba(0, 0, 0, 0.4);
+}
+.wi_container .wi_menus .wi_menu .wi_item:hover {
+  border: solid 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}

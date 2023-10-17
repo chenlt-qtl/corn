@@ -3,14 +3,14 @@ package org.seed.modules.word.model;
 import lombok.Data;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.modules.word.entity.Sentence;
-import org.seed.modules.word.entity.Word;
+import org.seed.modules.word.entity.WordEnglist;
 
 import java.util.List;
 
 @Data
 public class SentenceVo extends Sentence{
 
-    private List<Word> words;
+    private List<WordEnglist> words;
 
     public Sentence toSentence(){
         Sentence sentence = new Sentence();

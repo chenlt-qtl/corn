@@ -11,10 +11,10 @@ import org.seed.common.system.query.QueryGenerator;
 import org.seed.common.util.ResultUtils;
 import org.seed.modules.game.entity.Game;
 import org.seed.modules.game.service.IGameService;
-import org.seed.modules.word.entity.Word;
 import org.seed.modules.word.entity.WordChinese;
+import org.seed.modules.word.entity.WordEnglist;
 import org.seed.modules.word.service.IWordChineseService;
-import org.seed.modules.word.service.IWordService;
+import org.seed.modules.word.service.IWordEnglistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +40,7 @@ public class GameController {
     private IWordChineseService wordChineseService;
 
     @Autowired
-    private IWordService wordService;
+    private IWordEnglistService wordEnglishService;
 
     /**
      * 分页列表查询
@@ -161,9 +161,9 @@ public class GameController {
         } else {
             int count = 0;
             if (game.getType().intValue() == 0) {//英文
-                QueryWrapper<Word> queryWrapper = QueryGenerator.initQueryWrapper(new Word(), req.getParameterMap());
+                QueryWrapper<WordEnglist> queryWrapper = QueryGenerator.initQueryWrapper(new WordEnglist(), req.getParameterMap());
                 queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId + "'");
-                count = wordService.count(queryWrapper);
+                count = wordEnglishService.count(queryWrapper);
             } else {
                 QueryWrapper<WordChinese> queryWrapper = QueryGenerator.initQueryWrapper(new WordChinese(), req.getParameterMap());
                 queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId + "'");

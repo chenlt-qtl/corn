@@ -25,8 +25,8 @@ public class Sentence implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**articleId*/
 	@Excel(name = "articleId", width = 15)
 	private Long articleId;

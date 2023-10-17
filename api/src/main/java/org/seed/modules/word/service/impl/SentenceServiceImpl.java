@@ -8,7 +8,7 @@ import org.seed.modules.word.mapper.SentenceMapper;
 import org.seed.modules.word.model.SentenceVo;
 import org.seed.modules.word.service.ISentenceService;
 import org.seed.modules.word.service.IWordChineseService;
-import org.seed.modules.word.service.IWordService;
+import org.seed.modules.word.service.IWordEnglistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ import java.util.Locale;
 public class SentenceServiceImpl extends ServiceImpl<SentenceMapper, Sentence> implements ISentenceService {
 
     @Autowired
-    private IWordService wordService;
+    private IWordEnglistService wordEnglistService;
 
     @Autowired
     private IWordChineseService wordChineseService;
@@ -56,7 +56,7 @@ public class SentenceServiceImpl extends ServiceImpl<SentenceMapper, Sentence> i
             sentenceVo.transSentence(sentence);
             updateById(sentence);
             if (type == 0) {
-                wordService.saveWord(sentenceVo);
+                wordEnglistService.saveWord(sentenceVo);
             } else {
                 wordChineseService.saveWord(sentenceVo);
             }
@@ -76,7 +76,7 @@ public class SentenceServiceImpl extends ServiceImpl<SentenceMapper, Sentence> i
                 save(sentence);
 
                 sentenceVo.setId(sentence.getId());
-                wordService.saveWord(sentenceVo);
+                wordEnglistService.saveWord(sentenceVo);
             }
         }
 

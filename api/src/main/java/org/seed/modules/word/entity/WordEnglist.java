@@ -1,7 +1,6 @@
 package org.seed.modules.word.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -18,12 +17,12 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  */
 @Data
 @TableName("word")
-public class Word implements Serializable {
+public class WordEnglist implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**wordName*/
 	@Excel(name = "wordName", width = 15)
 	private java.lang.String wordName;
@@ -62,8 +61,8 @@ public class Word implements Serializable {
 	@Excel(name = "updateBy", width = 15)
 	private java.lang.String updateBy;
 
-	public Word(){}
-	public Word(String wordName){
+	public WordEnglist(){}
+	public WordEnglist(String wordName){
 		setWordName(wordName);
 	}
 }

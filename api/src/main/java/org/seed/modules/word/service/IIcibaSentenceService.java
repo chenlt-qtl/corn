@@ -13,5 +13,5 @@ import java.util.List;
  */
 public interface IIcibaSentenceService extends IService<IcibaSentence> {
 
-    List<IcibaSentence> getByWordId(String wordId);
+    List<IcibaSentence> getByWordId(Long wordId);
 }

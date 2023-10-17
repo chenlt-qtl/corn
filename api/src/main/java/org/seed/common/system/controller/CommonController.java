@@ -43,8 +43,14 @@ public class CommonController {
     public static final String GYM = "gym";
 
 
-    @PostMapping(value = "/uploadImg/note")
-    public Result uploadNoteImg(@RequestBody Map param) {
+    /**
+     * 保存笔记中的图片，会转成JPG（有损压缩）
+     *
+     * @param param
+     * @return
+     */
+    @PostMapping(value = "/uploadImg/note/{id}")
+    public Result uploadNoteImg(@RequestBody Map param, @PathVariable Integer id) {
         if (param.containsKey("file")) {
             try {
                 String file = String.valueOf(param.get("file"));
@@ -53,8 +59,10 @@ public class CommonController {
                     String data = matcher.group(0);//数据
                     String type = matcher.group(1);//type
                     String imgData = data.split(",")[1];
-                    String[] path = UpLoadUtil.getFilePaths(uploadpath, NOTE, "." + type, null);
-                    if (Base64Utils.GenerateImage(imgData, path[0])) {
+                    String dir = NOTE + "/" + id / 100 * 100;//路径（相对）
+                    String fileName = id.toString() + "_" + System.currentTimeMillis();//文件名称
+                    String[] path = UpLoadUtil.getFilePaths(uploadpath, dir, ".jpg", fileName);
+                    if (Base64Utils.saveBase64Image(imgData, type, path[0])) {
                         return ResultUtils.ok(path[1], UpLoadUtil.dbToReal(path[1]));
                     }
                 }
@@ -139,7 +147,7 @@ public class CommonController {
             String[] path = UpLoadUtil.getFilePaths(uploadpath, dir, orgName.substring(orgName.indexOf(".")), null);
             File savefile = new File(path[0]);
             FileCopyUtils.copy(mf.getBytes(), savefile);
-            return ResultUtils.ok(path[1],UpLoadUtil.dbToReal(path[1]));
+            return ResultUtils.ok(path[1], UpLoadUtil.dbToReal(path[1]));
         } catch (IOException e) {
             e.printStackTrace();
             throw new CornException(e);

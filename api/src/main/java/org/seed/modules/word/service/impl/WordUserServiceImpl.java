@@ -27,7 +27,7 @@ public class WordUserServiceImpl extends ServiceImpl<WordUserMapper, WordUser> i
     private static final int DEFAULT_SCORE = 7;
 
     @Override
-    public void saveRel(String wordId) {
+    public void saveRel(Long wordId) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         if (getRel(wordId) == null) {
             WordUser wordUser = new WordUser();
@@ -39,7 +39,7 @@ public class WordUserServiceImpl extends ServiceImpl<WordUserMapper, WordUser> i
     }
 
     @Override
-    public WordUser getRel(String wordId) {
+    public WordUser getRel(Long wordId) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<WordUser> wrapper = new QueryWrapper();
         wrapper.eq("user", sysUser.getUsername());
@@ -53,7 +53,7 @@ public class WordUserServiceImpl extends ServiceImpl<WordUserMapper, WordUser> i
     }
 
     @Override
-    public void removeByWordIds(List<String> wordIds) {
+    public void removeByWordIds(List<Long> wordIds) {
         if (wordIds != null && !wordIds.isEmpty()) {
             SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
             QueryWrapper<WordUser> wrapper = new QueryWrapper();

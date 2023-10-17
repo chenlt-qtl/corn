@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
 import org.seed.modules.system.entity.SysUser;
 import org.seed.modules.word.entity.ArticleWordRel;
-import org.seed.modules.word.entity.Word;
 import org.seed.modules.word.entity.WordChinese;
+import org.seed.modules.word.entity.WordEnglist;
 import org.seed.modules.word.entity.WordUser;
 import org.seed.modules.word.mapper.ArticleWordRelMapper;
 import org.seed.modules.word.service.IArticleWordRelService;
 import org.seed.modules.word.service.IWordChineseService;
-import org.seed.modules.word.service.IWordService;
+import org.seed.modules.word.service.IWordEnglistService;
 import org.seed.modules.word.service.IWordUserService;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +37,7 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     private IWordUserService wordUserService;
 
     @Resource
-    private IWordService wordService;
+    private IWordEnglistService wordService;
 
     @Resource
     private IWordChineseService wordChineseService;
@@ -53,10 +53,10 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
             SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
 
             for (String wordName : addWordNames) {
-                String wordId = null;
+                Long wordId = null;
                 try {
                     if(type == 0) {
-                        Word word = wordService.getWord(wordName);
+                        WordEnglist word = wordService.getWord(wordName);
                         wordId = word.getId();
                     }else{
                         WordChinese wordChinese = wordChineseService.getWord(wordName);
@@ -91,7 +91,7 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     }
 
     @Override
-    public void saveRels(Long articleId, String wordId) {
+    public void saveRels(Long articleId, Long wordId) {
 
 
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
@@ -114,7 +114,7 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     }
 
     @Override
-    public ArticleWordRel getRel(Long articleId, String wordId) {
+    public ArticleWordRel getRel(Long articleId, Long wordId) {
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<ArticleWordRel> wrapper = new QueryWrapper();
         wrapper.eq("article_id", articleId);
@@ -135,22 +135,22 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
     @Override
     public void removeRelByArticle(Long articleId, String[] wordNames) {
         removeByWordNames(articleId, wordNames);
-        QueryWrapper<Word> wordWrapper = new QueryWrapper();
+        QueryWrapper<WordEnglist> wordWrapper = new QueryWrapper();
         wordWrapper.in("word_name", wordNames);
-        List<Word> list = wordService.list(wordWrapper);
-        List<String> wordIds = new ArrayList<>();
-        for (Word word : list) {
+        List<WordEnglist> list = wordService.list(wordWrapper);
+        List<Long> wordIds = new ArrayList<>();
+        for (WordEnglist word : list) {
             wordIds.add(word.getId());
         }
 
-        List<String> usedWordIds = getRemoveWordIds(articleId, wordIds);
+        List<Long> usedWordIds = getRemoveWordIds(articleId, wordIds);
         wordUserService.removeByWordIds(usedWordIds);
     }
 
     @Override
     public void removeAricleRel(ArticleWordRel articleWordRel) {
         removeById(articleWordRel.getId());
-        List<String> wordIds = getRemoveWordIds(articleWordRel.getArticleId(), Arrays.asList(articleWordRel.getWordId()));
+        List<Long> wordIds = getRemoveWordIds(articleWordRel.getArticleId(), Arrays.asList(articleWordRel.getWordId()));
         wordUserService.removeByWordIds(wordIds);
     }
 
@@ -163,12 +163,12 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
      * @return
      */
     @Override
-    public List<String> getRemoveWordIds(Long articleId, List<String> wordIds) {
+    public List<Long> getRemoveWordIds(Long articleId, List<Long> wordIds) {
 
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         List<String> usedWordIds = articleWordRelMapper.getUsedWordIds(articleId, sysUser.getUsername(), wordIds);//查出正在使用的wordId
 
-        List<String> removeWordIds = wordIds.stream().filter(s -> !usedWordIds.contains(s)).collect(Collectors.toList());//剔除掉正在使用的wordId
+        List<Long> removeWordIds = wordIds.stream().filter(s -> !usedWordIds.contains(s)).collect(Collectors.toList());//剔除掉正在使用的wordId
 
         if (!removeWordIds.isEmpty()) {
             QueryWrapper<WordUser> wuWrapper = new QueryWrapper();
@@ -176,11 +176,11 @@ public class ArticleWordRelServiceImpl extends ServiceImpl<ArticleWordRelMapper,
             wuWrapper.eq("add_from", 1);//add_from必须是1的
             List<WordUser> wuList = wordUserService.list(wuWrapper);
             if (!wuList.isEmpty()) {
-                List<String> removeIds = new ArrayList<>();
+                List<Long> removeIds = new ArrayList<>();
                 wuList.stream().forEach(wu -> removeIds.add(wu.getWordId()));
                 return removeIds;
             }
         }
-        return new ArrayList<String>();
+        return new ArrayList<Long>();
     }
 }

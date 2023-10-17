@@ -9,8 +9,8 @@ import org.seed.common.api.vo.Result;
 import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
 import org.seed.common.util.ResultUtils;
-import org.seed.modules.word.entity.Word;
-import org.seed.modules.word.model.WordVo;
+import org.seed.modules.word.entity.WordEnglist;
+import org.seed.modules.word.model.WordEnglistVo;
 import org.seed.modules.word.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +29,11 @@ import java.util.Map;
  * @version： V1.0
  */
 @RestController
-@RequestMapping("/word/word")
+@RequestMapping("/word/english")
 @Slf4j
-public class WordController {
+public class WordEnglistController {
     @Autowired
-    private IWordService wordService;
+    private IWordEnglistService wordEnglishService;
 
     @Autowired
     private IIcibaSentenceService icibaSentenceService;
@@ -61,7 +61,7 @@ public class WordController {
                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
 
 
-        IPage<Map> rows = wordService.pageSearchWord(wordName, pageNo, pageSize);
+        IPage<Map> rows = wordEnglishService.pageSearchWord(wordName, pageNo, pageSize);
 
         return ResultUtils.okData(rows);
 
@@ -85,11 +85,11 @@ public class WordController {
             throw new CornException("Game id 是必填项！");
         }
 
-        Word word = new Word();
-        QueryWrapper<Word> queryWrapper = QueryGenerator.initQueryWrapper(word, req.getParameterMap());
+        WordEnglist word = new WordEnglist();
+        QueryWrapper<WordEnglist> queryWrapper = QueryGenerator.initQueryWrapper(word, req.getParameterMap());
         queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId);
-        Page<Word> page = new Page<Word>(pageNo, pageSize);
-        IPage<Word> pageList = wordService.page(page, queryWrapper);
+        Page<WordEnglist> page = new Page<WordEnglist>(pageNo, pageSize);
+        IPage<WordEnglist> pageList = wordEnglishService.page(page, queryWrapper);
 
         return ResultUtils.okData(pageList);
 
@@ -113,12 +113,12 @@ public class WordController {
             throw new CornException("Game id 是必填项！");
         }
 
-        Word word = new Word();
-        QueryWrapper<Word> queryWrapper = QueryGenerator.initQueryWrapper(word, req.getParameterMap());
+        WordEnglist word = new WordEnglist();
+        QueryWrapper<WordEnglist> queryWrapper = QueryGenerator.initQueryWrapper(word, req.getParameterMap());
         queryWrapper.inSql("id", " select word_id from game_word_rel where game_id = '" + gameId + "' and level = 0");
         queryWrapper.orderByAsc("rand()");
-        Page<Word> page = new Page<Word>(pageNo, pageSize);
-        IPage<Word> pageList = wordService.page(page, queryWrapper);
+        Page<WordEnglist> page = new Page<WordEnglist>(pageNo, pageSize);
+        IPage<WordEnglist> pageList = wordEnglishService.page(page, queryWrapper);
 
         return ResultUtils.okData(pageList);
 
@@ -131,9 +131,9 @@ public class WordController {
      * @return
      */
     @PostMapping(value = "/add")
-    public Result add(@RequestBody Word word) {
+    public Result add(@RequestBody WordEnglist word) {
         try {
-            wordService.save(word);
+            wordEnglishService.save(word);
             return ResultUtils.ok("添加成功！");
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,12 +150,12 @@ public class WordController {
      * @return
      */
     @PutMapping(value = "/edit")
-    public Result edit(@RequestBody Word word) {
-        Word wordEntity = wordService.getById(word.getId());
+    public Result edit(@RequestBody WordEnglist word) {
+        WordEnglist wordEntity = wordEnglishService.getById(word.getId());
         if (wordEntity == null) {
             throw new CornException("未找到对应实体");
         } else {
-            boolean ok = wordService.updateById(word);
+            boolean ok = wordEnglishService.updateById(word);
             return ResultUtils.ok("修改成功!");
         }
     }
@@ -168,11 +168,11 @@ public class WordController {
      */
     @DeleteMapping(value = "/delete")
     public Result delete(@RequestParam(name = "id", required = true) String id) {
-        Word word = wordService.getById(id);
+        WordEnglist word = wordEnglishService.getById(id);
         if (word == null) {
             throw new CornException("未找到对应实体");
         } else {
-            boolean ok = wordService.removeById(id);
+            boolean ok = wordEnglishService.removeById(id);
 
             return ResultUtils.ok("删除成功!");
 
@@ -192,7 +192,7 @@ public class WordController {
         if (ids == null || "".equals(ids.trim())) {
             throw new CornException("参数不识别！");
         } else {
-            this.wordService.removeByIds(Arrays.asList(ids.split(",")));
+            this.wordEnglishService.removeByIds(Arrays.asList(ids.split(",")));
             return ResultUtils.ok("删除成功!");
         }
 
@@ -206,7 +206,7 @@ public class WordController {
      */
     @GetMapping(value = "/queryById")
     public Result queryById(@RequestParam(name = "id", required = true) String id) {
-        Word word = wordService.getById(id);
+        WordEnglist word = wordEnglishService.getById(id);
         if (word == null) {
             throw new CornException("未找到对应实体");
         } else {
@@ -225,23 +225,23 @@ public class WordController {
     @GetMapping(value = "/queryByWordName")
     public Result queryByWordName(@RequestParam(name = "wordName", required = true) String wordName, @RequestParam(name = "articleId", required = false) Long articleId) {
 
-        WordVo wordVo = new WordVo(wordService.getWord(wordName));
-        String wordId = wordVo.getId();
+        WordEnglistVo wordEnglistVo = new WordEnglistVo(wordEnglishService.getWord(wordName));
+        Long wordId = wordEnglistVo.getId();
 
-        wordVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
-        wordVo.setSentences(sentenceService.getSentencesByWord(wordName));
-        wordVo.setRelWithUser(wordUserService.getRel(wordId) != null);
+        wordEnglistVo.setIcibaSentences(icibaSentenceService.getByWordId(wordId));
+        wordEnglistVo.setSentences(sentenceService.getSentencesByWord(wordName));
+        wordEnglistVo.setRelWithUser(wordUserService.getRel(wordId) != null);
         if (articleId != null) {
-            wordVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
+            wordEnglistVo.setRelWithArticle(articleWordRelService.getRel(articleId, wordId) != null);
         }
-        return ResultUtils.okData(wordVo);
+        return ResultUtils.okData(wordEnglistVo);
 
     }
 
     @GetMapping(value = "/queryByArticle")
     public Result queryByArticle(@RequestParam(name = "id", required = true) String id) {
         //获取word
-        List<Map> words = wordService.searchWordByArticle(id);
+        List<Map> words = wordEnglishService.searchWordByArticle(id);
         return ResultUtils.okData(new HashMap() {{
             put("records", words);
         }});

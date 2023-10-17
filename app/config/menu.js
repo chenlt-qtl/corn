@@ -13,18 +13,21 @@ export default {
                 },
                 {
                     path: '/word',
-                    name: '英语',
-                    component: './word',
+                    name: '学习',
+                    component: './Word',
+                },
+                {
+                    path: '/word/:type/list',
+                    component: './Word/ArticleList',
+                },
+                {
+                    path: '/word/article/:id',
+                    component: './Word/ArticleDetail',
                 },
                 {
                     path: '/splicMp3',
                     name: '切割',
                     component: './splicMp3',
-                },
-                {
-                    path: '/wordChinese',
-                    name: '语文天地',
-                    component: './wordChinese/articleList',
                 },
                 {
                     path: '/wordChinese/:id',

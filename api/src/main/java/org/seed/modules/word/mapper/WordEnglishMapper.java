@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.annotations.Param;
-import org.seed.modules.word.entity.Word;
+import org.seed.modules.word.entity.WordEnglist;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Map;
  * @date：   2019-08-22
  * @version： V1.0
  */
-public interface WordMapper extends BaseMapper<Word> {
+public interface WordEnglishMapper extends BaseMapper<WordEnglist> {
 
     IPage<Map> pageSeachWord(IPage<Map> page, @Param(Constants.WRAPPER) Wrapper<Map> queryWrapper);
 

@@ -22,12 +22,11 @@ import org.apache.http.util.EntityUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.quartz.CronExpression;
 import org.seed.common.exception.CornException;
 import org.seed.common.system.controller.CommonController;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.modules.word.entity.IcibaSentence;
-import org.seed.modules.word.entity.Word;
+import org.seed.modules.word.entity.WordEnglist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +74,7 @@ public class ParseIciba {
      * @throws Exception
      */
     private static Map parse(String data, String upload, String wordName) throws Exception {
-        Word word = new Word(wordName);
+        WordEnglist word = new WordEnglist(wordName);
         Map result = null;
         Document doc = DocumentHelper.parseText(data);
         Element rootElt = doc.getRootElement(); // 获取根节点

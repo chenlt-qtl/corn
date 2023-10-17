@@ -8,14 +8,12 @@ import org.apache.shiro.SecurityUtils;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.modules.system.entity.SysUser;
 import org.seed.modules.word.entity.IcibaSentence;
-import org.seed.modules.word.entity.Word;
-import org.seed.modules.word.mapper.WordMapper;
+import org.seed.modules.word.entity.WordEnglist;
+import org.seed.modules.word.mapper.WordEnglishMapper;
 import org.seed.modules.word.model.SentenceVo;
 import org.seed.modules.word.service.IIcibaSentenceService;
-import org.seed.modules.word.service.IWordService;
+import org.seed.modules.word.service.IWordEnglistService;
 import org.seed.modules.word.util.ParseIciba;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,12 +30,10 @@ import java.util.Map;
  * @version： V1.0
  */
 @Service
-public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IWordService {
-
-    private final static Logger logger = LoggerFactory.getLogger(WordServiceImpl.class);
+public class WordEnglishServiceImpl extends ServiceImpl<WordEnglishMapper, WordEnglist> implements IWordEnglistService {
 
     @Resource
-    private WordMapper wordMapper;
+    private WordEnglishMapper wordMapper;
 
     @Autowired
     private IIcibaSentenceService icibaSentenceService;
@@ -46,18 +42,18 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     private String uploadpath;
 
     @Override
-    public Word getWord(String wordName) {
+    public WordEnglist getWord(String wordName) {
         String lowerCase = wordName.toLowerCase();//转小写
-        List<Word> list = wordMapper.selectByMap(new HashMap() {{
+        List<WordEnglist> list = wordMapper.selectByMap(new HashMap() {{
             this.put("word_name", lowerCase);
         }});
-        Word word = null;
+        WordEnglist word = null;
         if (!list.isEmpty()) {
             word = list.get(0);//已存在数据库中
         } else {//查API
             Map detailMap = ParseIciba.getWordFromIciba(lowerCase, uploadpath);
             if(detailMap != null) {
-                word = (Word) detailMap.get("word");
+                word = (WordEnglist) detailMap.get("word");
                 save(word);
                 if (detailMap.containsKey("icibaSentence")) {//例句
                     List<IcibaSentence> icibaSentences = (List) detailMap.get("icibaSentence");
@@ -114,7 +110,7 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
     @Override
     public void saveWord(SentenceVo sentenceVo) {
         if (sentenceVo.getWords() != null && !sentenceVo.getWords().isEmpty()) {
-            for (Word wordVo : sentenceVo.getWords()) {
+            for (WordEnglist wordVo : sentenceVo.getWords()) {
                 try {
                     getWord(wordVo.getWordName().toLowerCase());
                 } catch (Exception e) {

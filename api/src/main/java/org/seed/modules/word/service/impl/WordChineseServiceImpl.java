@@ -3,8 +3,8 @@ package org.seed.modules.word.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.seed.common.exception.CornException;
-import org.seed.modules.word.entity.Word;
 import org.seed.modules.word.entity.WordChinese;
+import org.seed.modules.word.entity.WordEnglist;
 import org.seed.modules.word.mapper.WordChineseMapper;
 import org.seed.modules.word.model.SentenceVo;
 import org.seed.modules.word.service.IWordChineseService;
@@ -62,7 +62,7 @@ public class WordChineseServiceImpl extends ServiceImpl<WordChineseMapper, WordC
     @Override
     public void saveWord(SentenceVo sentenceVo) {
         if (sentenceVo.getWords() != null && !sentenceVo.getWords().isEmpty()) {
-            for (Word wordVo : sentenceVo.getWords()) {
+            for (WordEnglist wordVo : sentenceVo.getWords()) {
 
                     getWord(wordVo.getWordName().toLowerCase());
 

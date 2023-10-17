@@ -73,7 +73,7 @@ public class WordUserController {
 	 * @return
 	 */
 	@PostMapping(value = "/add")
-	public Result add(@RequestParam(name="wordId",required=true) String wordId) {
+	public Result add(@RequestParam(name="wordId",required=true) Long wordId) {
 		try {
 			wordUserService.saveRel(wordId);
 			return ResultUtils.ok("添加成功！");
@@ -110,7 +110,7 @@ public class WordUserController {
 	 * @return
 	 */
 	@DeleteMapping(value = "/delete")
-	public Result delete(@RequestParam(name="wordId",required=true) String wordId) {
+	public Result delete(@RequestParam(name="wordId",required=true) Long wordId) {
 		WordUser wordUser = wordUserService.getRel(wordId);
 		if(wordUser==null) {
 			throw new CornException("未找到对应实体");

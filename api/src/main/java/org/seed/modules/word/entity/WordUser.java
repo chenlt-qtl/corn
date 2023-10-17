@@ -22,14 +22,14 @@ public class WordUser implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**userId*/
 	@Excel(name = "user", width = 15)
 	private java.lang.String user;
 	/**wordId*/
 	@Excel(name = "wordId", width = 15)
-	private java.lang.String wordId;
+	private Long wordId;
 
 	@Excel(name = "addFrom", width = 15)
 	private Integer addFrom;

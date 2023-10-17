@@ -22,8 +22,8 @@ public class WordChinese implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**wordName*/
 	@Excel(name = "wordName", width = 15)
 	private java.lang.String wordName;

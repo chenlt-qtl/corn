@@ -22,14 +22,14 @@ public class ArticleWordRel implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/
-	@TableId(type = IdType.UUID)
-	private java.lang.String id;
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	/**sentenceId*/
 	@Excel(name = "articleId", width = 15)
 	private Long articleId;
 	/**wordId*/
 	@Excel(name = "wordId", width = 15)
-	private java.lang.String wordId;
+	private Long wordId;
 	/**status*/
 	@Excel(name = "status", width = 15)
 	private java.lang.String status;
