@@ -3,6 +3,9 @@ package org.seed.common.util;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Base64;
 
@@ -10,6 +13,7 @@ public class Base64Utils {
 
     /**
      * 图片转化成base64字符串
+     *
      * @param imgPath
      * @return
      */
@@ -40,31 +44,39 @@ public class Base64Utils {
     }
 
     /**
-     * base64字符串转化成图片
+     * 保存base64图片
      *
-     * @param imgData
-     *            图片编码
-     * @param imgFilePath
-     *            存放到本地路径
+     * @param imgData     图片编码
+     *                    originType 原来的图片类型
+     * @param imgFilePath 存放到本地路径
      * @return
      * @throws IOException
      */
     @SuppressWarnings("finally")
-    public static boolean GenerateImage(String imgData, String imgFilePath) throws IOException { // 对字节数组字符串进行Base64解码并生成图片
-        if (imgData == null) // 图像数据为空
+    public static boolean saveBase64Image(String imgData, String originType, String imgFilePath) throws IOException { // 对字节数组字符串进行Base64解码并生成图片
+        if (imgData == null) {// 图像数据为空
             return false;
+        }
         BASE64Decoder decoder = new BASE64Decoder();
         OutputStream out = null;
         try {
             out = new FileOutputStream(imgFilePath);
             // Base64解码
             byte[] b = decoder.decodeBuffer(imgData);
-            for (int i = 0; i < b.length; ++i) {
-                if (b[i] < 0) {// 调整异常数据
-                    b[i] += 256;
-                }
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(b));
+
+            if ("jpg".equals(originType) || "jpeg".equals(originType)) {
+                //直接保存
+                ImageIO.write(image, "jpg", out);
+            } else {//需要转格式
+                BufferedImage jpgBufferedImage = new BufferedImage(
+                        image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+                jpgBufferedImage.createGraphics().drawImage(image, 0, 0, Color.WHITE, null);
+
+                ImageIO.write(jpgBufferedImage, "jpg", out);
+
             }
-            out.write(b);
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

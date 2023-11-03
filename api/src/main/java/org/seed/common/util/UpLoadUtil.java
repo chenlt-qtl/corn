@@ -73,12 +73,10 @@ public class UpLoadUtil {
      */
     public static String[] getFilePaths(String uploadpath, String dir, String fileType, String fileName) {
         log.info("******≧◔◡◔≦*******upload path:" + uploadpath);
-        String nowday = new SimpleDateFormat("yyyyMMdd").format(new Date());
-
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         String dbpath = dir;//硬盘存放相对路径
-        if (!CommonController.WORD_PRON.equals(dir)) {//单词发音文件不用区分用户日期
-            dbpath = dbpath + File.separator + sysUser.getUsername() + File.separator + nowday;//硬盘存放相对路径
+        if (!CommonController.WORD_PRON.equals(dir)) {//单词发音文件不用区分用户
+            dbpath = dbpath + File.separator + sysUser.getUsername();//硬盘存放相对路径
         }
         log.info("******≧◔◡◔≦*******dbpath:" + dbpath);
         if (StringUtils.isBlank(fileName)) {
@@ -273,9 +271,9 @@ public class UpLoadUtil {
             if (data.startsWith("data:image") && data.contains(",")) {
                 String imgData = data.split(",")[1];
                 if (StringUtils.isNotBlank(imgData)) {
-                    String pathArr[] = UpLoadUtil.getFilePaths(uploadPath, CommonController.NOTE, "." + type, null);
+                    String pathArr[] = UpLoadUtil.getFilePaths(uploadPath, CommonController.NOTE, ".jpg", null);
                     try {
-                        if (Base64Utils.GenerateImage(imgData, pathArr[0])) {
+                        if (Base64Utils.saveBase64Image(imgData, type, pathArr[0])) {
                             matcher.appendReplacement(sbr, pathArr[1]);
                         }
                     } catch (IOException e) {

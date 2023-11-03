@@ -1,8 +1,9 @@
-Jeecg-Boot 快速开发平台
+Seed API 平台
 ===============
 
-当前最新版本： 1.1（发布日期：20190415）
-
+## 工具
+1. PNG转JPG
+    /tool/imageToJpg
 
 ## 后端技术架构
 - 基础框架：Spring Boot 2.0.3.RELEASE
@@ -25,11 +26,11 @@ Jeecg-Boot 快速开发平台
 
 - 语言：Java 8
 
-- IDE(JAVA)： Eclipse安装lombok插件 或者 IDEA
+- IDE(JAVA)：IDEA
 
 - 依赖管理：Maven
 
-- 数据库：MySQL5.0  &  Oracle 11g
+- 数据库：MySQL5.0
 
 - 缓存：Redis
 
