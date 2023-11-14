@@ -116,9 +116,9 @@ export async function deleteNote(id: String) {
   });
 }
 
-export async function uploadImg(img: String) {
+export async function uploadImg(img: String,id:number) {
 
-  return request('/api/sys/common/uploadImg/note', {
+  return request('/api/sys/common/uploadImg/note/'+id, {
     method: 'POST',
     data: {
       file: img,

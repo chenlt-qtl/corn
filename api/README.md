@@ -3,7 +3,7 @@ Seed API 平台
 
 ## 工具
 1. PNG转JPG
-    /tool/imageToJpg
+    org.seed.modules.tools.controller.ToolController /tool/imageToJpg
 
 ## 后端技术架构
 - 基础框架：Spring Boot 2.0.3.RELEASE

@@ -131,7 +131,7 @@ const MarkDown = React.forwardRef((props, ref) => {
     const handleImageUpload = (file, callback) => {
         const reader = new FileReader()
         reader.onload = async () => {
-            let result = await uploadImg(reader.result)
+            let result = await uploadImg(reader.result,props.note.openedNote.id)
             if (result.success) {
                 callback(result.result)
             } else {
