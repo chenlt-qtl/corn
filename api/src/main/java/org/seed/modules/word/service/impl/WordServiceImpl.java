@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.seed.common.util.UpLoadUtil;
 import org.seed.modules.system.entity.SysUser;
@@ -84,8 +85,11 @@ public class WordServiceImpl extends ServiceImpl<WordMapper, Word> implements IW
 
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
         QueryWrapper<Map> wrapper = new QueryWrapper();
-        wrapper.like("wordName", wordName).eq("user", sysUser.getUsername());
-        Page<Map> page = new Page<Map>(pageNo, pageSize);
+        if(StringUtils.isNotBlank(wordName)){
+            wrapper.like("wordName", wordName);
+        }
+        wrapper.eq("user", sysUser.getUsername());
+        Page<Map> page = new Page(pageNo, pageSize);
         IPage<Map> mapIPage = wordMapper.pageSeachWord(page, wrapper);
 
         handleMapUrl(mapIPage.getRecords());
