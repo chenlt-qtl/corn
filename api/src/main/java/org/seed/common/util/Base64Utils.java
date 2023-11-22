@@ -1,8 +1,5 @@
 package org.seed.common.util;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,13 +20,13 @@ public class Base64Utils {
         byte[] data = null;
         String encode = null; // 返回Base64编码过的字节数组字符串
         // 对字节数组Base64编码
-        BASE64Encoder encoder = new BASE64Encoder();
+        Base64.Encoder encoder = Base64.getMimeEncoder();
         try {
             // 读取图片字节数组
             in = new FileInputStream(imgFile);
             data = new byte[in.available()];
             in.read(data);
-            encode = encoder.encode(data);
+            encode = encoder.encodeToString(data);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -57,12 +54,12 @@ public class Base64Utils {
         if (imgData == null) {// 图像数据为空
             return false;
         }
-        BASE64Decoder decoder = new BASE64Decoder();
+        Base64.Decoder decoder = Base64.getMimeDecoder();
         OutputStream out = null;
         try {
             out = new FileOutputStream(imgFilePath);
             // Base64解码
-            byte[] b = decoder.decodeBuffer(imgData);
+            byte[] b = decoder.decode(imgData);
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(b));
 
             if ("jpg".equals(originType) || "jpeg".equals(originType)) {
