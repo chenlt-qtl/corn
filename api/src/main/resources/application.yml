@@ -76,7 +76,7 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/corn?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=UTC
+          url: jdbc:mysql://127.0.0.1:3306/corn?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
           username: corn
           password: corn2020!@#
           driver-class-name: com.mysql.cj.jdbc.Driver
@@ -111,7 +111,7 @@ jeecg :
     upload: /root/file/upload
     public: /root/file/public
     #文件显示时的前缀
-    pre: http://42.192.15.59/upload/
+    pre: http://117.50.196.66/upload/
     #lucene索引目录
     index: /root/file/index
 logging:
@@ -121,4 +121,4 @@ logging:
   root:
     file-name: api
     appender: RollingFile
-    path: /root/server/api/logs/
+    path: /root/corn/api/logs/
