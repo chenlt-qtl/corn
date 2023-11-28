@@ -76,7 +76,7 @@ spring:
         connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/corn?characterEncoding=UTF-8&useUnicode=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+          url: jdbc:mysql://127.0.0.1:3306/corn?characterEncoding=UTF-8&useUnicode=true&serverTimezone=UTC
           username: corn
           password: corn2020!@#
           driver-class-name: com.mysql.cj.jdbc.Driver
