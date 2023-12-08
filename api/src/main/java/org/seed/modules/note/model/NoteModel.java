@@ -44,4 +44,14 @@ public class NoteModel extends Note {
         this.setText(BtoaEncode.encryption(this.getText()));
         this.setName(BtoaEncode.encryption(this.getName()));
     }
+
+    @Override
+    public String toString() {
+        return "NoteModel{" +
+                "id='" + getId() + '\'' +
+                "createBy='" + getCreateBy() + '\'' +
+                "text='" + text + '\'' +
+                ", isFav=" + isFav +
+                '}';
+    }
 }

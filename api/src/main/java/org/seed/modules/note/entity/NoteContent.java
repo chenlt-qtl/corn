@@ -40,4 +40,11 @@ public class NoteContent implements Serializable {
 	private java.util.Date updateTime;
 
 	private java.lang.String updateBy;
+
+	public NoteContent() {
+	}
+
+	public NoteContent(String text) {
+		this.text = text;
+	}
 }

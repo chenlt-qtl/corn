@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.seed.tool.mapper.NoteMapper">
+
+
+
+    <select id="getNoteModelList" resultType="org.seed.modules.note.model.NoteModel">
+        SELECT a.id,a.name,a.create_by,b.text
+        FROM note_info a left join note_content b on a.content_id=b.id
+    </select>
+
+
+
+
+
+</mapper>

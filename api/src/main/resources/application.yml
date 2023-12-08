@@ -113,7 +113,7 @@ jeecg :
     #文件显示时的前缀
     pre: http://117.50.196.66/upload/
     #lucene索引目录
-    index: /root/file/index
+    lucence: /root/file/index
 logging:
   level:
     root: INFO

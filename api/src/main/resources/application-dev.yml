@@ -17,7 +17,7 @@ jeecg:
     #pre: /upload/
     pre: http://localhost:89/
     #lucene索引目录
-    index: E://corn//index
+    lucence: E://corn//index
 logging:
   root:
     appender: Console

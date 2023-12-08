@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.seed.common.api.vo.Result;
 import org.seed.common.exception.CornException;
 import org.seed.common.system.query.QueryGenerator;
@@ -19,6 +21,8 @@ import org.seed.common.util.ResultUtils;
 import org.seed.common.util.oConvertUtils;
 import org.seed.modules.system.entity.SysDict;
 import org.seed.modules.system.entity.SysDictItem;
+import org.seed.modules.system.mapper.SysDictMapper;
+import org.seed.modules.system.model.DuplicateCheckVo;
 import org.seed.modules.system.model.SysDictTree;
 import org.seed.modules.system.service.ISysDictItemService;
 import org.seed.modules.system.service.ISysDictService;
@@ -62,6 +66,9 @@ public class SysDictController {
 
 	@Autowired
 	private ISysDictItemService sysDictItemService;
+
+	@Autowired
+	SysDictMapper sysDictMapper;
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public Result queryPageList(SysDict sysDict,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -290,4 +297,32 @@ public class SysDictController {
 		return mv;
 	}
 
+	/**
+	 * 校验数据是否在系统中是否存在
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "/check", method = RequestMethod.GET)
+	@ApiOperation("重复校验接口")
+	public Result doDuplicateCheck(DuplicateCheckVo duplicateCheckVo, HttpServletRequest request) {
+		Long num = null;
+
+		log.info("----duplicate check------："+ duplicateCheckVo.toString());
+		if (StringUtils.isNotBlank(duplicateCheckVo.getDataId())) {
+			// [2].编辑页面校验
+			num = sysDictMapper.duplicateCheckCountSql(duplicateCheckVo);
+		} else {
+			// [1].添加页面校验
+			num = sysDictMapper.duplicateCheckCountSqlNoDataId(duplicateCheckVo);
+		}
+
+		if (num == null || num == 0) {
+			// 该值可用
+			return ResultUtils.ok("该值可用！");
+		} else {
+			// 该值不可用
+			log.info("该值不可用，系统中已存在！");
+			return ResultUtils.error("该值不可用，系统中已存在！");
+		}
+	}
 }

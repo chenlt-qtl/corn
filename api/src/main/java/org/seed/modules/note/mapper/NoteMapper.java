@@ -3,6 +3,7 @@ package org.seed.modules.note.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.seed.modules.note.entity.Note;
+import org.seed.modules.note.model.NoteModel;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ import java.util.List;
 public interface NoteMapper extends BaseMapper<Note> {
 
     List<Note> getChildren(@Param("parentId") Long parentId);
+
+    List<NoteModel> getNoteModelList(@Param("start") int start,@Param("limit") int limit);
 }
