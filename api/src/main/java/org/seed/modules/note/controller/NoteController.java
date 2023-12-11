@@ -2,6 +2,8 @@ package org.seed.modules.note.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.shiro.SecurityUtils;
 import org.seed.common.api.vo.Result;
 import org.seed.common.util.BtoaEncode;
@@ -15,9 +17,11 @@ import org.seed.modules.note.service.INoteContentService;
 import org.seed.modules.note.service.INoteFavoriteService;
 import org.seed.modules.note.service.INoteService;
 import org.seed.modules.system.entity.SysUser;
+import org.seed.tool.service.LucenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -40,6 +44,8 @@ public class NoteController {
     @Autowired
     private INoteContentService noteContentService;
 
+    @Autowired
+    private LucenceService lucenceService;
 
     /**
      * 分页列表查询
@@ -50,15 +56,16 @@ public class NoteController {
      * @return
      */
     @GetMapping(value = "/pageSearchNote")
-    public Result pageSearchNote(@RequestParam Long parentId, @RequestParam String searchStr, @RequestParam boolean withLeaf, @RequestParam Integer pageNo, @RequestParam Integer pageSize) {
-        IPage<Note> pageList = noteService.pageSearchNote(parentId, searchStr, withLeaf, pageNo, pageSize);
-        for (Note note : pageList.getRecords()) {
+    public Result pageSearchNote(@RequestParam Long parentId, @RequestParam String searchStr, @RequestParam boolean withLeaf, @RequestParam Integer pageNo, @RequestParam Integer pageSize) throws ParseException, InvalidTokenOffsetsException, IOException {
+//        IPage<Note> pageList = noteService.pageSearchNote(parentId, searchStr, withLeaf, pageNo, pageSize);
+        List<Note> list = lucenceService.searchNote(searchStr);
+        for (Note note : list) {
             if (note.getName() != null) {
                 //加密名称
                 note.setName(BtoaEncode.encryption(note.getName()));
             }
         }
-        return ResultUtils.okData(pageList);
+        return ResultUtils.okData(list);
     }
 
     /**

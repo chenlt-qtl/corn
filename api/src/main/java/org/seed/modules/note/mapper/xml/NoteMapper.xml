@@ -29,7 +29,7 @@
     </select>
 
     <select id="getNoteModelList" resultType="org.seed.modules.note.model.NoteModel">
-        SELECT a.id,a.name,a.create_by,b.text
+        SELECT a.id,a.name,a.create_by,a.is_leaf,b.text
         FROM note_info a left join note_content b on a.content_id=b.id
         where a.create_by is not null
         limit #{start},#{limit}

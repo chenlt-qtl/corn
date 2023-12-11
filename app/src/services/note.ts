@@ -57,7 +57,7 @@ export async function pageSearchNote({ pageNo, pageSize, searchStr = "", parentI
 
   return request(`/api/note/pageSearchNote?pageNo=${pageNo}&pageSize=${pageSize}&searchStr=${searchStr}&parentId=${parentId}&withLeaf=true`).then(res => {
     if (res) {
-      res.result.records = res.result.records.map(item => decryptNote(item))
+      res.result = res.result.map(item => decryptNote(item))
     }
     return res;
   })

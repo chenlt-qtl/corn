@@ -13,11 +13,13 @@ const NoteList: React.FC = (props, ref) => {
 
     const sortData = items => {
         const { sortType } = props;
+        console.log(2222, sortType);
 
 
         if (sortType) {
             if (sortType == "default") {
-                return [...items].sort((a, b) => a.isLeaf - b.isLeaf)
+                //先按名称排序 再按文件夹排序
+                return [...items].sort((a, b) => a.name > b.name).sort((a, b) => a.isLeaf - b.isLeaf)
             } else if (sortType == "date") {
                 return [...items].sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
             } else if (sortType == "name") {

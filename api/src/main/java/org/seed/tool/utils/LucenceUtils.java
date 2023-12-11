@@ -22,7 +22,15 @@ import java.util.Collection;
 
 public class LucenceUtils {
 
-    public static String createIndex(Collection<Document> docs, String indexPath) throws IOException {
+    /**
+     *
+     * @param docs  要写入的文件
+     * @param indexPath index存放的根路径
+     * @param openMode OpenMode.APPEND 会在索引库的基础上追加新索引。OpenMode.CREATE会先清空原来数据，再提交新的索引
+     * @return
+     * @throws IOException
+     */
+    public static String createIndex(Collection<Document> docs, String indexPath, IndexWriterConfig.OpenMode openMode) throws IOException {
 
         // 索引目录类,指定索引在硬盘中的位置
         Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexPath));
@@ -31,7 +39,7 @@ public class LucenceUtils {
         // 索引写出工具的配置对象，这个地方就是最上面报错的问题解决方案
         IndexWriterConfig conf = new IndexWriterConfig(analyzer);
         // 设置打开方式：OpenMode.APPEND 会在索引库的基础上追加新索引。OpenMode.CREATE会先清空原来数据，再提交新的索引
-        conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+        conf.setOpenMode(openMode);
         // 创建索引的写出工具类。参数：索引的目录和配置信息
         IndexWriter indexWriter = new IndexWriter(directory, conf);
         // 把文档集合交给IndexWriter

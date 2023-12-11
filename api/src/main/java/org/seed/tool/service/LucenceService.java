@@ -5,6 +5,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -42,26 +43,15 @@ public class LucenceService {
 
         String path = indexPath + File.separator + NOTE_PATH;
 
-        //1.删除旧index
-        File file = new File(path);
-        if (file.exists()) {
-            File[] files = file.listFiles();//声明目录下所有的文件 files[];
-            for (int i = 0; i < files.length; i++) {//遍历目录下所有的文件
-                files[i].delete();
-            }
-        } else {
-            file.mkdirs();
-        }
-
-        //2.创建index
+        //创建index
         int current = 0;
         int size = 20;
         long total = 1;
 
-        for (; total !=0; current++) {
+        for (; total != 0; current++) {
 
-            List<NoteModel> records = noteMapper.getNoteModelList(current*size,size);
-            total = 0;
+            List<NoteModel> records = noteMapper.getNoteModelList(current * size, size);
+            total = records.size();
             Collection<Document> docs = new ArrayList<>(size);
             for (NoteModel noteModel : records) {
                 // 创建文档对象
@@ -69,18 +59,20 @@ public class LucenceService {
                 //StringField会创建索引，但是不会被分词，TextField，即创建索引又会被分词。
                 document.add(new StringField("id", noteModel.getId().toString(), Field.Store.YES));
                 document.add(new StringField("createBy", noteModel.getCreateBy(), Field.Store.NO));
-                if(StringUtils.isNotBlank(noteModel.getText())) {
+                document.add(new StringField("id", noteModel.getId().toString(), Field.Store.YES));
+                if (StringUtils.isNotBlank(noteModel.getText())) {
                     document.add(new TextField("text", noteModel.getText(), Field.Store.NO));
                 }
                 document.add(new TextField("name", noteModel.getName(), Field.Store.YES));
+                document.add(new StringField("isLeaf", noteModel.getIsLeaf().toString(), Field.Store.YES));
                 docs.add(document);
             }
-            LucenceUtils.createIndex(docs, path);
+            LucenceUtils.createIndex(docs, path, current == 0 ? IndexWriterConfig.OpenMode.CREATE : IndexWriterConfig.OpenMode.APPEND);
         }
     }
 
     public List<Note> searchNote(String text) throws IOException, ParseException, InvalidTokenOffsetsException {
-        String[] fields =  {"name","text"};
+        String[] fields = {"name", "text"};
         String path = indexPath + File.separator + NOTE_PATH;
         IndexSearcher searcher = LucenceUtils.getSearcher(path);
 
@@ -89,17 +81,17 @@ public class LucenceService {
         // 创建查询解析器,两个参数：默认要查询的字段的名称，分词器
         MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, new MyIKAnalyzer());
         // 创建查询对象1
-        Query query1 = parser.parse(text);
-        builder.add( query1, BooleanClause.Occur.MUST );
+        Query query1 = parser.parse(text + "*");
+        builder.add(query1, BooleanClause.Occur.MUST);
 
         // 创建查询对象2
         SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        Query query2 =new TermQuery(new Term("createBy",sysUser.getUsername()));
-        builder.add( query2, BooleanClause.Occur.MUST );
+        Query query2 = new TermQuery(new Term("createBy", sysUser.getUsername()));
+        builder.add(query2, BooleanClause.Occur.MUST);
 
         ScoreDoc[] scoreDocs = LucenceUtils.searchByQuery(builder.build(), path);
         List<Note> list = new ArrayList();
-        for(ScoreDoc scoreDoc:scoreDocs){
+        for (ScoreDoc scoreDoc : scoreDocs) {
 
             int docID = scoreDoc.doc;
             // 根据编号去找文档
@@ -107,12 +99,12 @@ public class LucenceService {
             Note note = new Note();
             note.setId(Long.parseLong(doc.get("id")));
             note.setName(doc.get("name"));
+            note.setIsLeaf(Boolean.parseBoolean(doc.get("isLeaf")));
             list.add(note);
         }
         return list;
 
     }
-
 
 
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Dropdown, Menu, Button, Input, Radio, message } from 'antd';
+import { Dropdown, Menu, Button, Input, Radio } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import styles from './style.less';
 import { connect, useModel } from 'umi';
@@ -13,12 +13,12 @@ const ListMenu: React.FC = (props, ref) => {
 
     const { initialState: { currentUser } } = useModel('@@initialState');
 
-    const [sortType, setSortType] = useState<string>('name');
+    const [sortType, setSortType] = useState<string>('default');
     const [listData, setListData] = useState<Object[]>([]);
     const [searchRecent, setSearchRecent] = useState<string[]>((localStorage.getItem("searchRecent" + currentUser.id) || "").split(","));
     const searchWinRef = useRef(null);
     const searchRef = useRef(null);
-    const [range, setRange] = useState<number>(1);//1:当前文件夹  0：全部文件夹
+    // const [range, setRange] = useState<number>(0);//1:当前文件夹  0：全部文件夹
     const [showSearchWin, setShowSearchWin] = useState<boolean>(false);//控制是否展示搜索历史弹出框
     const [listTitle, setListTitle] = useState<string>("");
     const [searchStr, setSearchStr] = useState<string>("");
@@ -74,11 +74,10 @@ const ListMenu: React.FC = (props, ref) => {
             } else if (id == "history") {
                 listData = props.note.openedNotes
             }
-            setListData(listData.sort(i => i.isLeaf))
+            setListData(listData)
         } else {
             loadTreeData()
         }
-        setSortType('name')
 
     }
 
@@ -164,14 +163,14 @@ const ListMenu: React.FC = (props, ref) => {
         }
 
 
-        if (isFolder(id) && !range) { //全部文件夹搜索
+        // if (isFolder(id) && !range) { //全部文件夹搜索
             const res = await pageSearchNote({ pageNo: 0, pageSize: 20, searchStr, parentId: 0 });
             if (res && res.success) {
-                newListData = res.result.records
+                newListData = res.result
             }
-        } else {
-            newListData = listData.filter(i => i.name.toLowerCase().includes(searchStr.toLowerCase()))
-        }
+        // } else {
+        //     newListData = listData.filter(i => i.name.toLowerCase().includes(searchStr.toLowerCase()))
+        // }
 
         setListData(newListData)
         setShowSearchWin(false)
@@ -186,7 +185,10 @@ const ListMenu: React.FC = (props, ref) => {
     }
 
     const sortMenu = (
-        <Menu onClick={handleSort}>
+        <Menu onClick={handleSort} selectedKeys={[sortType]}>
+            <Menu.Item key="default">
+                默认排序
+            </Menu.Item>
             <Menu.Item key="date">
                 按时间排序
             </Menu.Item>
@@ -222,7 +224,7 @@ const ListMenu: React.FC = (props, ref) => {
                                 searchHistory(str)
                             }}>{str}</span>)}</span>
                         </div>
-                        {isFolder(id) ? (<div className={styles.range}>
+                        {/* {isFolder(id) ? (<div className={styles.range}>
                             <span className={styles.title}>搜索范围</span>
                             <div className={styles.rangeRadio}>
                                 <Radio.Group onChange={e => setRange(e.target.value)} value={range}>
@@ -230,7 +232,7 @@ const ListMenu: React.FC = (props, ref) => {
                                     <Radio value={0}>全部笔记</Radio>
                                 </Radio.Group>
                             </div>
-                        </div>) : ""}
+                        </div>) : ""} */}
                     </div>
                 </div>
 
