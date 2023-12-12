@@ -21,6 +21,17 @@ interface Item {
 let cardDataObj;
 let cardNumberObj;
 let player = new Audio();
+
+const dailyData = [{ title: "吃早饭", value: 3 },
+{ title: "吃早饭", value: 3 },
+{ title: "洗澡", value: 2 },
+{ title: "刷牙", value: 2 },
+{ title: "睡午觉", value: 3 },
+{ title: "抄作业", value: 2 },
+{ title: "收拾书桌", value: 2 },
+{ title: "放学就做作业", value: 5 },
+]
+
 const Bank: React.FC<{}> = () => {
 
     const [result, setResult] = useState<Object[]>([]);
@@ -102,6 +113,11 @@ const Bank: React.FC<{}> = () => {
         setResult([...result, item])
     }
 
+    const addRecords = (items:object[])=>{
+        soundEffect(1)
+        setResult([...result, ...items])
+    }
+
     const subItem = (index: number) => {
         const data = [...result];
         data.splice(index, 1);
@@ -147,8 +163,6 @@ const Bank: React.FC<{}> = () => {
         }
     }
 
-    const formatValue = (value: number) => value > 0 ? " +" + value : " " + value
-
 
     const clean = () => {
         setResult([])
@@ -184,14 +198,15 @@ const Bank: React.FC<{}> = () => {
         setModalVisible(false);
     }
 
-    const layout = { sm: { span: 4 }, xs: { span: 8 } }
-
     return (
         <div className={styles.container}>
             <Header title="银行" onBack={() => history.push("../card")}><Button type="link" onClick={edit}><SettingOutlined /></Button></Header>
             <div className={styles.body}>
                 <Account setAccountId={setAccountId} accountData={accountData} accountId={accountId}></Account>
                 <div className={styles.static}>
+                    <div
+                        className={`${styles.staticBtn} ${styles.add}`} 
+                        onClick={() => addRecords(dailyData)}>日常</div>
                     {staticData.map(data => <div
                         className={`${styles.staticBtn} ${data > 0 ? styles.add : styles.sub}`} key={data}
                         onClick={() => addRecord({ title: "", value: data })}>{data}</div>)}
