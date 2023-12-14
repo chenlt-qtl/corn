@@ -278,6 +278,7 @@
     </dependencies>
 
     <build>
+        <defaultGoal>install</defaultGoal>
         <finalName>api</finalName>
         <plugins>
             <plugin>
@@ -322,5 +323,4 @@
             </resource>
         </resources>
     </build>
-
 </project>
