@@ -6,7 +6,7 @@ import styles from './styles.less';
 
 const ChangeParent: React.FC = (props, ref) => {
 
-    const { treeData, node, onCancel, visible } = props;
+    const { node, onCancel, visible } = props;
 
     const [newParentId, setNewParentId] = useState<number>();
 
@@ -51,7 +51,7 @@ const ChangeParent: React.FC = (props, ref) => {
                             blockNode
                             multiple
                             showIcon={false}
-                            treeData={treeData}
+                            treeData={props.note.folderTreeData}
                             autoExpandParent={false}
                             onSelect={onSelect}
                             fieldNames={{ title: "name" }}

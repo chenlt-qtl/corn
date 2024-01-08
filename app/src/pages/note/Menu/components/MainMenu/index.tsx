@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './style.less';
 import { connect } from 'umi';
 import EditFolderModal from '../../../components/EditFolderModal';
@@ -6,37 +6,21 @@ import AddBtn from '../../../components/AddBtn';
 import NoteTree from './NoteTree';
 import { Button, Modal, notification } from "antd"
 import { ExclamationCircleOutlined, MenuOutlined } from '@ant-design/icons';
-import ChangeParentModal from '../../../components/ChangeParentModal';
-import { NoteNode } from '@/data/note'
 import { menuData, isFolder } from '../../../utils'
-import { getFolderData } from '../../utils'
 
 const { confirm } = Modal;
 
 const MainMenu: React.FC = (props, ref) => {
 
-    const { menuType } = props;
+    const { menuType, onChangeParent } = props;
 
     const [folderModalVisible, setFolderModalVisible] = useState<boolean>(false);
-    const [parentModalVisible, setParentModalVisible] = useState<boolean>(false);
 
     const [editNode, setEditNode] = useState<object>({});
-    const [treeData, setTreeData] = useState<NoteNode[]>([]);
 
-    useEffect(() => {
-        if (props.note.noteTreeData.length > 0) {
-            setTreeData(getFolderData(props.note.noteTreeData));
-        }
-    }, [props.note.noteTreeData]);
-
-    const handleRename = (node) => {
+    const handleRename = node => {
         setEditNode(node);
         setFolderModalVisible(true);
-    }
-
-    const handleChangeParent = (node) => {
-        setEditNode(node);
-        setParentModalVisible(true);
     }
 
     const onAddFolder = () => {
@@ -100,13 +84,12 @@ const MainMenu: React.FC = (props, ref) => {
                 {min ? "" : <><div className={styles.tree}>
                     <NoteTree
                         handleRename={handleRename}
-                        handleChangeParent={handleChangeParent}
+                        handleChangeParent={onChangeParent}
                         onDelete={handleDelete}
-                        treeData={treeData}
+                        treeData={props.note.folderTreeData}
                         {...props}
                     ></NoteTree>
                 </div>
-                    <ChangeParentModal treeData={treeData} node={editNode} onCancel={() => setParentModalVisible(false)} visible={parentModalVisible}></ChangeParentModal>
                 </>}
             </div >
         );

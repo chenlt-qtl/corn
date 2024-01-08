@@ -241,7 +241,7 @@ const ListMenu: React.FC = (props, ref) => {
                     <span className={styles.title}>{listTitle}</span>
                     <Dropdown overlay={sortMenu} trigger={['click']}><Button type="text"><EllipsisOutlined /></Button></Dropdown>
                 </div>
-                <NoteList {...props} data={listData} sortType={sortType} onFolderClick={clickFolder}></NoteList>
+                <NoteList {...props} handleChangeParent={props.onChangeParent} data={listData} sortType={sortType} onFolderClick={clickFolder}></NoteList>
             </div >
 
         );

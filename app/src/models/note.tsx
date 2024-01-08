@@ -1,11 +1,13 @@
 import { updateNoteTitle, queryNoteById, updateNoteText, updateParent, deleteNote, editOneFav, queryTreeMenu, addNote } from '@/services/note'
 import { NoteItem, NoteNode } from '@/data/note';
 import { Effect, Reducer } from 'umi';
+import { getFolderData } from '@/pages/note/Menu/utils';
 
 export interface NoteState {
     openedNote: NoteItem;
     openedNotes: [];
     noteTreeData: NoteNode[];
+    folderTreeData: NoteNode[];
     treeSelectKey: string;
     listParent: NoteItem;
 }
@@ -225,7 +227,8 @@ const NoteModel: NoteModelType = {
         refreshNoteTreeData(state: NoteState, { payload }): NoteState {
             return {
                 ...state,
-                noteTreeData: payload
+                noteTreeData: payload,
+                folderTreeData:getFolderData(payload)
             }
         },
         refreshTreeSelectKey(state: NoteState, { payload }): NoteState {

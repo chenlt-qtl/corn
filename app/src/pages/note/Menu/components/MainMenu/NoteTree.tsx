@@ -7,7 +7,7 @@ import { getNode } from '../../utils';
 
 const NoteTree: React.FC = (props, ref) => {
 
-    const { treeData, onDelete } = props;
+    const { treeData = [], onDelete } = props;
     const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
 
     useEffect(() => {
