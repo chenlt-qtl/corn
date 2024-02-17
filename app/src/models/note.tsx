@@ -42,7 +42,7 @@ const NoteModel: NoteModelType = {
         openedNotes: [],
         noteTreeData: [],
         treeSelectKey: "0",
-        listParent: {},
+        listParent: { id: "0" },
     },
 
     effects: {
@@ -75,7 +75,7 @@ const NoteModel: NoteModelType = {
                         payload: note.parentId || "0",
                     })
 
-                    if (!isNaN(listParent.id) && note.parentId && listParent.id != note.parentId) {
+                    if (!isNaN(listParent.id) && listParent.id != note.parentId) {
                         yield put({
                             type: 'refreshListParent',
                             payload: { id: note.parentId },
@@ -228,7 +228,7 @@ const NoteModel: NoteModelType = {
             return {
                 ...state,
                 noteTreeData: payload,
-                folderTreeData:getFolderData(payload)
+                folderTreeData: getFolderData(payload)
             }
         },
         refreshTreeSelectKey(state: NoteState, { payload }): NoteState {

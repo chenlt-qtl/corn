@@ -51,7 +51,7 @@ const ChangeParent: React.FC = (props, ref) => {
                             blockNode
                             multiple
                             showIcon={false}
-                            treeData={props.note.folderTreeData}
+                            treeData={[{ name: "文件夹", key: "0", children: props.note.folderTreeData }]}
                             autoExpandParent={false}
                             onSelect={onSelect}
                             fieldNames={{ title: "name" }}

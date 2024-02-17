@@ -30,5 +30,5 @@ public interface INoteService extends IService<Note> {
 
     IPage<Note> pageSearchNote(Long parentId, String searchStr, boolean withLeaf, int pageNo, int pageSize);
 
-    boolean updateParent(Note note, Note parent);
+    boolean updateParent(Note note, Long parentId);
 }

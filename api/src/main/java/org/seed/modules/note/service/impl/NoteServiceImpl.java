@@ -167,8 +167,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements IN
     }
 
     @Override
-    public boolean updateParent(Note note, Note parent) {
-        note.setParentId(parent.getId());
+    public boolean updateParent(Note note, Long parentId) {
+        note.setParentId(parentId);
         return updateById(note);
 
     }
