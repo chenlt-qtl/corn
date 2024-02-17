@@ -8,6 +8,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import HocMedia from "@/components/HocMedia";
 import lodash from 'lodash';
 import HistoryModal from '../components/HistoryModal'
+import HistorySaveBtn from '../components/HistorySaveBtn';
 
 let statusIcons = {
     '0': <CheckCircleTwoTone key="ok" twoToneColor="#52c41a" />,
@@ -28,7 +29,7 @@ const Content = React.forwardRef((props, ref) => {
     const [title, setTitle] = useState<String>("");
 
     const [showToc, setShowToc] = useState<boolean>(true);
-    const [historyModalVisible, setHistoryModalVisible] = useState<boolean>(false);
+    const [historyModalVisible, setHistoryModalVisible] = useState<boolean>(false);    
 
 
     useEffect(() => {
@@ -145,6 +146,7 @@ const Content = React.forwardRef((props, ref) => {
                 btns.push(<Button key="history" onClick={() => {
                     setHistoryModalVisible(true);
                 }} type='text'><HistoryOutlined /></Button>)
+                btns.push(<HistorySaveBtn key="save"/>)
             }
             btns.push(statusIcons[saveStatus])
             return btns;

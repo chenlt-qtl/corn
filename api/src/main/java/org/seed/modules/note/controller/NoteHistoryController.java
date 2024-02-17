@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.seed.common.api.vo.Result;
-import org.seed.common.system.query.QueryGenerator;
 import org.seed.common.util.BtoaEncode;
 import org.seed.common.util.ResultUtils;
 import org.seed.modules.note.entity.NoteHistory;
@@ -39,14 +38,18 @@ public class NoteHistoryController {
      * @return
      */
     @GetMapping("")
-    public Result queryPageList(@RequestParam Long noteId,
+    public Result queryPageList(@RequestParam Long noteId, @RequestParam Boolean hasTitle,
                                 @RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
                                 @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                                 HttpServletRequest req) {
         QueryWrapper<NoteHistory> queryWrapper = new QueryWrapper();
-        queryWrapper.select("id","create_time");
-
-        queryWrapper.eq("note_id",noteId);
+        queryWrapper.select("id","title", "create_time");
+        if (hasTitle) {
+            queryWrapper.isNotNull("title");
+        }else {
+            queryWrapper.isNull("title");
+        }
+        queryWrapper.eq("note_id", noteId);
         Page<NoteHistory> page = new Page<NoteHistory>(pageNo, pageSize);
         IPage<NoteHistory> pageList = noteHistoryService.page(page, queryWrapper);
         return ResultUtils.okData(pageList);
@@ -58,7 +61,7 @@ public class NoteHistoryController {
      * @param noteHistory
      * @return
      */
-    @PostMapping(value = "/add")
+    @PostMapping
     public Result add(@RequestBody NoteHistory noteHistory) {
         try {
             noteHistoryService.save(noteHistory);

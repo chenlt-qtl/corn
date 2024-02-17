@@ -1,7 +1,6 @@
 package org.seed.modules.note.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -27,6 +26,8 @@ public class NoteHistory implements Serializable {
 	/**noteId*/
 	@Excel(name = "noteId", width = 15)
 	private Long noteId;
+
+	private String title;
 	/**text*/
 	@Excel(name = "text", width = 15)
 	private String text;

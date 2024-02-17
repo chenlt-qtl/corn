@@ -2,6 +2,8 @@ import request from '@/utils/request';
 import { NoteItem } from './data.d';
 import { decryptNote, encryptionNote } from '@/pages/note/utils';
 import { decrypt } from '@/utils/utils';
+import { NoteHistory } from '@/data/note';
+import { stringify } from 'qs';
 
 //树形数据结构
 export async function queryTreeMenu(withLeaf: boolean) {
@@ -116,9 +118,9 @@ export async function deleteNote(id: String) {
   });
 }
 
-export async function uploadImg(img: String,id:number) {
+export async function uploadImg(img: String, id: number) {
 
-  return request('/api/sys/common/uploadImg/note/'+id, {
+  return request('/api/sys/common/uploadImg/note/' + id, {
     method: 'POST',
     data: {
       file: img,
@@ -143,11 +145,11 @@ export async function updateParent(noteId: number, parentId: number) {
 
 
 
-export async function getHistorys({ noteId, pageNo, pageSize }) {
+export async function getHistorys(params) {
+  console.log(stringify(params));
+  
 
-  return request('/api/noteHistory?noteId=' + noteId + "&pageNo=" + pageNo + "&pageSize=" + pageSize).then(res => {
-    console.log(1);
-
+  return request('/api/noteHistory?' + stringify(params)).then(res => {
     if (res) {
       res.result.records = res.result.records.map(item => decryptNote(item))
     }
@@ -163,5 +165,15 @@ export async function getHistory(id: number) {
       res.result.text = decrypt(res.result.text);
     }
     return res;
+  })
+}
+
+export async function addNoteHistory(params: NoteHistory) {
+  return request('/api/noteHistory', {
+    method: 'POST',
+    data: {
+      ...params,
+      method: 'post',
+    },
   })
 }
