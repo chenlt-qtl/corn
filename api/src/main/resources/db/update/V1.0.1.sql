@@ -22,3 +22,16 @@ rename table sys_data_new to sys_data;
 
 --增加历史记录名称
 alter table note_info_history add column `title` varchar(200) after note_id;
+
+--加卡历史
+CREATE TABLE `card_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) DEFAULT NULL,
+  `title` varchar(200) DEFAULT NULL,
+  `value` int(11) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `update_by` varchar(32) DEFAULT NULL,
+  `status` varchar(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

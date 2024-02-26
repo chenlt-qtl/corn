@@ -1,15 +1,18 @@
 import { Modal, message, Button } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { SettingOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, SettingOutlined } from '@ant-design/icons';
 
 import styles from './styles.less'
 import { getSysData, updateSysData } from "@/services/system"
+import { getPage, getTotal } from "@/services/card"
 import EditModal from '../components/EditBankModal';
 import Header from '../components/Header';
 import { history } from 'umi';
 import Account from '../components/Account';
 import Tabs from '../components/Tabs';
 import BankItems from '../components/BankItems';
+import SaveCardBtn from './SaveCardBtn';
+import HistoryBtn from './HistoryBtn';
 
 const staticData = [3, 2, 1, -1, -2, -3]
 
@@ -32,6 +35,7 @@ const dailyData = [{ title: "吃早饭", value: 3 },
 { title: "放学就做作业", value: 5 },
 ]
 
+
 const Bank: React.FC<{}> = () => {
 
     const [result, setResult] = useState<Object[]>([]);
@@ -42,8 +46,11 @@ const Bank: React.FC<{}> = () => {
     const [itemList, setItemList] = useState<Item[][]>([]);
 
     const [modalVisible, setModalVisible] = useState<boolean>(false)
-    const [accountId, setAccountId] = useState<number>(1);
-    const [accountData, setAccountData] = useState<Object>({});
+    const [userIdx, setUserIdx] = useState<number>(0);
+    const [users, setUsers] = useState<object[]>([
+        { id: 1, name: "豆芽", total: 0 },
+        { id: 2, name: "桐桐", total: 0 }
+    ]);
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -61,14 +68,17 @@ const Bank: React.FC<{}> = () => {
             }
         }
 
-        const res1 = await getSysData("card-number");
+        //获取卡片数
+        const res1 = await getTotal(users[0].id);
         if (res1.success) {
-            const records = res1.result.records;
-            if (records.length == 1) {
-                cardNumberObj = records[0]
-                setAccountData(records[0].value ? JSON.parse(records[0].value) : { "1": 0, "2": 0 });
-            }
+            users[0].total = res1.result;
         }
+        const res2 = await getTotal(users[1].id);
+        if (res2.success) {
+            users[1].total = res2.result;
+        }
+
+        setUsers([...users])
         setLoading(false)
 
     }
@@ -113,7 +123,7 @@ const Bank: React.FC<{}> = () => {
         setResult([...result, item])
     }
 
-    const addRecords = (items:object[])=>{
+    const addRecords = (items: object[]) => {
         soundEffect(1)
         setResult([...result, ...items])
     }
@@ -122,36 +132,6 @@ const Bank: React.FC<{}> = () => {
         const data = [...result];
         data.splice(index, 1);
         setResult(data)
-    }
-
-    const save = () => {
-        soundEffect(0)
-        const total = result.reduce((total, item) => {
-            return total + parseInt(item.value)
-        }, 0)
-
-        Modal.confirm({
-            title: `帐户 : ${accountId == 1 ? "豆芽" : "桐桐"}`,
-            content: (
-                <div>
-                    <p>存入 {total} 张卡?</p>
-                </div>
-            ),
-            onOk: async () => {
-                setLoading(true)
-                const oldNumber = accountData[accountId];
-                const newNumber = oldNumber * 1 + total;
-                accountData[accountId] = newNumber;
-                const res = await updateSysData({ ...cardNumberObj, value: JSON.stringify(accountData) });
-                setLoading(false);
-                if (res && res.success) {
-                    message.success("操作成功")
-                    clean()
-                } else {
-                    message.error('保存失败');
-                }
-            },
-        })
     }
 
     const formatTitle = item => {
@@ -200,12 +180,12 @@ const Bank: React.FC<{}> = () => {
 
     return (
         <div className={styles.container}>
-            <Header title="银行" onBack={() => history.push("../card")}><Button type="link" onClick={edit}><SettingOutlined /></Button></Header>
+            <Header title="银行" onBack={() => history.push("../card")}><HistoryBtn/><Button type="link" onClick={edit}><SettingOutlined /></Button></Header>
             <div className={styles.body}>
-                <Account setAccountId={setAccountId} accountData={accountData} accountId={accountId}></Account>
+                <Account setUserIdx={setUserIdx} users={users} userIdx={userIdx}></Account>
                 <div className={styles.static}>
                     <div
-                        className={`${styles.staticBtn} ${styles.add}`} 
+                        className={`${styles.staticBtn} ${styles.add}`}
                         onClick={() => addRecords(dailyData)}>日常</div>
                     {staticData.map(data => <div
                         className={`${styles.staticBtn} ${data > 0 ? styles.add : styles.sub}`} key={data}
@@ -220,7 +200,10 @@ const Bank: React.FC<{}> = () => {
                             onClick={() => subItem(index)}>{formatTitle(item)}</li>)}
                     </ul>
                     <section className={styles.btns}>
-                        <Button onClick={save} shape="round" className={styles.sum}>保存({result.reduce((total, cur) => total + cur.value * 1, 0)})</Button>
+                        <SaveCardBtn reloadData={() => {
+                            onCancel(true);
+                            clean();
+                        }} result={result} user={users[userIdx]} soundEffect={soundEffect} />
                         <Button onClick={clean} shape="round">清空</Button>
                     </section>
                 </div>

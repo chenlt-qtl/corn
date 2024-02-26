@@ -53,7 +53,7 @@ public class MybatisInterceptor implements Interceptor {
                         Object local_createBy = field.get(parameter);
                         field.setAccessible(false);
                         if (local_createBy == null || local_createBy.equals("")) {
-                            String createBy = "jeecg-boot";
+                            String createBy = "system";
                             // 获取登录用户信息
                             SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
                             if (sysUser != null) {
@@ -99,7 +99,7 @@ public class MybatisInterceptor implements Interceptor {
                     field.setAccessible(true);
                     Object local_updateBy = field.get(parameter);
                     field.setAccessible(false);
-                    String updateBy = "jeecg-boot";
+                    String updateBy = "system";
                     // 获取登录用户信息
                     SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
                     if (sysUser != null) {

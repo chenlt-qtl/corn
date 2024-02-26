@@ -40,6 +40,13 @@ declare namespace API {
     value: string;
   }
 
+  export interface CardNum {
+    id?: string;
+    userId: number;
+    title?: string;
+    value?: number;
+  }
+
   export interface CardData {
     tabs: string[];
     value: string[];
