@@ -78,6 +78,35 @@ public class LoginController {
 			return ResultUtils.okData(obj);
 		}
 	}
+
+	@RequestMapping(value = "/freeLogin", method = RequestMethod.POST)
+	@ApiOperation("登录接口")
+	public Result freeLogin(@RequestBody String password) {
+		password = BtoaEncode.decrypt(password);
+		SysUser sysUser = sysUserService.getUserByName(username);
+		if(sysUser==null) {
+			sysBaseAPI.addLog("登录失败，用户名:"+username+"不存在！", CommonConstant.LOG_TYPE_1, null);
+			throw new CornException("该用户不存在");
+		}else {
+			//密码验证
+			String userpassword = PasswordUtil.encrypt(username, password, sysUser.getSalt());
+			String syspassword = sysUser.getPassword();
+			if(!syspassword.equals(userpassword)) {
+				throw new CornException("用户名或密码错误");
+			}
+			//生成token
+			String token = JwtUtil.sign(username, syspassword);
+			redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
+			//设置超时时间
+			redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME/1000);
+
+			JSONObject obj = new JSONObject();
+			obj.put("token", token);
+			obj.put("userInfo", sysUser);
+			sysBaseAPI.addLog("用户名: "+username+",登录成功！", CommonConstant.LOG_TYPE_1, null);
+			return ResultUtils.okData(obj);
+		}
+	}
 	
 	/**
 	 * 退出登录

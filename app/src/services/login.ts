@@ -19,6 +19,14 @@ export async function accountLogin(params: LoginParamsType) {
   });
 }
 
+export async function freeLogin(password:string) {
+  return request('/api/sys/freeLogin', {
+    method: 'POST',
+    data: {
+      password: encryption(password)    }
+  });
+}
+
 export async function getFakeCaptcha(mobile: string) {
   return request(`/api/login/captcha?mobile=${mobile}`);
 }

@@ -42,7 +42,7 @@ declare namespace API {
 
   export interface CardNum {
     id?: string;
-    userId: number;
+    userId?: number;
     title?: string;
     value?: number;
   }

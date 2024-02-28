@@ -43,6 +43,7 @@ public class ShiroConfig {
 		Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 		// 配置不会被拦截的链接 顺序判断
 		filterChainDefinitionMap.put("/api/sys/login", "anon"); //登录接口排除
+		filterChainDefinitionMap.put("/api/sys/freeLogin", "anon"); //登录接口排除
 		filterChainDefinitionMap.put("/auth/2step-code", "anon");//登录验证码
 		filterChainDefinitionMap.put("/test/jeecgDemo/**", "anon"); //测试接口
 		filterChainDefinitionMap.put("/test/jeecgOrderMain/**", "anon"); //测试接口

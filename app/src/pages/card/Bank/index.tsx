@@ -34,7 +34,10 @@ const dailyData = [{ title: "吃早饭", value: 3 },
 { title: "收拾书桌", value: 2 },
 { title: "放学就做作业", value: 5 },
 ]
-
+ const userInitData = [
+    { id: 1, name: "豆芽", total: 0 },
+    { id: 2, name: "桐桐", total: 0 }
+]
 
 const Bank: React.FC<{}> = () => {
 
@@ -47,10 +50,7 @@ const Bank: React.FC<{}> = () => {
 
     const [modalVisible, setModalVisible] = useState<boolean>(false)
     const [userIdx, setUserIdx] = useState<number>(0);
-    const [users, setUsers] = useState<object[]>([
-        { id: 1, name: "豆芽", total: 0 },
-        { id: 2, name: "桐桐", total: 0 }
-    ]);
+    const [users, setUsers] = useState<object[]>([...userInitData]);
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -180,7 +180,7 @@ const Bank: React.FC<{}> = () => {
 
     return (
         <div className={styles.container}>
-            <Header title="银行" onBack={() => history.push("../card")}><HistoryBtn/><Button type="link" onClick={edit}><SettingOutlined /></Button></Header>
+            <Header title="银行" onBack={() => history.push("../card")}><HistoryBtn users={userInitData}/><Button type="link" onClick={edit}><SettingOutlined /></Button></Header>
             <div className={styles.body}>
                 <Account setUserIdx={setUserIdx} users={users} userIdx={userIdx}></Account>
                 <div className={styles.static}>

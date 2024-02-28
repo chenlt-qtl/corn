@@ -32,6 +32,7 @@ public class CardController {
         QueryWrapper<Card> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(userId!=null,"user_id",userId);
         queryWrapper.like(StringUtils.isNotBlank(title),"title",title);
+        queryWrapper.eq("status",2);
 
         Page<Card> page = new Page(current, pageSize);
         IPage<Card> pageList = cardService.page(page, queryWrapper);

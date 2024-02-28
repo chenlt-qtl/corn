@@ -34,8 +34,13 @@ export default defineConfig({
       routes: [
         {
           name: 'login',
-          path: '/user/login',
+          path: 'login',
           component: './user/login',
+        },
+        {
+          name: 'freeLogin',
+          path: 'freeLogin',
+          component: './user/FreeLogin',
         },
       ],
     },
